@@ -159,6 +159,13 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 			weekend_mult = Constants.WEEKEND_SATURDAY_AUDIENCE_MULT
 	if weekend_mult > 1.0:
 		audience = mini(venue.capacity, int(round(float(audience) * weekend_mult)))
+		
+	# Moltiplicatore Hype del Tour (se c'è una tournée in corso)
+	var tour_hype_mult: float = 1.0
+	if GameManager and GameManager.tour_system:
+		tour_hype_mult = GameManager.tour_system.get_tour_hype_multiplier()
+	if tour_hype_mult > 1.0:
+		audience = mini(venue.capacity, int(round(float(audience) * tour_hype_mult)))
 	
 	# 3. Valutazione scaletta e qualità media
 	var total_qual: float = 0.0
@@ -286,10 +293,14 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 		"band_synergy_bonus": band_synergy,
 		"concert_score": final_score,
 		"city_affinity_mult": city_affinity_mult,
+		"tour_hype_mult": tour_hype_mult,
 		"new_fans": new_fans,
 		"popularity_gained": pop_gain,
 		"is_soundcheck": is_soundcheck
 	}
 	
+	if GameManager and GameManager.tour_system and GameManager.tour_system.active_tour:
+		GameManager.tour_system.record_stop_result(result)
+		
 	EventBus.concert_resolved.emit(result)
 	return result

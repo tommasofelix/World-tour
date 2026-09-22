@@ -84,4 +84,11 @@ signal schedule_modal_requested()
 signal city_changed(old_city_id: int, new_city_id: int)
 signal travel_screen_requested()
 
+# --- Segnali Tour Musicali & Tournée (World-tour V4.0 / F8.2) ---
+signal tour_planned(tour_data: TourData)
+signal tour_stop_completed(stop_index: int, concert_result: Dictionary)
+signal tour_finished(summary: Dictionary)
+signal tour_screen_requested()
+
+
 

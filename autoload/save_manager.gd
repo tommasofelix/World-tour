@@ -26,7 +26,8 @@ func save_game() -> bool:
 		"player": GameManager.player_data.to_dict() if GameManager.player_data else {},
 		"calendar": GameManager.calendar_data.to_dict() if GameManager.calendar_data else {},
 		"schedule": GameManager.schedule_system.to_dict() if GameManager.schedule_system else [],
-		"travel": GameManager.travel_system.to_dict() if GameManager.travel_system else {}
+		"travel": GameManager.travel_system.to_dict() if GameManager.travel_system else {},
+		"tour": GameManager.tour_system.to_dict() if GameManager.tour_system else {}
 	}
 	
 	var json_string: String = JSON.stringify(save_dict, "\t")
@@ -162,6 +163,18 @@ func load_game() -> bool:
 
 	if save_dict.has("travel") and save_dict["travel"] is Dictionary:
 		GameManager.travel_system.from_dict(save_dict["travel"] as Dictionary)
+
+	if not GameManager.tour_system:
+		GameManager.tour_system = TourSystem.new(GameManager.player_data, GameManager.calendar_data, GameManager.travel_system, GameManager.schedule_system, GameManager.band_system)
+	else:
+		GameManager.tour_system.player_data = GameManager.player_data
+		GameManager.tour_system.calendar_data = GameManager.calendar_data
+		GameManager.tour_system.travel_system = GameManager.travel_system
+		GameManager.tour_system.schedule_system = GameManager.schedule_system
+		GameManager.tour_system.band_system = GameManager.band_system
+
+	if save_dict.has("tour") and save_dict["tour"] is Dictionary:
+		GameManager.tour_system.from_dict(save_dict["tour"] as Dictionary)
 
 	GameManager.change_state(Enums.GameState.GAMEPLAY_IDLE)
 	

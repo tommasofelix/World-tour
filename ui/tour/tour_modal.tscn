@@ -1,0 +1,207 @@
+[gd_scene load_steps=4 format=3 uid="uid://dmtourmodal01"]
+
+[ext_resource type="Script" path="res://ui/tour/tour_modal.gd" id="1_tour"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tour"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.09, 0.1, 0.14, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.35, 0.65, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_inner"]
+content_margin_left = 12.0
+content_margin_top = 12.0
+content_margin_right = 12.0
+content_margin_bottom = 12.0
+bg_color = Color(0.12, 0.14, 0.2, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.3, 0.35, 0.5, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="TourModal" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_tour")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.03, 0.04, 0.06, 1)
+
+[node name="PanelMain" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = 30.0
+offset_right = -40.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_tour")
+
+[node name="VBox" type="VBoxContainer" parent="PanelMain"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+
+[node name="LabelTitle" type="Label" parent="PanelMain/VBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "PIANIFICAZIONE TOURNÉE"
+
+[node name="PanelPlanning" type="PanelContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_inner")
+
+[node name="Margin" type="MarginContainer" parent="PanelMain/VBox/PanelPlanning"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxPlan" type="VBoxContainer" parent="PanelMain/VBox/PanelPlanning/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HBoxName" type="HBoxContainer" parent="PanelMain/VBox/PanelPlanning/Margin/VBoxPlan"]
+layout_mode = 2
+
+[node name="LabelName" type="Label" parent="PanelMain/VBox/PanelPlanning/Margin/VBoxPlan/HBoxName"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "Nome del Tour:"
+
+[node name="EditTourName" type="LineEdit" parent="PanelMain/VBox/PanelPlanning/Margin/VBoxPlan/HBoxName"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Es. Neon Underground Tour 2026"
+
+[node name="HBoxVehicle" type="HBoxContainer" parent="PanelMain/VBox/PanelPlanning/Margin/VBoxPlan"]
+layout_mode = 2
+
+[node name="LabelVehicle" type="Label" parent="PanelMain/VBox/PanelPlanning/Margin/VBoxPlan/HBoxVehicle"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "Mezzo di Trasporto:"
+
+[node name="OptVehicle" type="OptionButton" parent="PanelMain/VBox/PanelPlanning/Margin/VBoxPlan/HBoxVehicle"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxItinerary" type="HBoxContainer" parent="PanelMain/VBox/PanelPlanning/Margin/VBoxPlan"]
+layout_mode = 2
+
+[node name="LabelItinerary" type="Label" parent="PanelMain/VBox/PanelPlanning/Margin/VBoxPlan/HBoxItinerary"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "Itinerario Tour:"
+
+[node name="OptItinerary" type="OptionButton" parent="PanelMain/VBox/PanelPlanning/Margin/VBoxPlan/HBoxItinerary"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LabelPlanCost" type="Label" parent="PanelMain/VBox/PanelPlanning/Margin/VBoxPlan"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.8, 0.3, 1)
+text = "Costo Noleggio Veicolo: 0.00 €"
+
+[node name="BtnConfirmPlan" type="Button" parent="PanelMain/VBox/PanelPlanning/Margin/VBoxPlan"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+text = "Conferma e Prenota Tournée (Invio)"
+
+[node name="PanelActiveTour" type="PanelContainer" parent="PanelMain/VBox"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_inner")
+
+[node name="Margin" type="MarginContainer" parent="PanelMain/VBox/PanelActiveTour"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxActive" type="VBoxContainer" parent="PanelMain/VBox/PanelActiveTour/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="LabelActiveStatus" type="Label" parent="PanelMain/VBox/PanelActiveTour/Margin/VBoxActive"]
+layout_mode = 2
+text = "Stato Tour: In Corso"
+
+[node name="LabelActiveHype" type="Label" parent="PanelMain/VBox/PanelActiveTour/Margin/VBoxActive"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.85, 1.0, 1)
+text = "Hype Tour: +0% | Utile Netto: 0.00 €"
+
+[node name="ScrollStops" type="ScrollContainer" parent="PanelMain/VBox/PanelActiveTour/Margin/VBoxActive"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxStopsList" type="VBoxContainer" parent="PanelMain/VBox/PanelActiveTour/Margin/VBoxActive/ScrollStops"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="HBoxActions" type="HBoxContainer" parent="PanelMain/VBox/PanelActiveTour/Margin/VBoxActive"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="BtnAdvanceStop" type="Button" parent="PanelMain/VBox/PanelActiveTour/Margin/VBoxActive/HBoxActions"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Spostati verso la Prossima Tappa (Spazio)"
+
+[node name="BtnCancelTour" type="Button" parent="PanelMain/VBox/PanelActiveTour/Margin/VBoxActive/HBoxActions"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+text = "Interrompi Tour"
+
+[node name="LabelStatus" type="Label" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+text = "Tasti: 1, 2, 3 per Itinerari/Veicoli | Invio per Confermare | Esc/O per Chiudere"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+alignment = 2
+
+[node name="BtnClose" type="Button" parent="PanelMain/VBox/HBoxBottom"]
+custom_minimum_size = Vector2(130, 32)
+layout_mode = 2
+text = "Chiudi (Esc)"
