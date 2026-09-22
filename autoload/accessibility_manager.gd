@@ -13,19 +13,22 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_setup_tts()
 	EventBus.ui_focus_changed.connect(_on_ui_focus_changed)
+	EventBus.language_changed.connect(_on_language_changed)
 
-func _setup_tts() -> void:
+func _setup_tts(target_lang: String = "it") -> void:
 	# Verifica e selezione voce TTS se disponibile a livello di DisplayServer
 	if DisplayServer.tts_is_speaking() != null:
 		var voices: Array = DisplayServer.tts_get_voices()
 		if voices.size() > 0:
 			default_tts_voice_id = voices[0].id
-			# Cerca preferibilmente una voce italiana se presente
 			for v in voices:
 				var lang: String = v.get("language", "").to_lower()
-				if "it" in lang:
+				if target_lang in lang:
 					default_tts_voice_id = v.id
 					break
+
+func _on_language_changed(new_lang: String) -> void:
+	_setup_tts(new_lang)
 
 func announce(text: String, is_interrupt: bool = true) -> void:
 	if text.strip_edges().is_empty():

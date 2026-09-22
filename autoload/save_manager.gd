@@ -106,6 +106,12 @@ func load_game() -> bool:
 			GameManager.time_system.calendar_data = GameManager.calendar_data
 			
 	GameManager.change_state(Enums.GameState.GAMEPLAY_IDLE)
+	
+	# Allineamento della lingua salvata nella scheda giocatore se presente
+	if GameManager.player_data and not GameManager.player_data.language.is_empty():
+		if LocalizationManager:
+			LocalizationManager.set_language(GameManager.player_data.language, false)
+
 	AccessibilityManager.announce("Partita caricata. Giorno %d, Saldo %.2f euro." % [
 		GameManager.calendar_data.day_number,
 		GameManager.player_data.money
@@ -113,3 +119,27 @@ func load_game() -> bool:
 	
 	load_completed.emit(true)
 	return true
+
+func save_settings(settings_dict: Dictionary) -> bool:
+	var current: Dictionary = load_settings()
+	for k in settings_dict:
+		current[k] = settings_dict[k]
+	var f := FileAccess.open("user://settings.json", FileAccess.WRITE)
+	if not f:
+		return false
+	f.store_string(JSON.stringify(current, "\t"))
+	f.close()
+	return true
+
+func load_settings() -> Dictionary:
+	if not FileAccess.file_exists("user://settings.json"):
+		return {}
+	var f := FileAccess.open("user://settings.json", FileAccess.READ)
+	if not f:
+		return {}
+	var content := f.get_as_text()
+	f.close()
+	var json := JSON.new()
+	if json.parse(content) == OK and json.data is Dictionary:
+		return json.data as Dictionary
+	return {}

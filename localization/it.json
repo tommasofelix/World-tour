@@ -1,0 +1,62 @@
+{
+	"GAME_TITLE": "World Tour",
+	"GAME_SUBTITLE": "Music Career & Life Simulator",
+
+	"MENU_QUICK_START": "Avvio Rapido (Test)",
+	"MENU_QUICK_START_DESC": "Avvia direttamente la schermata di simulazione e test del ciclo vitale.",
+	"MENU_SETTINGS": "Impostazioni",
+	"MENU_SETTINGS_DESC": "Apre il pannello delle impostazioni generali e della lingua.",
+	"MENU_QUIT": "Esci",
+	"MENU_QUIT_DESC": "Chiude l'applicazione.",
+
+	"SETTINGS_TITLE": "Impostazioni Generali",
+	"SETTINGS_LANGUAGE_LABEL": "Lingua dell'applicazione:",
+	"SETTINGS_LANGUAGE_DESC": "Seleziona la lingua per i testi a schermo e per la vocalizzazione vocale con screen reader.",
+	"SETTINGS_BACK": "Indietro",
+	"SETTINGS_BACK_DESC": "Salva le preferenze e torna al menu principale.",
+	"SETTINGS_LANG_CHANGED_ANNOUNCEMENT": "Lingua impostata su: Italiano",
+
+	"LANG_IT": "Italiano",
+	"LANG_EN": "English",
+
+	"HUD_CLOCK": "Giorno %d — Ore %s (%s)",
+	"HUD_CLOCK_ACCESSIBILITY": "Orologio: Giorno %d, ore %s, %s",
+	"HUD_ENERGY": "Energia: %d%%",
+	"HUD_MONEY": "Saldo: %.2f €",
+	"HUD_STATUS_IDLE": "Stato: In attesa (Pronto per agire)",
+	"HUD_STATUS_BUSY": "Azione in corso: %s...",
+	"HUD_STATUS_PROGRESS": "Avanzamento: %d%%",
+	"HUD_STATUS_COMPLETED": "Completato! +%.1f XP",
+
+	"HUD_BTN_PRACTICE": "1. Allenamento Rapido (10s)",
+	"HUD_BTN_PRACTICE_ACC_NAME": "Esegui Allenamento Rapido",
+	"HUD_BTN_PRACTICE_ACC_DESC": "Tasto rapido 1. Dura 10 secondi, consuma 15 energia e fornisce XP per lo strumento.",
+
+	"HUD_BTN_PAUSE": "Pausa (Spazio)",
+	"HUD_BTN_RESUME": "Riprendi (Spazio)",
+	"HUD_BTN_PAUSE_ACC_NAME": "Pausa o Riprendi Simulazione",
+	"HUD_BTN_PAUSE_ACC_DESC": "Tasto rapido Spazio. Blocca o riavvia lo scorrere del tempo.",
+
+	"HUD_BTN_SAVE": "Salva Partita",
+	"HUD_BTN_SAVE_ACC_NAME": "Salva Partita",
+	"HUD_BTN_SAVE_ACC_DESC": "Salva lo stato corrente del gioco su disco.",
+
+	"HUD_BTN_MAIN_MENU": "Menu Principale",
+	"HUD_BTN_MAIN_MENU_ACC_NAME": "Torna al Menu Principale",
+	"HUD_BTN_MAIN_MENU_ACC_DESC": "Salva lo stato attuale ed esce alla schermata del menu principale.",
+
+	"PERIOD_MORNING": "Mattina",
+	"PERIOD_AFTERNOON": "Pomeriggio",
+	"PERIOD_EVENING": "Sera",
+	"PERIOD_NIGHT": "Notte",
+
+	"ACTION_QUICK_PRACTICE": "Allenamento Rapido",
+
+	"MSG_SAVE_SUCCESS": "Partita salvata con successo.",
+	"MSG_SAVE_BLOCKED_BUSY": "Impossibile salvare durante un'azione in corso.",
+	"MSG_SAVE_ERROR_TEMP": "Errore nell'apertura del file temporaneo di salvataggio.",
+	"MSG_SAVE_ERROR_USERDIR": "Errore di accesso alla cartella utente.",
+	"MSG_SAVE_ERROR_RENAME": "Errore nella ridenominazione atomica del salvataggio.",
+	"MSG_LOAD_SUCCESS": "Partita caricata con successo.",
+	"MSG_LOAD_NOT_FOUND": "Nessun file di salvataggio trovato."
+}

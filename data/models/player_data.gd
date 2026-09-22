@@ -7,6 +7,7 @@ extends RefCounted
 var player_name: String = "Alex"
 var primary_instrument: String = "Chitarra Elettrica"
 var background_id: String = "self_taught"
+var language: String = "it"
 
 # Risorse fisiologiche e finanziarie
 var energy: int = Constants.MAX_ENERGY
@@ -78,6 +79,7 @@ func to_dict() -> Dictionary:
 		"player_name": player_name,
 		"primary_instrument": primary_instrument,
 		"background_id": background_id,
+		"language": language,
 		"energy": energy,
 		"stress": stress,
 		"morale": morale,
@@ -93,6 +95,7 @@ func from_dict(dict: Dictionary) -> void:
 	player_name = dict.get("player_name", player_name)
 	primary_instrument = dict.get("primary_instrument", primary_instrument)
 	background_id = dict.get("background_id", background_id)
+	language = dict.get("language", language)
 	energy = int(dict.get("energy", energy))
 	stress = int(dict.get("stress", stress))
 	morale = int(dict.get("morale", morale))

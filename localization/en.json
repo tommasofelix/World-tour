@@ -1,0 +1,62 @@
+{
+	"GAME_TITLE": "World Tour",
+	"GAME_SUBTITLE": "Music Career & Life Simulator",
+
+	"MENU_QUICK_START": "Quick Start (Test)",
+	"MENU_QUICK_START_DESC": "Launch directly into the life cycle simulation and testing screen.",
+	"MENU_SETTINGS": "Settings",
+	"MENU_SETTINGS_DESC": "Open the general settings and language panel.",
+	"MENU_QUIT": "Quit",
+	"MENU_QUIT_DESC": "Exit the application.",
+
+	"SETTINGS_TITLE": "General Settings",
+	"SETTINGS_LANGUAGE_LABEL": "Application Language:",
+	"SETTINGS_LANGUAGE_DESC": "Select the language for on-screen text and screen reader speech output.",
+	"SETTINGS_BACK": "Back",
+	"SETTINGS_BACK_DESC": "Save preferences and return to the main menu.",
+	"SETTINGS_LANG_CHANGED_ANNOUNCEMENT": "Language set to: English",
+
+	"LANG_IT": "Italiano",
+	"LANG_EN": "English",
+
+	"HUD_CLOCK": "Day %d — %s (%s)",
+	"HUD_CLOCK_ACCESSIBILITY": "Clock: Day %d, %s, %s",
+	"HUD_ENERGY": "Energy: %d%%",
+	"HUD_MONEY": "Balance: %.2f €",
+	"HUD_STATUS_IDLE": "Status: Idle (Ready to act)",
+	"HUD_STATUS_BUSY": "Action in progress: %s...",
+	"HUD_STATUS_PROGRESS": "Progress: %d%%",
+	"HUD_STATUS_COMPLETED": "Completed! +%.1f XP",
+
+	"HUD_BTN_PRACTICE": "1. Quick Practice (10s)",
+	"HUD_BTN_PRACTICE_ACC_NAME": "Perform Quick Practice",
+	"HUD_BTN_PRACTICE_ACC_DESC": "Shortcut 1. Takes 10 seconds, costs 15 energy and grants instrument XP.",
+
+	"HUD_BTN_PAUSE": "Pause (Space)",
+	"HUD_BTN_RESUME": "Resume (Space)",
+	"HUD_BTN_PAUSE_ACC_NAME": "Pause or Resume Simulation",
+	"HUD_BTN_PAUSE_ACC_DESC": "Shortcut Space. Freezes or resumes time.",
+
+	"HUD_BTN_SAVE": "Save Game",
+	"HUD_BTN_SAVE_ACC_NAME": "Save Game",
+	"HUD_BTN_SAVE_ACC_DESC": "Saves the current game state to disk.",
+
+	"HUD_BTN_MAIN_MENU": "Main Menu",
+	"HUD_BTN_MAIN_MENU_ACC_NAME": "Return to Main Menu",
+	"HUD_BTN_MAIN_MENU_ACC_DESC": "Saves current state and exits to the main menu screen.",
+
+	"PERIOD_MORNING": "Morning",
+	"PERIOD_AFTERNOON": "Afternoon",
+	"PERIOD_EVENING": "Evening",
+	"PERIOD_NIGHT": "Night",
+
+	"ACTION_QUICK_PRACTICE": "Quick Practice",
+
+	"MSG_SAVE_SUCCESS": "Game saved successfully.",
+	"MSG_SAVE_BLOCKED_BUSY": "Cannot save while an action is in progress.",
+	"MSG_SAVE_ERROR_TEMP": "Error opening temporary save file.",
+	"MSG_SAVE_ERROR_USERDIR": "Error accessing user directory.",
+	"MSG_SAVE_ERROR_RENAME": "Error atomically renaming save file.",
+	"MSG_LOAD_SUCCESS": "Game loaded successfully.",
+	"MSG_LOAD_NOT_FOUND": "No save file found."
+}

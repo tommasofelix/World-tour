@@ -30,3 +30,6 @@ signal game_over_triggered(reason: String)
 # --- Segnali di Accessibilità & Interfaccia ---
 signal accessibility_announced(text: String, is_interrupt: bool)
 signal ui_focus_changed(control_name: String, control_role: String, control_value: String)
+
+# --- Segnali di Sistema & Localizzazione ---
+signal language_changed(new_language: String)

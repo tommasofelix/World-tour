@@ -4,6 +4,16 @@ Le modifiche rilevanti sono registrate in ordine cronologico inverso. Una voce d
 
 ## Non rilasciato
 
+### 2026-09-22 — Chiusura Fase 2.5: Sistema di Localizzazione (i18n) & Main Menu Simmetrico
+- Creati i dizionari di localizzazione bilingue (`localization/it.json` e `localization/en.json`) con 49 chiavi speculari per menu, impostazioni, HUD e annunci.
+- Implementato l'Autoload `LocalizationManager` con rilevamento lingua OS (`OS.get_locale_language()`), registrazione in `TranslationServer` e segnale `language_changed`.
+- Esteso `PlayerData` con il campo `language` per il salvataggio della lingua nella scheda personaggio.
+- Implementati `save_settings()` e `load_settings()` in `SaveManager` per la persistenza delle impostazioni globali in `user://settings.json`.
+- Creata la schermata del Menu Principale (`ui/main_menu/main_menu.tscn`, `ui/main_menu/main_menu.gd`) con 3 pulsanti (Avvio Rapido, Impostazioni, Esci) e pannello Impostazioni per cambio lingua immediato da tastiera o mouse.
+- Aggiornato l'HUD di gioco (`ui/hud/hud.tscn`, `ui/hud/hud.gd`) con pulsante "Menu Principale" per il flusso bidirezionale con salvataggio automatico.
+- Aggiunta la suite di test automatizzati `tests/test_localization.gd` portando i test superati da 67 a 96/96 (100% verde).
+- Eseguito con successo il collaudo congiunto a video e con screen reader NVDA.
+
 ### 2026-09-22 — Chiusura Fase 2: Vertical Slice V1.0 (Core Loop Vitale)
 - Implementati i modelli dati runtime in `data/models/` (`PlayerData`, `CalendarData`, `ActionData`) con serializzazione e deserializzazione atomica.
 - Realizzato il motore temporale `TimeSystem` con orologio giornaliero da 600 secondi (24 ore virtuali), fasce orarie e velocità 1x/2x/5x.

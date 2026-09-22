@@ -60,6 +60,7 @@ theme_override_constants/separation = 20
 
 [node name="BtnPractice" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
 layout_mode = 2
+focus_neighbor_left = NodePath("../BtnMainMenu")
 focus_neighbor_right = NodePath("../BtnPause")
 text = "1. Allenamento Rapido (10s)"
 
@@ -72,4 +73,11 @@ text = "Pausa (Spazio)"
 [node name="BtnSave" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnPause")
+focus_neighbor_right = NodePath("../BtnMainMenu")
 text = "Salva Partita"
+
+[node name="BtnMainMenu" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnSave")
+focus_neighbor_right = NodePath("../BtnPractice")
+text = "Menu Principale"

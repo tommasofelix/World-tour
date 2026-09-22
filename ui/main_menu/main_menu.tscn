@@ -1,0 +1,109 @@
+[gd_scene load_steps=2 format=3 uid="uid://dmmainmenu01"]
+
+[ext_resource type="Script" path="res://ui/main_menu/main_menu.gd" id="1_menu"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menu")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxMain" type="VBoxContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+theme_override_constants/separation = 35
+
+[node name="Header" type="VBoxContainer" parent="CenterContainer/VBoxMain"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LabelTitle" type="Label" parent="CenterContainer/VBoxMain/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 42
+text = "World Tour"
+horizontal_alignment = 1
+
+[node name="LabelSubtitle" type="Label" parent="CenterContainer/VBoxMain/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Music Career & Life Simulator"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/VBoxMain"]
+layout_mode = 2
+
+[node name="VBoxMenu" type="VBoxContainer" parent="CenterContainer/VBoxMain"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="BtnQuickStart" type="Button" parent="CenterContainer/VBoxMain/VBoxMenu"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+focus_neighbor_top = NodePath("../BtnQuit")
+focus_neighbor_bottom = NodePath("../BtnSettings")
+theme_override_font_sizes/font_size = 18
+text = "Avvio Rapido (Test)"
+
+[node name="BtnSettings" type="Button" parent="CenterContainer/VBoxMain/VBoxMenu"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+focus_neighbor_top = NodePath("../BtnQuickStart")
+focus_neighbor_bottom = NodePath("../BtnQuit")
+theme_override_font_sizes/font_size = 18
+text = "Impostazioni"
+
+[node name="BtnQuit" type="Button" parent="CenterContainer/VBoxMain/VBoxMenu"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+focus_neighbor_top = NodePath("../BtnSettings")
+focus_neighbor_bottom = NodePath("../BtnQuickStart")
+theme_override_font_sizes/font_size = 18
+text = "Esci"
+
+[node name="PanelSettings" type="PanelContainer" parent="CenterContainer/VBoxMain"]
+visible = false
+layout_mode = 2
+
+[node name="VBoxSettings" type="VBoxContainer" parent="CenterContainer/VBoxMain/PanelSettings"]
+layout_mode = 2
+theme_override_constants/separation = 25
+
+[node name="LabelSettingsTitle" type="Label" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Impostazioni Generali"
+horizontal_alignment = 1
+
+[node name="HBoxLang" type="HBoxContainer" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="LabelLang" type="Label" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxLang"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Lingua dell'applicazione:"
+
+[node name="OptLang" type="OptionButton" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxLang"]
+custom_minimum_size = Vector2(160, 40)
+layout_mode = 2
+focus_neighbor_bottom = NodePath("../../BtnBackSettings")
+
+[node name="HSeparatorSettings" type="HSeparator" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings"]
+layout_mode = 2
+
+[node name="BtnBackSettings" type="Button" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings"]
+custom_minimum_size = Vector2(0, 45)
+layout_mode = 2
+focus_neighbor_top = NodePath("../HBoxLang/OptLang")
+text = "Indietro"
