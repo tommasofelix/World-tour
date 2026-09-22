@@ -101,3 +101,10 @@ signal social_controversy_triggered(controversy_data: Dictionary)
 signal social_controversy_resolved(choice: int, outcome: Dictionary)
 signal social_buzz_updated(new_buzz: float)
 signal social_screen_requested()
+
+# --- Segnali Classifiche Musicali & Artisti Rivali (World-tour V4.0 / SP-13 / F8.5) ---
+signal weekly_charts_updated(charts_data: Dictionary)
+signal chart_debut_achieved(category: String, title: String, rank: int)
+signal chart_number_one_achieved(category: String, title: String)
+signal chart_screen_requested()
+

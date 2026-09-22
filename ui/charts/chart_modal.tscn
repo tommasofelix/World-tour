@@ -1,0 +1,126 @@
+[gd_scene load_steps=3 format=3 uid="uid://dmchartmodal01"]
+
+[ext_resource type="Script" path="res://ui/charts/chart_modal.gd" id="1_chart"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.07, 0.09, 0.14, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.55, 0.8, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="ChartModal" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_chart")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.03, 0.05, 0.95)
+
+[node name="PanelMain" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -480.0
+offset_top = -320.0
+offset_right = 480.0
+offset_bottom = 320.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_main")
+
+[node name="VBox" type="VBoxContainer" parent="PanelMain"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Header" type="VBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="LabelTitle" type="Label" parent="PanelMain/VBox/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Hit Parade — Classifiche Musicali Ufficiali"
+
+[node name="LabelSubtitle" type="Label" parent="PanelMain/VBox/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.75, 1, 1)
+text = "Aggiornata ogni Domenica | Consulta le vendite e gli streaming"
+
+[node name="HBoxTabs" type="HBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BtnTabSingles" type="Button" parent="PanelMain/VBox/HBoxTabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "[1] Top 10 Singoli"
+
+[node name="BtnTabAlbums" type="Button" parent="PanelMain/VBox/HBoxTabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "[2] Top 10 Album & EP"
+
+[node name="BtnTabRivals" type="Button" parent="PanelMain/VBox/HBoxTabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "[R] Artisti e Band Rivali"
+
+[node name="PanelBody" type="PanelContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Margin" type="MarginContainer" parent="PanelMain/VBox/PanelBody"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxBody" type="VBoxContainer" parent="PanelMain/VBox/PanelBody/Margin"]
+layout_mode = 2
+
+[node name="ScrollEntries" type="ScrollContainer" parent="PanelMain/VBox/PanelBody/Margin/VBoxBody"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxEntries" type="VBoxContainer" parent="PanelMain/VBox/PanelBody/Margin/VBoxBody/ScrollEntries"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="LabelStatus" type="Label" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.3, 1)
+text = "Premi 1 o 2 per cambiare classifica, R per i rivali, Esc per uscire."
+
+[node name="HBoxBottom" type="HBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+alignment = 2
+
+[node name="BtnClose" type="Button" parent="PanelMain/VBox/HBoxBottom"]
+layout_mode = 2
+text = "Chiudi (Esc / H)"

@@ -72,6 +72,11 @@ func _on_day_ended(day_num: int) -> void:
 	if GameManager and GameManager.social_media_system:
 		GameManager.social_media_system.process_daily_decay()
 		
+	# Aggiornamento settimanale ufficiale Hit Parade (ogni Domenica notte)
+	if calendar_data and calendar_data.get_weekday() == Enums.Weekday.SUNDAY:
+		if GameManager and GameManager.chart_system:
+			GameManager.chart_system.update_weekly_charts(day_num)
+		
 	# Valutazione dilemmi etici serali
 	var pending_dilemma: DilemmaData = null
 	if GameManager and GameManager.dilemma_system:

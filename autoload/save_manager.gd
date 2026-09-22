@@ -29,7 +29,9 @@ func save_game() -> bool:
 		"travel": GameManager.travel_system.to_dict() if GameManager.travel_system else {},
 		"tour": GameManager.tour_system.to_dict() if GameManager.tour_system else {},
 		"festivals": GameManager.festival_system.to_dict() if GameManager.festival_system else {},
-		"social": GameManager.social_media_system.to_dict() if GameManager.social_media_system else {}
+		"social": GameManager.social_media_system.to_dict() if GameManager.social_media_system else {},
+		"rivals": GameManager.rival_system.to_dict() if GameManager.rival_system else {},
+		"charts": GameManager.chart_system.to_dict() if GameManager.chart_system else {}
 	}
 	
 	var json_string: String = JSON.stringify(save_dict, "\t")
@@ -200,6 +202,23 @@ func load_game() -> bool:
 
 	if save_dict.has("social") and save_dict["social"] is Dictionary:
 		GameManager.social_media_system.from_dict(save_dict["social"] as Dictionary)
+
+	if not GameManager.rival_system:
+		GameManager.rival_system = RivalSystem.new()
+	if save_dict.has("rivals") and save_dict["rivals"] is Dictionary:
+		GameManager.rival_system.from_dict(save_dict["rivals"] as Dictionary)
+
+	if not GameManager.chart_system:
+		GameManager.chart_system = ChartSystem.new(GameManager.player_data, GameManager.calendar_data, GameManager.rival_system, GameManager.social_media_system, GameManager.album_system)
+	else:
+		GameManager.chart_system.player_data = GameManager.player_data
+		GameManager.chart_system.calendar_data = GameManager.calendar_data
+		GameManager.chart_system.rival_system = GameManager.rival_system
+		GameManager.chart_system.social_media_system = GameManager.social_media_system
+		GameManager.chart_system.album_system = GameManager.album_system
+
+	if save_dict.has("charts") and save_dict["charts"] is Dictionary:
+		GameManager.chart_system.from_dict(save_dict["charts"] as Dictionary)
 
 	GameManager.change_state(Enums.GameState.GAMEPLAY_IDLE)
 	

@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" path="res://ui/tour/tour_modal.tscn" id="13_tour"]
 [ext_resource type="PackedScene" path="res://ui/festival/festival_modal.tscn" id="14_fest"]
 [ext_resource type="PackedScene" path="res://ui/social/social_modal.tscn" id="15_social"]
+[ext_resource type="PackedScene" path="res://ui/charts/chart_modal.tscn" id="16_chart"]
 
 [node name="HUD" type="Control"]
 layout_mode = 3
@@ -221,8 +222,15 @@ text = "Festival (F)"
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnFestival")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
-focus_neighbor_right = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
+focus_neighbor_right = NodePath("../BtnChart")
 text = "Social (Y)"
+
+[node name="BtnChart" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnSocial")
+focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
+focus_neighbor_right = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
+text = "Classifiche (H)"
 
 [node name="SongCatalog" parent="." instance=ExtResource("2_catalog")]
 visible = false
@@ -277,6 +285,10 @@ visible = false
 layout_mode = 1
 
 [node name="SocialModal" parent="." instance=ExtResource("15_social")]
+visible = false
+layout_mode = 1
+
+[node name="ChartModal" parent="." instance=ExtResource("16_chart")]
 visible = false
 layout_mode = 1
 

@@ -26,6 +26,8 @@ var travel_system: TravelSystem
 var tour_system: TourSystem
 var festival_system: FestivalSystem
 var social_media_system: SocialMediaSystem
+var rival_system: RivalSystem
+var chart_system: ChartSystem
 
 func _ready() -> void:
 	# Inizializzazione dati di default
@@ -54,6 +56,8 @@ func _ready() -> void:
 	tour_system = TourSystem.new(player_data, calendar_data, travel_system, schedule_system, band_system)
 	festival_system = FestivalSystem.new(player_data, calendar_data, travel_system, schedule_system, band_system)
 	social_media_system = SocialMediaSystem.new(player_data, calendar_data, band_system, music_system)
+	rival_system = RivalSystem.new()
+	chart_system = ChartSystem.new(player_data, calendar_data, rival_system, social_media_system, album_system)
 
 func change_state(new_state: int) -> bool:
 	if current_state == new_state:
@@ -110,5 +114,7 @@ func start_new_game(p_name: String = "Alex", p_instrument: String = "Chitarra El
 	tour_system = TourSystem.new(player_data, calendar_data, travel_system, schedule_system, band_system)
 	festival_system = FestivalSystem.new(player_data, calendar_data, travel_system, schedule_system, band_system)
 	social_media_system = SocialMediaSystem.new(player_data, calendar_data, band_system, music_system)
+	rival_system = RivalSystem.new()
+	chart_system = ChartSystem.new(player_data, calendar_data, rival_system, social_media_system, album_system)
 	
 	change_state(Enums.GameState.GAMEPLAY_IDLE)

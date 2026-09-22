@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://test_chart_rival_sys_scene"]
+
+[ext_resource type="Script" path="res://tests/test_chart_rival_system.gd" id="1_chart_test"]
+
+[node name="TestChartRivalSystem" type="Node"]
+script = ExtResource("1_chart_test")
