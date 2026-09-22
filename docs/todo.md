@@ -55,6 +55,10 @@ Il materiale del Game Design Document originario è stato organizzato e disaccop
    *Competenze*: Accessibility Engineering, Screen Reader Integration, Universal UX.  
    *Oggetto*: Principio di Simmetria Universale (Luca con tastiera/NVDA e Holy Diver con grafica moderna e mouse), modulo AccessibilityManager (`nvdaControllerClient.dll`/SAPI), scorciatoie 1–9, sonificazione e volumi di sicurezza (0.7f–0.8f con ducking).
 
+9. **[`SP-09`: Calendario Sistemico, Agenda, Cicli Temporali e Programmazione Eventi](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/attivi/sottopiani/09_calendario_sistemico_agenda_e_cicli_temporali.md)**  
+   *Competenze*: Systems Engineering, Life Simulation, Dynamic World Pacing.  
+   *Oggetto*: Scansione multi-livello del tempo (giorni della settimana da Lunedì a Domenica, mese convenzionale a 28 giorni, 4 stagioni, anno di carriera), modello `CalendarEventData` e motore `ScheduleSystem` per la gestione dell'agenda impegni della band, scadenze discografiche, serate live e programmazione dei locali.
+
 ---
 
 ## 3. ROADMAP SEQUENZIALE OPERATIVA (CHECKBOX SPUNTABILI)
@@ -150,7 +154,7 @@ Il materiale del Game Design Document originario è stato organizzato e disaccop
 ---
 
 ### FASE 8: Il Mondo Dinamico, Tour Interurbani, Festival Estivi & Social Media (Versione 4.0)
-- [ ] `F8.1`: **Mappa Geografica & Sistema delle Città (`CityData`, `TravelSystem`)**: Rete di città e scene musicali (Milano, Bologna, Roma, Londra, Berlino), ciascuna con affinità di genere, costo di viaggio, stanchezza da spostamento e livello di penetrazione della fanbase.
+- [x] `F8.1`: **Mappa Geografica & Sistema delle Città (`CityData`, `TravelSystem`)**: Rete di 6 città (Milano, Bologna, Roma, Napoli, Londra, Berlino) con affinità di genere musicale, matrice di viaggio (costi denaro, fatica energia, stress), penetrazione territoriale della fanbase (85% locale, 15% riverbero nazionale), locali specifici per metropoli, modale `TravelModal` ad alto contrasto con tasto rapido `V` e tasti numerici `1`..`6`, lettura vocale lineare per NVDA, integrazione in `GameManager`, `ConcertSystem`, `LiveConcert` e `SaveManager`. Convalidato con 64/64 test dedicati e 12/12 suite complessive superate con 0 errori.
 - [ ] `F8.2`: **Pianificazione & Gestione del Tour (`TourSystem`, `TourData`)**: Modulo per organizzare una serie di tappe live consecutive (date, trasporti con furgone scassato vs tour bus di lusso, alloggi in tour, stanchezza cumulativa e gestione del logorio della band).
 - [ ] `F8.3`: **I Grandi Festival Estivi (`FestivalEvent`, `FestivalSystem`)**: Stagione dei festival all'aperto, slot di esibizione (pomeriggio, tramonto, headliner serale), competizione tra band e impatto massivo su notorietà e vendite merch.
 - [ ] `F8.4`: **Social Media, Fan Engagement & Viralità (`SocialMediaSystem`)**: Canali social della band, pubblicazione di contenuti e clip dietro le quinte, hype virale, gestione delle polemiche online e impatto sul buzz dei singoli.

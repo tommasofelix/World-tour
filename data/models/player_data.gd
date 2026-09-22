@@ -56,6 +56,42 @@ var revenue_split_mode: int = Enums.RevenueSplit.EQUAL_SPLIT
 # Lifestyle & Alloggi
 var current_housing_tier: int = Enums.HousingTier.STARTER_BEDROOM
 
+# Mappa Geografica & Fanbase Territoriale (World-tour V4.0 / F8.1)
+var current_city_id: int = Enums.CityId.MILANO
+var city_fans: Dictionary = {
+	Enums.CityId.MILANO: 0,
+	Enums.CityId.BOLOGNA: 0,
+	Enums.CityId.ROMA: 0,
+	Enums.CityId.NAPOLI: 0,
+	Enums.CityId.LONDRA: 0,
+	Enums.CityId.BERLINO: 0
+}
+var city_popularity: Dictionary = {
+	Enums.CityId.MILANO: 1.0,
+	Enums.CityId.BOLOGNA: 0.0,
+	Enums.CityId.ROMA: 0.0,
+	Enums.CityId.NAPOLI: 0.0,
+	Enums.CityId.LONDRA: 0.0,
+	Enums.CityId.BERLINO: 0.0
+}
+
+func get_current_city_name() -> String:
+	match current_city_id:
+		Enums.CityId.MILANO:
+			return "Milano"
+		Enums.CityId.BOLOGNA:
+			return "Bologna"
+		Enums.CityId.ROMA:
+			return "Roma"
+		Enums.CityId.NAPOLI:
+			return "Napoli"
+		Enums.CityId.LONDRA:
+			return "Londra"
+		Enums.CityId.BERLINO:
+			return "Berlino"
+		_:
+			return "Milano"
+
 # Raccolte Discografiche (EP / Album)
 var albums: Array[AlbumData] = []
 
@@ -218,7 +254,10 @@ func populate_starter_test_songs() -> void:
 
 func get_skill_level(skill_key: String) -> int:
 	if skills.has(skill_key):
-		return skills[skill_key]["level"]
+		var val = skills[skill_key]
+		if val is Dictionary:
+			return int(val.get("level", 10))
+		return int(val)
 	return 10
 
 func add_xp_to_skill(skill_key: String, xp_amount: float) -> bool:
@@ -254,6 +293,9 @@ func add_stress(amount: int) -> void:
 
 func reduce_stress(amount: int) -> void:
 	stress = maxi(Constants.MIN_STRESS, stress - amount)
+
+func modify_morale(delta: int) -> void:
+	morale = clampi(morale + delta, Constants.MIN_MORALE, Constants.MAX_MORALE)
 
 func modify_money(delta: float) -> void:
 	money += delta
@@ -357,7 +399,10 @@ func to_dict() -> Dictionary:
 		"albums": serialized_albums,
 		"active_contract": active_contract.to_dict() if active_contract else {},
 		"active_manager": active_manager.to_dict() if active_manager else {},
-		"resolved_dilemmas": resolved_dilemmas.duplicate()
+		"resolved_dilemmas": resolved_dilemmas.duplicate(),
+		"current_city_id": current_city_id,
+		"city_fans": city_fans.duplicate(true),
+		"city_popularity": city_popularity.duplicate(true)
 	}
 
 func from_dict(dict: Dictionary) -> void:
@@ -374,6 +419,15 @@ func from_dict(dict: Dictionary) -> void:
 	fans = int(dict.get("fans", fans))
 	reputation = float(dict.get("reputation", reputation))
 	popularity = float(dict.get("popularity", popularity))
+	current_city_id = int(dict.get("current_city_id", current_city_id))
+	if dict.has("city_fans") and dict["city_fans"] is Dictionary:
+		city_fans.clear()
+		for k in dict["city_fans"]:
+			city_fans[int(k)] = int(dict["city_fans"][k])
+	if dict.has("city_popularity") and dict["city_popularity"] is Dictionary:
+		city_popularity.clear()
+		for k in dict["city_popularity"]:
+			city_popularity[int(k)] = float(dict["city_popularity"][k])
 	if dict.has("skills") and dict["skills"] is Dictionary:
 		skills = dict["skills"].duplicate(true)
 		

@@ -72,3 +72,16 @@ signal industry_hub_requested()
 signal dilemma_triggered(dilemma_data: Dictionary)
 signal dilemma_resolved(dilemma_id: String, option_chosen: int, effects: Dictionary)
 
+# --- Segnali Calendario Sistemico & Agenda della Band (World-tour V4.0 / SP-09) ---
+signal schedule_event_added(event: CalendarEventData)
+signal schedule_event_removed(event_id: String)
+signal schedule_event_triggered(event: CalendarEventData)
+signal schedule_event_missed(event: CalendarEventData, reason: String)
+signal schedule_events_updated()
+signal schedule_modal_requested()
+
+# --- Segnali Mappa Geografica & Viaggi (World-tour V4.0 / F8.1) ---
+signal city_changed(old_city_id: int, new_city_id: int)
+signal travel_screen_requested()
+
+

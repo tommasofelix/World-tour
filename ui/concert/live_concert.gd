@@ -99,7 +99,12 @@ func open_preparation() -> void:
 	current_event.clear()
 	latest_result.clear()
 	
-	# Popola i locali
+	# Popola i locali della città corrente
+	if GameManager and GameManager.travel_system:
+		venues = GameManager.travel_system.get_current_city_venues()
+	else:
+		venues = VenueData.get_default_venues()
+		
 	opt_venue.clear()
 	var player_pop: float = GameManager.player_data.popularity if GameManager and GameManager.player_data else 0.0
 	for i in range(venues.size()):

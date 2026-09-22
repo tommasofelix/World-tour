@@ -149,6 +149,17 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 		venue.fair_ticket_price
 	)
 	
+	# Moltiplicatori del fine settimana (Venerdì +50%, Sabato +100%)
+	var weekend_mult: float = 1.0
+	if calendar_data:
+		var wday: int = calendar_data.get_weekday()
+		if wday == Enums.Weekday.FRIDAY:
+			weekend_mult = Constants.WEEKEND_FRIDAY_AUDIENCE_MULT
+		elif wday == Enums.Weekday.SATURDAY:
+			weekend_mult = Constants.WEEKEND_SATURDAY_AUDIENCE_MULT
+	if weekend_mult > 1.0:
+		audience = mini(venue.capacity, int(round(float(audience) * weekend_mult)))
+	
 	# 3. Valutazione scaletta e qualità media
 	var total_qual: float = 0.0
 	for s in setlist:
@@ -175,14 +186,35 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 	var band_synergy: float = 0.0
 	if GameManager and GameManager.band_system:
 		band_synergy = GameManager.band_system.get_band_synergy_bonus()
-	var final_score: float = clampf((base_score * closer_bonus_mult) + event_score_delta + soundcheck_bonus + band_synergy, 1.0, 100.0)
+	
+	# Calcolo affinità media della scaletta con la scena musicale della città corrente
+	var city_affinity_mult: float = 1.0
+	if GameManager and GameManager.travel_system:
+		var cur_city: CityData = GameManager.travel_system.get_current_city()
+		if cur_city:
+			var total_aff: float = 0.0
+			for s in setlist:
+				total_aff += cur_city.get_affinity_for_genre(s.genre)
+			city_affinity_mult = total_aff / float(maxi(1, setlist.size()))
+			
+	var raw_score: float = (base_score * closer_bonus_mult) + event_score_delta + soundcheck_bonus + band_synergy
+	var final_score: float = clampf(raw_score * city_affinity_mult, 1.0, 100.0)
 	
 	# 5. Conversione Fan
 	var new_fans: int = Formulas.calculate_fan_conversion(audience, final_score, charisma_level)
 	if last_song.special_trait == Enums.SongTrait.CULT_CLASSIC:
 		new_fans = int(round(float(new_fans) * 2.0))
+	if calendar_data and calendar_data.get_weekday() == Enums.Weekday.SATURDAY:
+		new_fans = int(round(float(new_fans) * Constants.WEEKEND_SATURDAY_FAN_MULT))
+	if city_affinity_mult != 1.0:
+		new_fans = int(round(float(new_fans) * city_affinity_mult))
 		
-	player_data.fans += new_fans
+	# Marcatura evento a calendario se programmato
+	if GameManager and GameManager.schedule_system and calendar_data:
+		var todays_events := GameManager.schedule_system.get_events_for_day(calendar_data.day_number)
+		for ev in todays_events:
+			if ev.event_type == Enums.CalendarEventType.CONCERT and (ev.location_id == venue.id or ev.location_id.is_empty()):
+				GameManager.schedule_system.mark_event_completed(ev.id)
 	
 	# 6. Economia Serata & Ripartizione Compensi (Revenue Split & Manager)
 	var gross_revenue: float = float(audience) * ticket_price
@@ -213,9 +245,16 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 		player_data.modify_money(player_share)
 		EventBus.money_changed.emit(player_data.money, player_share, "concert_tickets")
 		
-	# 7. Crescita notorietà & statistiche
+	# 7. Crescita notorietà & statistiche con territorialità
 	var pop_gain: float = (final_score / 100.0) * (float(audience) / float(venue.capacity)) * 3.0
-	player_data.popularity = clampf(player_data.popularity + pop_gain, 0.0, 100.0)
+	if GameManager and GameManager.travel_system:
+		var cur_cid: int = GameManager.travel_system.current_city_id
+		GameManager.travel_system.add_fans_in_city(cur_cid, new_fans)
+		GameManager.travel_system.modify_popularity_in_city(cur_cid, pop_gain)
+	else:
+		player_data.fans += new_fans
+		player_data.popularity = clampf(player_data.popularity + pop_gain, 0.0, 100.0)
+		
 	player_data.reputation = maxf(1.0, player_data.reputation + (final_score * 0.03))
 	
 	# Aggiorna metriche per le canzoni eseguite
@@ -246,6 +285,7 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 		"band_share": band_share,
 		"band_synergy_bonus": band_synergy,
 		"concert_score": final_score,
+		"city_affinity_mult": city_affinity_mult,
 		"new_fans": new_fans,
 		"popularity_gained": pop_gain,
 		"is_soundcheck": is_soundcheck

@@ -24,7 +24,9 @@ func save_game() -> bool:
 		"schema_version": CURRENT_SCHEMA_VERSION,
 		"timestamp": Time.get_datetime_string_from_system(),
 		"player": GameManager.player_data.to_dict() if GameManager.player_data else {},
-		"calendar": GameManager.calendar_data.to_dict() if GameManager.calendar_data else {}
+		"calendar": GameManager.calendar_data.to_dict() if GameManager.calendar_data else {},
+		"schedule": GameManager.schedule_system.to_dict() if GameManager.schedule_system else [],
+		"travel": GameManager.travel_system.to_dict() if GameManager.travel_system else {}
 	}
 	
 	var json_string: String = JSON.stringify(save_dict, "\t")
@@ -140,6 +142,26 @@ func load_game() -> bool:
 	else:
 		GameManager.dilemma_system.player_data = GameManager.player_data
 		GameManager.dilemma_system.calendar_data = GameManager.calendar_data
+
+	if not GameManager.schedule_system:
+		GameManager.schedule_system = ScheduleSystem.new(GameManager.player_data, GameManager.calendar_data)
+	else:
+		GameManager.schedule_system.player_data = GameManager.player_data
+		GameManager.schedule_system.calendar_data = GameManager.calendar_data
+
+	if save_dict.has("schedule") and save_dict["schedule"] is Array:
+		GameManager.schedule_system.from_dict(save_dict["schedule"] as Array)
+	else:
+		GameManager.schedule_system.ensure_monthly_rent_scheduled()
+
+	if not GameManager.travel_system:
+		GameManager.travel_system = TravelSystem.new(GameManager.player_data, GameManager.calendar_data)
+	else:
+		GameManager.travel_system.player_data = GameManager.player_data
+		GameManager.travel_system.calendar_data = GameManager.calendar_data
+
+	if save_dict.has("travel") and save_dict["travel"] is Dictionary:
+		GameManager.travel_system.from_dict(save_dict["travel"] as Dictionary)
 
 	GameManager.change_state(Enums.GameState.GAMEPLAY_IDLE)
 	

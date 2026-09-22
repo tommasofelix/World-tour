@@ -26,6 +26,8 @@ extends Control
 @onready var btn_economy: Button = $VBoxMain/PanelCenter/HBoxActions/BtnEconomy
 @onready var btn_band: Button = $VBoxMain/PanelCenter/HBoxActions/BtnBand
 @onready var btn_industry: Button = $VBoxMain/PanelCenter/HBoxActions/BtnIndustry
+@onready var btn_agenda: Button = $VBoxMain/PanelCenter/HBoxActions/BtnAgenda
+@onready var btn_travel: Button = $VBoxMain/PanelCenter/HBoxActions/BtnTravel
 
 @onready var song_catalog_modal: Control = $SongCatalog
 @onready var song_creator_modal: Control = $SongCreator
@@ -37,6 +39,7 @@ extends Control
 @onready var album_creator_modal: Control = $AlbumCreator
 @onready var industry_hub_modal: Control = $IndustryHub
 @onready var dilemma_modal: Control = $DilemmaModal
+@onready var travel_modal: Control = $TravelModal
 
 var _pending_dilemma_at_day_end: Dictionary = {}
 
@@ -72,6 +75,8 @@ func _ready() -> void:
 	btn_economy.pressed.connect(open_economy_bank)
 	btn_band.pressed.connect(open_band_hub)
 	btn_industry.pressed.connect(open_industry_hub)
+	btn_agenda.pressed.connect(_on_btn_agenda_pressed)
+	btn_travel.pressed.connect(open_travel_modal)
 	btn_speed.pressed.connect(_on_btn_speed_pressed)
 	btn_pause.pressed.connect(_on_btn_pause_pressed)
 	btn_save.pressed.connect(_on_btn_save_pressed)
@@ -99,6 +104,8 @@ func _ready() -> void:
 		industry_hub_modal.closed.connect(close_industry_hub)
 	if dilemma_modal:
 		dilemma_modal.closed.connect(close_dilemma_modal)
+	if travel_modal:
+		travel_modal.closed.connect(close_travel_modal)
 	song_catalog_modal.new_album_requested.connect(open_album_creator)
 		
 	# Connessione Fine Giornata (EndDaySystem)
@@ -125,6 +132,8 @@ func _ready() -> void:
 	EventBus.band_hub_requested.connect(open_band_hub)
 	EventBus.album_creator_requested.connect(open_album_creator)
 	EventBus.industry_hub_requested.connect(open_industry_hub)
+	EventBus.travel_screen_requested.connect(open_travel_modal)
+	EventBus.city_changed.connect(func(_o, _n): _update_hud_display())
 	EventBus.dilemma_triggered.connect(_on_dilemma_triggered)
 	EventBus.contract_signed.connect(func(_d): _update_hud_display())
 	EventBus.contract_canceled.connect(func(_d): _update_hud_display())
@@ -159,7 +168,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	   (band_hub_modal and band_hub_modal.visible) or \
 	   (album_creator_modal and album_creator_modal.visible) or \
 	   (industry_hub_modal and industry_hub_modal.visible) or \
-	   (dilemma_modal and dilemma_modal.visible):
+	   (dilemma_modal and dilemma_modal.visible) or \
+	   (travel_modal and travel_modal.visible):
 		return
 	
 	match event.keycode:
@@ -183,6 +193,12 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		KEY_B:
 			open_economy_bank()
+			get_viewport().set_input_as_handled()
+		KEY_A:
+			_on_btn_agenda_pressed()
+			get_viewport().set_input_as_handled()
+		KEY_V:
+			open_travel_modal()
 			get_viewport().set_input_as_handled()
 		KEY_T:
 			_on_btn_speed_pressed()
@@ -214,6 +230,8 @@ func _refresh_ui_text() -> void:
 	btn_economy.text = tr("HUD_BTN_ECONOMY")
 	btn_band.text = tr("HUD_BTN_BAND")
 	btn_industry.text = tr("HUD_BTN_INDUSTRY")
+	btn_agenda.text = "Agenda (A)"
+	btn_travel.text = "Viaggi (V)"
 	
 	var current_spd: float = GameManager.time_system.time_scale if GameManager and GameManager.time_system else 1.0
 	btn_speed.text = tr("HUD_BTN_SPEED") % current_spd
@@ -232,6 +250,8 @@ func _refresh_ui_text() -> void:
 	AccessibilityManager.hook_control_accessibility(btn_economy, tr("HUD_BTN_ECONOMY_ACC_NAME"), tr("HUD_BTN_ECONOMY_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_band, tr("HUD_BTN_BAND_ACC_NAME"), tr("HUD_BTN_BAND_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_industry, tr("HUD_BTN_INDUSTRY_ACC_NAME"), tr("HUD_BTN_INDUSTRY_ACC_DESC"))
+	AccessibilityManager.hook_control_accessibility(btn_agenda, "Agenda Impegni Band", "Consulta gli impegni, concerti e scadenze dei prossimi 7 giorni (Tasto rapido A).")
+	AccessibilityManager.hook_control_accessibility(btn_travel, "Mappa Geografica e Viaggi", "Esplora le scene musicali delle altre città e viaggia (Tasto rapido V).")
 	AccessibilityManager.hook_control_accessibility(btn_speed, tr("HUD_BTN_SPEED_ACC_NAME"), tr("HUD_BTN_SPEED_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_pause, tr("HUD_BTN_PAUSE_ACC_NAME"), tr("HUD_BTN_PAUSE_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_save, tr("HUD_BTN_SAVE_ACC_NAME"), tr("HUD_BTN_SAVE_ACC_DESC"))
@@ -239,6 +259,12 @@ func _refresh_ui_text() -> void:
 	
 	if not action_system or not action_system.is_running:
 		label_status.text = tr("HUD_STATUS_IDLE")
+
+func _on_btn_agenda_pressed() -> void:
+	if GameManager and GameManager.schedule_system:
+		var speech: String = GameManager.schedule_system.get_linear_agenda_speech(7)
+		AccessibilityManager.announce(speech, true)
+		label_status.text = speech
 
 func _on_btn_speed_pressed() -> void:
 	if GameManager and GameManager.time_system:
@@ -495,6 +521,42 @@ func close_industry_hub() -> void:
 	btn_industry.grab_focus()
 	_update_hud_display()
 
+func open_travel_modal() -> void:
+	if song_catalog_modal and song_catalog_modal.visible:
+		song_catalog_modal.visible = false
+	if song_creator_modal and song_creator_modal.visible:
+		song_creator_modal.visible = false
+	if live_concert_modal and live_concert_modal.visible:
+		live_concert_modal.visible = false
+	if economy_bank_modal and economy_bank_modal.visible:
+		economy_bank_modal.visible = false
+	if daily_summary_modal and daily_summary_modal.visible:
+		daily_summary_modal.visible = false
+	if character_sheet_modal and character_sheet_modal.visible:
+		character_sheet_modal.visible = false
+	if band_hub_modal and band_hub_modal.visible:
+		band_hub_modal.visible = false
+	if album_creator_modal and album_creator_modal.visible:
+		album_creator_modal.visible = false
+	if industry_hub_modal and industry_hub_modal.visible:
+		industry_hub_modal.visible = false
+	if dilemma_modal and dilemma_modal.visible:
+		dilemma_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = false
+	if travel_modal:
+		travel_modal.open()
+	GameManager.open_menu()
+
+func close_travel_modal() -> void:
+	if travel_modal:
+		travel_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = true
+	GameManager.close_menu()
+	btn_travel.grab_focus()
+	_update_hud_display()
+
 func _on_dilemma_triggered(dilemma_dict: Dictionary) -> void:
 	if song_catalog_modal and song_catalog_modal.visible:
 		song_catalog_modal.visible = false
@@ -581,11 +643,15 @@ func _on_song_created_or_finished(_song: SongData) -> void:
 
 func _update_hud_display() -> void:
 	if GameManager.calendar_data:
-		var t_str: String = GameManager.calendar_data.get_formatted_time_string()
-		var p_str: String = _get_localized_period(GameManager.calendar_data.current_period)
-		var d_num: int = GameManager.calendar_data.day_number
-		label_time.text = tr("HUD_CLOCK") % [d_num, t_str, p_str]
-		label_time.set_accessibility_name(tr("HUD_CLOCK_ACCESSIBILITY") % [d_num, t_str, p_str])
+		var cd: CalendarData = GameManager.calendar_data
+		var t_str: String = cd.get_formatted_time_string()
+		var p_str: String = _get_localized_period(cd.current_period)
+		var d_num: int = cd.day_number
+		var w_name: String = cd.get_weekday_name()
+		var s_name: String = cd.get_season_name()
+		var y_num: int = cd.get_year()
+		label_time.text = "Giorno %d (%s) — Ore %s (%s) [%s A%d]" % [d_num, w_name, t_str, p_str, s_name, y_num]
+		label_time.set_accessibility_name("Orologio: Giorno %d, %s, ore %s, %s. Stagione %s, Anno %d" % [d_num, w_name, t_str, p_str, s_name, y_num])
 		
 	if GameManager.player_data:
 		label_energy.text = tr("HUD_ENERGY") % GameManager.player_data.energy
@@ -610,9 +676,11 @@ func _update_hud_display() -> void:
 			if GameManager.career_system:
 				tier_name = GameManager.career_system.get_tier_name(GameManager.player_data.career_tier)
 				
-			label_player_summary.text = tr("HUD_PLAYER_SUMMARY") % [
+			var city_name: String = GameManager.player_data.get_current_city_name()
+			label_player_summary.text = "%s (%s) | Città: %s | Status: %s | %s" % [
 				GameManager.player_data.player_name,
 				GameManager.player_data.get_background_name(),
+				city_name,
 				tier_name,
 				skills_summary
 			]

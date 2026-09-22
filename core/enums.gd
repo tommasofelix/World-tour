@@ -148,3 +148,96 @@ enum DilemmaCategory {
 	ARTISTIC_INTEGRITY # Richieste di compromesso sui testi/musica
 }
 
+# --- Calendario Sistemico & Cicli Temporali (SP-09 / V4.0) ---
+enum Weekday {
+	MONDAY = 0,
+	TUESDAY = 1,
+	WEDNESDAY = 2,
+	THURSDAY = 3,
+	FRIDAY = 4,
+	SATURDAY = 5,
+	SUNDAY = 6
+}
+
+enum Season {
+	SPRING = 0,
+	SUMMER = 1,
+	AUTUMN = 2,
+	WINTER = 3
+}
+
+enum CalendarEventType {
+	CONCERT = 0,
+	REHEARSAL = 1,
+	STUDIO_BOOKING = 2,
+	CONTRACT_DEADLINE = 3,
+	RENT_DUE = 4,
+	FESTIVAL = 5,
+	TOUR_STOP = 6
+}
+
+# --- Mondo Dinamico, Tour, Festival & Social (V4.0) ---
+enum CityId {
+	MILANO = 0,
+	BOLOGNA = 1,
+	ROMA = 2,
+	NAPOLI = 3,
+	LONDRA = 4,
+	BERLINO = 5
+}
+
+enum TourVehicleType {
+	RUSTY_VAN = 0,    # Furgone scassato (economico, +15 stress per tappa, rischio guasto)
+	PRO_VAN = 1,      # Van professionale (bilanciato, +5 stress)
+	LUXURY_BUS = 2    # Tour bus di lusso (0 stress, costo elevato)
+}
+
+enum FestivalSlot {
+	OPENING_AFTERNOON = 0, # Slot pomeridiano di apertura
+	SUNSET_SLOT = 1,       # Slot al tramonto
+	HEADLINER_NIGHT = 2    # Headliner notturno principale
+}
+
+enum SocialPostType {
+	PRACTICE_CLIP = 0,     # Video prove / backstage
+	TRACK_TEASER = 1,      # Teaser di un brano o singolo
+	BEHIND_THE_SCENES = 2, # Vita da band / tour
+	PROVOCATION = 3        # Post provocatorio / meme
+}
+
+static func get_genre_name(genre: int) -> String:
+	match genre:
+		MusicalGenre.ROCK:
+			return "Rock"
+		MusicalGenre.POP:
+			return "Pop"
+		MusicalGenre.METAL:
+			return "Metal"
+		MusicalGenre.HIPHOP:
+			return "Hip Hop"
+		MusicalGenre.ELECTRONIC:
+			return "Elettronica"
+		MusicalGenre.INDIE:
+			return "Indie"
+		_:
+			return "Rock"
+
+static func get_city_name(city_id: int) -> String:
+	match city_id:
+		CityId.MILANO:
+			return "Milano"
+		CityId.BOLOGNA:
+			return "Bologna"
+		CityId.ROMA:
+			return "Roma"
+		CityId.NAPOLI:
+			return "Napoli"
+		CityId.LONDRA:
+			return "Londra"
+		CityId.BERLINO:
+			return "Berlino"
+		_:
+			return "Sconosciuta"
+
+
+

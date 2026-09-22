@@ -134,3 +134,19 @@ const MANAGER_FRIEND_STRESS_RELIEF: float = 1.0
 const MANAGER_PRO_STRESS_RELIEF: float = 2.5
 const MANAGER_SHARK_STRESS_RELIEF: float = 4.0
 
+# --- Calendario Sistemico & Cicli Temporali (SP-09 / World-tour V4.0) ---
+const DAYS_PER_WEEK: int = 7
+const DAYS_PER_MONTH: int = 28
+const WEEKS_PER_MONTH: int = 4
+const MONTHS_PER_YEAR: int = 12
+const DAYS_PER_YEAR: int = 336 # 28 * 12
+const MONTHS_PER_SEASON: int = 3
+
+# Moltiplicatori e bonus legati ai giorni della settimana
+const WEEKEND_FRIDAY_AUDIENCE_MULT: float = 1.50
+const WEEKEND_SATURDAY_AUDIENCE_MULT: float = 2.00
+const WEEKEND_SATURDAY_FAN_MULT: float = 1.50
+const TUESDAY_STUDIO_DISCOUNT: float = 0.20
+const WEDNESDAY_BAND_XP_MULT: float = 1.20
+
+

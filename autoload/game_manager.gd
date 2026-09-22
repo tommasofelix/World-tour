@@ -21,6 +21,8 @@ var band_system: BandSystem
 var album_system: AlbumSystem
 var industry_system: IndustrySystem
 var dilemma_system: DilemmaSystem
+var schedule_system: ScheduleSystem
+var travel_system: TravelSystem
 
 func _ready() -> void:
 	# Inizializzazione dati di default
@@ -43,6 +45,9 @@ func _ready() -> void:
 	album_system = AlbumSystem.new(player_data, calendar_data)
 	industry_system = IndustrySystem.new(player_data, calendar_data)
 	dilemma_system = DilemmaSystem.new(player_data, calendar_data)
+	schedule_system = ScheduleSystem.new(player_data, calendar_data)
+	schedule_system.ensure_monthly_rent_scheduled()
+	travel_system = TravelSystem.new(player_data, calendar_data)
 
 func change_state(new_state: int) -> bool:
 	if current_state == new_state:
@@ -93,5 +98,8 @@ func start_new_game(p_name: String = "Alex", p_instrument: String = "Chitarra El
 	album_system = AlbumSystem.new(player_data, calendar_data)
 	industry_system = IndustrySystem.new(player_data, calendar_data)
 	dilemma_system = DilemmaSystem.new(player_data, calendar_data)
+	schedule_system = ScheduleSystem.new(player_data, calendar_data)
+	schedule_system.ensure_monthly_rent_scheduled()
+	travel_system = TravelSystem.new(player_data, calendar_data)
 	
 	change_state(Enums.GameState.GAMEPLAY_IDLE)

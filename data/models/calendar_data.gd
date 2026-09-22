@@ -39,6 +39,105 @@ func get_formatted_time_string() -> String:
 		
 	return "%02d:%02d" % [virtual_hour, virtual_minute]
 
+func get_weekday() -> int:
+	return (day_number - 1) % Constants.DAYS_PER_WEEK
+
+func get_weekday_name() -> String:
+	match get_weekday():
+		Enums.Weekday.MONDAY:
+			return "Lunedì"
+		Enums.Weekday.TUESDAY:
+			return "Martedì"
+		Enums.Weekday.WEDNESDAY:
+			return "Mercoledì"
+		Enums.Weekday.THURSDAY:
+			return "Giovedì"
+		Enums.Weekday.FRIDAY:
+			return "Venerdì"
+		Enums.Weekday.SATURDAY:
+			return "Sabato"
+		Enums.Weekday.SUNDAY:
+			return "Domenica"
+		_:
+			return "Lunedì"
+
+func get_day_of_month() -> int:
+	return ((day_number - 1) % Constants.DAYS_PER_MONTH) + 1
+
+func get_month() -> int:
+	return (int((day_number - 1) / Constants.DAYS_PER_MONTH) % Constants.MONTHS_PER_YEAR) + 1
+
+func get_month_name() -> String:
+	match get_month():
+		1:
+			return "Gennaio"
+		2:
+			return "Febbraio"
+		3:
+			return "Marzo"
+		4:
+			return "Aprile"
+		5:
+			return "Maggio"
+		6:
+			return "Giugno"
+		7:
+			return "Luglio"
+		8:
+			return "Agosto"
+		9:
+			return "Settembre"
+		10:
+			return "Ottobre"
+		11:
+			return "Novembre"
+		12:
+			return "Dicembre"
+		_:
+			return "Gennaio"
+
+func get_season() -> int:
+	return int((get_month() - 1) / Constants.MONTHS_PER_SEASON)
+
+func get_season_name() -> String:
+	match get_season():
+		Enums.Season.SPRING:
+			return "Primavera"
+		Enums.Season.SUMMER:
+			return "Estate"
+		Enums.Season.AUTUMN:
+			return "Autunno"
+		Enums.Season.WINTER:
+			return "Inverno"
+		_:
+			return "Primavera"
+
+func get_year() -> int:
+	return int((day_number - 1) / Constants.DAYS_PER_YEAR) + 1
+
+func get_week_number() -> int:
+	return int((day_number - 1) / Constants.DAYS_PER_WEEK) + 1
+
+func get_full_date_string() -> String:
+	return "%s %d %s, Anno %d (%s)" % [
+		get_weekday_name(),
+		get_day_of_month(),
+		get_month_name(),
+		get_year(),
+		get_season_name()
+	]
+
+func is_weekend() -> bool:
+	var w: int = get_weekday()
+	return w == Enums.Weekday.SATURDAY or w == Enums.Weekday.SUNDAY
+
+func is_prime_time() -> bool:
+	var w: int = get_weekday()
+	return w == Enums.Weekday.FRIDAY or w == Enums.Weekday.SATURDAY
+
+func is_end_of_month() -> bool:
+	return get_day_of_month() == Constants.DAYS_PER_MONTH
+
 func update_period() -> int:
 	# Fasce proporzionali alla durata della giornata:
 	# Mattina: > 75% del tempo rimanente (06:00 - 10:30)

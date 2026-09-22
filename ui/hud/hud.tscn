@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" path="res://ui/album/album_creator.tscn" id="9_albumcr"]
 [ext_resource type="PackedScene" path="res://ui/industry/industry_hub.tscn" id="10_indhub"]
 [ext_resource type="PackedScene" path="res://ui/industry/dilemma_modal.tscn" id="11_dilemma"]
+[ext_resource type="PackedScene" path="res://ui/travel/travel_modal.tscn" id="12_travel"]
 
 [node name="HUD" type="Control"]
 layout_mode = 3
@@ -182,8 +183,22 @@ text = "Band (G)"
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnBand")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
-focus_neighbor_right = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
+focus_neighbor_right = NodePath("../BtnAgenda")
 text = "Industria (K)"
+
+[node name="BtnAgenda" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnIndustry")
+focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
+focus_neighbor_right = NodePath("../BtnTravel")
+text = "Agenda (A)"
+
+[node name="BtnTravel" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnAgenda")
+focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
+focus_neighbor_right = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
+text = "Viaggi (V)"
 
 [node name="SongCatalog" parent="." instance=ExtResource("2_catalog")]
 visible = false
@@ -224,3 +239,8 @@ layout_mode = 1
 [node name="DilemmaModal" parent="." instance=ExtResource("11_dilemma")]
 visible = false
 layout_mode = 1
+
+[node name="TravelModal" parent="." instance=ExtResource("12_travel")]
+visible = false
+layout_mode = 1
+

@@ -129,8 +129,17 @@ func refresh_sheet() -> void:
 		vbox_skills.add_child(row)
 		
 	# Annuncio vocale sintetico per NVDA
-	var speech: String = "Scheda Personaggio di %s. Strumento: %s. Background: %s. Tratto: %s. Status: %s. Energia: %d%%, Stress: %d%%, Morale: %d%%. Saldo: %.2f euro. Premi Esc per tornare all'HUD." % [
+	var date_str: String = "Giorno %d" % (GameManager.calendar_data.day_number if GameManager.calendar_data else 1)
+	if GameManager and GameManager.calendar_data:
+		date_str = GameManager.calendar_data.get_full_date_string()
+		
+	var upcoming_count: int = 0
+	if GameManager and GameManager.schedule_system:
+		upcoming_count = GameManager.schedule_system.get_upcoming_events(7).size()
+		
+	var speech: String = "Scheda Personaggio di %s. Data: %s. Strumento: %s. Background: %s. Tratto: %s. Status: %s. Energia: %d%%, Stress: %d%%, Morale: %d%%. Saldo: %.2f euro. Impegni in agenda: %d nei prossimi 7 giorni. Premi A per ascoltare l'agenda o Esc per tornare all'HUD." % [
 		player.player_name,
+		date_str,
 		player.primary_instrument,
 		player.get_background_name(),
 		player.get_trait_name(),
@@ -138,7 +147,8 @@ func refresh_sheet() -> void:
 		player.energy,
 		player.stress,
 		player.morale,
-		player.money
+		player.money,
+		upcoming_count
 	]
 	AccessibilityManager.announce(speech, true)
 
@@ -153,4 +163,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		var key_event := event as InputEventKey
 		if key_event.keycode == KEY_ESCAPE or key_event.keycode == KEY_C:
 			_on_btn_close_pressed()
+			get_viewport().set_input_as_handled()
+		elif key_event.keycode == KEY_A:
+			if GameManager and GameManager.schedule_system:
+				var agenda_speech: String = GameManager.schedule_system.get_linear_agenda_speech(7)
+				AccessibilityManager.announce(agenda_speech, true)
 			get_viewport().set_input_as_handled()

@@ -246,6 +246,15 @@ func sign_contract(contract_id: String) -> Dictionary:
 	active_player.active_contract = found_contract
 	active_player.available_contracts.clear()
 	
+	# Inserimento scadenza di consegna master nell'Agenda della Band (SP-09)
+	if GameManager and GameManager.schedule_system:
+		var deadline_days: int = 56 if found_contract.contract_type == Enums.ContractType.MAJOR_LABEL else 84
+		GameManager.schedule_system.schedule_album_deadline(
+			"Album Contratto #%d" % (found_contract.albums_delivered + 1),
+			deadline_days,
+			found_contract.label_name
+		)
+	
 	EventBus.contract_signed.emit(found_contract.to_dict())
 	
 	var type_str: String = found_contract.get_type_name()

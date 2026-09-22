@@ -112,8 +112,23 @@ func advance_to_next_day() -> void:
 		calendar_data.day_number += 1
 		calendar_data.reset_daily_saturation()
 		
+	var new_day: int = calendar_data.day_number if calendar_data else 1
+	
+	# Controllo impegni a calendario e avanzamento dell'agenda
+	var schedule_report: Dictionary = {}
+	if GameManager and GameManager.schedule_system:
+		schedule_report = GameManager.schedule_system.process_daily_schedule_check(new_day)
+		
 	GameManager.change_state(Enums.GameState.GAMEPLAY_IDLE)
 	
-	var new_day: int = calendar_data.day_number if calendar_data else 1
 	EventBus.day_started.emit(new_day)
-	AccessibilityManager.announce("Inizia il Giorno %d. Buongiorno!" % new_day, true)
+	
+	var date_str: String = calendar_data.get_full_date_string() if calendar_data else ("Giorno %d" % new_day)
+	var speech: String = "Inizia il Giorno %d: %s. Buongiorno!" % [new_day, date_str]
+	if schedule_report.get("todays_events_count", 0) > 0:
+		speech += " Hai %d impegni in agenda per oggi." % schedule_report["todays_events_count"]
+	if schedule_report.get("missed_count", 0) > 0:
+		speech += " ATTENZIONE: Hai mancato %d impegni critici ieri!" % schedule_report["missed_count"]
+		
+	AccessibilityManager.announce(speech, true)
+
