@@ -181,12 +181,9 @@ func _process(delta: float) -> void:
 	if action_system and action_system.is_running:
 		action_system.update_action(delta)
 
-func _unhandled_input(event: InputEvent) -> void:
-	if not (event is InputEventKey) or not event.is_pressed() or event.is_echo():
-		return
-	
-	# Se una modale è aperta, non intercettare scorciatoie di navigazione HUD
-	if (song_catalog_modal and song_catalog_modal.visible) or \
+## Verifica se almeno una finestra modale è attualmente aperta e visibile
+func _is_any_modal_open() -> bool:
+	return (song_catalog_modal and song_catalog_modal.visible) or \
 	   (song_creator_modal and song_creator_modal.visible) or \
 	   (live_concert_modal and live_concert_modal.visible) or \
 	   (economy_bank_modal and economy_bank_modal.visible) or \
@@ -200,7 +197,49 @@ func _unhandled_input(event: InputEvent) -> void:
 	   (tour_modal and tour_modal.visible) or \
 	   (festival_modal and festival_modal.visible) or \
 	   (social_modal and social_modal.visible) or \
-	   (chart_modal and chart_modal.visible):
+	   (chart_modal and chart_modal.visible)
+
+## Chiude e occulta sistematicamente tutte le finestre modali del gioco
+func _hide_all_modals() -> void:
+	if song_catalog_modal:
+		song_catalog_modal.visible = false
+	if song_creator_modal:
+		song_creator_modal.visible = false
+	if live_concert_modal:
+		live_concert_modal.visible = false
+	if economy_bank_modal:
+		economy_bank_modal.visible = false
+	if daily_summary_modal:
+		daily_summary_modal.visible = false
+	if character_sheet_modal:
+		character_sheet_modal.visible = false
+	if band_hub_modal:
+		band_hub_modal.visible = false
+	if album_creator_modal:
+		album_creator_modal.visible = false
+	if industry_hub_modal:
+		industry_hub_modal.visible = false
+	if dilemma_modal:
+		dilemma_modal.visible = false
+	if travel_modal:
+		travel_modal.visible = false
+	if tour_modal:
+		tour_modal.visible = false
+	if festival_modal:
+		festival_modal.visible = false
+	if social_modal:
+		social_modal.visible = false
+	if chart_modal:
+		chart_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = false
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not (event is InputEventKey) or not event.is_pressed() or event.is_echo():
+		return
+	
+	# Se una modale è aperta, non intercettare scorciatoie di navigazione HUD
+	if _is_any_modal_open():
 		return
 	
 	match event.keycode:
@@ -328,20 +367,7 @@ func _on_speed_changed(new_speed: float) -> void:
 	btn_speed.text = tr("HUD_BTN_SPEED") % new_speed
 
 func open_catalog(show_albums: bool = false) -> void:
-	if song_creator_modal.visible:
-		song_creator_modal.visible = false
-	if live_concert_modal.visible:
-		live_concert_modal.visible = false
-	if economy_bank_modal.visible:
-		economy_bank_modal.visible = false
-	if character_sheet_modal and character_sheet_modal.visible:
-		character_sheet_modal.visible = false
-	if band_hub_modal and band_hub_modal.visible:
-		band_hub_modal.visible = false
-	if album_creator_modal and album_creator_modal.visible:
-		album_creator_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = false
+	_hide_all_modals()
 	song_catalog_modal.visible = true
 	if show_albums:
 		song_catalog_modal.show_albums_section()
@@ -355,20 +381,10 @@ func close_catalog() -> void:
 		vbox_main.visible = true
 	GameManager.close_menu()
 	btn_catalog.grab_focus()
+	_update_hud_display()
 
 func open_song_creator() -> void:
-	if song_catalog_modal.visible:
-		song_catalog_modal.visible = false
-	if live_concert_modal.visible:
-		live_concert_modal.visible = false
-	if economy_bank_modal.visible:
-		economy_bank_modal.visible = false
-	if character_sheet_modal and character_sheet_modal.visible:
-		character_sheet_modal.visible = false
-	if band_hub_modal and band_hub_modal.visible:
-		band_hub_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = false
+	_hide_all_modals()
 	song_creator_modal.visible = true
 	song_creator_modal.start_new_song()
 	GameManager.open_menu()
@@ -379,37 +395,16 @@ func close_song_creator() -> void:
 		vbox_main.visible = true
 	GameManager.close_menu()
 	btn_new_song.grab_focus()
+	_update_hud_display()
 
 func open_song_editor(song: SongData) -> void:
-	if song_catalog_modal.visible:
-		song_catalog_modal.visible = false
-	if live_concert_modal.visible:
-		live_concert_modal.visible = false
-	if economy_bank_modal.visible:
-		economy_bank_modal.visible = false
-	if character_sheet_modal and character_sheet_modal.visible:
-		character_sheet_modal.visible = false
-	if band_hub_modal and band_hub_modal.visible:
-		band_hub_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = false
+	_hide_all_modals()
 	song_creator_modal.visible = true
 	song_creator_modal.edit_existing_song(song)
 	GameManager.open_menu()
 
 func open_live_concert() -> void:
-	if song_catalog_modal.visible:
-		song_catalog_modal.visible = false
-	if song_creator_modal.visible:
-		song_creator_modal.visible = false
-	if economy_bank_modal.visible:
-		economy_bank_modal.visible = false
-	if character_sheet_modal and character_sheet_modal.visible:
-		character_sheet_modal.visible = false
-	if band_hub_modal and band_hub_modal.visible:
-		band_hub_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = false
+	_hide_all_modals()
 	live_concert_modal.visible = true
 	live_concert_modal.open_preparation()
 	GameManager.open_menu()
@@ -423,18 +418,7 @@ func close_live_concert() -> void:
 	_update_hud_display()
 
 func open_economy_bank() -> void:
-	if song_catalog_modal.visible:
-		song_catalog_modal.visible = false
-	if song_creator_modal.visible:
-		song_creator_modal.visible = false
-	if live_concert_modal.visible:
-		live_concert_modal.visible = false
-	if character_sheet_modal and character_sheet_modal.visible:
-		character_sheet_modal.visible = false
-	if band_hub_modal and band_hub_modal.visible:
-		band_hub_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = false
+	_hide_all_modals()
 	economy_bank_modal.open()
 	GameManager.open_menu()
 
@@ -447,20 +431,7 @@ func close_economy_bank() -> void:
 	_update_hud_display()
 
 func open_character_sheet() -> void:
-	if song_catalog_modal and song_catalog_modal.visible:
-		song_catalog_modal.visible = false
-	if song_creator_modal and song_creator_modal.visible:
-		song_creator_modal.visible = false
-	if live_concert_modal and live_concert_modal.visible:
-		live_concert_modal.visible = false
-	if economy_bank_modal and economy_bank_modal.visible:
-		economy_bank_modal.visible = false
-	if daily_summary_modal and daily_summary_modal.visible:
-		daily_summary_modal.visible = false
-	if band_hub_modal and band_hub_modal.visible:
-		band_hub_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = false
+	_hide_all_modals()
 	if character_sheet_modal:
 		character_sheet_modal.open()
 	GameManager.open_menu()
@@ -475,20 +446,7 @@ func close_character_sheet() -> void:
 	_update_hud_display()
 
 func open_band_hub() -> void:
-	if song_catalog_modal and song_catalog_modal.visible:
-		song_catalog_modal.visible = false
-	if song_creator_modal and song_creator_modal.visible:
-		song_creator_modal.visible = false
-	if live_concert_modal and live_concert_modal.visible:
-		live_concert_modal.visible = false
-	if economy_bank_modal and economy_bank_modal.visible:
-		economy_bank_modal.visible = false
-	if daily_summary_modal and daily_summary_modal.visible:
-		daily_summary_modal.visible = false
-	if character_sheet_modal and character_sheet_modal.visible:
-		character_sheet_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = false
+	_hide_all_modals()
 	if band_hub_modal:
 		band_hub_modal.open()
 	GameManager.open_menu()
@@ -503,22 +461,7 @@ func close_band_hub() -> void:
 	_update_hud_display()
 
 func open_album_creator() -> void:
-	if song_catalog_modal and song_catalog_modal.visible:
-		song_catalog_modal.visible = false
-	if song_creator_modal and song_creator_modal.visible:
-		song_creator_modal.visible = false
-	if live_concert_modal and live_concert_modal.visible:
-		live_concert_modal.visible = false
-	if economy_bank_modal and economy_bank_modal.visible:
-		economy_bank_modal.visible = false
-	if daily_summary_modal and daily_summary_modal.visible:
-		daily_summary_modal.visible = false
-	if character_sheet_modal and character_sheet_modal.visible:
-		character_sheet_modal.visible = false
-	if band_hub_modal and band_hub_modal.visible:
-		band_hub_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = false
+	_hide_all_modals()
 	if album_creator_modal:
 		album_creator_modal.open()
 	GameManager.open_menu()
@@ -539,26 +482,7 @@ func _on_album_published(_album_data: Dictionary) -> void:
 	_update_hud_display()
 
 func open_industry_hub() -> void:
-	if song_catalog_modal and song_catalog_modal.visible:
-		song_catalog_modal.visible = false
-	if song_creator_modal and song_creator_modal.visible:
-		song_creator_modal.visible = false
-	if live_concert_modal and live_concert_modal.visible:
-		live_concert_modal.visible = false
-	if economy_bank_modal and economy_bank_modal.visible:
-		economy_bank_modal.visible = false
-	if daily_summary_modal and daily_summary_modal.visible:
-		daily_summary_modal.visible = false
-	if character_sheet_modal and character_sheet_modal.visible:
-		character_sheet_modal.visible = false
-	if band_hub_modal and band_hub_modal.visible:
-		band_hub_modal.visible = false
-	if album_creator_modal and album_creator_modal.visible:
-		album_creator_modal.visible = false
-	if dilemma_modal and dilemma_modal.visible:
-		dilemma_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = false
+	_hide_all_modals()
 	if industry_hub_modal:
 		industry_hub_modal.open()
 	GameManager.open_menu()
@@ -573,30 +497,7 @@ func close_industry_hub() -> void:
 	_update_hud_display()
 
 func open_travel_modal() -> void:
-	if song_catalog_modal and song_catalog_modal.visible:
-		song_catalog_modal.visible = false
-	if song_creator_modal and song_creator_modal.visible:
-		song_creator_modal.visible = false
-	if live_concert_modal and live_concert_modal.visible:
-		live_concert_modal.visible = false
-	if economy_bank_modal and economy_bank_modal.visible:
-		economy_bank_modal.visible = false
-	if daily_summary_modal and daily_summary_modal.visible:
-		daily_summary_modal.visible = false
-	if character_sheet_modal and character_sheet_modal.visible:
-		character_sheet_modal.visible = false
-	if band_hub_modal and band_hub_modal.visible:
-		band_hub_modal.visible = false
-	if album_creator_modal and album_creator_modal.visible:
-		album_creator_modal.visible = false
-	if industry_hub_modal and industry_hub_modal.visible:
-		industry_hub_modal.visible = false
-	if dilemma_modal and dilemma_modal.visible:
-		dilemma_modal.visible = false
-	if festival_modal and festival_modal.visible:
-		festival_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = false
+	_hide_all_modals()
 	if travel_modal:
 		travel_modal.open()
 	GameManager.open_menu()
@@ -611,32 +512,7 @@ func close_travel_modal() -> void:
 	_update_hud_display()
 
 func open_tour_modal() -> void:
-	if song_catalog_modal and song_catalog_modal.visible:
-		song_catalog_modal.visible = false
-	if song_creator_modal and song_creator_modal.visible:
-		song_creator_modal.visible = false
-	if live_concert_modal and live_concert_modal.visible:
-		live_concert_modal.visible = false
-	if economy_bank_modal and economy_bank_modal.visible:
-		economy_bank_modal.visible = false
-	if daily_summary_modal and daily_summary_modal.visible:
-		daily_summary_modal.visible = false
-	if character_sheet_modal and character_sheet_modal.visible:
-		character_sheet_modal.visible = false
-	if band_hub_modal and band_hub_modal.visible:
-		band_hub_modal.visible = false
-	if album_creator_modal and album_creator_modal.visible:
-		album_creator_modal.visible = false
-	if industry_hub_modal and industry_hub_modal.visible:
-		industry_hub_modal.visible = false
-	if dilemma_modal and dilemma_modal.visible:
-		dilemma_modal.visible = false
-	if travel_modal and travel_modal.visible:
-		travel_modal.visible = false
-	if festival_modal and festival_modal.visible:
-		festival_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = false
+	_hide_all_modals()
 	if tour_modal:
 		tour_modal.open()
 	GameManager.open_menu()
@@ -651,34 +527,7 @@ func close_tour_modal() -> void:
 	_update_hud_display()
 
 func open_festival_modal() -> void:
-	if song_catalog_modal and song_catalog_modal.visible:
-		song_catalog_modal.visible = false
-	if song_creator_modal and song_creator_modal.visible:
-		song_creator_modal.visible = false
-	if live_concert_modal and live_concert_modal.visible:
-		live_concert_modal.visible = false
-	if economy_bank_modal and economy_bank_modal.visible:
-		economy_bank_modal.visible = false
-	if daily_summary_modal and daily_summary_modal.visible:
-		daily_summary_modal.visible = false
-	if character_sheet_modal and character_sheet_modal.visible:
-		character_sheet_modal.visible = false
-	if band_hub_modal and band_hub_modal.visible:
-		band_hub_modal.visible = false
-	if album_creator_modal and album_creator_modal.visible:
-		album_creator_modal.visible = false
-	if industry_hub_modal and industry_hub_modal.visible:
-		industry_hub_modal.visible = false
-	if dilemma_modal and dilemma_modal.visible:
-		dilemma_modal.visible = false
-	if travel_modal and travel_modal.visible:
-		travel_modal.visible = false
-	if tour_modal and tour_modal.visible:
-		tour_modal.visible = false
-	if social_modal and social_modal.visible:
-		social_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = false
+	_hide_all_modals()
 	if festival_modal:
 		festival_modal.open()
 	GameManager.open_menu()
@@ -693,36 +542,7 @@ func close_festival_modal() -> void:
 	_update_hud_display()
 
 func open_social_modal() -> void:
-	if song_catalog_modal and song_catalog_modal.visible:
-		song_catalog_modal.visible = false
-	if song_creator_modal and song_creator_modal.visible:
-		song_creator_modal.visible = false
-	if live_concert_modal and live_concert_modal.visible:
-		live_concert_modal.visible = false
-	if economy_bank_modal and economy_bank_modal.visible:
-		economy_bank_modal.visible = false
-	if daily_summary_modal and daily_summary_modal.visible:
-		daily_summary_modal.visible = false
-	if character_sheet_modal and character_sheet_modal.visible:
-		character_sheet_modal.visible = false
-	if band_hub_modal and band_hub_modal.visible:
-		band_hub_modal.visible = false
-	if album_creator_modal and album_creator_modal.visible:
-		album_creator_modal.visible = false
-	if industry_hub_modal and industry_hub_modal.visible:
-		industry_hub_modal.visible = false
-	if dilemma_modal and dilemma_modal.visible:
-		dilemma_modal.visible = false
-	if travel_modal and travel_modal.visible:
-		travel_modal.visible = false
-	if tour_modal and tour_modal.visible:
-		tour_modal.visible = false
-	if festival_modal and festival_modal.visible:
-		festival_modal.visible = false
-	if chart_modal and chart_modal.visible:
-		chart_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = false
+	_hide_all_modals()
 	if social_modal:
 		social_modal.open()
 	GameManager.open_menu()
@@ -737,36 +557,7 @@ func close_social_modal() -> void:
 	_update_hud_display()
 
 func open_chart_modal() -> void:
-	if song_catalog_modal and song_catalog_modal.visible:
-		song_catalog_modal.visible = false
-	if song_creator_modal and song_creator_modal.visible:
-		song_creator_modal.visible = false
-	if live_concert_modal and live_concert_modal.visible:
-		live_concert_modal.visible = false
-	if economy_bank_modal and economy_bank_modal.visible:
-		economy_bank_modal.visible = false
-	if daily_summary_modal and daily_summary_modal.visible:
-		daily_summary_modal.visible = false
-	if character_sheet_modal and character_sheet_modal.visible:
-		character_sheet_modal.visible = false
-	if band_hub_modal and band_hub_modal.visible:
-		band_hub_modal.visible = false
-	if album_creator_modal and album_creator_modal.visible:
-		album_creator_modal.visible = false
-	if industry_hub_modal and industry_hub_modal.visible:
-		industry_hub_modal.visible = false
-	if dilemma_modal and dilemma_modal.visible:
-		dilemma_modal.visible = false
-	if travel_modal and travel_modal.visible:
-		travel_modal.visible = false
-	if tour_modal and tour_modal.visible:
-		tour_modal.visible = false
-	if festival_modal and festival_modal.visible:
-		festival_modal.visible = false
-	if social_modal and social_modal.visible:
-		social_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = false
+	_hide_all_modals()
 	if chart_modal:
 		chart_modal.open()
 	GameManager.open_menu()
@@ -781,26 +572,7 @@ func close_chart_modal() -> void:
 	_update_hud_display()
 
 func _on_dilemma_triggered(dilemma_dict: Dictionary) -> void:
-	if song_catalog_modal and song_catalog_modal.visible:
-		song_catalog_modal.visible = false
-	if song_creator_modal and song_creator_modal.visible:
-		song_creator_modal.visible = false
-	if live_concert_modal and live_concert_modal.visible:
-		live_concert_modal.visible = false
-	if economy_bank_modal and economy_bank_modal.visible:
-		economy_bank_modal.visible = false
-	if daily_summary_modal and daily_summary_modal.visible:
-		daily_summary_modal.visible = false
-	if character_sheet_modal and character_sheet_modal.visible:
-		character_sheet_modal.visible = false
-	if band_hub_modal and band_hub_modal.visible:
-		band_hub_modal.visible = false
-	if album_creator_modal and album_creator_modal.visible:
-		album_creator_modal.visible = false
-	if industry_hub_modal and industry_hub_modal.visible:
-		industry_hub_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = false
+	_hide_all_modals()
 	if dilemma_modal:
 		dilemma_modal.open(dilemma_dict)
 	GameManager.open_menu()
@@ -815,26 +587,7 @@ func close_dilemma_modal() -> void:
 	_update_hud_display()
 
 func open_daily_summary(summary_data: Dictionary) -> void:
-	if song_catalog_modal and song_catalog_modal.visible:
-		song_catalog_modal.visible = false
-	if song_creator_modal and song_creator_modal.visible:
-		song_creator_modal.visible = false
-	if live_concert_modal and live_concert_modal.visible:
-		live_concert_modal.visible = false
-	if economy_bank_modal and economy_bank_modal.visible:
-		economy_bank_modal.visible = false
-	if character_sheet_modal and character_sheet_modal.visible:
-		character_sheet_modal.visible = false
-	if band_hub_modal and band_hub_modal.visible:
-		band_hub_modal.visible = false
-	if album_creator_modal and album_creator_modal.visible:
-		album_creator_modal.visible = false
-	if industry_hub_modal and industry_hub_modal.visible:
-		industry_hub_modal.visible = false
-	if dilemma_modal and dilemma_modal.visible:
-		dilemma_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = false
+	_hide_all_modals()
 	if summary_data.has("pending_dilemma") and not summary_data["pending_dilemma"].is_empty():
 		_pending_dilemma_at_day_end = summary_data["pending_dilemma"]
 	if daily_summary_modal:
