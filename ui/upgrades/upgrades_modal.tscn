@@ -1,0 +1,171 @@
+[gd_scene format=3 uid="uid://dm4upgradesmod01"]
+
+[ext_resource type="Script" uid="uid://df67upgradewt01" path="res://ui/upgrades/upgrades_modal.gd" id="1_upgrades"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main"]
+bg_color = Color(0.06, 0.07, 0.1, 0.98)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.2, 0.75, 0.85, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="UpgradesModal" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_upgrades")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.02, 0.04, 0.92)
+
+[node name="PanelMain" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -380.0
+offset_top = -280.0
+offset_right = 380.0
+offset_bottom = 280.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_main")
+
+[node name="Margin" type="MarginContainer" parent="PanelMain"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
+
+[node name="VBox" type="VBoxContainer" parent="PanelMain/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="HBoxHeader" type="HBoxContainer" parent="PanelMain/Margin/VBox"]
+layout_mode = 2
+
+[node name="LabelTitle" type="Label" parent="PanelMain/Margin/VBox/HBoxHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "SKILLS, UPGRADE & STRUMENTAZIONE (U)"
+
+[node name="LabelMoney" type="Label" parent="PanelMain/Margin/VBox/HBoxHeader"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.85, 0.2, 1)
+theme_override_font_sizes/font_size = 16
+text = "Saldo: 500.00 €"
+
+[node name="BtnClose" type="Button" parent="PanelMain/Margin/VBox/HBoxHeader"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Chiudi (Esc)"
+
+[node name="HSeparator" type="HSeparator" parent="PanelMain/Margin/VBox"]
+layout_mode = 2
+
+[node name="HBoxTabs" type="HBoxContainer" parent="PanelMain/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BtnTabHousing" type="Button" parent="PanelMain/Margin/VBox/HBoxTabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "1. Spazio Vitale & Casa"
+
+[node name="BtnTabRehearsal" type="Button" parent="PanelMain/Margin/VBox/HBoxTabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "2. Sala Prove"
+
+[node name="BtnTabGear" type="Button" parent="PanelMain/Margin/VBox/HBoxTabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "3. Negozio Strumenti"
+
+[node name="BtnTabStudio" type="Button" parent="PanelMain/Margin/VBox/HBoxTabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "4. Hardware Studio"
+
+[node name="HSeparator2" type="HSeparator" parent="PanelMain/Margin/VBox"]
+layout_mode = 2
+
+[node name="PanelHousing" type="VBoxContainer" parent="PanelMain/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="LabelHousingDesc" type="Label" parent="PanelMain/Margin/VBox/PanelHousing"]
+layout_mode = 2
+text = "Gestione Residenza: l'alloggio determina la qualità del riposo e la spesa fissa quotidiana."
+
+[node name="LabelHousingCurrent" type="Label" parent="PanelMain/Margin/VBox/PanelHousing"]
+layout_mode = 2
+text = "Alloggio Attuale: Stanzetta (15.00 € / giorno | Recupero Sonno standard)"
+
+[node name="PanelRehearsal" type="VBoxContainer" parent="PanelMain/Margin/VBox"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="LabelRehearsalDesc" type="Label" parent="PanelMain/Margin/VBox/PanelRehearsal"]
+layout_mode = 2
+text = "Sala Prove: un ambiente trattato acusticamente riduce l'affaticamento e la tensione della band."
+
+[node name="LabelRehearsalCurrent" type="Label" parent="PanelMain/Margin/VBox/PanelRehearsal"]
+layout_mode = 2
+text = "Allestimento Attuale: Garage di periferia (Nessun trattamento acustico)"
+
+[node name="PanelGear" type="VBoxContainer" parent="PanelMain/Margin/VBox"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="LabelGearDesc" type="Label" parent="PanelMain/Margin/VBox/PanelGear"]
+layout_mode = 2
+text = "Negozio Strumenti: strumenti di qualità superiore aumentano il carisma sul palco e la resa tecnica."
+
+[node name="LabelGearCurrent" type="Label" parent="PanelMain/Margin/VBox/PanelGear"]
+layout_mode = 2
+text = "Strumentazione: Strumenti base di partenza (Livello 10)"
+
+[node name="PanelStudio" type="VBoxContainer" parent="PanelMain/Margin/VBox"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="LabelStudioDesc" type="Label" parent="PanelMain/Margin/VBox/PanelStudio"]
+layout_mode = 2
+text = "Hardware di Registrazione: microfoni professionali e schede audio innalzano il limite di qualità brani."
+
+[node name="LabelStudioCurrent" type="Label" parent="PanelMain/Margin/VBox/PanelStudio"]
+layout_mode = 2
+text = "Studio Setup: Registratore portatile base"
+
+[node name="LabelFeedback" type="Label" parent="PanelMain/Margin/VBox"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1

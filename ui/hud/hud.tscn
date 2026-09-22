@@ -16,6 +16,8 @@
 [ext_resource type="PackedScene" uid="uid://cmwl8cbhw552k" path="res://ui/festival/festival_modal.tscn" id="14_fest"]
 [ext_resource type="PackedScene" uid="uid://coi38q00mm8wy" path="res://ui/social/social_modal.tscn" id="15_social"]
 [ext_resource type="PackedScene" uid="uid://b8m1n6ydye71u" path="res://ui/charts/chart_modal.tscn" id="16_chart"]
+[ext_resource type="PackedScene" uid="uid://dm2systemmenu01" path="res://ui/system_menu/system_menu_modal.tscn" id="17_sysmenu"]
+[ext_resource type="PackedScene" uid="uid://dm4upgradesmod01" path="res://ui/upgrades/upgrades_modal.tscn" id="18_upgrades"]
 
 [node name="HUD" type="Control" unique_id=580846484]
 layout_mode = 3
@@ -130,6 +132,34 @@ theme_override_constants/separation = 20
 layout_mode = 2
 text = "Stato: In attesa (Pronto per agire)"
 
+[node name="HBoxCategories" type="HBoxContainer" parent="VBoxMain/PanelCenter" unique_id=149827361]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="BtnTabPersonal" type="Button" parent="VBoxMain/PanelCenter/HBoxCategories" unique_id=83726194]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "1. Hub Personale"
+
+[node name="BtnTabCreation" type="Button" parent="VBoxMain/PanelCenter/HBoxCategories" unique_id=83726195]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "2. Creazione & Produzione"
+
+[node name="BtnTabCareer" type="Button" parent="VBoxMain/PanelCenter/HBoxCategories" unique_id=83726196]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "3. Carriera & Band"
+
+[node name="BtnTabUpgrades" type="Button" parent="VBoxMain/PanelCenter/HBoxCategories" unique_id=83726197]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "4. Skills & Upgrade"
+
 [node name="HBoxActions" type="HBoxContainer" parent="VBoxMain/PanelCenter" unique_id=1812420596]
 layout_mode = 2
 theme_override_constants/separation = 14
@@ -229,8 +259,15 @@ text = "Social (Y)"
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnSocial")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
-focus_neighbor_right = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
+focus_neighbor_right = NodePath("../BtnUpgrades")
 text = "Classifiche (H)"
+
+[node name="BtnUpgrades" type="Button" parent="VBoxMain/PanelCenter/HBoxActions" unique_id=1523022208]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnChart")
+focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
+focus_neighbor_right = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
+text = "Miglioramenti (U)"
 
 [node name="SongCatalog" parent="." unique_id=757915434 instance=ExtResource("2_catalog")]
 visible = false
@@ -289,5 +326,13 @@ visible = false
 layout_mode = 1
 
 [node name="ChartModal" parent="." unique_id=305224174 instance=ExtResource("16_chart")]
+visible = false
+layout_mode = 1
+
+[node name="SystemMenuModal" parent="." unique_id=305224175 instance=ExtResource("17_sysmenu")]
+visible = false
+layout_mode = 1
+
+[node name="UpgradesModal" parent="." unique_id=305224176 instance=ExtResource("18_upgrades")]
 visible = false
 layout_mode = 1

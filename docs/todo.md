@@ -78,6 +78,12 @@ I nuovi sottopiani per la Fase 9 (V5.0 Endgame) risiedono in [`docs/piani/attivi
     *Competenze*: Competitive Systems, Chart Tracking, Industry Dynamics.  
     *Oggetto*: 10 band rivali continentali, Hit Parade settimanale Top 10 Singoli e Top 10 Album, movimenti, picchi e conquista del #1.
 
+### Sottopiani Attivi in Lavorazione (Fase 9 — V5.0)
+
+14. **[`SP-14`: Riorganizzazione UI, Menu di Sistema & Macro-Aree](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/attivi/sottopiani/14_riorganizzazione_ui_menu_sistema_e_macro_aree.md)** [/]  
+    *Competenze*: UI/UX Engineering, Screen Reader Accessibility (NVDA Zero Mouse), Simmetria Universale.  
+    *Oggetto*: Architettura HUD a 5 sezioni, Top Bar fissa, Menu di Sistema su tasto `Esc` e selettore a 4 Macro-Aree tematiche.
+
 ---
 
 ## 3. ROADMAP SEQUENZIALE OPERATIVA (CHECKBOX SPUNTABILI)
@@ -180,6 +186,15 @@ I nuovi sottopiani per la Fase 9 (V5.0 Endgame) risiedono in [`docs/piani/attivi
 - [x] `F8.5`: **Artisti Rivali & Classifiche Musicali (`RivalSystem`, `ChartSystem`, `RivalData`, `ChartEntryData`)**: Catalogo di 10 band rivali continentali distribuite sulle 6 metropoli europee con generi e popolarità dinamica; simulazione settimanale ogni Domenica notte (`EndDaySystem`); compilazione della Top 10 Singoli e Top 10 Album; algoritmo di stream/vendite del giocatore potenziato da qualità dei brani, fan e social buzz; tracciamento debutti (`NEW`), variazioni posizioni (`▲`, `▼`, `=`), picchi e settimane di permanenza; evento trionfale per la conquista del #1 con bonus popolarità, fan e morale; modale `ChartModal` ad alto contrasto con tasto rapido HUD `H`, tasti `1` (Singoli), `2` (Album), `R` (Rivale), `Esc` e vocalizzazione sequenziale lineare al 100% per NVDA; persistenza atomica in `SaveManager`. Convalidato con 54/54 test dedicati e 16/16 suite headless del progetto a 0 errori.
 - [x] `F8.6`: **Dashboard Tour & Accessibilità NVDA (`ui/hud/`, `ui/tour/`, `ui/social/`)**: Centralizzazione atomica della visibilità modali nell'HUD con `_hide_all_modals()` e guardia predittiva `_is_any_modal_open()` su tutte le 15 finestre del gioco; eliminazione di sovrapposizioni e focus leaks; blindatura della coesistenza dei 15 tasti rapidi HUD (`C`, `G`, `K`, `L`, `M`, `N`, `B`, `A`, `V`, `O`, `F`, `Y`, `H`, `T`, `P`); isolamento del backdrop per Holy Diver e annunci vocali lineari al 100% per NVDA. Convalidato con la nuova suite headless `test_v4_ui_integration.gd` (44 test) e 17/17 suite complessive del progetto a 0 errori.
 - [x] `F8.7`: **Suite di Test Headless Globale & Collaudo Congiunto V4.0**: Collaudo congiunto definitivo della Versione 4.0 con Luca (NVDA/tastiera) e Holy Diver (monitor/mouse), verifica di integrità complessiva su 17 suite di test headless superate al 100% (0 errori e zero regressioni); chiusura formale della Versione 4.0 e transizione a Versione 5.0.
+
+---
+
+### FASE 9: Architettura UI a 5 Sezioni, Menu di Sistema & Espansione V5.0 (Endgame)
+- [x] `F9.0`: **Riorganizzazione Architetturale UI (Top Bar Permanente, Menu Sistema Esc & 4 Macro-Aree)**: Scorporo dell'HUD orizzontale a 15 tasti; consolidamento Top Bar fissa permanente; creazione modale `SystemMenuModal` (Riprendi, Salva Partita atomico, Impostazioni volumi/voce/lingua, Torna al Menu Principale) su tasto `Esc` a riposo; selettore 4 Macro-Aree (`1` Hub Personale, `2` Creazione & Produzione, `3` Carriera & Band, `4` Skills & Upgrade con modale `UpgradesModal`) con conservazione di tutti i 15 tasti rapidi diretti storici; suite di test `test_v5_ui_overhaul.gd`. Convalidato con 18/18 suite di test headless superate al 100% con 0 errori.
+- [ ] `F9.1`: **Skills, Upgrade Hub & Strumentazione (`UpgradesModal`)**: Lifestyle residenziale (alloggi), sala prove insonorizzata, negozio strumenti musicali con bonus carisma/abilità, hardware home studio/registrazione per innalzamento Quality Score.
+- [ ] `F9.2`: **Grandi Stadi, Palasport & Mega-Eventi**: Tournée mondiali, arene da 15.000 a 80.000 spettatori, allestimenti scenici, service audio/luci e logistica da superstar.
+- [ ] `F9.3`: **Legacy, Premi alla Carriera & Finale di Gioco**: Hall of Fame, Dischi d'Oro/Platino/Diamante, Grammy Awards, condizioni di vittoria e pensione musicale.
+- [ ] `F9.4`: **Suite di Test Headless Globale & Collaudo Congiunto V5.0**: Verifica complessiva congiunta su tutte le suite di test con 0 errori, zero regressioni e release finale V5.0.
 
 ---
 

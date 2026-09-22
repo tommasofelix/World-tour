@@ -42,6 +42,10 @@ func announce(text: String, is_interrupt: bool = true) -> void:
 			DisplayServer.tts_stop()
 		DisplayServer.tts_speak(text, default_tts_voice_id, int(Constants.AUDIO_SAFE_VOLUME_LINEAR * 100.0))
 
+## Alias per announce: sintesi vocale immediata di messaggi per NVDA
+func speak(text: String, is_interrupt: bool = true) -> void:
+	announce(text, is_interrupt)
+
 func _on_ui_focus_changed(control_name: String, control_role: String, control_value: String) -> void:
 	var msg: String = control_name
 	if not control_value.is_empty():

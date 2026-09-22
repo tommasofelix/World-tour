@@ -18,6 +18,12 @@ extends Control
 
 @onready var label_player_summary: Label = $VBoxMain/PanelPlayerOverview/Margin/LabelPlayerSummary
 @onready var label_status: Label = $VBoxMain/PanelCenter/LabelStatus
+@onready var hbox_categories: HBoxContainer = $VBoxMain/PanelCenter/HBoxCategories
+@onready var btn_tab_personal: Button = $VBoxMain/PanelCenter/HBoxCategories/BtnTabPersonal
+@onready var btn_tab_creation: Button = $VBoxMain/PanelCenter/HBoxCategories/BtnTabCreation
+@onready var btn_tab_career: Button = $VBoxMain/PanelCenter/HBoxCategories/BtnTabCareer
+@onready var btn_tab_upgrades: Button = $VBoxMain/PanelCenter/HBoxCategories/BtnTabUpgrades
+
 @onready var btn_character: Button = $VBoxMain/PanelCenter/HBoxActions/BtnCharacter
 @onready var btn_practice: Button = $VBoxMain/PanelCenter/HBoxActions/BtnPractice
 @onready var btn_catalog: Button = $VBoxMain/PanelCenter/HBoxActions/BtnCatalog
@@ -32,6 +38,7 @@ extends Control
 @onready var btn_festival: Button = $VBoxMain/PanelCenter/HBoxActions/BtnFestival
 @onready var btn_social: Button = $VBoxMain/PanelCenter/HBoxActions/BtnSocial
 @onready var btn_chart: Button = $VBoxMain/PanelCenter/HBoxActions/BtnChart
+@onready var btn_upgrades: Button = $VBoxMain/PanelCenter/HBoxActions/BtnUpgrades
 
 @onready var song_catalog_modal: Control = $SongCatalog
 @onready var song_creator_modal: Control = $SongCreator
@@ -48,7 +55,10 @@ extends Control
 @onready var festival_modal: Control = $FestivalModal
 @onready var social_modal: Control = $SocialModal
 @onready var chart_modal: Control = $ChartModal
+@onready var system_menu_modal: Control = $SystemMenuModal
+@onready var upgrades_modal: Control = $UpgradesModal
 
+var current_category_tab: int = 1
 var _pending_dilemma_at_day_end: Dictionary = {}
 
 var action_system: ActionSystem
@@ -94,6 +104,19 @@ func _ready() -> void:
 	btn_save.pressed.connect(_on_btn_save_pressed)
 	btn_main_menu.pressed.connect(_on_btn_main_menu_pressed)
 	
+	# Connessione Tab Categorie e Upgrades
+	btn_tab_personal.pressed.connect(func(): select_category_tab(1))
+	btn_tab_creation.pressed.connect(func(): select_category_tab(2))
+	btn_tab_career.pressed.connect(func(): select_category_tab(3))
+	btn_tab_upgrades.pressed.connect(func(): select_category_tab(4))
+	btn_upgrades.pressed.connect(open_upgrades_modal)
+	
+	AccessibilityManager.hook_control_accessibility(btn_tab_personal, "Area 1: Hub Personale", "Mostra le azioni di identità, agenda, bilancio e viaggi.")
+	AccessibilityManager.hook_control_accessibility(btn_tab_creation, "Area 2: Creazione e Produzione", "Mostra catalogo brani, nuovo brano e creazione album.")
+	AccessibilityManager.hook_control_accessibility(btn_tab_career, "Area 3: Carriera e Band", "Mostra concerti, band, tour, festival, social, classifiche e contratti.")
+	AccessibilityManager.hook_control_accessibility(btn_tab_upgrades, "Area 4: Skills e Upgrade", "Mostra alloggi, sala prove, strumenti musicali e hardware di registrazione.")
+	AccessibilityManager.hook_control_accessibility(btn_upgrades, "Miglioramenti e Strumentazione (U)", "Apre la gestione e acquisto di upgrade per alloggio, sala prove e strumenti.")
+	
 	AccessibilityManager.hook_control_accessibility(btn_tour, "Tournée e Concerti (O)", "Apre la gestione e pianificazione delle tournée multi-tappa.")
 	AccessibilityManager.hook_control_accessibility(btn_festival, "Grandi Festival Estivi (F)", "Apre la schermata dei festival estivi e la selezione degli slot.")
 	AccessibilityManager.hook_control_accessibility(btn_social, "Social Media (Y)", "Apre il canale social della band per pubblicare contenuti e gestire il feed dei fan.")
@@ -131,7 +154,14 @@ func _ready() -> void:
 		social_modal.closed.connect(close_social_modal)
 	if chart_modal:
 		chart_modal.closed.connect(close_chart_modal)
+	if system_menu_modal:
+		system_menu_modal.resume_requested.connect(close_system_menu)
+	if upgrades_modal:
+		upgrades_modal.closed.connect(close_upgrades_modal)
 	song_catalog_modal.new_album_requested.connect(open_album_creator)
+	
+	# Inizializza la visualizzazione sulla prima categoria (Hub Personale)
+	select_category_tab(1)
 		
 	# Connessione Fine Giornata (EndDaySystem)
 	if GameManager:
@@ -197,7 +227,9 @@ func _is_any_modal_open() -> bool:
 	   (tour_modal and tour_modal.visible) or \
 	   (festival_modal and festival_modal.visible) or \
 	   (social_modal and social_modal.visible) or \
-	   (chart_modal and chart_modal.visible)
+	   (chart_modal and chart_modal.visible) or \
+	   (system_menu_modal and system_menu_modal.visible) or \
+	   (upgrades_modal and upgrades_modal.visible)
 
 ## Chiude e occulta sistematicamente tutte le finestre modali del gioco
 func _hide_all_modals() -> void:
@@ -231,6 +263,10 @@ func _hide_all_modals() -> void:
 		social_modal.visible = false
 	if chart_modal:
 		chart_modal.visible = false
+	if system_menu_modal:
+		system_menu_modal.visible = false
+	if upgrades_modal:
+		upgrades_modal.visible = false
 	if vbox_main:
 		vbox_main.visible = false
 
@@ -243,6 +279,24 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	
 	match event.keycode:
+		KEY_ESCAPE:
+			open_system_menu()
+			get_viewport().set_input_as_handled()
+		KEY_1:
+			select_category_tab(1)
+			get_viewport().set_input_as_handled()
+		KEY_2:
+			select_category_tab(2)
+			get_viewport().set_input_as_handled()
+		KEY_3:
+			select_category_tab(3)
+			get_viewport().set_input_as_handled()
+		KEY_4:
+			select_category_tab(4)
+			get_viewport().set_input_as_handled()
+		KEY_I:
+			speak_hud_info()
+			get_viewport().set_input_as_handled()
 		KEY_C:
 			open_character_sheet()
 			get_viewport().set_input_as_handled()
@@ -282,10 +336,16 @@ func _unhandled_input(event: InputEvent) -> void:
 		KEY_H:
 			open_chart_modal()
 			get_viewport().set_input_as_handled()
+		KEY_U:
+			open_upgrades_modal()
+			get_viewport().set_input_as_handled()
+		KEY_P:
+			open_album_creator()
+			get_viewport().set_input_as_handled()
 		KEY_T:
 			_on_btn_speed_pressed()
 			get_viewport().set_input_as_handled()
-		KEY_P:
+		KEY_SPACE:
 			_on_btn_pause_pressed()
 			get_viewport().set_input_as_handled()
 
@@ -380,6 +440,7 @@ func close_catalog() -> void:
 	if vbox_main:
 		vbox_main.visible = true
 	GameManager.close_menu()
+	select_category_tab(2)
 	btn_catalog.grab_focus()
 	_update_hud_display()
 
@@ -394,6 +455,7 @@ func close_song_creator() -> void:
 	if vbox_main:
 		vbox_main.visible = true
 	GameManager.close_menu()
+	select_category_tab(2)
 	btn_new_song.grab_focus()
 	_update_hud_display()
 
@@ -414,6 +476,7 @@ func close_live_concert() -> void:
 	if vbox_main:
 		vbox_main.visible = true
 	GameManager.close_menu()
+	select_category_tab(3)
 	btn_concert.grab_focus()
 	_update_hud_display()
 
@@ -427,6 +490,7 @@ func close_economy_bank() -> void:
 	if vbox_main:
 		vbox_main.visible = true
 	GameManager.close_menu()
+	select_category_tab(1)
 	btn_economy.grab_focus()
 	_update_hud_display()
 
@@ -442,6 +506,7 @@ func close_character_sheet() -> void:
 	if vbox_main:
 		vbox_main.visible = true
 	GameManager.close_menu()
+	select_category_tab(1)
 	btn_character.grab_focus()
 	_update_hud_display()
 
@@ -457,6 +522,7 @@ func close_band_hub() -> void:
 	if vbox_main:
 		vbox_main.visible = true
 	GameManager.close_menu()
+	select_category_tab(3)
 	btn_band.grab_focus()
 	_update_hud_display()
 
@@ -472,6 +538,7 @@ func close_album_creator() -> void:
 	if vbox_main:
 		vbox_main.visible = true
 	GameManager.close_menu()
+	select_category_tab(2)
 	btn_catalog.grab_focus()
 	_update_hud_display()
 
@@ -493,6 +560,7 @@ func close_industry_hub() -> void:
 	if vbox_main:
 		vbox_main.visible = true
 	GameManager.close_menu()
+	select_category_tab(3)
 	btn_industry.grab_focus()
 	_update_hud_display()
 
@@ -508,6 +576,7 @@ func close_travel_modal() -> void:
 	if vbox_main:
 		vbox_main.visible = true
 	GameManager.close_menu()
+	select_category_tab(1)
 	btn_travel.grab_focus()
 	_update_hud_display()
 
@@ -523,6 +592,7 @@ func close_tour_modal() -> void:
 	if vbox_main:
 		vbox_main.visible = true
 	GameManager.close_menu()
+	select_category_tab(3)
 	btn_tour.grab_focus()
 	_update_hud_display()
 
@@ -538,6 +608,7 @@ func close_festival_modal() -> void:
 	if vbox_main:
 		vbox_main.visible = true
 	GameManager.close_menu()
+	select_category_tab(3)
 	btn_festival.grab_focus()
 	_update_hud_display()
 
@@ -553,6 +624,7 @@ func close_social_modal() -> void:
 	if vbox_main:
 		vbox_main.visible = true
 	GameManager.close_menu()
+	select_category_tab(3)
 	btn_social.grab_focus()
 	_update_hud_display()
 
@@ -568,8 +640,107 @@ func close_chart_modal() -> void:
 	if vbox_main:
 		vbox_main.visible = true
 	GameManager.close_menu()
+	select_category_tab(3)
 	btn_chart.grab_focus()
 	_update_hud_display()
+
+func open_system_menu() -> void:
+	_hide_all_modals()
+	if system_menu_modal:
+		system_menu_modal.open()
+	GameManager.open_menu()
+
+func close_system_menu() -> void:
+	if system_menu_modal:
+		system_menu_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = true
+	GameManager.close_menu()
+	select_category_tab(current_category_tab)
+	_update_hud_display()
+
+func open_upgrades_modal() -> void:
+	_hide_all_modals()
+	if upgrades_modal:
+		upgrades_modal.open()
+	GameManager.open_menu()
+
+func close_upgrades_modal() -> void:
+	if upgrades_modal:
+		upgrades_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = true
+	GameManager.close_menu()
+	select_category_tab(4)
+	btn_upgrades.grab_focus()
+	_update_hud_display()
+
+func select_category_tab(tab_idx: int) -> void:
+	current_category_tab = tab_idx
+	
+	# Categoria 1: Hub Personale (Personaggio, Agenda, Bilancio, Viaggi, Allenamento)
+	var is_personal: bool = (tab_idx == 1)
+	if btn_character: btn_character.visible = is_personal
+	if btn_agenda: btn_agenda.visible = is_personal
+	if btn_economy: btn_economy.visible = is_personal
+	if btn_travel: btn_travel.visible = is_personal
+	if btn_practice: btn_practice.visible = is_personal
+	
+	# Categoria 2: Creazione & Produzione (Catalogo, Nuovo Brano)
+	var is_creation: bool = (tab_idx == 2)
+	if btn_catalog: btn_catalog.visible = is_creation
+	if btn_new_song: btn_new_song.visible = is_creation
+	
+	# Categoria 3: Carriera & Band (Concerti, Band, Tour, Festival, Social, Classifiche, Industria)
+	var is_career: bool = (tab_idx == 3)
+	if btn_concert: btn_concert.visible = is_career
+	if btn_band: btn_band.visible = is_career
+	if btn_tour: btn_tour.visible = is_career
+	if btn_festival: btn_festival.visible = is_career
+	if btn_social: btn_social.visible = is_career
+	if btn_chart: btn_chart.visible = is_career
+	if btn_industry: btn_industry.visible = is_career
+	
+	# Categoria 4: Skills & Upgrade (Miglioramenti Alloggio/Sala/Strumenti)
+	var is_upgrades: bool = (tab_idx == 4)
+	if btn_upgrades: btn_upgrades.visible = is_upgrades
+	
+	# Focus e annuncio vocale per NVDA
+	match tab_idx:
+		1:
+			if btn_tab_personal: btn_tab_personal.grab_focus()
+			AccessibilityManager.speak("Area 1: Hub Personale. Opzioni: Personaggio C, Agenda A, Bilancio B, Viaggi V, Allenamento Rapido 1.")
+		2:
+			if btn_tab_creation: btn_tab_creation.grab_focus()
+			AccessibilityManager.speak("Area 2: Creazione e Produzione. Opzioni: Catalogo M, Nuovo Brano N, Album P.")
+		3:
+			if btn_tab_career: btn_tab_career.grab_focus()
+			AccessibilityManager.speak("Area 3: Carriera e Band. Opzioni: Concerti L, Band G, Tour O, Festival F, Social Y, Classifiche H, Industria K.")
+		4:
+			if btn_tab_upgrades: btn_tab_upgrades.grab_focus()
+			AccessibilityManager.speak("Area 4: Skills e Upgrade. Opzioni: Miglioramenti e Strumentazione U.")
+
+func speak_hud_info() -> void:
+	var info_text: String = ""
+	if label_time:
+		info_text += label_time.text + ". "
+	if label_energy:
+		info_text += label_energy.text + ", "
+	if label_stress:
+		info_text += label_stress.text + ", "
+	if label_morale:
+		info_text += label_morale.text + ", "
+	if label_money:
+		info_text += label_money.text + ". "
+	if GameManager and GameManager.time_system:
+		var speed_str: String = "1x"
+		match GameManager.time_system.time_scale:
+			1.0: speed_str = "1x normale"
+			2.0: speed_str = "2x veloce"
+			3.0: speed_str = "3x rapida"
+		var paused_str: String = "In pausa" if GameManager.time_system.is_paused else "In esecuzione"
+		info_text += "Simulazione %s a velocità %s." % [paused_str, speed_str]
+	AccessibilityManager.speak(info_text)
 
 func _on_dilemma_triggered(dilemma_dict: Dictionary) -> void:
 	_hide_all_modals()
