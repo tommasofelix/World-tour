@@ -51,3 +51,27 @@ enum SkillType {
 	CHARISMA,       # Magnetismo e comunicazione col pubblico
 	BUSINESS        # Senso degli affari e negoziazione contratti
 }
+
+enum SongStatus {
+	DRAFT,          # Bozza in lavorazione (fasi 1-4)
+	PRODUCED,       # Master completato e pronto per il rilascio
+	RELEASED        # Pubblicato sul mercato come Singolo, EP o Album
+}
+
+enum SongStage {
+	CONCEPT,        # Fase 1: Scelta Genere, Tema e Titolo
+	COMPOSITION,    # Fase 2: Riff, Accordi ed Armonia
+	SONGWRITING,    # Fase 3: Testi e Metrica
+	RECORDING,      # Fase 4: Registrazione Strumento / Voce
+	MIXING,         # Fase 5: Missaggio e Mastering
+	COMPLETED       # Lavorazione ultimata
+}
+
+enum SongTrait {
+	NONE,           # Nessun tratto speciale
+	EARWORM,        # Tormentone (+25% ascolti nei primi 30gg)
+	CULT_CLASSIC,   # Pezzo Cult (converte x2 fan ai live)
+	STAGE_BEAST,    # Bomba dal Vivo (+15% Concert Score se in chiusura)
+	AUDIOPHILE_GEM, # Gemma per Audiofili (recensioni eccellenti, req. Prod >= 70)
+	ROUGH_DIAMOND   # Diamante Grezzo (buona composizione ma registrata low-fi)
+}

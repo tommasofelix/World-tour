@@ -102,11 +102,11 @@ Il materiale del Game Design Document originario è stato organizzato e disaccop
 ---
 
 ### FASE 3: Vertical Slice V1.1 — Il Ciclo Creativo (Music Crafting)
-- [ ] `F3.1`: Implementazione completa delle 7 abilità in `SkillSystem` con curve di livello.
-- [ ] `F3.2`: Pipeline a 5 stadi di creazione brani in `MusicSystem` (Genere, Composizione, Testo, Produzione, Qualità).
-- [ ] `F3.3`: Gestione del catalogo brani del giocatore (stati Bozza, Prodotto, Rilasciato).
-- [ ] `F3.4`: Meccanismo di rilascio del primo Singolo musicale.
-- [ ] `F3.5`: Test funzionale del ciclo creativo e verifica feedback vocale per NVDA.
+- [x] `F3.1`: Implementazione completa delle 7 abilità in `SkillSystem` con curve di livello.
+- [x] `F3.2`: Pipeline a 5 stadi di creazione brani in `MusicSystem` (Genere, Composizione, Testo, Produzione, Qualità).
+- [x] `F3.3`: Gestione del catalogo brani del giocatore (stati Bozza, Prodotto, Rilasciato).
+- [x] `F3.4`: Meccanismo di rilascio del primo Singolo musicale.
+- [x] `F3.5`: Test funzionale del ciclo creativo e verifica feedback vocale per NVDA (convalidato con 109 test e collaudo in-game).
 
 ---
 

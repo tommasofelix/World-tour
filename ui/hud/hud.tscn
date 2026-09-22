@@ -1,6 +1,8 @@
 [gd_scene load_steps=2 format=3 uid="uid://c6hudworldtour01"]
 
 [ext_resource type="Script" path="res://ui/hud/hud.gd" id="1_hud"]
+[ext_resource type="PackedScene" path="res://ui/music/song_catalog.tscn" id="2_catalog"]
+[ext_resource type="PackedScene" path="res://ui/music/song_creator.tscn" id="3_creator"]
 
 [node name="HUD" type="Control"]
 layout_mode = 3
@@ -61,12 +63,24 @@ theme_override_constants/separation = 20
 [node name="BtnPractice" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnMainMenu")
-focus_neighbor_right = NodePath("../BtnPause")
+focus_neighbor_right = NodePath("../BtnCatalog")
 text = "1. Allenamento Rapido (10s)"
+
+[node name="BtnCatalog" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnPractice")
+focus_neighbor_right = NodePath("../BtnNewSong")
+text = "Catalogo (M)"
+
+[node name="BtnNewSong" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnCatalog")
+focus_neighbor_right = NodePath("../BtnPause")
+text = "Nuovo Brano (N)"
 
 [node name="BtnPause" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
 layout_mode = 2
-focus_neighbor_left = NodePath("../BtnPractice")
+focus_neighbor_left = NodePath("../BtnNewSong")
 focus_neighbor_right = NodePath("../BtnSave")
 text = "Pausa (Spazio)"
 
@@ -81,3 +95,11 @@ layout_mode = 2
 focus_neighbor_left = NodePath("../BtnSave")
 focus_neighbor_right = NodePath("../BtnPractice")
 text = "Menu Principale"
+
+[node name="SongCatalog" parent="." instance=ExtResource("2_catalog")]
+visible = false
+layout_mode = 1
+
+[node name="SongCreator" parent="." instance=ExtResource("3_creator")]
+visible = false
+layout_mode = 1

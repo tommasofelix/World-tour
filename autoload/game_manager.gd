@@ -11,12 +11,16 @@ var previous_state: int = Enums.GameState.BOOT
 var player_data: PlayerData
 var calendar_data: CalendarData
 var time_system: TimeSystem
+var skill_system: SkillSystem
+var music_system: MusicSystem
 
 func _ready() -> void:
 	# Inizializzazione dati di default
 	player_data = PlayerData.new()
 	calendar_data = CalendarData.new()
 	time_system = TimeSystem.new(calendar_data)
+	skill_system = SkillSystem.new(player_data)
+	music_system = MusicSystem.new(player_data, calendar_data, skill_system)
 
 func change_state(new_state: int) -> bool:
 	if current_state == new_state:
@@ -52,5 +56,7 @@ func start_new_game(p_name: String = "Alex", p_instrument: String = "Chitarra El
 	
 	calendar_data = CalendarData.new()
 	time_system = TimeSystem.new(calendar_data)
+	skill_system = SkillSystem.new(player_data)
+	music_system = MusicSystem.new(player_data, calendar_data, skill_system)
 	
 	change_state(Enums.GameState.GAMEPLAY_IDLE)

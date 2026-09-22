@@ -10,9 +10,14 @@ extends Control
 @onready var label_money: Label = $VBoxMain/PanelTop/HBoxTop/LabelMoney
 @onready var label_status: Label = $VBoxMain/PanelCenter/LabelStatus
 @onready var btn_practice: Button = $VBoxMain/PanelCenter/HBoxActions/BtnPractice
+@onready var btn_catalog: Button = $VBoxMain/PanelCenter/HBoxActions/BtnCatalog
+@onready var btn_new_song: Button = $VBoxMain/PanelCenter/HBoxActions/BtnNewSong
 @onready var btn_pause: Button = $VBoxMain/PanelCenter/HBoxActions/BtnPause
 @onready var btn_save: Button = $VBoxMain/PanelCenter/HBoxActions/BtnSave
 @onready var btn_main_menu: Button = $VBoxMain/PanelCenter/HBoxActions/BtnMainMenu
+
+@onready var song_catalog_modal: Control = $SongCatalog
+@onready var song_creator_modal: Control = $SongCreator
 
 var action_system: ActionSystem
 var quick_practice_action: ActionData
@@ -39,9 +44,17 @@ func _ready() -> void:
 	
 	# Connessione eventi UI
 	btn_practice.pressed.connect(_on_btn_practice_pressed)
+	btn_catalog.pressed.connect(open_catalog)
+	btn_new_song.pressed.connect(open_song_creator)
 	btn_pause.pressed.connect(_on_btn_pause_pressed)
 	btn_save.pressed.connect(_on_btn_save_pressed)
 	btn_main_menu.pressed.connect(_on_btn_main_menu_pressed)
+	
+	# Connessione modali musicali
+	song_catalog_modal.closed.connect(close_catalog)
+	song_catalog_modal.new_song_requested.connect(_on_catalog_new_song_requested)
+	song_creator_modal.creation_finished.connect(_on_song_created_or_finished)
+	song_creator_modal.creation_canceled.connect(close_song_creator)
 	
 	# Connessione EventBus
 	EventBus.time_ticked.connect(_on_time_ticked)
@@ -50,6 +63,8 @@ func _ready() -> void:
 	EventBus.action_completed.connect(_on_action_completed)
 	EventBus.money_changed.connect(_on_money_changed)
 	EventBus.language_changed.connect(_on_language_changed)
+	EventBus.song_catalog_requested.connect(open_catalog)
+	EventBus.song_creator_requested.connect(open_song_creator)
 	
 	# Configurazione semantica AccessKit e testi iniziali
 	_refresh_ui_text()
@@ -80,6 +95,8 @@ func _get_localized_period(period: int) -> String:
 func _refresh_ui_text() -> void:
 	# Testi pulsanti
 	btn_practice.text = tr("HUD_BTN_PRACTICE")
+	btn_catalog.text = tr("HUD_BTN_CATALOG")
+	btn_new_song.text = tr("HUD_BTN_NEW_SONG")
 	var is_paused: bool = GameManager.time_system.is_paused if GameManager.time_system else false
 	btn_pause.text = tr("HUD_BTN_RESUME") if is_paused else tr("HUD_BTN_PAUSE")
 	btn_save.text = tr("HUD_BTN_SAVE")
@@ -87,12 +104,46 @@ func _refresh_ui_text() -> void:
 	
 	# Hook AccessKit semantici per NVDA
 	AccessibilityManager.hook_control_accessibility(btn_practice, tr("HUD_BTN_PRACTICE_ACC_NAME"), tr("HUD_BTN_PRACTICE_ACC_DESC"))
+	AccessibilityManager.hook_control_accessibility(btn_catalog, tr("HUD_BTN_CATALOG_ACC_NAME"), tr("HUD_BTN_CATALOG_ACC_DESC"))
+	AccessibilityManager.hook_control_accessibility(btn_new_song, tr("HUD_BTN_NEW_SONG_ACC_NAME"), tr("HUD_BTN_NEW_SONG_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_pause, tr("HUD_BTN_PAUSE_ACC_NAME"), tr("HUD_BTN_PAUSE_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_save, tr("HUD_BTN_SAVE_ACC_NAME"), tr("HUD_BTN_SAVE_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_main_menu, tr("HUD_BTN_MAIN_MENU_ACC_NAME"), tr("HUD_BTN_MAIN_MENU_ACC_DESC"))
 	
 	if not action_system or not action_system.is_running:
 		label_status.text = tr("HUD_STATUS_IDLE")
+
+func open_catalog() -> void:
+	if song_creator_modal.visible:
+		close_song_creator()
+	song_catalog_modal.visible = true
+	song_catalog_modal.refresh_catalog()
+	GameManager.open_menu()
+
+func close_catalog() -> void:
+	song_catalog_modal.visible = false
+	GameManager.close_menu()
+	btn_catalog.grab_focus()
+
+func open_song_creator() -> void:
+	if song_catalog_modal.visible:
+		close_catalog()
+	song_creator_modal.visible = true
+	song_creator_modal.start_new_song()
+	GameManager.open_menu()
+
+func close_song_creator() -> void:
+	song_creator_modal.visible = false
+	GameManager.close_menu()
+	btn_new_song.grab_focus()
+
+func _on_catalog_new_song_requested() -> void:
+	close_catalog()
+	open_song_creator()
+
+func _on_song_created_or_finished(_song: SongData) -> void:
+	close_song_creator()
+	open_catalog()
 
 func _update_hud_display() -> void:
 	if GameManager.calendar_data:

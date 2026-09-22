@@ -108,6 +108,14 @@ func _unhandled_input(event: InputEvent) -> void:
 				var p: PlayerData = GameManager.player_data
 				announce("Status: Livello carriera %d, Fan stabili %d, Reputazione %.1f." % [p.career_tier, p.fans, p.reputation], true)
 				get_viewport().set_input_as_handled()
+				
+		KEY_M:
+			EventBus.song_catalog_requested.emit()
+			get_viewport().set_input_as_handled()
+			
+		KEY_N:
+			EventBus.song_creator_requested.emit()
+			get_viewport().set_input_as_handled()
 
 func hook_control_accessibility(node: Control, control_name: String, control_description: String = "") -> void:
 	if not node:

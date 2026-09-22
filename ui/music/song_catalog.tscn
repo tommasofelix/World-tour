@@ -1,0 +1,92 @@
+[gd_scene load_steps=2 format=3 uid="uid://dmsongcat01"]
+
+[ext_resource type="Script" path="res://ui/music/song_catalog.gd" id="1_catalog"]
+
+[node name="SongCatalog" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_catalog")
+
+[node name="PanelMain" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 60.0
+offset_top = 40.0
+offset_right = -60.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="PanelMain"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Header" type="HBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+
+[node name="LabelTitle" type="Label" parent="PanelMain/VBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 28
+text = "Catalogo Discografico"
+
+[node name="HBoxFilters" type="HBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="BtnFilterAll" type="Button" parent="PanelMain/VBox/HBoxFilters"]
+layout_mode = 2
+text = "Tutti"
+
+[node name="BtnFilterDrafts" type="Button" parent="PanelMain/VBox/HBoxFilters"]
+layout_mode = 2
+text = "Bozze"
+
+[node name="BtnFilterProduced" type="Button" parent="PanelMain/VBox/HBoxFilters"]
+layout_mode = 2
+text = "Pronti"
+
+[node name="BtnFilterReleased" type="Button" parent="PanelMain/VBox/HBoxFilters"]
+layout_mode = 2
+text = "Rilasciati"
+
+[node name="HSeparator1" type="HSeparator" parent="PanelMain/VBox"]
+layout_mode = 2
+
+[node name="ScrollSongs" type="ScrollContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxSongs" type="VBoxContainer" parent="PanelMain/VBox/ScrollSongs"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="LabelEmpty" type="Label" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Nessun brano nel catalogo. Premi 'N' per creare una nuova canzone!"
+horizontal_alignment = 1
+
+[node name="HSeparator2" type="HSeparator" parent="PanelMain/VBox"]
+layout_mode = 2
+
+[node name="HBoxBottom" type="HBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="BtnNewSong" type="Button" parent="PanelMain/VBox/HBoxBottom"]
+custom_minimum_size = Vector2(220, 45)
+layout_mode = 2
+text = "Nuova Canzone (N)"
+
+[node name="BtnClose" type="Button" parent="PanelMain/VBox/HBoxBottom"]
+custom_minimum_size = Vector2(160, 45)
+layout_mode = 2
+text = "Chiudi (Esc)"

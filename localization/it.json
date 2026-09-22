@@ -45,6 +45,14 @@
 	"HUD_BTN_MAIN_MENU_ACC_NAME": "Torna al Menu Principale",
 	"HUD_BTN_MAIN_MENU_ACC_DESC": "Salva lo stato attuale ed esce alla schermata del menu principale.",
 
+	"HUD_BTN_CATALOG": "Catalogo (M)",
+	"HUD_BTN_CATALOG_ACC_NAME": "Apri Catalogo Discografico",
+	"HUD_BTN_CATALOG_ACC_DESC": "Tasto rapido M. Visualizza tutti i tuoi brani, le bozze e i singoli.",
+
+	"HUD_BTN_NEW_SONG": "Nuovo Brano (N)",
+	"HUD_BTN_NEW_SONG_ACC_NAME": "Crea Nuovo Brano Musicale",
+	"HUD_BTN_NEW_SONG_ACC_DESC": "Tasto rapido N. Apre lo studio di composizione per creare una nuova canzone.",
+
 	"PERIOD_MORNING": "Mattina",
 	"PERIOD_AFTERNOON": "Pomeriggio",
 	"PERIOD_EVENING": "Sera",
@@ -58,5 +66,63 @@
 	"MSG_SAVE_ERROR_USERDIR": "Errore di accesso alla cartella utente.",
 	"MSG_SAVE_ERROR_RENAME": "Errore nella ridenominazione atomica del salvataggio.",
 	"MSG_LOAD_SUCCESS": "Partita caricata con successo.",
-	"MSG_LOAD_NOT_FOUND": "Nessun file di salvataggio trovato."
+	"MSG_LOAD_NOT_FOUND": "Nessun file di salvataggio trovato.",
+
+	"GENRE_ROCK": "Rock",
+	"GENRE_POP": "Pop",
+	"GENRE_METAL": "Metal",
+	"GENRE_HIPHOP": "Hip-Hop",
+	"GENRE_ELECTRONIC": "Electronic",
+	"GENRE_INDIE": "Indie",
+
+	"THEME_LOVE": "Amore",
+	"THEME_REBELLION": "Ribellione",
+	"THEME_MELANCHOLY": "Melancolia",
+	"THEME_SUCCESS": "Successo",
+	"THEME_NIGHT": "Notte",
+
+	"STATUS_DRAFT": "Bozza in corso",
+	"STATUS_PRODUCED": "Master Prodotto",
+	"STATUS_RELEASED": "Singolo Rilasciato",
+
+	"TRAIT_NONE": "Standard",
+	"TRAIT_EARWORM": "Tormentone (+25% ascolti)",
+	"TRAIT_CULT_CLASSIC": "Pezzo Cult (x2 fan ai live)",
+	"TRAIT_STAGE_BEAST": "Bomba dal Vivo (+15% score)",
+	"TRAIT_AUDIOPHILE_GEM": "Gemma per Audiofili",
+	"TRAIT_ROUGH_DIAMOND": "Diamante Grezzo",
+
+	"SKILL_INSTRUMENT": "Strumento",
+	"SKILL_COMPOSITION": "Composizione",
+	"SKILL_SONGWRITING": "Scrittura Testi",
+	"SKILL_PRODUCTION": "Produzione",
+	"SKILL_PERFORMANCE": "Performance dal Vivo",
+	"SKILL_CHARISMA": "Carisma",
+	"SKILL_BUSINESS": "Affari & Mercato",
+
+	"CATALOG_TITLE": "Catalogo Discografico",
+	"CATALOG_EMPTY": "Nessun brano nel catalogo. Premi 'N' per creare una nuova canzone!",
+	"CATALOG_BTN_NEW": "Nuova Canzone (N)",
+	"CATALOG_BTN_RELEASE": "Rilascia come Singolo",
+	"CATALOG_BTN_CLOSE": "Chiudi (Esc)",
+	"CATALOG_FILTER_ALL": "Tutti",
+	"CATALOG_FILTER_DRAFTS": "Bozze",
+	"CATALOG_FILTER_PRODUCED": "Pronti",
+	"CATALOG_FILTER_RELEASED": "Rilasciati",
+
+	"CREATOR_TITLE": "Studio Musicale — Nuova Canzone",
+	"CREATOR_STEP1": "Fase 1: Titolo e Genere",
+	"CREATOR_STEP2": "Fase 2: Composizione Riff e Accordi",
+	"CREATOR_STEP3": "Fase 3: Scrittura Testo",
+	"CREATOR_STEP4": "Fase 4: Registrazione Strumenti",
+	"CREATOR_STEP5": "Fase 5: Missaggio e Mastering",
+	"CREATOR_STUDIO_HOME": "Home Studio (Gratuito, cap qualità 60)",
+	"CREATOR_STUDIO_PRO": "Studio Professionale (50 €, bonus +15)",
+	"CREATOR_BTN_NEXT": "Procedi allo Step Successivo",
+	"CREATOR_BTN_FINISH": "Completa e Salva Master",
+	"CREATOR_BTN_CANCEL": "Annulla e Torna Indietro",
+
+	"MSG_LEVEL_UP": "Fantastico! L'abilità %s è salita al livello %d!",
+	"MSG_SONG_RELEASED": "Il singolo '%s' è stato pubblicato sul mercato! Qualità finale: %.1f / 100.",
+	"MSG_SONG_SAVED_DRAFT": "Bozza '%s' salvata nel catalogo."
 }

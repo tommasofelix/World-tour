@@ -19,8 +19,13 @@ signal action_canceled(action_id: String)
 
 # --- Segnali Musicali & Spettacoli ---
 signal song_created(song_data: Dictionary)
+signal song_stage_completed(song_id: String, stage: int)
+signal song_released(song_data: Dictionary)
+signal skill_leveled_up(skill_key: String, new_level: int)
 signal concert_resolved(concert_result: Dictionary)
 signal stage_event_triggered(event_data: Dictionary)
+signal song_catalog_requested()
+signal song_creator_requested()
 
 # --- Segnali Economia & Carriera ---
 signal money_changed(new_balance: float, delta: float, reason: String)

@@ -45,6 +45,14 @@
 	"HUD_BTN_MAIN_MENU_ACC_NAME": "Return to Main Menu",
 	"HUD_BTN_MAIN_MENU_ACC_DESC": "Saves current state and exits to the main menu screen.",
 
+	"HUD_BTN_CATALOG": "Catalog (M)",
+	"HUD_BTN_CATALOG_ACC_NAME": "Open Discography Catalog",
+	"HUD_BTN_CATALOG_ACC_DESC": "Shortcut M. View all your songs, drafts and singles.",
+
+	"HUD_BTN_NEW_SONG": "New Song (N)",
+	"HUD_BTN_NEW_SONG_ACC_NAME": "Create New Musical Track",
+	"HUD_BTN_NEW_SONG_ACC_DESC": "Shortcut N. Open the creation studio to craft a new song.",
+
 	"PERIOD_MORNING": "Morning",
 	"PERIOD_AFTERNOON": "Afternoon",
 	"PERIOD_EVENING": "Evening",
@@ -58,5 +66,63 @@
 	"MSG_SAVE_ERROR_USERDIR": "Error accessing user directory.",
 	"MSG_SAVE_ERROR_RENAME": "Error atomically renaming save file.",
 	"MSG_LOAD_SUCCESS": "Game loaded successfully.",
-	"MSG_LOAD_NOT_FOUND": "No save file found."
+	"MSG_LOAD_NOT_FOUND": "No save file found.",
+
+	"GENRE_ROCK": "Rock",
+	"GENRE_POP": "Pop",
+	"GENRE_METAL": "Metal",
+	"GENRE_HIPHOP": "Hip-Hop",
+	"GENRE_ELECTRONIC": "Electronic",
+	"GENRE_INDIE": "Indie",
+
+	"THEME_LOVE": "Love",
+	"THEME_REBELLION": "Rebellion",
+	"THEME_MELANCHOLY": "Melancholy",
+	"THEME_SUCCESS": "Success",
+	"THEME_NIGHT": "Night",
+
+	"STATUS_DRAFT": "Draft in progress",
+	"STATUS_PRODUCED": "Master Produced",
+	"STATUS_RELEASED": "Released Single",
+
+	"TRAIT_NONE": "Standard",
+	"TRAIT_EARWORM": "Earworm (+25% streams)",
+	"TRAIT_CULT_CLASSIC": "Cult Classic (x2 fans at concerts)",
+	"TRAIT_STAGE_BEAST": "Stage Beast (+15% score)",
+	"TRAIT_AUDIOPHILE_GEM": "Audiophile Gem",
+	"TRAIT_ROUGH_DIAMOND": "Rough Diamond",
+
+	"SKILL_INSTRUMENT": "Instrument",
+	"SKILL_COMPOSITION": "Composition",
+	"SKILL_SONGWRITING": "Songwriting",
+	"SKILL_PRODUCTION": "Production",
+	"SKILL_PERFORMANCE": "Live Performance",
+	"SKILL_CHARISMA": "Charisma",
+	"SKILL_BUSINESS": "Business & Market",
+
+	"CATALOG_TITLE": "Discography Catalog",
+	"CATALOG_EMPTY": "No tracks in catalog. Press 'N' to create a new song!",
+	"CATALOG_BTN_NEW": "New Song (N)",
+	"CATALOG_BTN_RELEASE": "Release as Single",
+	"CATALOG_BTN_CLOSE": "Close (Esc)",
+	"CATALOG_FILTER_ALL": "All",
+	"CATALOG_FILTER_DRAFTS": "Drafts",
+	"CATALOG_FILTER_PRODUCED": "Ready",
+	"CATALOG_FILTER_RELEASED": "Released",
+
+	"CREATOR_TITLE": "Music Studio — New Track",
+	"CREATOR_STEP1": "Stage 1: Title & Genre",
+	"CREATOR_STEP2": "Stage 2: Riff & Chord Composition",
+	"CREATOR_STEP3": "Stage 3: Songwriting",
+	"CREATOR_STEP4": "Stage 4: Instrument Tracking",
+	"CREATOR_STEP5": "Stage 5: Mixing & Mastering",
+	"CREATOR_STUDIO_HOME": "Home Studio (Free, max quality 60)",
+	"CREATOR_STUDIO_PRO": "Professional Studio (50 €, +15 bonus)",
+	"CREATOR_BTN_NEXT": "Proceed to Next Stage",
+	"CREATOR_BTN_FINISH": "Complete & Save Master",
+	"CREATOR_BTN_CANCEL": "Cancel & Return",
+
+	"MSG_LEVEL_UP": "Fantastic! %s reached level %d!",
+	"MSG_SONG_RELEASED": "Single '%s' has been released! Final quality: %.1f / 100.",
+	"MSG_SONG_SAVED_DRAFT": "Draft '%s' saved in catalog."
 }

@@ -21,16 +21,58 @@ var fans: int = 0
 var reputation: float = 5.0
 var popularity: float = 1.0
 
-# Dizionario delle 7 abilità con livello ed esperienza accumulata
 var skills: Dictionary = {
 	"instrument": {"level": 10, "xp": 0.0},
 	"composition": {"level": 10, "xp": 0.0},
 	"songwriting": {"level": 10, "xp": 0.0},
+	"lyrics": {"level": 10, "xp": 0.0},
+	"vocals": {"level": 10, "xp": 0.0},
+	"guitar": {"level": 10, "xp": 0.0},
+	"bass": {"level": 10, "xp": 0.0},
+	"drums": {"level": 10, "xp": 0.0},
 	"production": {"level": 10, "xp": 0.0},
 	"performance": {"level": 10, "xp": 0.0},
 	"charisma": {"level": 10, "xp": 0.0},
 	"business": {"level": 10, "xp": 0.0}
 }
+
+# Catalogo brani del musicista
+var songs: Array[SongData] = []
+
+func add_song(song: SongData) -> void:
+	# Se esiste già un brano con lo stesso id, lo aggiorna
+	for i in range(songs.size()):
+		if songs[i].id == song.id:
+			songs[i] = song
+			return
+	songs.append(song)
+
+func get_song_by_id(song_id: String) -> SongData:
+	for s in songs:
+		if s.id == song_id:
+			return s
+	return null
+
+func get_drafts() -> Array[SongData]:
+	var result: Array[SongData] = []
+	for s in songs:
+		if s.status == Enums.SongStatus.DRAFT:
+			result.append(s)
+	return result
+
+func get_produced_songs() -> Array[SongData]:
+	var result: Array[SongData] = []
+	for s in songs:
+		if s.status == Enums.SongStatus.PRODUCED:
+			result.append(s)
+	return result
+
+func get_released_singles() -> Array[SongData]:
+	var result: Array[SongData] = []
+	for s in songs:
+		if s.status == Enums.SongStatus.RELEASED:
+			result.append(s)
+	return result
 
 func get_skill_level(skill_key: String) -> int:
 	if skills.has(skill_key):
@@ -75,6 +117,10 @@ func modify_money(delta: float) -> void:
 	money += delta
 
 func to_dict() -> Dictionary:
+	var serialized_songs: Array = []
+	for s in songs:
+		serialized_songs.append(s.to_dict())
+		
 	return {
 		"player_name": player_name,
 		"primary_instrument": primary_instrument,
@@ -88,7 +134,8 @@ func to_dict() -> Dictionary:
 		"fans": fans,
 		"reputation": reputation,
 		"popularity": popularity,
-		"skills": skills.duplicate(true)
+		"skills": skills.duplicate(true),
+		"songs": serialized_songs
 	}
 
 func from_dict(dict: Dictionary) -> void:
@@ -106,3 +153,11 @@ func from_dict(dict: Dictionary) -> void:
 	popularity = float(dict.get("popularity", popularity))
 	if dict.has("skills") and dict["skills"] is Dictionary:
 		skills = dict["skills"].duplicate(true)
+		
+	songs.clear()
+	if dict.has("songs") and dict["songs"] is Array:
+		for s_dict in dict["songs"]:
+			if s_dict is Dictionary:
+				var s := SongData.new()
+				s.from_dict(s_dict)
+				songs.append(s)

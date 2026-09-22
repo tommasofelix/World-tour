@@ -4,6 +4,19 @@ Le modifiche rilevanti sono registrate in ordine cronologico inverso. Una voce d
 
 ## Non rilasciato
 
+### 2026-09-22 — Chiusura Fase 3: Vertical Slice V1.1 — Il Ciclo Creativo (Music Crafting)
+- Creato il modello runtime del brano musicale [`data/models/song_data.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/data/models/song_data.gd) con le 5 fasi di produzione, calcolo del `quality_score`, tratti emergenti e persistenza atomica.
+- Implementato [`systems/skill_system.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/systems/skill_system.gd) con gestione delle 7 abilità artistiche, soglie di crescita esponenziali basate su `Formulas.calculate_xp_for_level`, Level Cap a 99 ed emissione `EventBus.skill_leveled_up`.
+- Realizzato il motore di produzione discografica [`systems/music_system.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/systems/music_system.gd) (Concept, Composizione, Testi, Registrazione Home vs Pro Studio a 50€, Missaggio e Mastering con Quality Score ed estrazione tratti speciali, rilascio singolo con fan, reputazione e royalty).
+- Esteso [`data/models/player_data.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/data/models/player_data.gd) con il catalogo brani `songs: Array[SongData]` e metodi di filtraggio (`get_drafts`, `get_produced_songs`, `get_released_singles`).
+- Aggiornato [`core/enums.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/core/enums.gd) con `SongStatus`, `SongStage` e `SongTrait`.
+- Create le interfacce utente simmetriche ed accessibili per la musica: Catalogo Brani (`ui/music/song_catalog.tscn`) e Studio di Creazione Guidata (`ui/music/song_creator.tscn`) con scorciatoie dedicate `M` ed `N`.
+- Aggiornato l'HUD (`ui/hud/hud.tscn`, `ui/hud/hud.gd`) con pulsanti integrati e focus loop circolare continuo.
+- Estesi i dizionari multilingua (`localization/it.json` e `localization/en.json`) con tutti i termini musicali, generi, temi e descrizioni semantiche AccessKit.
+- Risolto e validato il bug `RRU-01` (`BUG-001`) relativo all'API di override del tema in Godot 4.
+- Implementata la suite di test unitari `tests/test_music_system.gd` portando il totale dei test automatici superati a 109 asserzioni su `test_music_system` e 248+ test complessivi nel progetto (100% passati).
+- Eseguito con esito positivo il collaudo pratico in-game congiunto da parte di Luca (NVDA e tastiera) e Tom a monitor.
+
 ### 2026-09-22 — Chiusura Fase 2.5: Sistema di Localizzazione (i18n) & Main Menu Simmetrico
 - Creati i dizionari di localizzazione bilingue (`localization/it.json` e `localization/en.json`) con 49 chiavi speculari per menu, impostazioni, HUD e annunci.
 - Implementato l'Autoload `LocalizationManager` con rilevamento lingua OS (`OS.get_locale_language()`), registrazione in `TranslationServer` e segnale `language_changed`.

@@ -26,7 +26,7 @@ L’integrazione riguarda esclusivamente governance, accessibilità e tracciabil
   - Validazione sintattica: `powershell -File tools/check.ps1`
   - Test unitari headless: `powershell -File tools/test.ps1`
   - Esecuzione gioco: `powershell -File tools/run.ps1`
-- **Fase attiva**: Fase 2 e Fase 2.5 completate (Vertical Slice V1.0 e Localizzazione/Main Menu convalidati e collaudati con successo); in preparazione Fase 3 (Vertical Slice V1.1 — Il Ciclo Creativo / Music Crafting).
+- **Fase attiva**: Fase 1, Fase 2, Fase 2.5 e Fase 3 completate (Vertical Slice V1.1 — Il Ciclo Creativo / Music Crafting convalidato e collaudato con successo); in preparazione Fase 4 (Vertical Slice V1.2 — Il Palco dal Vivo / Live Performance).
 
 ## Riservatezza
 
