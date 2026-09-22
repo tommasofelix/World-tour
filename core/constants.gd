@@ -5,11 +5,20 @@ extends RefCounted
 ## Parametri e Costanti Centralizzate di Bilanciamento per World-tour
 
 # --- Orologio e Tempo ---
-const DAY_DURATION_SECONDS: float = 600.0
+const DAY_DURATION_5_MIN: float = 300.0
+const DAY_DURATION_10_MIN: float = 600.0
+const DAY_DURATION_15_MIN: float = 900.0
+const DAY_DURATION_20_MIN: float = 1200.0
+const DEFAULT_DAY_DURATION_SECONDS: float = 300.0
+const DAY_DURATION_SECONDS: float = 300.0
+const SUPPORTED_DAY_DURATIONS: Array[float] = [300.0, 600.0, 900.0, 1200.0]
+
 const OVERTIME_DURATION_SECONDS: float = 120.0
 const SPEED_NORMAL: float = 1.0
 const SPEED_FAST: float = 2.0
+const SPEED_3X: float = 3.0
 const SPEED_ULTRA: float = 5.0
+const SUPPORTED_SPEEDS: Array[float] = [1.0, 2.0, 3.0]
 
 # --- Fisiologia e Risorse Vitali ---
 const MAX_ENERGY: int = 100

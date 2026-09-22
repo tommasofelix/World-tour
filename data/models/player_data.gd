@@ -81,6 +81,87 @@ func get_playable_songs() -> Array[SongData]:
 			result.append(s)
 	return result
 
+func populate_starter_test_songs() -> void:
+	songs.clear()
+	
+	# 2 Bozze (DRAFT)
+	var d1 := SongData.new("song_draft_01", "Riff della Notte", Enums.MusicalGenre.ROCK, "night")
+	d1.status = Enums.SongStatus.DRAFT
+	d1.stage = Enums.SongStage.CONCEPT
+	songs.append(d1)
+	
+	var d2 := SongData.new("song_draft_02", "Pensieri Sparsi", Enums.MusicalGenre.INDIE, "melancholy")
+	d2.status = Enums.SongStatus.DRAFT
+	d2.stage = Enums.SongStage.SONGWRITING
+	d2.comp_skill_used = 35.0
+	d2.quality_score = 30.0
+	songs.append(d2)
+	
+	# 5 Brani Pronti per il Palco (PRODUCED)
+	var p1 := SongData.new("song_prod_01", "Fuoco nel Garage", Enums.MusicalGenre.ROCK, "rebellion")
+	p1.status = Enums.SongStatus.PRODUCED
+	p1.stage = Enums.SongStage.COMPLETED
+	p1.quality_score = 74.0
+	p1.special_trait = Enums.SongTrait.STAGE_BEAST
+	songs.append(p1)
+	
+	var p2 := SongData.new("song_prod_02", "Ballata Metropolitana", Enums.MusicalGenre.POP, "love")
+	p2.status = Enums.SongStatus.PRODUCED
+	p2.stage = Enums.SongStage.COMPLETED
+	p2.quality_score = 68.0
+	p2.special_trait = Enums.SongTrait.EARWORM
+	songs.append(p2)
+	
+	var p3 := SongData.new("song_prod_03", "Insonnia Elettrica", Enums.MusicalGenre.ELECTRONIC, "night")
+	p3.status = Enums.SongStatus.PRODUCED
+	p3.stage = Enums.SongStage.COMPLETED
+	p3.quality_score = 65.0
+	songs.append(p3)
+	
+	var p4 := SongData.new("song_prod_04", "Rabbia e Cemento", Enums.MusicalGenre.METAL, "rebellion")
+	p4.status = Enums.SongStatus.PRODUCED
+	p4.stage = Enums.SongStage.COMPLETED
+	p4.quality_score = 78.0
+	p4.special_trait = Enums.SongTrait.STAGE_BEAST
+	songs.append(p4)
+	
+	var p5 := SongData.new("song_prod_05", "Aria Sottile", Enums.MusicalGenre.INDIE, "success")
+	p5.status = Enums.SongStatus.PRODUCED
+	p5.stage = Enums.SongStage.COMPLETED
+	p5.quality_score = 62.0
+	p5.special_trait = Enums.SongTrait.CULT_CLASSIC
+	songs.append(p5)
+	
+	# 3 Singoli Già Pubblicati (RELEASED)
+	var r1 := SongData.new("song_rel_01", "Prima Scintilla", Enums.MusicalGenre.ROCK, "rebellion")
+	r1.status = Enums.SongStatus.RELEASED
+	r1.stage = Enums.SongStage.COMPLETED
+	r1.quality_score = 72.0
+	r1.special_trait = Enums.SongTrait.CULT_CLASSIC
+	r1.release_day = 1
+	r1.plays = 450
+	r1.revenue = 135.0
+	songs.append(r1)
+	
+	var r2 := SongData.new("song_rel_02", "Strade Deserte", Enums.MusicalGenre.POP, "melancholy")
+	r2.status = Enums.SongStatus.RELEASED
+	r2.stage = Enums.SongStage.COMPLETED
+	r2.quality_score = 64.0
+	r2.release_day = 1
+	r2.plays = 280
+	r2.revenue = 84.0
+	songs.append(r2)
+	
+	var r3 := SongData.new("song_rel_03", "Urlo dal Sottosuolo", Enums.MusicalGenre.METAL, "night")
+	r3.status = Enums.SongStatus.RELEASED
+	r3.stage = Enums.SongStage.COMPLETED
+	r3.quality_score = 80.0
+	r3.special_trait = Enums.SongTrait.STAGE_BEAST
+	r3.release_day = 2
+	r3.plays = 620
+	r3.revenue = 190.0
+	songs.append(r3)
+
 
 func get_skill_level(skill_key: String) -> int:
 	if skills.has(skill_key):

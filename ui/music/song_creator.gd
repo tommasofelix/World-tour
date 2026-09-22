@@ -1,50 +1,46 @@
 # res://ui/music/song_creator.gd
 extends Control
 
-## Controller dello Studio Musicale e Creazione Guidata Brano di World-tour
+## Controller dello Studio Musicale e Creazione Brano di World-tour
+## Scheda Unica Integrata: tutti i parametri artistici e di produzione in una sola interfaccia.
 ## Conforme alla Simmetria Universale (Luca con NVDA/tastiera e Holy Diver a monitor).
 
 signal creation_finished(song: SongData)
 signal creation_canceled()
 
-@onready var label_title: Label = $PanelMain/VBox/LabelTitle
-@onready var label_step_title: Label = $PanelMain/VBox/LabelStepTitle
-@onready var label_step_info: Label = $PanelMain/VBox/LabelStepInfo
+@onready var label_title: Label = $PanelMain/VBox/Header/LabelTitle
+@onready var label_step_title: Label = $PanelMain/VBox/Header/LabelStepTitle
+@onready var label_step_info: Label = $PanelMain/VBox/Header/LabelStepInfo
 
-# Contenitori dei singoli step
-@onready var step1_container: VBoxContainer = $PanelMain/VBox/Step1Container
-@onready var edit_title: LineEdit = $PanelMain/VBox/Step1Container/HBoxTitle/EditTitle
-@onready var opt_genre: OptionButton = $PanelMain/VBox/Step1Container/HBoxGenre/OptGenre
-@onready var opt_theme: OptionButton = $PanelMain/VBox/Step1Container/HBoxTheme/OptTheme
+# Campi di input artistici e di produzione
+@onready var edit_title: LineEdit = $PanelMain/VBox/VBoxForm/HBoxTitle/EditTitle
+@onready var opt_genre: OptionButton = $PanelMain/VBox/VBoxForm/HBoxGenreTheme/OptGenre
+@onready var opt_theme: OptionButton = $PanelMain/VBox/VBoxForm/HBoxGenreTheme/OptTheme
+@onready var opt_studio: OptionButton = $PanelMain/VBox/VBoxForm/HBoxStudio/OptStudio
+@onready var chk_burst: CheckBox = $PanelMain/VBox/VBoxForm/HBoxStudio/ChkBurst
 
-@onready var step2_container: VBoxContainer = $PanelMain/VBox/Step2Container
-@onready var chk_burst: CheckBox = $PanelMain/VBox/Step2Container/ChkBurst
-
-@onready var step3_container: VBoxContainer = $PanelMain/VBox/Step3Container
-
-@onready var step4_container: VBoxContainer = $PanelMain/VBox/Step4Container
-@onready var opt_studio: OptionButton = $PanelMain/VBox/Step4Container/HBoxStudio/OptStudio
-
-@onready var step5_container: VBoxContainer = $PanelMain/VBox/Step5Container
-
-@onready var step6_container: VBoxContainer = $PanelMain/VBox/Step6Container
-@onready var label_result: Label = $PanelMain/VBox/Step6Container/LabelResult
-@onready var btn_release_now: Button = $PanelMain/VBox/Step6Container/HBoxResult/BtnReleaseNow
-@onready var btn_done: Button = $PanelMain/VBox/Step6Container/HBoxResult/BtnDone
-
-# Bottoni di navigazione in basso
+# Stato e bottoni di avanzamento
+@onready var label_stage_status: Label = $PanelMain/VBox/VBoxStatus/LabelStageStatus
+@onready var btn_produce_all: Button = $PanelMain/VBox/HBoxBottom/BtnProduceAll
 @onready var btn_action: Button = $PanelMain/VBox/HBoxBottom/BtnAction
 @onready var btn_save_draft: Button = $PanelMain/VBox/HBoxBottom/BtnSaveDraft
 @onready var btn_edit_info: Button = $PanelMain/VBox/HBoxBottom/BtnEditInfo
 @onready var btn_cancel: Button = $PanelMain/VBox/HBoxBottom/BtnCancel
 
-var current_song: SongData
+# Sezione risultato finale
+@onready var panel_result: PanelContainer = $PanelMain/VBox/PanelResult
+@onready var label_result: Label = $PanelMain/VBox/PanelResult/VBoxResult/LabelResult
+@onready var btn_release_now: Button = $PanelMain/VBox/PanelResult/VBoxResult/HBoxResult/BtnReleaseNow
+@onready var btn_done: Button = $PanelMain/VBox/PanelResult/VBoxResult/HBoxResult/BtnDone
+
+var current_song: SongData = null
 var current_step: int = 1
 var resume_step: int = 1
 
 func _ready() -> void:
 	_setup_options()
 	
+	btn_produce_all.pressed.connect(_on_btn_produce_all_pressed)
 	btn_action.pressed.connect(_on_btn_action_pressed)
 	btn_save_draft.pressed.connect(_on_btn_save_draft_pressed)
 	btn_edit_info.pressed.connect(_on_btn_edit_info_pressed)
@@ -58,7 +54,7 @@ func _ready() -> void:
 	start_new_song()
 
 func _setup_options() -> void:
-	# Generi
+	# Generi musicali
 	opt_genre.clear()
 	opt_genre.add_item(tr("GENRE_ROCK"), Enums.MusicalGenre.ROCK)
 	opt_genre.add_item(tr("GENRE_POP"), Enums.MusicalGenre.POP)
@@ -67,7 +63,7 @@ func _setup_options() -> void:
 	opt_genre.add_item(tr("GENRE_ELECTRONIC"), Enums.MusicalGenre.ELECTRONIC)
 	opt_genre.add_item(tr("GENRE_INDIE"), Enums.MusicalGenre.INDIE)
 	
-	# Temi
+	# Temi lirici
 	opt_theme.clear()
 	opt_theme.add_item(tr("THEME_LOVE"), 0)
 	opt_theme.set_item_metadata(0, "love")
@@ -80,33 +76,42 @@ func _setup_options() -> void:
 	opt_theme.add_item(tr("THEME_NIGHT"), 4)
 	opt_theme.set_item_metadata(4, "night")
 	
-	# Studio
+	# Scelta dello Studio
 	opt_studio.clear()
 	opt_studio.add_item(tr("CREATOR_STUDIO_HOME"), 0)
 	opt_studio.set_item_metadata(0, false)
 	opt_studio.add_item(tr("CREATOR_STUDIO_PRO"), 1)
 	opt_studio.set_item_metadata(1, true)
 	
-	# Hook semantici per bottoni di navigazione
-	btn_edit_info.text = tr("CREATOR_BTN_EDIT_INFO")
-	AccessibilityManager.hook_control_accessibility(btn_edit_info, tr("CREATOR_BTN_EDIT_INFO"), "Ritorna alla schermata iniziale per modificare titolo, genere e tema del brano.")
+	# Hook semantici per l'accessibilità da tastiera e NVDA
+	AccessibilityManager.hook_control_accessibility(edit_title, "Titolo Brano", "Inserisci il titolo della canzone da creare.")
+	AccessibilityManager.hook_control_accessibility(opt_genre, "Genere Musicale", "Seleziona il genere musicale tra Rock, Pop, Metal, HipHop, Elettronica, Indie.")
+	AccessibilityManager.hook_control_accessibility(opt_theme, "Tema Lirico", "Seleziona il tema ispiratore per il testo.")
+	AccessibilityManager.hook_control_accessibility(opt_studio, "Studio di Registrazione", "Scegli tra Home Studio gratuito o Studio Professionale a 50 euro.")
+	AccessibilityManager.hook_control_accessibility(chk_burst, "Ispirazione Improvvisa", "Spunta per tentare un guizzo creativo con bonus qualità.")
+	AccessibilityManager.hook_control_accessibility(btn_produce_all, "Produci Brano Completo", "Registra e finalizza l'intero brano in un'unica sessione se hai energia e fondi sufficienti.")
+	AccessibilityManager.hook_control_accessibility(btn_action, "Avanza Prossima Fase", "Avanza di un singolo stadio nella produzione del brano.")
 	AccessibilityManager.hook_control_accessibility(btn_save_draft, "Salva Bozza", "Salva lo stato corrente della bozza e ritorna al catalogo.")
+	AccessibilityManager.hook_control_accessibility(btn_edit_info, "Modifica Titolo", "Sposta il focus sul campo titolo per modificarlo velocemente.")
 	AccessibilityManager.hook_control_accessibility(btn_cancel, "Annulla", "Chiude lo studio musicale senza salvare ulteriori modifiche.")
 
 func start_new_song() -> void:
 	current_song = null
 	resume_step = 1
 	current_step = 1
+	panel_result.visible = false
 	label_title.text = tr("CREATOR_TITLE")
 	edit_title.text = "Nuova Traccia %d" % [randi() % 900 + 100]
-	_show_step(1)
+	chk_burst.button_pressed = false
+	opt_studio.select(0)
+	_update_stage_display()
 	edit_title.grab_focus()
 
 func edit_existing_song(song: SongData) -> void:
 	current_song = song
 	label_title.text = "%s — '%s'" % [tr("CREATOR_TITLE_EDIT"), song.title]
+	panel_result.visible = (song.status == Enums.SongStatus.PRODUCED or song.status == Enums.SongStatus.RELEASED)
 	
-	# Popola i controlli dello Step 1 con i dati correnti
 	edit_title.text = song.title
 	for i in range(opt_genre.item_count):
 		if opt_genre.get_item_id(i) == song.genre:
@@ -117,7 +122,6 @@ func edit_existing_song(song: SongData) -> void:
 			opt_theme.selected = i
 			break
 			
-	# Determina lo step di ripresa in base all'ultimo stadio completato
 	var target_step: int = 1
 	match song.stage:
 		Enums.SongStage.CONCEPT:
@@ -134,136 +138,192 @@ func edit_existing_song(song: SongData) -> void:
 			target_step = 1
 			
 	resume_step = target_step
-	_show_step(target_step)
+	current_step = target_step
+	btn_edit_info.visible = true
+	_update_stage_display()
+	btn_action.grab_focus()
 
-func _show_step(step: int) -> void:
-	current_step = step
-	step1_container.visible = (step == 1)
-	step2_container.visible = (step == 2)
-	step3_container.visible = (step == 3)
-	step4_container.visible = (step == 4)
-	step5_container.visible = (step == 5)
-	step6_container.visible = (step == 6)
-	
-	btn_action.visible = (step < 6)
-	btn_save_draft.visible = (step < 6 and (step > 1 or current_song != null))
-	if btn_edit_info:
-		btn_edit_info.visible = (step > 1 and step < 6 and current_song != null)
-	
-	match step:
-		1:
-			label_step_title.text = tr("CREATOR_STEP1")
-			label_step_info.text = "Scegli il titolo, il genere musicale e il tema ispiratore per la tua opera."
-			if current_song != null and resume_step > 1:
-				btn_action.text = "Torna alla Produzione (Fase %d)" % resume_step
-			elif current_song != null:
-				btn_action.text = "Conferma e Continua"
-			else:
-				btn_action.text = "Inizia Composizione"
-			edit_title.grab_focus()
-		2:
-			label_step_title.text = tr("CREATOR_STEP2")
-			label_step_info.text = "Crea riff e progressioni armoniche. Richiede 15 energia."
-			btn_action.text = "Componi Melodia"
-			btn_action.grab_focus()
-		3:
-			label_step_title.text = tr("CREATOR_STEP3")
-			label_step_info.text = "Scrivi strofe e ritornello. Richiede 10 energia."
-			btn_action.text = "Scrivi Testo"
-			btn_action.grab_focus()
-		4:
-			label_step_title.text = tr("CREATOR_STEP4")
-			label_step_info.text = "Registra le tracce strumentali e vocali. Richiede 25 energia."
-			btn_action.text = "Incidi Tracce"
-			opt_studio.grab_focus()
-		5:
-			label_step_title.text = tr("CREATOR_STEP5")
-			label_step_info.text = "Bilancia equalizzazione, volumi e mastering. Richiede 15 energia."
-			btn_action.text = "Finalizza Master"
-			btn_action.grab_focus()
-		6:
-			label_step_title.text = "Master Ultimato con Successo!"
-			var trait_str: String = current_song.get_trait_name() if current_song else "Standard"
-			var qual: float = current_song.quality_score if current_song else 0.0
-			label_step_info.text = "Punteggio Qualità: %.1f / 100 | Tratto emergente: %s" % [qual, trait_str]
-			label_result.text = "Il brano '%s' è pronto per essere rilasciato sul mercato discografico!" % [current_song.title if current_song else ""]
+func _update_stage_display() -> void:
+	if current_song == null:
+		label_stage_status.text = "Fase attuale: Ideazione | Produzione completa: 65 Energia (oppure a tappe)"
+		btn_action.text = "1. Componi Melodia (-15 Energia)"
+		btn_produce_all.text = "Produci Tutto (65 Energia)"
+		btn_produce_all.disabled = false
+		btn_action.disabled = false
+		panel_result.visible = false
+		return
+		
+	match current_song.stage:
+		Enums.SongStage.CONCEPT:
+			label_stage_status.text = "Fase attuale: Ideazione | Prossimo passo: Melodia (-15 Energia)"
+			btn_action.text = "Componi Melodia (-15 Energia)"
+			btn_produce_all.disabled = false
+			btn_action.disabled = false
+			panel_result.visible = false
+		Enums.SongStage.COMPOSITION:
+			label_stage_status.text = "Fase attuale: Melodia Composta | Prossimo passo: Testo (-10 Energia)"
+			btn_action.text = "Scrivi Testo (-10 Energia)"
+			btn_produce_all.disabled = false
+			btn_action.disabled = false
+			panel_result.visible = false
+		Enums.SongStage.SONGWRITING:
+			label_stage_status.text = "Fase attuale: Testo Scritto | Prossimo passo: Registrazione (-25 Energia)"
+			btn_action.text = "Registra Tracce (-25 Energia)"
+			btn_produce_all.disabled = false
+			btn_action.disabled = false
+			panel_result.visible = false
+		Enums.SongStage.RECORDING:
+			label_stage_status.text = "Fase attuale: Tracce Registrate | Prossimo passo: Missaggio Finale (-15 Energia)"
+			btn_action.text = "Finalizza Master (-15 Energia)"
+			btn_produce_all.disabled = false
+			btn_action.disabled = false
+			panel_result.visible = false
+		Enums.SongStage.COMPLETED:
+			label_stage_status.text = "Fase attuale: Master Ultimato e Prodotto!"
+			btn_produce_all.disabled = true
+			btn_action.disabled = true
+			panel_result.visible = true
+			var trait_str: String = current_song.get_trait_name()
+			label_result.text = "Brano Ultimato con Successo! Punteggio: %.1f / 100 | Tratto: %s" % [
+				current_song.quality_score,
+				trait_str
+			]
 			btn_release_now.grab_focus()
+
+func _sync_form_to_song() -> void:
+	var s_title := edit_title.text.strip_edges()
+	if s_title.is_empty():
+		s_title = "Untitled Track"
+	var s_genre: int = opt_genre.get_selected_id()
+	var s_theme: String = str(opt_theme.get_item_metadata(opt_theme.selected))
+	
+	if current_song == null:
+		if GameManager and GameManager.music_system:
+			current_song = GameManager.music_system.create_draft(s_title, s_genre, s_theme)
+	else:
+		current_song.title = s_title
+		current_song.genre = s_genre
+		current_song.theme = s_theme
+		EventBus.song_updated.emit(current_song.to_dict())
+
+func _on_btn_produce_all_pressed() -> void:
+	if not GameManager or not GameManager.music_system:
+		return
+		
+	_sync_form_to_song()
+	var ms: MusicSystem = GameManager.music_system
+	var use_pro: bool = bool(opt_studio.get_item_metadata(opt_studio.selected))
+	var burst: bool = chk_burst.button_pressed
+	
+	# Verifica rapida risorse complessive
+	var player: PlayerData = GameManager.player_data
+	if use_pro and player.money < 50.0 and current_song.stage < Enums.SongStage.RECORDING:
+		AccessibilityManager.announce("Fondi insufficienti per lo Studio Professionale (richiesti 50 euro).", true)
+		return
+		
+	# Esecuzione stadi fino al completamento
+	if current_song.stage == Enums.SongStage.CONCEPT:
+		var r1 := ms.work_on_composition(current_song, burst)
+		if not r1.get("success", false):
+			AccessibilityManager.announce("Energia insufficiente per comporre la melodia.", true)
+			_update_stage_display()
+			return
 			
-	AccessibilityManager.announce("%s. %s" % [label_step_title.text, label_step_info.text], true)
+	if current_song.stage == Enums.SongStage.COMPOSITION:
+		var r2 := ms.work_on_lyrics(current_song)
+		if not r2.get("success", false):
+			AccessibilityManager.announce("Energia insufficiente per scrivere il testo.", true)
+			_update_stage_display()
+			return
+			
+	if current_song.stage == Enums.SongStage.SONGWRITING:
+		var r3 := ms.record_tracks(current_song, use_pro)
+		if not r3.get("success", false):
+			AccessibilityManager.announce("Energia o fondi insufficienti per incidere le tracce.", true)
+			_update_stage_display()
+			return
+			
+	if current_song.stage == Enums.SongStage.RECORDING:
+		var r4 := ms.mix_and_master(current_song)
+		if not r4.get("success", false):
+			AccessibilityManager.announce("Energia insufficiente per il missaggio finale.", true)
+			_update_stage_display()
+			return
+			
+	current_step = 6
+	resume_step = 6
+	_update_stage_display()
+	var speech: String = "Produzione completata! '%s' è pronta. Punteggio qualità: %.1f. Tratto: %s." % [
+		current_song.title,
+		current_song.quality_score,
+		current_song.get_trait_name()
+	]
+	AccessibilityManager.announce(speech, true)
 
 func _on_btn_action_pressed() -> void:
 	if not GameManager or not GameManager.music_system:
 		return
 		
+	_sync_form_to_song()
 	var ms: MusicSystem = GameManager.music_system
+	var use_pro: bool = bool(opt_studio.get_item_metadata(opt_studio.selected))
+	var burst: bool = chk_burst.button_pressed
 	
-	match current_step:
-		1:
-			var s_title := edit_title.text.strip_edges()
-			if s_title.is_empty():
-				s_title = "Untitled Track"
-			var s_genre := opt_genre.get_selected_id()
-			var s_theme: String = str(opt_theme.get_item_metadata(opt_theme.selected))
-			if current_song != null:
-				current_song.title = s_title
-				current_song.genre = s_genre
-				current_song.theme = s_theme
-				label_title.text = "%s — '%s'" % [tr("CREATOR_TITLE_EDIT"), current_song.title]
-				EventBus.song_updated.emit(current_song.to_dict())
-				var next_step := resume_step if resume_step > 1 else 2
-				_show_step(next_step)
-			else:
-				current_song = ms.create_draft(s_title, s_genre, s_theme)
-				resume_step = 2
-				_show_step(2)
-		2:
-			var res := ms.work_on_composition(current_song, chk_burst.button_pressed)
+	match current_song.stage:
+		Enums.SongStage.CONCEPT:
+			var res := ms.work_on_composition(current_song, burst)
 			if res.get("success", false):
+				current_step = 3
 				resume_step = 3
-				_show_step(3)
+				_update_stage_display()
+				AccessibilityManager.announce("Melodia composta con successo. Ora scrivi il testo.", true)
 			else:
 				AccessibilityManager.announce("Energia insufficiente per comporre.", true)
-		3:
+		Enums.SongStage.COMPOSITION:
 			var res := ms.work_on_lyrics(current_song)
 			if res.get("success", false):
+				current_step = 4
 				resume_step = 4
-				_show_step(4)
+				_update_stage_display()
+				AccessibilityManager.announce("Testo completato con successo. Ora incidi le tracce.", true)
 			else:
-				AccessibilityManager.announce("Energia insufficiente per scrivere il testo.", true)
-		4:
-			var use_pro: bool = bool(opt_studio.get_item_metadata(opt_studio.selected))
+				AccessibilityManager.announce("Energia insufficiente per il testo.", true)
+		Enums.SongStage.SONGWRITING:
 			var res := ms.record_tracks(current_song, use_pro)
 			if res.get("success", false):
+				current_step = 5
 				resume_step = 5
-				_show_step(5)
+				_update_stage_display()
+				AccessibilityManager.announce("Tracce incise con successo. Ora finalizza il master.", true)
 			else:
 				var reason: String = res.get("reason", "")
 				if reason == "money_insufficient":
-					AccessibilityManager.announce("Fondi insufficienti per lo Studio Professionale (50 € richiesti).", true)
+					AccessibilityManager.announce("Fondi insufficienti per lo Studio Professionale (50 euro richiesti).", true)
 				else:
 					AccessibilityManager.announce("Energia insufficiente per registrare.", true)
-		5:
+		Enums.SongStage.RECORDING:
 			var res := ms.mix_and_master(current_song)
 			if res.get("success", false):
+				current_step = 6
 				resume_step = 6
-				_show_step(6)
+				_update_stage_display()
+				var speech: String = "Master ultimato! Qualità: %.1f, Tratto: %s." % [
+					current_song.quality_score,
+					current_song.get_trait_name()
+				]
+				AccessibilityManager.announce(speech, true)
 			else:
 				AccessibilityManager.announce("Energia insufficiente per il missaggio.", true)
 
 func _on_btn_save_draft_pressed() -> void:
+	_sync_form_to_song()
 	if current_song:
-		if current_step == 1:
-			var s_title := edit_title.text.strip_edges()
-			if not s_title.is_empty():
-				current_song.title = s_title
-			current_song.genre = opt_genre.get_selected_id()
-			current_song.theme = str(opt_theme.get_item_metadata(opt_theme.selected))
-			EventBus.song_updated.emit(current_song.to_dict())
-		AccessibilityManager.announce(tr("MSG_SONG_SAVED_DRAFT") % current_song.title, true)
+		AccessibilityManager.announce("Bozza '%s' salvata nel catalogo." % current_song.title, true)
 	creation_finished.emit(current_song)
 
 func _on_btn_edit_info_pressed() -> void:
-	_show_step(1)
+	edit_title.grab_focus()
+	AccessibilityManager.announce("Focus sul titolo del brano.", true)
 
 func _on_btn_release_now_pressed() -> void:
 	if current_song and GameManager and GameManager.music_system:
@@ -278,11 +338,7 @@ func _on_btn_cancel_pressed() -> void:
 
 func _on_language_changed(_new_lang: String) -> void:
 	_setup_options()
-	if current_song != null:
-		label_title.text = "%s — '%s'" % [tr("CREATOR_TITLE_EDIT"), current_song.title]
-	else:
-		label_title.text = tr("CREATOR_TITLE")
-	_show_step(current_step)
+	_update_stage_display()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not visible:

@@ -97,6 +97,21 @@ text = "Lingua dell'applicazione:"
 [node name="OptLang" type="OptionButton" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxLang"]
 custom_minimum_size = Vector2(160, 40)
 layout_mode = 2
+focus_neighbor_bottom = NodePath("../../HBoxDayDuration/OptDayDuration")
+
+[node name="HBoxDayDuration" type="HBoxContainer" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="LabelDayDuration" type="Label" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxDayDuration"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Durata Giornata:"
+
+[node name="OptDayDuration" type="OptionButton" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxDayDuration"]
+custom_minimum_size = Vector2(180, 40)
+layout_mode = 2
+focus_neighbor_top = NodePath("../../HBoxLang/OptLang")
 focus_neighbor_bottom = NodePath("../../BtnBackSettings")
 
 [node name="HSeparatorSettings" type="HSeparator" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings"]
@@ -105,5 +120,5 @@ layout_mode = 2
 [node name="BtnBackSettings" type="Button" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings"]
 custom_minimum_size = Vector2(0, 45)
 layout_mode = 2
-focus_neighbor_top = NodePath("../HBoxLang/OptLang")
+focus_neighbor_top = NodePath("../HBoxDayDuration/OptDayDuration")
 text = "Indietro"

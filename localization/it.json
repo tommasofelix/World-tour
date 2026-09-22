@@ -175,5 +175,42 @@
 	"CONCERT_BTN_START": "Sali sul Palco! (Invio)",
 	"CONCERT_BTN_CANCEL": "Annulla e Torna all'HUD (Esc)",
 	"CONCERT_BTN_CLOSE_SUMMARY": "Incassa e Torna all'HUD (Invio / Esc)",
-	"CONCERT_NO_PLAYABLE_SONGS": "Nessun brano pronto o rilasciato. Produci una canzone nello Studio Musicale (N) prima di organizzare un concerto!"
+	"CONCERT_NO_PLAYABLE_SONGS": "Nessun brano pronto o rilasciato. Produci una canzone nello Studio Musicale (N) prima di organizzare un concerto!",
+
+	"HUD_BTN_SPEED": "Velocità: %.0fx (T)",
+	"HUD_SPEED_CHANGED": "Velocità di gioco impostata a %.0fx",
+	"HUD_BTN_SPEED_ACC_NAME": "Velocità Simulazione",
+	"HUD_BTN_SPEED_ACC_DESC": "Tasto rapido T. Alterna ciclicamente tra velocità 1x, 2x e 3x.",
+	"HUD_BTN_ECONOMY": "Bilancio (B)",
+	"HUD_BTN_ECONOMY_ACC_NAME": "Bilancio ed Economia",
+	"HUD_BTN_ECONOMY_ACC_DESC": "Tasto rapido B. Consulta saldo, spese fisse, turno di lavoro e giorni di autonomia residua.",
+
+	"CAREER_TIER_0": "Nessuno (Beginner)",
+	"CAREER_TIER_1": "Musicista da Cameretta",
+	"CAREER_TIER_2": "Artista di Strada (Busker)",
+	"CAREER_TIER_3": "Attrazione Locale (Local Hero)",
+	"CAREER_TIER_4": "Eroe Underground",
+	"CAREER_TIER_5": "Sensazione Indie Nazionale",
+	"CAREER_TIER_6": "Stella Nazionale",
+	"CAREER_TIER_7": "Icona e Superstar Mondiale",
+
+	"JOB_RETAIL_NAME": "Commesso Part-time",
+	"JOB_RETAIL_DESC": "Lavoro al negozio: paga 55.00 €, -20 Energia, +5 Stress.",
+	"JOB_WAITER_NAME": "Cameriere Serale",
+	"JOB_WAITER_DESC": "Turno serale al pub: paga 45.00 €, -25 Energia, +10 Stress.",
+	"JOB_WAREHOUSE_NAME": "Magazziniere",
+	"JOB_WAREHOUSE_DESC": "Turno al magazzino: paga 70.00 €, -35 Energia, +15 Stress.",
+	"JOB_NONE_NAME": "Musicista a Tempo Pieno",
+	"JOB_ERR_UNEMPLOYED": "Non hai un lavoro ordinario, ti dedichi alla musica a tempo pieno!",
+	"JOB_ERR_ENERGY": "Energia insufficiente per svolgere il turno di lavoro ordinario.",
+
+	"BANK_TITLE": "Ufficio Finanziario — Bilancio, Lavoro & Carriera",
+	"BANK_BALANCE": "Saldo Attuale: %.2f €",
+	"BANK_RUNWAY": "Autonomia Economica Stimata: %.1f giorni (Spese fisse: %.2f € al giorno)",
+	"BANK_STATUS": "Status di Carriera: %s",
+	"BANK_JOB_SECTION": "Occupazione di Sussistenza:",
+	"BANK_BTN_WORK": "Svolgi Turno di Lavoro",
+	"BANK_BTN_RESIGN": "Compi il Salto nel Vuoto (Licenziati)",
+	"BANK_HISTORY_TITLE": "Registro Ultime Transazioni:",
+	"BANK_BTN_CLOSE": "Chiudi Bilancio (Esc / B)"
 }

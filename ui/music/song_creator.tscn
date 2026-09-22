@@ -3,10 +3,10 @@
 [ext_resource type="Script" path="res://ui/music/song_creator.gd" id="1_creator"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_creator"]
-content_margin_left = 20.0
-content_margin_top = 20.0
-content_margin_right = 20.0
-content_margin_bottom = 20.0
+content_margin_left = 25.0
+content_margin_top = 25.0
+content_margin_right = 25.0
+content_margin_bottom = 25.0
 bg_color = Color(0.09, 0.1, 0.14, 1)
 border_width_left = 2
 border_width_top = 2
@@ -39,181 +39,168 @@ color = Color(0.05, 0.05, 0.08, 1)
 
 [node name="PanelMain" type="PanelContainer" parent="."]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 60.0
-offset_top = 40.0
-offset_right = -60.0
-offset_bottom = -40.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -420.0
+offset_top = -290.0
+offset_right = 420.0
+offset_bottom = 290.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_creator")
 
 [node name="VBox" type="VBoxContainer" parent="PanelMain"]
 layout_mode = 2
-theme_override_constants/separation = 18
+theme_override_constants/separation = 16
 
-[node name="LabelTitle" type="Label" parent="PanelMain/VBox"]
+[node name="Header" type="VBoxContainer" parent="PanelMain/VBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
-text = "Studio Musicale — Creazione Brano"
+theme_override_constants/separation = 4
 
-[node name="LabelStepTitle" type="Label" parent="PanelMain/VBox"]
+[node name="LabelTitle" type="Label" parent="PanelMain/VBox/Header"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "Fase 1: Titolo e Genere"
+theme_override_font_sizes/font_size = 24
+text = "Studio Musicale — Scheda Creazione Brano"
 
-[node name="LabelStepInfo" type="Label" parent="PanelMain/VBox"]
+[node name="LabelStepTitle" type="Label" parent="PanelMain/VBox/Header"]
 layout_mode = 2
-text = "Scegli il titolo, il genere e il tema della tua nuova canzone."
+theme_override_font_sizes/font_size = 16
+text = "Tutte le opzioni artistiche e produttive in un'unica scheda."
+
+[node name="LabelStepInfo" type="Label" parent="PanelMain/VBox/Header"]
+layout_mode = 2
+text = "Imposta titolo, genere, tema e studio. Puoi produrre l'intero brano o procedere a tappe."
 
 [node name="HSeparator1" type="HSeparator" parent="PanelMain/VBox"]
 layout_mode = 2
 
-[node name="Step1Container" type="VBoxContainer" parent="PanelMain/VBox"]
+[node name="VBoxForm" type="VBoxContainer" parent="PanelMain/VBox"]
 layout_mode = 2
-theme_override_constants/separation = 15
+theme_override_constants/separation = 12
 
-[node name="HBoxTitle" type="HBoxContainer" parent="PanelMain/VBox/Step1Container"]
+[node name="HBoxTitle" type="HBoxContainer" parent="PanelMain/VBox/VBoxForm"]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 16
 
-[node name="LabelTitlePrompt" type="Label" parent="PanelMain/VBox/Step1Container/HBoxTitle"]
+[node name="LabelTitlePrompt" type="Label" parent="PanelMain/VBox/VBoxForm/HBoxTitle"]
+custom_minimum_size = Vector2(180, 0)
 layout_mode = 2
 text = "Titolo del brano:"
 
-[node name="EditTitle" type="LineEdit" parent="PanelMain/VBox/Step1Container/HBoxTitle"]
-custom_minimum_size = Vector2(300, 40)
+[node name="EditTitle" type="LineEdit" parent="PanelMain/VBox/VBoxForm/HBoxTitle"]
+custom_minimum_size = Vector2(300, 38)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Nuova Traccia 101"
 
-[node name="HBoxGenre" type="HBoxContainer" parent="PanelMain/VBox/Step1Container"]
+[node name="HBoxGenreTheme" type="HBoxContainer" parent="PanelMain/VBox/VBoxForm"]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 16
 
-[node name="LabelGenre" type="Label" parent="PanelMain/VBox/Step1Container/HBoxGenre"]
+[node name="LabelGenre" type="Label" parent="PanelMain/VBox/VBoxForm/HBoxGenreTheme"]
+custom_minimum_size = Vector2(180, 0)
 layout_mode = 2
 text = "Genere musicale:"
 
-[node name="OptGenre" type="OptionButton" parent="PanelMain/VBox/Step1Container/HBoxGenre"]
-custom_minimum_size = Vector2(250, 40)
+[node name="OptGenre" type="OptionButton" parent="PanelMain/VBox/VBoxForm/HBoxGenreTheme"]
+custom_minimum_size = Vector2(180, 38)
 layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="HBoxTheme" type="HBoxContainer" parent="PanelMain/VBox/Step1Container"]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="LabelTheme" type="Label" parent="PanelMain/VBox/Step1Container/HBoxTheme"]
+[node name="LabelTheme" type="Label" parent="PanelMain/VBox/VBoxForm/HBoxGenreTheme"]
 layout_mode = 2
 text = "Tema lirico:"
 
-[node name="OptTheme" type="OptionButton" parent="PanelMain/VBox/Step1Container/HBoxTheme"]
-custom_minimum_size = Vector2(250, 40)
+[node name="OptTheme" type="OptionButton" parent="PanelMain/VBox/VBoxForm/HBoxGenreTheme"]
+custom_minimum_size = Vector2(180, 38)
 layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="Step2Container" type="VBoxContainer" parent="PanelMain/VBox"]
-visible = false
+[node name="HBoxStudio" type="HBoxContainer" parent="PanelMain/VBox/VBoxForm"]
 layout_mode = 2
-theme_override_constants/separation = 15
+theme_override_constants/separation = 16
 
-[node name="LabelComp" type="Label" parent="PanelMain/VBox/Step2Container"]
+[node name="LabelStudio" type="Label" parent="PanelMain/VBox/VBoxForm/HBoxStudio"]
+custom_minimum_size = Vector2(180, 0)
 layout_mode = 2
-text = "Composizione Riff ed Armonia. Richiede 15 energia."
+text = "Studio di registrazione:"
 
-[node name="ChkBurst" type="CheckBox" parent="PanelMain/VBox/Step2Container"]
+[node name="OptStudio" type="OptionButton" parent="PanelMain/VBox/VBoxForm/HBoxStudio"]
+custom_minimum_size = Vector2(250, 38)
 layout_mode = 2
-text = "Ispirazione Improvvisa (+5.0 bonus compositivo)"
+size_flags_horizontal = 3
 
-[node name="Step3Container" type="VBoxContainer" parent="PanelMain/VBox"]
-visible = false
+[node name="ChkBurst" type="CheckBox" parent="PanelMain/VBox/VBoxForm/HBoxStudio"]
 layout_mode = 2
-theme_override_constants/separation = 15
-
-[node name="LabelLyric" type="Label" parent="PanelMain/VBox/Step3Container"]
-layout_mode = 2
-text = "Scrittura delle strofe e del ritornello in base al tema. Richiede 10 energia."
-
-[node name="Step4Container" type="VBoxContainer" parent="PanelMain/VBox"]
-visible = false
-layout_mode = 2
-theme_override_constants/separation = 15
-
-[node name="LabelRecord" type="Label" parent="PanelMain/VBox/Step4Container"]
-layout_mode = 2
-text = "Registrazione delle tracce audio (Strumento e Voce). Richiede 25 energia."
-
-[node name="HBoxStudio" type="HBoxContainer" parent="PanelMain/VBox/Step4Container"]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="LabelStudio" type="Label" parent="PanelMain/VBox/Step4Container/HBoxStudio"]
-layout_mode = 2
-text = "Ambiente di registrazione:"
-
-[node name="OptStudio" type="OptionButton" parent="PanelMain/VBox/Step4Container/HBoxStudio"]
-custom_minimum_size = Vector2(350, 40)
-layout_mode = 2
-
-[node name="Step5Container" type="VBoxContainer" parent="PanelMain/VBox"]
-visible = false
-layout_mode = 2
-theme_override_constants/separation = 15
-
-[node name="LabelMix" type="Label" parent="PanelMain/VBox/Step5Container"]
-layout_mode = 2
-text = "Missaggio finale, bilanciamento dinamico e mastering. Richiede 15 energia."
-
-[node name="Step6Container" type="VBoxContainer" parent="PanelMain/VBox"]
-visible = false
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="LabelResult" type="Label" parent="PanelMain/VBox/Step6Container"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "Il brano è pronto!"
-
-[node name="HBoxResult" type="HBoxContainer" parent="PanelMain/VBox/Step6Container"]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="BtnReleaseNow" type="Button" parent="PanelMain/VBox/Step6Container/HBoxResult"]
-custom_minimum_size = Vector2(250, 50)
-layout_mode = 2
-text = "Rilascia subito come Singolo"
-
-[node name="BtnDone" type="Button" parent="PanelMain/VBox/Step6Container/HBoxResult"]
-custom_minimum_size = Vector2(220, 50)
-layout_mode = 2
-text = "Salva nel Catalogo ed Esci"
+text = "Ispirazione Improvvisa (+Bonus Qualità)"
 
 [node name="HSeparator2" type="HSeparator" parent="PanelMain/VBox"]
 layout_mode = 2
 
+[node name="VBoxStatus" type="VBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LabelStageStatus" type="Label" parent="PanelMain/VBox/VBoxStatus"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Fase attuale: Ideazione | Costo produzione completa: 65 Energia (oppure a tappe)"
+
 [node name="HBoxBottom" type="HBoxContainer" parent="PanelMain/VBox"]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 14
+
+[node name="BtnProduceAll" type="Button" parent="PanelMain/VBox/HBoxBottom"]
+custom_minimum_size = Vector2(230, 44)
+layout_mode = 2
+text = "Produci Tutto (65 Energia)"
 
 [node name="BtnAction" type="Button" parent="PanelMain/VBox/HBoxBottom"]
-custom_minimum_size = Vector2(220, 45)
+custom_minimum_size = Vector2(200, 44)
 layout_mode = 2
-text = "Azione Successiva"
+text = "Avanza Prossima Fase"
 
 [node name="BtnSaveDraft" type="Button" parent="PanelMain/VBox/HBoxBottom"]
-visible = false
-custom_minimum_size = Vector2(220, 45)
+custom_minimum_size = Vector2(170, 44)
 layout_mode = 2
-text = "Salva Bozza ed Esci"
+text = "Salva come Bozza"
 
 [node name="BtnEditInfo" type="Button" parent="PanelMain/VBox/HBoxBottom"]
-visible = false
-custom_minimum_size = Vector2(200, 45)
+custom_minimum_size = Vector2(130, 44)
 layout_mode = 2
-text = "Modifica Info Brano"
+text = "Modifica Titolo"
 
 [node name="BtnCancel" type="Button" parent="PanelMain/VBox/HBoxBottom"]
-custom_minimum_size = Vector2(160, 45)
+custom_minimum_size = Vector2(100, 44)
 layout_mode = 2
-text = "Annulla"
+text = "Annulla (Esc)"
+
+[node name="PanelResult" type="PanelContainer" parent="PanelMain/VBox"]
+visible = false
+layout_mode = 2
+
+[node name="VBoxResult" type="VBoxContainer" parent="PanelMain/VBox/PanelResult"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="LabelResult" type="Label" parent="PanelMain/VBox/PanelResult/VBoxResult"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Master Ultimato con Successo! Qualità: 0.0"
+
+[node name="HBoxResult" type="HBoxContainer" parent="PanelMain/VBox/PanelResult/VBoxResult"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="BtnReleaseNow" type="Button" parent="PanelMain/VBox/PanelResult/VBoxResult/HBoxResult"]
+custom_minimum_size = Vector2(230, 44)
+layout_mode = 2
+text = "Rilascia subito come Singolo"
+
+[node name="BtnDone" type="Button" parent="PanelMain/VBox/PanelResult/VBoxResult/HBoxResult"]
+custom_minimum_size = Vector2(200, 44)
+layout_mode = 2
+text = "Salva nel Catalogo ed Esci"

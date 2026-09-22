@@ -16,6 +16,8 @@ extends Control
 @onready var label_settings_title: Label = $CenterContainer/VBoxMain/PanelSettings/VBoxSettings/LabelSettingsTitle
 @onready var label_lang: Label = $CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxLang/LabelLang
 @onready var opt_lang: OptionButton = $CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxLang/OptLang
+@onready var label_day_duration: Label = $CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxDayDuration/LabelDayDuration
+@onready var opt_day_duration: OptionButton = $CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxDayDuration/OptDayDuration
 @onready var btn_back_settings: Button = $CenterContainer/VBoxMain/PanelSettings/VBoxSettings/BtnBackSettings
 
 func _ready() -> void:
@@ -23,8 +25,9 @@ func _ready() -> void:
 	if GameManager:
 		GameManager.change_state(Enums.GameState.MAIN_MENU)
 		
-	# Inizializzazione opzioni lingua
+	# Inizializzazione opzioni lingua e durata giornata
 	_populate_language_options()
+	_populate_day_duration_options()
 	
 	# Connessione segnali bottoni
 	btn_quick_start.pressed.connect(_on_quick_start_pressed)
@@ -32,6 +35,7 @@ func _ready() -> void:
 	btn_quit.pressed.connect(_on_quit_pressed)
 	btn_back_settings.pressed.connect(_on_back_settings_pressed)
 	opt_lang.item_selected.connect(_on_language_selected)
+	opt_day_duration.item_selected.connect(_on_day_duration_selected)
 	
 	# Connessione al bus per cambio lingua
 	EventBus.language_changed.connect(_on_language_changed)
@@ -59,6 +63,27 @@ func _populate_language_options() -> void:
 	else:
 		opt_lang.select(0)
 
+func _populate_day_duration_options() -> void:
+	opt_day_duration.clear()
+	opt_day_duration.add_item("5 Minuti (Default)", 0)
+	opt_day_duration.set_item_metadata(0, 300.0)
+	opt_day_duration.add_item("10 Minuti", 1)
+	opt_day_duration.set_item_metadata(1, 600.0)
+	opt_day_duration.add_item("15 Minuti", 2)
+	opt_day_duration.set_item_metadata(2, 900.0)
+	opt_day_duration.add_item("20 Minuti", 3)
+	opt_day_duration.set_item_metadata(3, 1200.0)
+	
+	var cur_dur: float = SaveManager.get_day_duration() if SaveManager else Constants.DEFAULT_DAY_DURATION_SECONDS
+	if is_equal_approx(cur_dur, 600.0):
+		opt_day_duration.select(1)
+	elif is_equal_approx(cur_dur, 900.0):
+		opt_day_duration.select(2)
+	elif is_equal_approx(cur_dur, 1200.0):
+		opt_day_duration.select(3)
+	else:
+		opt_day_duration.select(0)
+
 func _refresh_ui_text() -> void:
 	# Aggiorna testi a video (Holy Diver)
 	label_title.text = tr("GAME_TITLE")
@@ -69,6 +94,7 @@ func _refresh_ui_text() -> void:
 	
 	label_settings_title.text = tr("SETTINGS_TITLE")
 	label_lang.text = tr("SETTINGS_LANGUAGE_LABEL")
+	label_day_duration.text = "Durata Giornata:"
 	btn_back_settings.text = tr("SETTINGS_BACK")
 	
 	# Configurazione semantica per Screen Reader NVDA (Luca)
@@ -76,9 +102,13 @@ func _refresh_ui_text() -> void:
 	AccessibilityManager.hook_control_accessibility(btn_settings, tr("MENU_SETTINGS"), tr("MENU_SETTINGS_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_quit, tr("MENU_QUIT"), tr("MENU_QUIT_DESC"))
 	AccessibilityManager.hook_control_accessibility(opt_lang, tr("SETTINGS_LANGUAGE_LABEL"), tr("SETTINGS_LANGUAGE_DESC"))
+	AccessibilityManager.hook_control_accessibility(opt_day_duration, "Durata Giornata", "Seleziona la durata reale di ogni giornata di gioco: 5, 10, 15 o 20 minuti.")
 	AccessibilityManager.hook_control_accessibility(btn_back_settings, tr("SETTINGS_BACK"), tr("SETTINGS_BACK_DESC"))
 
 func _on_quick_start_pressed() -> void:
+	# Inizializza partita con starter pack e durata configurata
+	if GameManager:
+		GameManager.start_new_game()
 	# Avvia HUD di simulazione
 	get_tree().change_scene_to_file("res://ui/hud/hud.tscn")
 
@@ -86,6 +116,7 @@ func _on_settings_pressed() -> void:
 	vbox_menu.visible = false
 	panel_settings.visible = true
 	_populate_language_options()
+	_populate_day_duration_options()
 	opt_lang.grab_focus()
 
 func _on_back_settings_pressed() -> void:
@@ -97,6 +128,17 @@ func _on_language_selected(index: int) -> void:
 	var selected_code: String = str(opt_lang.get_item_metadata(index))
 	if LocalizationManager:
 		LocalizationManager.set_language(selected_code, true)
+
+func _on_day_duration_selected(index: int) -> void:
+	var dur: float = float(opt_day_duration.get_item_metadata(index))
+	if SaveManager:
+		SaveManager.set_day_duration(dur)
+	if GameManager and GameManager.calendar_data:
+		GameManager.calendar_data.day_duration = dur
+		GameManager.calendar_data.remaining_seconds = dur
+		GameManager.calendar_data.update_period()
+	var mins: int = int(dur / 60.0)
+	AccessibilityManager.announce("Durata della giornata impostata a %d minuti." % mins, true)
 
 func _on_language_changed(new_lang: String) -> void:
 	_refresh_ui_text()

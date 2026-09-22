@@ -4,7 +4,23 @@ Le modifiche rilevanti sono registrate in ordine cronologico inverso. Una voce d
 
 ## Non rilasciato
 
-### 2026-09-22 — Chiusura Fase 3: Vertical Slice V1.1 — Il Ciclo Creativo (Music Crafting)
+### 2026-09-22 — Chiusura Fase 5: Vertical Slice V1.3 — Economia, Carriera e Rilascio MVG (V1.0)
+- Realizzato il modulo [`systems/economy_system.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/systems/economy_system.gd) con spese fisse di vitto e alloggio (25 € a notte), calcolo dell'autonomia economica residua (*Runway* in giorni), registro analitico delle transazioni, 3 lavori ordinari di sussistenza (Commesso, Cameriere, Magazziniere) e meccanica del "Salto nel vuoto" (licenziamento volontario).
+- Realizzato il motore di progressione di carriera [`systems/career_system.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/systems/career_system.gd) con 8 status da *Sconosciuto* a *Superstar Mondiale* e promozioni automatiche al termine di concerti o pubblicazione singoli.
+- Introdotta la velocità scalabile (1x, 2x, 3x) nel `TimeSystem`, con pulsante HUD `BtnSpeed` (T) e annuncio vocale immediato per NVDA.
+- Aggiunta la durata della giornata personalizzabile con default a **5 minuti** (300s) e opzioni 10, 15, 20 minuti, selezionabile nel pannello Impostazioni e memorizzata in `user://settings.json`.
+- Creata la modale accessibile [`ui/summary/daily_summary.tscn`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/summary/daily_summary.tscn) collegata a `EndDaySystem` per la notifica e lettura notturna di spese, saldo e sonno ristoratore.
+- Riorganizzato il layout dell'HUD: controlli operativi di sistema (Velocità, Pausa, Salva, Menu) posizionati nella barra superiore insieme a Tempo, Energia e Saldo; barra centrale riservata alle attività di gameplay.
+- Rinnovato [`ui/music/song_creator.tscn`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/music/song_creator.tscn) in una **Scheda Unica Integrata** con tutti i parametri artistici, opzioni studio (Home vs Pro), pulsante "Produci Tutto (65 Energia)" e avanzamento a tappe.
+- Popolato automaticamente lo Starter Pack di 10 canzoni di prova (2 bozze, 5 prodotte con tratti `STAGE_BEAST` e `CULT_CLASSIC`, 3 singoli rilasciati).
+- Creata la suite `tests/test_economy_system.gd` portando il totale a 6 suite di test su 6 superate al 100% con 0 fallimenti. Rilascio del Minimum Viable Game (V1.0 MVG).
+
+### 2026-09-22 — Chiusura Fase 4: Vertical Slice V1.2 — Il Palco dal Vivo (Live Performance & Concert Loop)
+- Implementato [`systems/concert_system.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/systems/concert_system.gd) per la simulazione completa dei concerti dal vivo (selezione da 1 a 4 brani pronti/pubblicati, soundcheck, imprevisti di palco a scelta multipla con check Carisma/Performance, closer bonus con tratti speciali, affluenza, incassi e conversione fan).
+- Creato il catalogo dei locali starter [`data/models/venue_data.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/data/models/venue_data.gd) con 4 venue bilanciate (Garage, Pub, Piccolo Club, Club di Tendenza).
+- Creata l'interfaccia concerti accessibile [`ui/concert/live_concert.tscn`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/concert/live_concert.tscn) con navigazione 100% tastiera (`L`, `1`, `2`, `Esc`).
+- Risolta l'anomalia `RRU-04` sull'isolamento di AccessKit per l'HUD sottostante e aggiunta di backdrop opachi antiriflesso (`#050508`).
+- Creata la suite `tests/test_concert_system.gd` con 53 test unitari/integrazione passati al 100%.
 - Creato il modello runtime del brano musicale [`data/models/song_data.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/data/models/song_data.gd) con le 5 fasi di produzione, calcolo del `quality_score`, tratti emergenti e persistenza atomica.
 - Implementato [`systems/skill_system.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/systems/skill_system.gd) con gestione delle 7 abilità artistiche, soglie di crescita esponenziali basate su `Formulas.calculate_xp_for_level`, Level Cap a 99 ed emissione `EventBus.skill_leveled_up`.
 - Realizzato il motore di produzione discografica [`systems/music_system.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/systems/music_system.gd) (Concept, Composizione, Testi, Registrazione Home vs Pro Studio a 50€, Missaggio e Mastering con Quality Score ed estrazione tratti speciali, rilascio singolo con fan, reputazione e royalty).

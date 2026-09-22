@@ -21,6 +21,8 @@ func _on_day_ended(day_num: int) -> void:
 	if player_data:
 		player_data.modify_money(-total_expenses)
 		EventBus.money_changed.emit(player_data.money, -total_expenses, "Spese vive (vitto e alloggio)")
+		if GameManager and GameManager.economy_system:
+			GameManager.economy_system.log_transaction(-total_expenses, "rent", "Spese vive (vitto e alloggio)", day_num)
 		
 		# Rigenerazione del sonno
 		player_data.add_energy(Constants.SLEEP_STANDARD_ENERGY)

@@ -16,8 +16,8 @@ func _ready() -> void:
 	test_calendar_data_model()
 	test_time_system_flow()
 	test_action_system_execution()
-	test_diminishing_returns_integration()
-	test_end_day_system_resolution()
+	test_action_anti_grinding()
+	test_end_day_resolution()
 	test_atomic_save_and_load()
 	
 	print("\n--------------------------------------------------------")
@@ -75,54 +75,62 @@ func test_calendar_data_model() -> void:
 	print("\n2. Verifica Modello CalendarData:")
 	var c: CalendarData = CalendarData.new()
 	assert_equal(c.day_number, 1, "Giorno iniziale = 1")
-	assert_equal(c.remaining_seconds, 600.0, "Secondi iniziali = 600s")
+	assert_equal(c.remaining_seconds, 300.0, "Secondi iniziali = 300s (5 min default)")
 	assert_equal(c.get_period_name(), "Mattina", "Fascia oraria iniziale = Mattina")
 	assert_equal(c.get_formatted_time_string(), "06:00", "Orario virtuale iniziale = 06:00")
 	
-	# Avanzamento orario virtuale a metà giornata (300s rimanenti)
-	c.remaining_seconds = 300.0
+	# Avanzamento orario virtuale a metà giornata (150s rimanenti)
+	c.remaining_seconds = 150.0
 	c.update_period()
-	assert_equal(c.get_period_name(), "Pomeriggio", "A 300s -> Fascia Pomeriggio")
-	assert_equal(c.get_formatted_time_string(), "15:00", "A 300s -> Ore 15:00 virtuali")
+	assert_equal(c.get_period_name(), "Pomeriggio", "A 150s -> Fascia Pomeriggio")
+	assert_equal(c.get_formatted_time_string(), "15:00", "A 150s -> Ore 15:00 virtuali")
 
 func test_time_system_flow() -> void:
 	print("\n3. Verifica Motore Temporale (TimeSystem):")
 	var c: CalendarData = CalendarData.new()
 	var ts: TimeSystem = TimeSystem.new(c)
 	
-	# Avanzamento nominale a 1x
+	# Avanzamento nominale a 1x (da 300s)
 	ts.advance_time(10.0)
-	assert_equal(c.remaining_seconds, 590.0, "Avanzamento 10s a 1x -> 590s rimanenti")
+	assert_equal(c.remaining_seconds, 290.0, "Avanzamento 10s a 1x -> 290s rimanenti")
 	
 	# Pausa attiva
 	ts.set_paused(true)
 	ts.advance_time(10.0)
-	assert_equal(c.remaining_seconds, 590.0, "In pausa -> Il tempo rimane bloccato a 590s")
+	assert_equal(c.remaining_seconds, 290.0, "In pausa -> Il tempo rimane bloccato a 290s")
 	ts.set_paused(false)
 	
 	# Moltiplicatore 2x
 	ts.set_time_scale(2.0)
 	ts.advance_time(10.0)
-	assert_equal(c.remaining_seconds, 570.0, "Avanzamento 10s a 2x -> 570s rimanenti")
+	assert_equal(c.remaining_seconds, 270.0, "Avanzamento 10s a 2x -> 270s rimanenti")
 
 func test_action_system_execution() -> void:
 	print("\n4. Verifica Esecuzione Azione (ActionSystem):")
 	var p: PlayerData = PlayerData.new()
 	var c: CalendarData = CalendarData.new()
 	var act_sys: ActionSystem = ActionSystem.new(p, c)
+	var test_action: ActionData = ActionData.new(
+		"test_practice",
+		"Test Allenamento",
+		10.0,
+		20,
+		5,
+		15.0,
+		"instrument"
+	)
 	
-	var action: ActionData = ActionData.new("practice_test", "Test Pratica", 10.0, 20, 5, 20.0, "instrument")
-	
-	var can_start: bool = act_sys.start_action(action)
-	assert_true(can_start, "Avvio azione regolare consentito")
+	# Tentativo avvio azione
+	var started: bool = act_sys.start_action(test_action)
+	assert_true(started, "Avvio azione regolare consentito")
 	assert_true(act_sys.is_running, "ActionSystem risulta in stato di esecuzione")
 	assert_equal(GameManager.current_state, Enums.GameState.GAMEPLAY_BUSY, "FSM globale transita in GAMEPLAY_BUSY")
 	
-	# Aggiornamento parziale (5s su 10s)
+	# Aggiornamento parziale (50%)
 	act_sys.update_action(5.0)
 	assert_true(act_sys.is_running, "Azione ancora in corso a metà timer")
 	
-	# Completamento (altri 5s)
+	# Completamento azione (rimanenti 5.0s)
 	act_sys.update_action(5.0)
 	assert_true(not act_sys.is_running, "Azione completata e conclusa")
 	assert_equal(p.energy, 80, "Consumo energia applicato (100 - 20 = 80)")
@@ -130,23 +138,26 @@ func test_action_system_execution() -> void:
 	assert_true(p.skills["instrument"]["xp"] > 0.0, "XP assegnati allo strumento")
 	assert_equal(GameManager.current_state, Enums.GameState.GAMEPLAY_IDLE, "FSM globale ritorna in GAMEPLAY_IDLE")
 
-func test_diminishing_returns_integration() -> void:
+func test_action_anti_grinding() -> void:
 	print("\n5. Verifica Anti-Grinding Azioni nel CalendarData:")
 	var c: CalendarData = CalendarData.new()
 	assert_equal(c.get_action_count("practice"), 0, "Conteggio iniziale azione = 0")
+	
 	c.increment_action_count("practice")
 	assert_equal(c.get_action_count("practice"), 1, "Prima esecuzione registrata = 1")
+	
 	c.increment_action_count("practice")
 	assert_equal(c.get_action_count("practice"), 2, "Seconda esecuzione registrata = 2")
+	
 	c.reset_daily_saturation()
 	assert_equal(c.get_action_count("practice"), 0, "Reset giornaliero azzera saturazione a 0")
 
-func test_end_day_system_resolution() -> void:
+func test_end_day_resolution() -> void:
 	print("\n6. Verifica Risoluzione Fine Giornata (EndDaySystem):")
 	var p: PlayerData = PlayerData.new()
+	p.money = 200.0
 	p.energy = 20
 	p.stress = 40
-	p.money = 200.0
 	
 	var c: CalendarData = CalendarData.new()
 	var end_day: EndDaySystem = EndDaySystem.new(p, c)
@@ -162,7 +173,7 @@ func test_end_day_system_resolution() -> void:
 	# Passaggio al giorno successivo
 	end_day.advance_to_next_day()
 	assert_equal(c.day_number, 2, "Giorno incrementato a 2")
-	assert_equal(c.remaining_seconds, 600.0, "Orologio ripristinato a 600s")
+	assert_equal(c.remaining_seconds, 300.0, "Orologio ripristinato a 300s")
 	assert_equal(GameManager.current_state, Enums.GameState.GAMEPLAY_IDLE, "FSM ritorna in GAMEPLAY_IDLE")
 
 func test_atomic_save_and_load() -> void:

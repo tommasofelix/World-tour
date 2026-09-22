@@ -1,9 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://c6hudworldtour01"]
+[gd_scene load_steps=7 format=3 uid="uid://c6hudworldtour01"]
 
 [ext_resource type="Script" path="res://ui/hud/hud.gd" id="1_hud"]
 [ext_resource type="PackedScene" path="res://ui/music/song_catalog.tscn" id="2_catalog"]
 [ext_resource type="PackedScene" path="res://ui/music/song_creator.tscn" id="3_creator"]
 [ext_resource type="PackedScene" path="res://ui/concert/live_concert.tscn" id="4_concert"]
+[ext_resource type="PackedScene" path="res://ui/economy/economy_bank.tscn" id="5_bank"]
+[ext_resource type="PackedScene" path="res://ui/summary/daily_summary.tscn" id="6_summary"]
 
 [node name="HUD" type="Control"]
 layout_mode = 3
@@ -31,19 +33,54 @@ layout_mode = 2
 
 [node name="HBoxTop" type="HBoxContainer" parent="VBoxMain/PanelTop"]
 layout_mode = 2
-theme_override_constants/separation = 40
+theme_override_constants/separation = 20
 
 [node name="LabelTime" type="Label" parent="VBoxMain/PanelTop/HBoxTop"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 16
 text = "Giorno 1 — Ore 06:00 (Mattina)"
 
 [node name="LabelEnergy" type="Label" parent="VBoxMain/PanelTop/HBoxTop"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 16
 text = "Energia: 100%"
 
 [node name="LabelMoney" type="Label" parent="VBoxMain/PanelTop/HBoxTop"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 16
 text = "Saldo: 500.00 €"
+
+[node name="Spacer" type="Control" parent="VBoxMain/PanelTop/HBoxTop"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BtnSpeed" type="Button" parent="VBoxMain/PanelTop/HBoxTop"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../../../PanelCenter/HBoxActions/BtnEconomy")
+focus_neighbor_right = NodePath("../BtnPause")
+focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnPractice")
+text = "Velocità: 1x (T)"
+
+[node name="BtnPause" type="Button" parent="VBoxMain/PanelTop/HBoxTop"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnSpeed")
+focus_neighbor_right = NodePath("../BtnSave")
+focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnPractice")
+text = "Pausa (Spazio)"
+
+[node name="BtnSave" type="Button" parent="VBoxMain/PanelTop/HBoxTop"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnPause")
+focus_neighbor_right = NodePath("../BtnMainMenu")
+focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnPractice")
+text = "Salva Partita"
+
+[node name="BtnMainMenu" type="Button" parent="VBoxMain/PanelTop/HBoxTop"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnSave")
+focus_neighbor_right = NodePath("../../../PanelCenter/HBoxActions/BtnPractice")
+focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnPractice")
+text = "Menu Principale"
 
 [node name="HSeparator" type="HSeparator" parent="VBoxMain"]
 layout_mode = 2
@@ -59,49 +96,42 @@ text = "Stato: In attesa (Pronto per agire)"
 
 [node name="HBoxActions" type="HBoxContainer" parent="VBoxMain/PanelCenter"]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 16
 
 [node name="BtnPractice" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
 layout_mode = 2
-focus_neighbor_left = NodePath("../BtnMainMenu")
+focus_neighbor_left = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
+focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
 focus_neighbor_right = NodePath("../BtnCatalog")
 text = "1. Allenamento Rapido (10s)"
 
 [node name="BtnCatalog" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnPractice")
+focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
 focus_neighbor_right = NodePath("../BtnNewSong")
 text = "Catalogo (M)"
 
 [node name="BtnNewSong" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnCatalog")
+focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnPause")
 focus_neighbor_right = NodePath("../BtnConcert")
 text = "Nuovo Brano (N)"
 
 [node name="BtnConcert" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnNewSong")
-focus_neighbor_right = NodePath("../BtnPause")
+focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnSave")
+focus_neighbor_right = NodePath("../BtnEconomy")
 text = "Concerti (L)"
 
-[node name="BtnPause" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+[node name="BtnEconomy" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnConcert")
-focus_neighbor_right = NodePath("../BtnSave")
-text = "Pausa (Spazio)"
-
-[node name="BtnSave" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
-layout_mode = 2
-focus_neighbor_left = NodePath("../BtnPause")
-focus_neighbor_right = NodePath("../BtnMainMenu")
-text = "Salva Partita"
-
-[node name="BtnMainMenu" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
-layout_mode = 2
-focus_neighbor_left = NodePath("../BtnSave")
-focus_neighbor_right = NodePath("../BtnPractice")
-text = "Menu Principale"
+focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
+focus_neighbor_right = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
+text = "Bilancio (B)"
 
 [node name="SongCatalog" parent="." instance=ExtResource("2_catalog")]
 visible = false
@@ -115,3 +145,10 @@ layout_mode = 1
 visible = false
 layout_mode = 1
 
+[node name="EconomyBank" parent="." instance=ExtResource("5_bank")]
+visible = false
+layout_mode = 1
+
+[node name="DailySummary" parent="." instance=ExtResource("6_summary")]
+visible = false
+layout_mode = 1

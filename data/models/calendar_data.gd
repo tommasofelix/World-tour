@@ -5,9 +5,14 @@ extends RefCounted
 ## Modello Dati Runtime del Calendario e Tempo Quotidiano per World-tour
 
 var day_number: int = 1
-var remaining_seconds: float = Constants.DAY_DURATION_SECONDS
+var day_duration: float = Constants.DEFAULT_DAY_DURATION_SECONDS
+var remaining_seconds: float = Constants.DEFAULT_DAY_DURATION_SECONDS
 var current_period: int = Enums.TimePeriod.MORNING
 var action_counts_today: Dictionary = {}
+
+func _init(p_duration: float = Constants.DEFAULT_DAY_DURATION_SECONDS) -> void:
+	day_duration = p_duration
+	remaining_seconds = day_duration
 
 func get_period_name() -> String:
 	match current_period:
@@ -23,9 +28,8 @@ func get_period_name() -> String:
 			return "Mattina"
 
 func get_formatted_time_string() -> String:
-	# 600s di gioco corrispondono a 18 ore attive (dalle 06:00 alle 24:00)
-	# 1 secondo reale = 1.8 minuti virtuali (108 secondi virtuali)
-	var elapsed_ratio: float = 1.0 - clampf(remaining_seconds / Constants.DAY_DURATION_SECONDS, 0.0, 1.0)
+	# La durata del giorno corrisponde a 18 ore attive (dalle 06:00 alle 24:00)
+	var elapsed_ratio: float = 1.0 - clampf(remaining_seconds / day_duration, 0.0, 1.0)
 	var total_virtual_minutes: float = elapsed_ratio * (18.0 * 60.0)
 	var virtual_hour: int = 6 + int(floor(total_virtual_minutes / 60.0))
 	var virtual_minute: int = int(floor(fmod(total_virtual_minutes, 60.0)))
@@ -36,16 +40,16 @@ func get_formatted_time_string() -> String:
 	return "%02d:%02d" % [virtual_hour, virtual_minute]
 
 func update_period() -> int:
-	# Fasce su 600s:
-	# Mattina: 600s - 450s (06:00 - 10:30)
-	# Pomeriggio: 450s - 250s (10:30 - 16:30)
-	# Sera: 250s - 50s (16:30 - 22:30)
-	# Notte: 50s - 0s (22:30 - 24:00)
-	if remaining_seconds > 450.0:
+	# Fasce proporzionali alla durata della giornata:
+	# Mattina: > 75% del tempo rimanente (06:00 - 10:30)
+	# Pomeriggio: > 41.6% del tempo rimanente (10:30 - 16:30)
+	# Sera: > 8.3% del tempo rimanente (16:30 - 22:30)
+	# Notte: <= 8.3% del tempo rimanente (22:30 - 24:00)
+	if remaining_seconds > day_duration * 0.75:
 		current_period = Enums.TimePeriod.MORNING
-	elif remaining_seconds > 250.0:
+	elif remaining_seconds > day_duration * 0.416:
 		current_period = Enums.TimePeriod.AFTERNOON
-	elif remaining_seconds > 50.0:
+	elif remaining_seconds > day_duration * 0.083:
 		current_period = Enums.TimePeriod.EVENING
 	else:
 		current_period = Enums.TimePeriod.NIGHT
@@ -63,12 +67,13 @@ func get_action_count(action_id: String) -> int:
 
 func reset_daily_saturation() -> void:
 	action_counts_today.clear()
-	remaining_seconds = Constants.DAY_DURATION_SECONDS
+	remaining_seconds = day_duration
 	update_period()
 
 func to_dict() -> Dictionary:
 	return {
 		"day_number": day_number,
+		"day_duration": day_duration,
 		"remaining_seconds": remaining_seconds,
 		"current_period": current_period,
 		"action_counts_today": action_counts_today.duplicate(true)
@@ -76,6 +81,7 @@ func to_dict() -> Dictionary:
 
 func from_dict(dict: Dictionary) -> void:
 	day_number = int(dict.get("day_number", day_number))
+	day_duration = float(dict.get("day_duration", day_duration))
 	remaining_seconds = float(dict.get("remaining_seconds", remaining_seconds))
 	current_period = int(dict.get("current_period", current_period))
 	if dict.has("action_counts_today") and dict["action_counts_today"] is Dictionary:

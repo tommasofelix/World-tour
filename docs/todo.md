@@ -121,11 +121,11 @@ Il materiale del Game Design Document originario è stato organizzato e disaccop
 ---
 
 ### FASE 5: Vertical Slice V1.3 — Economia, Carriera e Rilascio MVG
-- [ ] `F5.1`: Modulo `EconomySystem` con addebito spese fisse quotidiane (alloggio, cibo, trasporti).
-- [ ] `F5.2`: Sistema di sblocco e progressione livelli di carriera (da Beginner ad Artista Locale).
-- [ ] `F5.3`: Rifinitura estetica e grafica (cura visiva, allineamenti, colori WCAG per Holy Diver e utenti vedenti).
-- [ ] `F5.4`: Collaudo manuale congiunto (Luca con NVDA/tastiera, Holy Diver con monitor/mouse).
-- [ ] `F5.5`: Tag Git e archiviazione del piano di completamento della V1.0 Minimum Viable Game.
+- [x] `F5.1`: Modulo `EconomySystem` (`systems/economy_system.gd`: spese fisse vitto/alloggio 25 €, registro transazioni, autonomia economica residua, lavori ordinari di sussistenza e meccanica del "Salto nel vuoto").
+- [x] `F5.2`: Modulo `CareerSystem` (`systems/career_system.gd`: matrice degli status da Beginner a Superstar con promozioni automatiche basate su fan, popolarità e singoli rilasciati).
+- [x] `F5.3`: Rifinitura estetica, velocità scalabile e Starter Pack (`ui/economy/economy_bank.tscn`, pulsanti HUD Velocità `T` 1x/2x/3x con annuncio NVDA, Bilancio `B`, e starter pack di 10 canzoni multi-genere con tratti speciali per testing immediato).
+- [x] `F5.4`: Collaudo manuale congiunto (Luca con NVDA/tastiera, Holy Diver con monitor/mouse): superato con risoluzione dei 5 feedback (starter pack brani, durata giornata personalizzabile con default a 5 min, riepilogo giornaliero DailySummary, layout barra superiore HUD e scheda unica di creazione brani).
+- [x] `F5.5`: Tag Git e archiviazione del piano di completamento della V1.0 Minimum Viable Game (6 suite di test su 6 superate al 100%, 0 errori).
 
 ---
 

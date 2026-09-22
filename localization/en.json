@@ -175,5 +175,42 @@
 	"CONCERT_BTN_START": "Hit the Stage! (Enter)",
 	"CONCERT_BTN_CANCEL": "Cancel & Return to HUD (Esc)",
 	"CONCERT_BTN_CLOSE_SUMMARY": "Collect & Return to HUD (Enter / Esc)",
-	"CONCERT_NO_PLAYABLE_SONGS": "No ready or released tracks. Produce a song in the Music Studio (N) before organizing a gig!"
+	"CONCERT_NO_PLAYABLE_SONGS": "No ready or released tracks. Produce a song in the Music Studio (N) before organizing a gig!",
+
+	"HUD_BTN_SPEED": "Speed: %.0fx (T)",
+	"HUD_SPEED_CHANGED": "Game speed set to %.0fx",
+	"HUD_BTN_SPEED_ACC_NAME": "Simulation Speed",
+	"HUD_BTN_SPEED_ACC_DESC": "Shortcut T. Cycle game simulation speed between 1x, 2x, and 3x.",
+	"HUD_BTN_ECONOMY": "Finances (B)",
+	"HUD_BTN_ECONOMY_ACC_NAME": "Finances and Economy",
+	"HUD_BTN_ECONOMY_ACC_DESC": "Shortcut B. View balance, living expenses, job shift, and runway days.",
+
+	"CAREER_TIER_0": "Nobody (Beginner)",
+	"CAREER_TIER_1": "Bedroom Musician",
+	"CAREER_TIER_2": "Street Busker",
+	"CAREER_TIER_3": "Local Attraction (Local Hero)",
+	"CAREER_TIER_4": "Underground Hero",
+	"CAREER_TIER_5": "National Indie Sensation",
+	"CAREER_TIER_6": "National Star",
+	"CAREER_TIER_7": "Global Superstar & Icon",
+
+	"JOB_RETAIL_NAME": "Part-time Clerk",
+	"JOB_RETAIL_DESC": "Record shop shift: pays €55.00, -20 Energy, +5 Stress.",
+	"JOB_WAITER_NAME": "Evening Waiter",
+	"JOB_WAITER_DESC": "Pub night shift: pays €45.00, -25 Energy, +10 Stress.",
+	"JOB_WAREHOUSE_NAME": "Warehouse Worker",
+	"JOB_WAREHOUSE_DESC": "Warehouse shift: pays €70.00, -35 Energy, +15 Stress.",
+	"JOB_NONE_NAME": "Full-time Musician",
+	"JOB_ERR_UNEMPLOYED": "You have no day job, you are a full-time musician!",
+	"JOB_ERR_ENERGY": "Insufficient energy to work your regular job shift.",
+
+	"BANK_TITLE": "Financial Office — Budget, Jobs & Career",
+	"BANK_BALANCE": "Current Balance: €%.2f",
+	"BANK_RUNWAY": "Estimated Financial Runway: %.1f days (Fixed expenses: €%.2f / day)",
+	"BANK_STATUS": "Career Status: %s",
+	"BANK_JOB_SECTION": "Survival Occupation:",
+	"BANK_BTN_WORK": "Work a Job Shift",
+	"BANK_BTN_RESIGN": "Take the Leap (Resign from Day Job)",
+	"BANK_HISTORY_TITLE": "Recent Transactions Log:",
+	"BANK_BTN_CLOSE": "Close Finances (Esc / B)"
 }

@@ -32,6 +32,11 @@ signal live_concert_requested()
 # --- Segnali Economia & Carriera ---
 signal money_changed(new_balance: float, delta: float, reason: String)
 signal career_status_unlocked(new_tier: int, tier_name: String)
+signal career_tier_promoted(new_tier: int, tier_name: String)
+signal job_completed(job_id: String, wage: float)
+signal resigned_from_job()
+signal transaction_logged(transaction: Dictionary)
+signal economy_screen_requested()
 signal game_over_triggered(reason: String)
 
 # --- Segnali di Accessibilità & Interfaccia ---

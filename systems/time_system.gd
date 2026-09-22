@@ -29,6 +29,15 @@ func set_time_scale(new_scale: float) -> void:
 		time_scale = clamped_scale
 		EventBus.speed_changed.emit(time_scale)
 
+func cycle_speed() -> float:
+	var current_idx: int = Constants.SUPPORTED_SPEEDS.find(time_scale)
+	var next_idx: int = 0
+	if current_idx != -1 and current_idx < Constants.SUPPORTED_SPEEDS.size() - 1:
+		next_idx = current_idx + 1
+	var new_speed: float = Constants.SUPPORTED_SPEEDS[next_idx]
+	set_time_scale(new_speed)
+	return time_scale
+
 func advance_time(delta_seconds: float) -> void:
 	if is_paused or calendar_data.remaining_seconds <= 0.0:
 		return

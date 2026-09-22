@@ -14,15 +14,27 @@ var time_system: TimeSystem
 var skill_system: SkillSystem
 var music_system: MusicSystem
 var concert_system: ConcertSystem
+var career_system: CareerSystem
+var economy_system: EconomySystem
+var end_day_system: EndDaySystem
 
 func _ready() -> void:
 	# Inizializzazione dati di default
+	var default_day_duration: float = Constants.DEFAULT_DAY_DURATION_SECONDS
+	if SaveManager:
+		default_day_duration = SaveManager.get_day_duration()
+		
 	player_data = PlayerData.new()
-	calendar_data = CalendarData.new()
+	player_data.populate_starter_test_songs()
+	
+	calendar_data = CalendarData.new(default_day_duration)
 	time_system = TimeSystem.new(calendar_data)
 	skill_system = SkillSystem.new(player_data)
 	music_system = MusicSystem.new(player_data, calendar_data, skill_system)
 	concert_system = ConcertSystem.new(player_data, calendar_data, skill_system)
+	career_system = CareerSystem.new(player_data)
+	economy_system = EconomySystem.new(player_data, calendar_data)
+	end_day_system = EndDaySystem.new(player_data, calendar_data)
 
 func change_state(new_state: int) -> bool:
 	if current_state == new_state:
@@ -51,15 +63,23 @@ func close_menu() -> void:
 			time_system.set_paused(false)
 
 func start_new_game(p_name: String = "Alex", p_instrument: String = "Chitarra Elettrica", p_background: String = "self_taught") -> void:
+	var day_duration: float = Constants.DEFAULT_DAY_DURATION_SECONDS
+	if SaveManager:
+		day_duration = SaveManager.get_day_duration()
+
 	player_data = PlayerData.new()
 	player_data.player_name = p_name
 	player_data.primary_instrument = p_instrument
 	player_data.background_id = p_background
+	player_data.populate_starter_test_songs()
 	
-	calendar_data = CalendarData.new()
+	calendar_data = CalendarData.new(day_duration)
 	time_system = TimeSystem.new(calendar_data)
 	skill_system = SkillSystem.new(player_data)
 	music_system = MusicSystem.new(player_data, calendar_data, skill_system)
 	concert_system = ConcertSystem.new(player_data, calendar_data, skill_system)
+	career_system = CareerSystem.new(player_data)
+	economy_system = EconomySystem.new(player_data, calendar_data)
+	end_day_system = EndDaySystem.new(player_data, calendar_data)
 	
 	change_state(Enums.GameState.GAMEPLAY_IDLE)

@@ -155,3 +155,10 @@ func load_settings() -> Dictionary:
 	if json.parse(content) == OK and json.data is Dictionary:
 		return json.data as Dictionary
 	return {}
+
+func get_day_duration() -> float:
+	var s: Dictionary = load_settings()
+	return float(s.get("day_duration", Constants.DEFAULT_DAY_DURATION_SECONDS))
+
+func set_day_duration(p_duration: float) -> void:
+	save_settings({"day_duration": p_duration})
