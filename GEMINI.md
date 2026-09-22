@@ -1,7 +1,7 @@
 # World-tour — Hub di contesto locale
 
 - Framework: ASTRALIS, baseline pubblica `main@d28d1f9`.
-- Stato del progetto: Fase 7 (Versione 3.0: L'Industria Musicale, Manager, Contratti Indie vs Major e Bivi Etici) completata e convalidata al 100% con NVDA; apertura della Fase 8 (Versione 4.0: Il Mondo Dinamico, Tour Interurbani, Festival Estivi & Social Media). 10 suite di test headless convalidate con 0 errori. Stack confermato Godot Engine 4.7.2 win64.
+- Stato del progetto: Fase 8 (Versione 4.0: Il Mondo Dinamico, Tour Interurbani, Festival Estivi, Social Media, Artisti Rivali & Classifiche) completata e convalidata al 100% con NVDA; 17 suite di test headless convalidate con 0 errori. Stack confermato Godot Engine 4.7.2 win64. Apertura della Fase 9 (Versione 5.0: Endgame, Grandi Stadi & Superstar Mondiale).
 - Repository: pubblico; mantenere fuori dati personali e governance privata.
 - AI primaria: Antigravity, salvo diversa decisione esplicita del responsabile del progetto.
 - Collaboratori ausiliari: attivati soltanto quando presenti o richiesti.

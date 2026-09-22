@@ -1,23 +1,23 @@
-[gd_scene load_steps=14 format=3 uid="uid://c6hudworldtour01"]
+[gd_scene format=3 uid="uid://cj62gf11ysl7u"]
 
-[ext_resource type="Script" path="res://ui/hud/hud.gd" id="1_hud"]
-[ext_resource type="PackedScene" path="res://ui/music/song_catalog.tscn" id="2_catalog"]
-[ext_resource type="PackedScene" path="res://ui/music/song_creator.tscn" id="3_creator"]
-[ext_resource type="PackedScene" path="res://ui/concert/live_concert.tscn" id="4_concert"]
-[ext_resource type="PackedScene" path="res://ui/economy/economy_bank.tscn" id="5_bank"]
-[ext_resource type="PackedScene" path="res://ui/summary/daily_summary.tscn" id="6_summary"]
-[ext_resource type="PackedScene" path="res://ui/character/character_sheet.tscn" id="7_charsheet"]
-[ext_resource type="PackedScene" path="res://ui/band/band_hub.tscn" id="8_bandhub"]
-[ext_resource type="PackedScene" path="res://ui/album/album_creator.tscn" id="9_albumcr"]
-[ext_resource type="PackedScene" path="res://ui/industry/industry_hub.tscn" id="10_indhub"]
-[ext_resource type="PackedScene" path="res://ui/industry/dilemma_modal.tscn" id="11_dilemma"]
-[ext_resource type="PackedScene" path="res://ui/travel/travel_modal.tscn" id="12_travel"]
-[ext_resource type="PackedScene" path="res://ui/tour/tour_modal.tscn" id="13_tour"]
-[ext_resource type="PackedScene" path="res://ui/festival/festival_modal.tscn" id="14_fest"]
-[ext_resource type="PackedScene" path="res://ui/social/social_modal.tscn" id="15_social"]
-[ext_resource type="PackedScene" path="res://ui/charts/chart_modal.tscn" id="16_chart"]
+[ext_resource type="Script" uid="uid://bjtv7h5kf0ptq" path="res://ui/hud/hud.gd" id="1_hud"]
+[ext_resource type="PackedScene" uid="uid://dmsongcat01" path="res://ui/music/song_catalog.tscn" id="2_catalog"]
+[ext_resource type="PackedScene" uid="uid://dmsongcreat01" path="res://ui/music/song_creator.tscn" id="3_creator"]
+[ext_resource type="PackedScene" uid="uid://c8liveconct01" path="res://ui/concert/live_concert.tscn" id="4_concert"]
+[ext_resource type="PackedScene" uid="uid://dmeconbank01" path="res://ui/economy/economy_bank.tscn" id="5_bank"]
+[ext_resource type="PackedScene" uid="uid://dmsummarywt01" path="res://ui/summary/daily_summary.tscn" id="6_summary"]
+[ext_resource type="PackedScene" uid="uid://bw3u4ugqd3yx1" path="res://ui/character/character_sheet.tscn" id="7_charsheet"]
+[ext_resource type="PackedScene" uid="uid://dmbandhubwt01" path="res://ui/band/band_hub.tscn" id="8_bandhub"]
+[ext_resource type="PackedScene" uid="uid://dmalbumcrwt01" path="res://ui/album/album_creator.tscn" id="9_albumcr"]
+[ext_resource type="PackedScene" uid="uid://dmindhubwt01" path="res://ui/industry/industry_hub.tscn" id="10_indhub"]
+[ext_resource type="PackedScene" uid="uid://di3xf1tfkfnlg" path="res://ui/industry/dilemma_modal.tscn" id="11_dilemma"]
+[ext_resource type="PackedScene" uid="uid://drhidq00mm8wy" path="res://ui/travel/travel_modal.tscn" id="12_travel"]
+[ext_resource type="PackedScene" uid="uid://dmtourmodal01" path="res://ui/tour/tour_modal.tscn" id="13_tour"]
+[ext_resource type="PackedScene" uid="uid://cmwl8cbhw552k" path="res://ui/festival/festival_modal.tscn" id="14_fest"]
+[ext_resource type="PackedScene" uid="uid://coi38q00mm8wy" path="res://ui/social/social_modal.tscn" id="15_social"]
+[ext_resource type="PackedScene" uid="uid://b8m1n6ydye71u" path="res://ui/charts/chart_modal.tscn" id="16_chart"]
 
-[node name="HUD" type="Control"]
+[node name="HUD" type="Control" unique_id=580846484]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -26,7 +26,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_hud")
 
-[node name="VBoxMain" type="VBoxContainer" parent="."]
+[node name="VBoxMain" type="VBoxContainer" parent="." unique_id=738305192]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -39,257 +39,255 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 16
 
-[node name="PanelTop" type="PanelContainer" parent="VBoxMain"]
+[node name="PanelTop" type="PanelContainer" parent="VBoxMain" unique_id=935913963]
 layout_mode = 2
 
-[node name="HBoxTop" type="HBoxContainer" parent="VBoxMain/PanelTop"]
+[node name="HBoxTop" type="HBoxContainer" parent="VBoxMain/PanelTop" unique_id=560305964]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="LabelTime" type="Label" parent="VBoxMain/PanelTop/HBoxTop"]
+[node name="LabelTime" type="Label" parent="VBoxMain/PanelTop/HBoxTop" unique_id=643396033]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "Giorno 1 — Ore 06:00 (Mattina)"
 
-[node name="LabelEnergy" type="Label" parent="VBoxMain/PanelTop/HBoxTop"]
+[node name="LabelEnergy" type="Label" parent="VBoxMain/PanelTop/HBoxTop" unique_id=1621612116]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "Energia: 100%"
 
-[node name="LabelStress" type="Label" parent="VBoxMain/PanelTop/HBoxTop"]
+[node name="LabelStress" type="Label" parent="VBoxMain/PanelTop/HBoxTop" unique_id=2127848119]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "Stress: 0%"
 
-[node name="LabelMorale" type="Label" parent="VBoxMain/PanelTop/HBoxTop"]
+[node name="LabelMorale" type="Label" parent="VBoxMain/PanelTop/HBoxTop" unique_id=5148782]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "Morale: 100%"
 
-[node name="LabelMoney" type="Label" parent="VBoxMain/PanelTop/HBoxTop"]
+[node name="LabelMoney" type="Label" parent="VBoxMain/PanelTop/HBoxTop" unique_id=1324885678]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "Saldo: 500.00 €"
 
-[node name="Spacer" type="Control" parent="VBoxMain/PanelTop/HBoxTop"]
+[node name="Spacer" type="Control" parent="VBoxMain/PanelTop/HBoxTop" unique_id=2068228314]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="BtnSpeed" type="Button" parent="VBoxMain/PanelTop/HBoxTop"]
+[node name="BtnSpeed" type="Button" parent="VBoxMain/PanelTop/HBoxTop" unique_id=1179566846]
 layout_mode = 2
 focus_neighbor_left = NodePath("../../../PanelCenter/HBoxActions/BtnEconomy")
 focus_neighbor_right = NodePath("../BtnPause")
 focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnCharacter")
 text = "Velocità: 1x (T)"
 
-[node name="BtnPause" type="Button" parent="VBoxMain/PanelTop/HBoxTop"]
+[node name="BtnPause" type="Button" parent="VBoxMain/PanelTop/HBoxTop" unique_id=1693903049]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnSpeed")
 focus_neighbor_right = NodePath("../BtnSave")
 focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnCharacter")
 text = "Pausa (Spazio)"
 
-[node name="BtnSave" type="Button" parent="VBoxMain/PanelTop/HBoxTop"]
+[node name="BtnSave" type="Button" parent="VBoxMain/PanelTop/HBoxTop" unique_id=201408763]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnPause")
 focus_neighbor_right = NodePath("../BtnMainMenu")
 focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnCharacter")
 text = "Salva Partita"
 
-[node name="BtnMainMenu" type="Button" parent="VBoxMain/PanelTop/HBoxTop"]
+[node name="BtnMainMenu" type="Button" parent="VBoxMain/PanelTop/HBoxTop" unique_id=188100732]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnSave")
 focus_neighbor_right = NodePath("../../../PanelCenter/HBoxActions/BtnCharacter")
 focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnCharacter")
 text = "Menu Principale"
 
-[node name="PanelPlayerOverview" type="PanelContainer" parent="VBoxMain"]
+[node name="PanelPlayerOverview" type="PanelContainer" parent="VBoxMain" unique_id=683714081]
 layout_mode = 2
 
-[node name="Margin" type="MarginContainer" parent="VBoxMain/PanelPlayerOverview"]
+[node name="Margin" type="MarginContainer" parent="VBoxMain/PanelPlayerOverview" unique_id=662848867]
 layout_mode = 2
 theme_override_constants/margin_left = 12
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 8
 
-[node name="LabelPlayerSummary" type="Label" parent="VBoxMain/PanelPlayerOverview/Margin"]
+[node name="LabelPlayerSummary" type="Label" parent="VBoxMain/PanelPlayerOverview/Margin" unique_id=557309721]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "Musicista: Alex | Chitarra (Liv. 10) | Composizione (Liv. 10) | Live (Liv. 10) | Status: Principiante (T0)"
 
-[node name="HSeparator" type="HSeparator" parent="VBoxMain"]
+[node name="HSeparator" type="HSeparator" parent="VBoxMain" unique_id=2056239759]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="PanelCenter" type="VBoxContainer" parent="VBoxMain"]
+[node name="PanelCenter" type="VBoxContainer" parent="VBoxMain" unique_id=855014256]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="LabelStatus" type="Label" parent="VBoxMain/PanelCenter"]
+[node name="LabelStatus" type="Label" parent="VBoxMain/PanelCenter" unique_id=2081646603]
 layout_mode = 2
 text = "Stato: In attesa (Pronto per agire)"
 
-[node name="HBoxActions" type="HBoxContainer" parent="VBoxMain/PanelCenter"]
+[node name="HBoxActions" type="HBoxContainer" parent="VBoxMain/PanelCenter" unique_id=1812420596]
 layout_mode = 2
 theme_override_constants/separation = 14
 
-[node name="BtnCharacter" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+[node name="BtnCharacter" type="Button" parent="VBoxMain/PanelCenter/HBoxActions" unique_id=947872876]
 layout_mode = 2
 focus_neighbor_left = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
 focus_neighbor_right = NodePath("../BtnPractice")
 text = "Personaggio (C)"
 
-[node name="BtnPractice" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+[node name="BtnPractice" type="Button" parent="VBoxMain/PanelCenter/HBoxActions" unique_id=1561766057]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnCharacter")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
 focus_neighbor_right = NodePath("../BtnCatalog")
 text = "1. Allenamento Rapido (10s)"
 
-[node name="BtnCatalog" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+[node name="BtnCatalog" type="Button" parent="VBoxMain/PanelCenter/HBoxActions" unique_id=622029772]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnPractice")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
 focus_neighbor_right = NodePath("../BtnNewSong")
 text = "Catalogo (M)"
 
-[node name="BtnNewSong" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+[node name="BtnNewSong" type="Button" parent="VBoxMain/PanelCenter/HBoxActions" unique_id=682500397]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnCatalog")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnPause")
 focus_neighbor_right = NodePath("../BtnConcert")
 text = "Nuovo Brano (N)"
 
-[node name="BtnConcert" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+[node name="BtnConcert" type="Button" parent="VBoxMain/PanelCenter/HBoxActions" unique_id=1103517269]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnNewSong")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnSave")
 focus_neighbor_right = NodePath("../BtnEconomy")
 text = "Concerti (L)"
 
-[node name="BtnEconomy" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+[node name="BtnEconomy" type="Button" parent="VBoxMain/PanelCenter/HBoxActions" unique_id=1231723877]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnConcert")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
 focus_neighbor_right = NodePath("../BtnBand")
 text = "Bilancio (B)"
 
-[node name="BtnBand" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+[node name="BtnBand" type="Button" parent="VBoxMain/PanelCenter/HBoxActions" unique_id=449429762]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnEconomy")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
 focus_neighbor_right = NodePath("../BtnIndustry")
 text = "Band (G)"
 
-[node name="BtnIndustry" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+[node name="BtnIndustry" type="Button" parent="VBoxMain/PanelCenter/HBoxActions" unique_id=15645225]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnBand")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
 focus_neighbor_right = NodePath("../BtnAgenda")
 text = "Industria (K)"
 
-[node name="BtnAgenda" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+[node name="BtnAgenda" type="Button" parent="VBoxMain/PanelCenter/HBoxActions" unique_id=1466727645]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnIndustry")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
 focus_neighbor_right = NodePath("../BtnTravel")
 text = "Agenda (A)"
 
-[node name="BtnTravel" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+[node name="BtnTravel" type="Button" parent="VBoxMain/PanelCenter/HBoxActions" unique_id=2055528703]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnAgenda")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
 focus_neighbor_right = NodePath("../BtnTour")
 text = "Viaggi (V)"
 
-[node name="BtnTour" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+[node name="BtnTour" type="Button" parent="VBoxMain/PanelCenter/HBoxActions" unique_id=728642068]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnTravel")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
 focus_neighbor_right = NodePath("../BtnFestival")
 text = "Tour (O)"
 
-[node name="BtnFestival" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+[node name="BtnFestival" type="Button" parent="VBoxMain/PanelCenter/HBoxActions" unique_id=821837518]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnTour")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
 focus_neighbor_right = NodePath("../BtnSocial")
 text = "Festival (F)"
 
-[node name="BtnSocial" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+[node name="BtnSocial" type="Button" parent="VBoxMain/PanelCenter/HBoxActions" unique_id=77448039]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnFestival")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
 focus_neighbor_right = NodePath("../BtnChart")
 text = "Social (Y)"
 
-[node name="BtnChart" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+[node name="BtnChart" type="Button" parent="VBoxMain/PanelCenter/HBoxActions" unique_id=1523022207]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnSocial")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
 focus_neighbor_right = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
 text = "Classifiche (H)"
 
-[node name="SongCatalog" parent="." instance=ExtResource("2_catalog")]
+[node name="SongCatalog" parent="." unique_id=757915434 instance=ExtResource("2_catalog")]
 visible = false
 layout_mode = 1
 
-[node name="SongCreator" parent="." instance=ExtResource("3_creator")]
+[node name="SongCreator" parent="." unique_id=592367982 instance=ExtResource("3_creator")]
 visible = false
 layout_mode = 1
 
-[node name="LiveConcert" parent="." instance=ExtResource("4_concert")]
+[node name="LiveConcert" parent="." unique_id=674689179 instance=ExtResource("4_concert")]
 visible = false
 layout_mode = 1
 
-[node name="EconomyBank" parent="." instance=ExtResource("5_bank")]
+[node name="EconomyBank" parent="." unique_id=2061391460 instance=ExtResource("5_bank")]
 visible = false
 layout_mode = 1
 
-[node name="DailySummary" parent="." instance=ExtResource("6_summary")]
+[node name="DailySummary" parent="." unique_id=615915829 instance=ExtResource("6_summary")]
 visible = false
 layout_mode = 1
 
-[node name="CharacterSheet" parent="." instance=ExtResource("7_charsheet")]
+[node name="CharacterSheet" parent="." unique_id=1680651095 instance=ExtResource("7_charsheet")]
 visible = false
 layout_mode = 1
 
-[node name="BandHub" parent="." instance=ExtResource("8_bandhub")]
+[node name="BandHub" parent="." unique_id=539947235 instance=ExtResource("8_bandhub")]
 visible = false
 layout_mode = 1
 
-[node name="AlbumCreator" parent="." instance=ExtResource("9_albumcr")]
+[node name="AlbumCreator" parent="." unique_id=2130199813 instance=ExtResource("9_albumcr")]
 visible = false
 layout_mode = 1
 
-[node name="IndustryHub" parent="." instance=ExtResource("10_indhub")]
+[node name="IndustryHub" parent="." unique_id=644488191 instance=ExtResource("10_indhub")]
 visible = false
 layout_mode = 1
 
-[node name="DilemmaModal" parent="." instance=ExtResource("11_dilemma")]
+[node name="DilemmaModal" parent="." unique_id=1896936925 instance=ExtResource("11_dilemma")]
 visible = false
 layout_mode = 1
 
-[node name="TravelModal" parent="." instance=ExtResource("12_travel")]
+[node name="TravelModal" parent="." unique_id=1749926577 instance=ExtResource("12_travel")]
 visible = false
 layout_mode = 1
 
-[node name="TourModal" parent="." instance=ExtResource("13_tour")]
+[node name="TourModal" parent="." unique_id=1620454119 instance=ExtResource("13_tour")]
 visible = false
 layout_mode = 1
 
-[node name="FestivalModal" parent="." instance=ExtResource("14_fest")]
+[node name="FestivalModal" parent="." unique_id=1301207504 instance=ExtResource("14_fest")]
 visible = false
 layout_mode = 1
 
-[node name="SocialModal" parent="." instance=ExtResource("15_social")]
+[node name="SocialModal" parent="." unique_id=1286792123 instance=ExtResource("15_social")]
 visible = false
 layout_mode = 1
 
-[node name="ChartModal" parent="." instance=ExtResource("16_chart")]
+[node name="ChartModal" parent="." unique_id=305224174 instance=ExtResource("16_chart")]
 visible = false
 layout_mode = 1
-
-
