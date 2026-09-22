@@ -8,13 +8,17 @@ extends Control
 @onready var vbox_main: VBoxContainer = $VBoxMain
 @onready var label_time: Label = $VBoxMain/PanelTop/HBoxTop/LabelTime
 @onready var label_energy: Label = $VBoxMain/PanelTop/HBoxTop/LabelEnergy
+@onready var label_stress: Label = $VBoxMain/PanelTop/HBoxTop/LabelStress
+@onready var label_morale: Label = $VBoxMain/PanelTop/HBoxTop/LabelMorale
 @onready var label_money: Label = $VBoxMain/PanelTop/HBoxTop/LabelMoney
 @onready var btn_speed: Button = $VBoxMain/PanelTop/HBoxTop/BtnSpeed
 @onready var btn_pause: Button = $VBoxMain/PanelTop/HBoxTop/BtnPause
 @onready var btn_save: Button = $VBoxMain/PanelTop/HBoxTop/BtnSave
 @onready var btn_main_menu: Button = $VBoxMain/PanelTop/HBoxTop/BtnMainMenu
 
+@onready var label_player_summary: Label = $VBoxMain/PanelPlayerOverview/Margin/LabelPlayerSummary
 @onready var label_status: Label = $VBoxMain/PanelCenter/LabelStatus
+@onready var btn_character: Button = $VBoxMain/PanelCenter/HBoxActions/BtnCharacter
 @onready var btn_practice: Button = $VBoxMain/PanelCenter/HBoxActions/BtnPractice
 @onready var btn_catalog: Button = $VBoxMain/PanelCenter/HBoxActions/BtnCatalog
 @onready var btn_new_song: Button = $VBoxMain/PanelCenter/HBoxActions/BtnNewSong
@@ -26,6 +30,7 @@ extends Control
 @onready var live_concert_modal: Control = $LiveConcert
 @onready var economy_bank_modal: Control = $EconomyBank
 @onready var daily_summary_modal: Control = $DailySummary
+@onready var character_sheet_modal: Control = $CharacterSheet
 
 var action_system: ActionSystem
 var quick_practice_action: ActionData
@@ -51,6 +56,7 @@ func _ready() -> void:
 	label_status.set_accessibility_live(Constants.ACCESSIBILITY_LIVE_ASSERTIVE)
 	
 	# Connessione eventi UI
+	btn_character.pressed.connect(open_character_sheet)
 	btn_practice.pressed.connect(_on_btn_practice_pressed)
 	btn_catalog.pressed.connect(open_catalog)
 	btn_new_song.pressed.connect(open_song_creator)
@@ -61,7 +67,7 @@ func _ready() -> void:
 	btn_save.pressed.connect(_on_btn_save_pressed)
 	btn_main_menu.pressed.connect(_on_btn_main_menu_pressed)
 	
-	# Connessione modali musicali, concerti ed economia
+	# Connessione modali musicali, concerti, economia e scheda personaggio
 	song_catalog_modal.closed.connect(close_catalog)
 	song_catalog_modal.new_song_requested.connect(_on_catalog_new_song_requested)
 	song_catalog_modal.edit_song_requested.connect(open_song_editor)
@@ -72,6 +78,8 @@ func _ready() -> void:
 	economy_bank_modal.closed.connect(close_economy_bank)
 	if daily_summary_modal:
 		daily_summary_modal.day_advanced.connect(_on_day_advanced)
+	if character_sheet_modal:
+		character_sheet_modal.closed.connect(close_character_sheet)
 		
 	# Connessione Fine Giornata (EndDaySystem)
 	if GameManager:
@@ -100,7 +108,7 @@ func _ready() -> void:
 	_update_hud_display()
 	
 	# Auto-focus sul primo elemento utile
-	btn_practice.grab_focus()
+	btn_character.grab_focus()
 
 func _process(delta: float) -> void:
 	if GameManager.time_system:
@@ -117,10 +125,14 @@ func _unhandled_input(event: InputEvent) -> void:
 	   (song_creator_modal and song_creator_modal.visible) or \
 	   (live_concert_modal and live_concert_modal.visible) or \
 	   (economy_bank_modal and economy_bank_modal.visible) or \
-	   (daily_summary_modal and daily_summary_modal.visible):
+	   (daily_summary_modal and daily_summary_modal.visible) or \
+	   (character_sheet_modal and character_sheet_modal.visible):
 		return
 	
 	match event.keycode:
+		KEY_C:
+			open_character_sheet()
+			get_viewport().set_input_as_handled()
 		KEY_L:
 			open_live_concert()
 			get_viewport().set_input_as_handled()
@@ -155,6 +167,7 @@ func _get_localized_period(period: int) -> String:
 
 func _refresh_ui_text() -> void:
 	# Testi pulsanti
+	btn_character.text = tr("HUD_BTN_CHARACTER")
 	btn_practice.text = tr("HUD_BTN_PRACTICE")
 	btn_catalog.text = tr("HUD_BTN_CATALOG")
 	btn_new_song.text = tr("HUD_BTN_NEW_SONG")
@@ -170,6 +183,7 @@ func _refresh_ui_text() -> void:
 	btn_main_menu.text = tr("HUD_BTN_MAIN_MENU")
 	
 	# Hook AccessKit semantici per NVDA
+	AccessibilityManager.hook_control_accessibility(btn_character, tr("HUD_BTN_CHARACTER_ACC_NAME"), tr("HUD_BTN_CHARACTER_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_practice, tr("HUD_BTN_PRACTICE_ACC_NAME"), tr("HUD_BTN_PRACTICE_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_catalog, tr("HUD_BTN_CATALOG_ACC_NAME"), tr("HUD_BTN_CATALOG_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_new_song, tr("HUD_BTN_NEW_SONG_ACC_NAME"), tr("HUD_BTN_NEW_SONG_ACC_DESC"))
@@ -200,6 +214,8 @@ func open_catalog() -> void:
 		live_concert_modal.visible = false
 	if economy_bank_modal.visible:
 		economy_bank_modal.visible = false
+	if character_sheet_modal and character_sheet_modal.visible:
+		character_sheet_modal.visible = false
 	if vbox_main:
 		vbox_main.visible = false
 	song_catalog_modal.visible = true
@@ -220,6 +236,8 @@ func open_song_creator() -> void:
 		live_concert_modal.visible = false
 	if economy_bank_modal.visible:
 		economy_bank_modal.visible = false
+	if character_sheet_modal and character_sheet_modal.visible:
+		character_sheet_modal.visible = false
 	if vbox_main:
 		vbox_main.visible = false
 	song_creator_modal.visible = true
@@ -240,6 +258,8 @@ func open_song_editor(song: SongData) -> void:
 		live_concert_modal.visible = false
 	if economy_bank_modal.visible:
 		economy_bank_modal.visible = false
+	if character_sheet_modal and character_sheet_modal.visible:
+		character_sheet_modal.visible = false
 	if vbox_main:
 		vbox_main.visible = false
 	song_creator_modal.visible = true
@@ -253,6 +273,8 @@ func open_live_concert() -> void:
 		song_creator_modal.visible = false
 	if economy_bank_modal.visible:
 		economy_bank_modal.visible = false
+	if character_sheet_modal and character_sheet_modal.visible:
+		character_sheet_modal.visible = false
 	if vbox_main:
 		vbox_main.visible = false
 	live_concert_modal.visible = true
@@ -274,6 +296,8 @@ func open_economy_bank() -> void:
 		song_creator_modal.visible = false
 	if live_concert_modal.visible:
 		live_concert_modal.visible = false
+	if character_sheet_modal and character_sheet_modal.visible:
+		character_sheet_modal.visible = false
 	if vbox_main:
 		vbox_main.visible = false
 	economy_bank_modal.open()
@@ -287,6 +311,32 @@ func close_economy_bank() -> void:
 	btn_economy.grab_focus()
 	_update_hud_display()
 
+func open_character_sheet() -> void:
+	if song_catalog_modal and song_catalog_modal.visible:
+		song_catalog_modal.visible = false
+	if song_creator_modal and song_creator_modal.visible:
+		song_creator_modal.visible = false
+	if live_concert_modal and live_concert_modal.visible:
+		live_concert_modal.visible = false
+	if economy_bank_modal and economy_bank_modal.visible:
+		economy_bank_modal.visible = false
+	if daily_summary_modal and daily_summary_modal.visible:
+		daily_summary_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = false
+	if character_sheet_modal:
+		character_sheet_modal.open()
+	GameManager.open_menu()
+
+func close_character_sheet() -> void:
+	if character_sheet_modal:
+		character_sheet_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = true
+	GameManager.close_menu()
+	btn_character.grab_focus()
+	_update_hud_display()
+
 func open_daily_summary(summary_data: Dictionary) -> void:
 	if song_catalog_modal.visible:
 		song_catalog_modal.visible = false
@@ -296,6 +346,8 @@ func open_daily_summary(summary_data: Dictionary) -> void:
 		live_concert_modal.visible = false
 	if economy_bank_modal.visible:
 		economy_bank_modal.visible = false
+	if character_sheet_modal and character_sheet_modal.visible:
+		character_sheet_modal.visible = false
 	if vbox_main:
 		vbox_main.visible = false
 	if daily_summary_modal:
@@ -330,7 +382,33 @@ func _update_hud_display() -> void:
 		
 	if GameManager.player_data:
 		label_energy.text = tr("HUD_ENERGY") % GameManager.player_data.energy
+		if label_stress:
+			label_stress.text = tr("HUD_STRESS") % GameManager.player_data.stress
+		if label_morale:
+			label_morale.text = tr("HUD_MORALE") % GameManager.player_data.morale
 		label_money.text = tr("HUD_MONEY") % GameManager.player_data.money
+		
+		if label_player_summary:
+			var skills_summary: String = ""
+			if GameManager.skill_system:
+				var summaries: Array[Dictionary] = GameManager.skill_system.get_all_skills_summary()
+				var parts: Array[String] = []
+				for s in summaries:
+					parts.append("%s L%d" % [s["name"], s["level"]])
+				skills_summary = ", ".join(parts)
+			else:
+				skills_summary = "Strumento L10"
+			
+			var tier_name: String = "Principiante"
+			if GameManager.career_system:
+				tier_name = GameManager.career_system.get_tier_name(GameManager.player_data.career_tier)
+				
+			label_player_summary.text = tr("HUD_PLAYER_SUMMARY") % [
+				GameManager.player_data.player_name,
+				GameManager.player_data.get_background_name(),
+				tier_name,
+				skills_summary
+			]
 
 func _on_time_ticked(_remaining_sec: float, _time_str: String, _period: int) -> void:
 	_update_hud_display()

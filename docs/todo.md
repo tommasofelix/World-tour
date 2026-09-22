@@ -129,6 +129,14 @@ Il materiale del Game Design Document originario è stato organizzato e disaccop
 
 ---
 
+### FASE 6: Identità Artistica & Espansione V2.0 (The Musician's Life)
+- [x] `F6.1`: **L'Identità del Musicista & Scheda Personaggio (Opzione 1)**: Protagonista pronto per i test (Alex, Chitarra Elettrica, Autodidatta, Carismatico, 7 abilità a Liv. 10), integrazione bisogni vitali (Stress e Morale) e riquadro riassuntivo artistico nell'HUD, pulsante `Personaggio (C)` e scorciatoia `C`, modale ad alto contrasto `CharacterSheet` con matrice dinamica delle 7 abilità e annuncio vocale per NVDA (convalidato con 35/35 file verificati e 6/6 test suite).
+- [ ] `F6.2`: **Dinamiche di Routine, Recupero Psico-Fisico & Lifestyle**: Attività quotidiane di svago per gestire lo Stress e ripristinare il Morale (ascolto musica, cinema, passeggiata, sessioni jam libere).
+- [ ] `F6.3`: **Formati Discografici Estesi**: Produzione e rilascio di EP (3-5 tracce) e Album / LP (8-12 tracce) con booklet, recensioni della critica musicale e campagne promozionali.
+- [ ] `F6.4`: **Sistema Band & Reclutamento Musicisti**: Formazione del gruppo, annunci per musicisti, provini, chimica relazionale e gestione delle personalità.
+
+---
+
 ### ROADMAP DI ESPANSIONE (V2.0 – V5.0)
 - [ ] `V2.0`: Sistema Band, reclutamento musicisti, dinamiche relazionali, creazione EP e Album, lifestyle approfondito.
 - [ ] `V3.0`: Industria musicale, manager, etichette Indie vs Major, contratti ed eventi narrativi a bivi morali.

@@ -1,7 +1,7 @@
 # World-tour — Hub di contesto locale
 
 - Framework: ASTRALIS, baseline pubblica `main@d28d1f9`.
-- Stato del progetto: Fase 4 completata e chiusa con successo (Vertical Slice V1.2 — Live Performance & Concert Loop); avviata Fase 5: Vertical Slice V1.3 — Economia, Carriera e Rilascio MVG; stack confermato Godot Engine 4.7.2 win64.
+- Stato del progetto: Fase 5 completata (MVG V1.3); Fase 6A completata e verificata con successo (Identità del Musicista & Scheda Personaggio — Opzione 1); pronti per l'espansione V2.0 (Fase 6B: Routine, Svago e Recupero Psico-Fisico o Formati Disco Estesi); stack confermato Godot Engine 4.7.2 win64.
 - Repository: pubblico; mantenere fuori dati personali e governance privata.
 - AI primaria: Antigravity, salvo diversa decisione esplicita del responsabile del progetto.
 - Collaboratori ausiliari: attivati soltanto quando presenti o richiesti.

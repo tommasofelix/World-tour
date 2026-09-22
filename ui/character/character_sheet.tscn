@@ -1,0 +1,159 @@
+[gd_scene load_steps=3 format=3 uid="uid://dmcharsheetwt01"]
+
+[ext_resource type="Script" path="res://ui/character/character_sheet.gd" id="1_charsheet"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_charsheet"]
+content_margin_left = 25.0
+content_margin_top = 25.0
+content_margin_right = 25.0
+content_margin_bottom = 25.0
+bg_color = Color(0.09, 0.1, 0.14, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.5, 0.4, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="CharacterSheet" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_charsheet")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.05, 0.05, 0.08, 1)
+
+[node name="PanelMain" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -440.0
+offset_top = -290.0
+offset_right = 440.0
+offset_bottom = 290.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_charsheet")
+
+[node name="VBox" type="VBoxContainer" parent="PanelMain"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Header" type="VBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="LabelTitle" type="Label" parent="PanelMain/VBox/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Scheda Musicista — Alex"
+
+[node name="LabelSubtitle" type="Label" parent="PanelMain/VBox/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Profilo Artistico, Status di Carriera e Matrice delle Abilità"
+
+[node name="HSeparator1" type="HSeparator" parent="PanelMain/VBox"]
+layout_mode = 2
+
+[node name="HBoxBody" type="HBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 30
+
+[node name="VBoxLeft" type="VBoxContainer" parent="PanelMain/VBox/HBoxBody"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="LabelSectionLeft" type="Label" parent="PanelMain/VBox/HBoxBody/VBoxLeft"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Dati Artistici & Condizione"
+
+[node name="LabelName" type="Label" parent="PanelMain/VBox/HBoxBody/VBoxLeft"]
+layout_mode = 2
+text = "Nome d'arte: Alex"
+
+[node name="LabelInstrument" type="Label" parent="PanelMain/VBox/HBoxBody/VBoxLeft"]
+layout_mode = 2
+text = "Strumento Primario: Chitarra Elettrica"
+
+[node name="LabelBackground" type="Label" parent="PanelMain/VBox/HBoxBody/VBoxLeft"]
+layout_mode = 2
+text = "Origine / Background: Autodidatta (Equilibrato)"
+
+[node name="LabelTrait" type="Label" parent="PanelMain/VBox/HBoxBody/VBoxLeft"]
+layout_mode = 2
+text = "Tratto Personale: Carismatico (+Presenza Scenica e Fan)"
+
+[node name="LabelCareer" type="Label" parent="PanelMain/VBox/HBoxBody/VBoxLeft"]
+layout_mode = 2
+text = "Status Carriera: Principiante da Cameretta (T0)"
+
+[node name="LabelFame" type="Label" parent="PanelMain/VBox/HBoxBody/VBoxLeft"]
+layout_mode = 2
+text = "Fan: 0 | Popolarità: 1.0% | Reputazione: 5.0"
+
+[node name="HSepLeft" type="HSeparator" parent="PanelMain/VBox/HBoxBody/VBoxLeft"]
+layout_mode = 2
+
+[node name="LabelVitals" type="Label" parent="PanelMain/VBox/HBoxBody/VBoxLeft"]
+layout_mode = 2
+text = "Condizione: Energia 100% | Stress 0% | Morale 100%"
+
+[node name="LabelFinance" type="Label" parent="PanelMain/VBox/HBoxBody/VBoxLeft"]
+layout_mode = 2
+text = "Finanze: Saldo 500.00 € | Spese Fisse: 25.00 €/notte"
+
+[node name="VSeparator" type="VSeparator" parent="PanelMain/VBox/HBoxBody"]
+layout_mode = 2
+
+[node name="VBoxRight" type="VBoxContainer" parent="PanelMain/VBox/HBoxBody"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="LabelSectionRight" type="Label" parent="PanelMain/VBox/HBoxBody/VBoxRight"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Matrice delle 7 Abilità Artistiche"
+
+[node name="ScrollSkills" type="ScrollContainer" parent="PanelMain/VBox/HBoxBody/VBoxRight"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxSkillsList" type="VBoxContainer" parent="PanelMain/VBox/HBoxBody/VBoxRight/ScrollSkills"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="HSeparator2" type="HSeparator" parent="PanelMain/VBox"]
+layout_mode = 2
+
+[node name="HBoxBottom" type="HBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="BtnClose" type="Button" parent="PanelMain/VBox/HBoxBottom"]
+custom_minimum_size = Vector2(240, 46)
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "Chiudi Scheda (Esc / C)"

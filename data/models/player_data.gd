@@ -7,7 +7,34 @@ extends RefCounted
 var player_name: String = "Alex"
 var primary_instrument: String = "Chitarra Elettrica"
 var background_id: String = "self_taught"
+var trait_id: String = "charismatic"
 var language: String = "it"
+
+func get_background_name() -> String:
+	match background_id:
+		"self_taught":
+			return "Autodidatta (Equilibrato)"
+		"conservatory":
+			return "Conservatorio (Teoria & Composizione)"
+		"street_kid":
+			return "Musicista di Strada (Carisma & Grinta)"
+		"art_family":
+			return "Famiglia d'Arte (Notorietà & Contatti)"
+		_:
+			return "Autodidatta"
+
+func get_trait_name() -> String:
+	match trait_id:
+		"charismatic":
+			return "Carismatico (+Presenza Scenica e Fan)"
+		"perfectionist":
+			return "Perfezionista (+Qualità Brani, +Stress)"
+		"night_owl":
+			return "Creativo Notturno (+Ispirazione Serale)"
+		"resilient":
+			return "Resiliente (-Consumo Energia)"
+		_:
+			return "Carismatico"
 
 # Risorse fisiologiche e finanziarie
 var energy: int = Constants.MAX_ENERGY
@@ -214,6 +241,7 @@ func to_dict() -> Dictionary:
 		"player_name": player_name,
 		"primary_instrument": primary_instrument,
 		"background_id": background_id,
+		"trait_id": trait_id,
 		"language": language,
 		"energy": energy,
 		"stress": stress,
@@ -231,6 +259,7 @@ func from_dict(dict: Dictionary) -> void:
 	player_name = dict.get("player_name", player_name)
 	primary_instrument = dict.get("primary_instrument", primary_instrument)
 	background_id = dict.get("background_id", background_id)
+	trait_id = dict.get("trait_id", trait_id)
 	language = dict.get("language", language)
 	energy = int(dict.get("energy", energy))
 	stress = int(dict.get("stress", stress))

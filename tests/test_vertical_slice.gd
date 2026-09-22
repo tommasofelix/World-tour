@@ -19,6 +19,7 @@ func _ready() -> void:
 	test_action_anti_grinding()
 	test_end_day_resolution()
 	test_atomic_save_and_load()
+	test_character_sheet_ui()
 	
 	print("\n--------------------------------------------------------")
 	print("ESITO COMPLESSIVO TEST VERTICAL SLICE:")
@@ -70,6 +71,20 @@ func test_player_data_model() -> void:
 	var p_restored: PlayerData = PlayerData.new()
 	p_restored.from_dict(d)
 	assert_equal(p_restored.energy, 60, "Ripristino serializzazione: Energia mantenuta a 60")
+	
+	# Test tratti, background e serializzazione identità
+	assert_equal(p.background_id, "self_taught", "Background ID iniziale = self_taught")
+	assert_equal(p.trait_id, "charismatic", "Trait ID iniziale = charismatic")
+	assert_true(p.get_background_name().contains("Autodidatta"), "Nome background localizzato contiene Autodidatta")
+	assert_true(p.get_trait_name().contains("Carismatico"), "Nome tratto localizzato contiene Carismatico")
+	
+	p.trait_id = "resilient"
+	p.background_id = "conservatory"
+	var d2: Dictionary = p.to_dict()
+	var p2: PlayerData = PlayerData.new()
+	p2.from_dict(d2)
+	assert_equal(p2.trait_id, "resilient", "Ripristino serializzazione: Trait ID resilient")
+	assert_equal(p2.background_id, "conservatory", "Ripristino serializzazione: Background ID conservatory")
 
 func test_calendar_data_model() -> void:
 	print("\n2. Verifica Modello CalendarData:")
@@ -207,3 +222,26 @@ func test_atomic_save_and_load() -> void:
 	assert_equal(GameManager.player_data.player_name, "Luca Rock", "Nome ripristinato correttamente: Luca Rock")
 	assert_equal(GameManager.player_data.money, 777.50, "Saldo ripristinato correttamente: 777.50 €")
 	assert_equal(GameManager.calendar_data.day_number, 3, "Giorno ripristinato correttamente: Giorno 3")
+
+func test_character_sheet_ui() -> void:
+	print("\n8. Verifica Scheda Personaggio e Identità (CharacterSheet):")
+	var char_res: Resource = load("res://ui/character/character_sheet.tscn")
+	assert_true(char_res != null, "Risorsa character_sheet.tscn caricata")
+	var sheet: Control = char_res.instantiate() as Control
+	assert_true(sheet != null, "Istanziazione character_sheet riuscita")
+	
+	add_child(sheet)
+	var btn_close: Button = sheet.get_node_or_null("PanelMain/VBox/HBoxBottom/BtnClose")
+	assert_true(btn_close != null, "BtnClose presente nella scheda personaggio")
+	
+	var lbl_name: Label = sheet.get_node_or_null("PanelMain/VBox/HBoxBody/VBoxLeft/LabelName")
+	assert_true(lbl_name != null, "LabelName presente nella colonna anagrafica")
+	
+	var vbox_skills: VBoxContainer = sheet.get_node_or_null("PanelMain/VBox/HBoxBody/VBoxRight/ScrollSkills/VBoxSkillsList")
+	assert_true(vbox_skills != null, "VBoxSkillsList presente per la matrice delle 7 abilità")
+	
+	sheet.refresh_sheet()
+	assert_equal(vbox_skills.get_child_count(), 7, "Matrice delle 7 abilità popolata (7 elementi)")
+	remove_child(sheet)
+	sheet.queue_free()
+

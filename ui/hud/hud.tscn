@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://c6hudworldtour01"]
+[gd_scene load_steps=8 format=3 uid="uid://c6hudworldtour01"]
 
 [ext_resource type="Script" path="res://ui/hud/hud.gd" id="1_hud"]
 [ext_resource type="PackedScene" path="res://ui/music/song_catalog.tscn" id="2_catalog"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://ui/concert/live_concert.tscn" id="4_concert"]
 [ext_resource type="PackedScene" path="res://ui/economy/economy_bank.tscn" id="5_bank"]
 [ext_resource type="PackedScene" path="res://ui/summary/daily_summary.tscn" id="6_summary"]
+[ext_resource type="PackedScene" path="res://ui/character/character_sheet.tscn" id="7_charsheet"]
 
 [node name="HUD" type="Control"]
 layout_mode = 3
@@ -22,32 +23,43 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 40.0
-offset_top = 40.0
+offset_top = 30.0
 offset_right = -40.0
-offset_bottom = -40.0
+offset_bottom = -30.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 16
 
 [node name="PanelTop" type="PanelContainer" parent="VBoxMain"]
 layout_mode = 2
 
 [node name="HBoxTop" type="HBoxContainer" parent="VBoxMain/PanelTop"]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 16
 
 [node name="LabelTime" type="Label" parent="VBoxMain/PanelTop/HBoxTop"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 15
 text = "Giorno 1 — Ore 06:00 (Mattina)"
 
 [node name="LabelEnergy" type="Label" parent="VBoxMain/PanelTop/HBoxTop"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 15
 text = "Energia: 100%"
+
+[node name="LabelStress" type="Label" parent="VBoxMain/PanelTop/HBoxTop"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Stress: 0%"
+
+[node name="LabelMorale" type="Label" parent="VBoxMain/PanelTop/HBoxTop"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Morale: 100%"
 
 [node name="LabelMoney" type="Label" parent="VBoxMain/PanelTop/HBoxTop"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 15
 text = "Saldo: 500.00 €"
 
 [node name="Spacer" type="Control" parent="VBoxMain/PanelTop/HBoxTop"]
@@ -58,33 +70,48 @@ size_flags_horizontal = 3
 layout_mode = 2
 focus_neighbor_left = NodePath("../../../PanelCenter/HBoxActions/BtnEconomy")
 focus_neighbor_right = NodePath("../BtnPause")
-focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnPractice")
+focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnCharacter")
 text = "Velocità: 1x (T)"
 
 [node name="BtnPause" type="Button" parent="VBoxMain/PanelTop/HBoxTop"]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnSpeed")
 focus_neighbor_right = NodePath("../BtnSave")
-focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnPractice")
+focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnCharacter")
 text = "Pausa (Spazio)"
 
 [node name="BtnSave" type="Button" parent="VBoxMain/PanelTop/HBoxTop"]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnPause")
 focus_neighbor_right = NodePath("../BtnMainMenu")
-focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnPractice")
+focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnCharacter")
 text = "Salva Partita"
 
 [node name="BtnMainMenu" type="Button" parent="VBoxMain/PanelTop/HBoxTop"]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnSave")
-focus_neighbor_right = NodePath("../../../PanelCenter/HBoxActions/BtnPractice")
-focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnPractice")
+focus_neighbor_right = NodePath("../../../PanelCenter/HBoxActions/BtnCharacter")
+focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnCharacter")
 text = "Menu Principale"
+
+[node name="PanelPlayerOverview" type="PanelContainer" parent="VBoxMain"]
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="VBoxMain/PanelPlayerOverview"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="LabelPlayerSummary" type="Label" parent="VBoxMain/PanelPlayerOverview/Margin"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Musicista: Alex | Chitarra (Liv. 10) | Composizione (Liv. 10) | Live (Liv. 10) | Status: Principiante (T0)"
 
 [node name="HSeparator" type="HSeparator" parent="VBoxMain"]
 layout_mode = 2
-theme_override_constants/separation = 30
+theme_override_constants/separation = 20
 
 [node name="PanelCenter" type="VBoxContainer" parent="VBoxMain"]
 layout_mode = 2
@@ -96,11 +123,18 @@ text = "Stato: In attesa (Pronto per agire)"
 
 [node name="HBoxActions" type="HBoxContainer" parent="VBoxMain/PanelCenter"]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 14
+
+[node name="BtnCharacter" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
+focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
+focus_neighbor_right = NodePath("../BtnPractice")
+text = "Personaggio (C)"
 
 [node name="BtnPractice" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
 layout_mode = 2
-focus_neighbor_left = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
+focus_neighbor_left = NodePath("../BtnCharacter")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
 focus_neighbor_right = NodePath("../BtnCatalog")
 text = "1. Allenamento Rapido (10s)"
@@ -150,5 +184,9 @@ visible = false
 layout_mode = 1
 
 [node name="DailySummary" parent="." instance=ExtResource("6_summary")]
+visible = false
+layout_mode = 1
+
+[node name="CharacterSheet" parent="." instance=ExtResource("7_charsheet")]
 visible = false
 layout_mode = 1
