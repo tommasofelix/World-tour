@@ -239,5 +239,16 @@ static func get_city_name(city_id: int) -> String:
 		_:
 			return "Sconosciuta"
 
+static func get_festival_slot_name(slot: int) -> String:
+	match slot:
+		FestivalSlot.OPENING_AFTERNOON:
+			return "Slot Pomeridiano (Apertura)"
+		FestivalSlot.SUNSET_SLOT:
+			return "Slot al Tramonto (Golden Hour)"
+		FestivalSlot.HEADLINER_NIGHT:
+			return "Headliner Notturno (Prime Time)"
+		_:
+			return "Slot Non Assegnato"
+
 
 

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://test_fest_sys_scene"]
+
+[ext_resource type="Script" path="res://tests/test_festival_system.gd" id="1_fest_test"]
+
+[node name="TestFestivalSystem" type="Node"]
+script = ExtResource("1_fest_test")

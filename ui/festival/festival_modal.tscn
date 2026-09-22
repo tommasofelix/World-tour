@@ -1,0 +1,204 @@
+[gd_scene load_steps=4 format=3 uid="uid://dmfestivalmodal01"]
+
+[ext_resource type="Script" path="res://ui/festival/festival_modal.gd" id="1_fest"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fest"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.08, 0.1, 0.15, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.5, 0.7, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+content_margin_left = 12.0
+content_margin_top = 12.0
+content_margin_right = 12.0
+content_margin_bottom = 12.0
+bg_color = Color(0.12, 0.15, 0.22, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.35, 0.5, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="FestivalModal" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_fest")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.02, 0.03, 0.05, 1)
+
+[node name="PanelMain" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = 30.0
+offset_right = -40.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_fest")
+
+[node name="VBox" type="VBoxContainer" parent="PanelMain"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Header" type="VBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+
+[node name="LabelTitle" type="Label" parent="PanelMain/VBox/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.95, 0.95, 1, 1)
+text = "🎪 Grandi Festival Estivi — Stagione all'Aperto (Versione 4.0)"
+
+[node name="LabelSubtitle" type="Label" parent="PanelMain/VBox/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.7, 0.75, 0.85, 1)
+text = "Mesi 4-6 (Estate): Candidati agli slot orari, vendi merchandise ed eclissa la band rivale sul cartellone."
+
+[node name="HSeparator" type="HSeparator" parent="PanelMain/VBox"]
+layout_mode = 2
+
+[node name="HBoxBody" type="HBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="PanelList" type="PanelContainer" parent="PanelMain/VBox/HBoxBody"]
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Margin" type="MarginContainer" parent="PanelMain/VBox/HBoxBody/PanelList"]
+layout_mode = 2
+
+[node name="VBoxList" type="VBoxContainer" parent="PanelMain/VBox/HBoxBody/PanelList/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LabelFestListTitle" type="Label" parent="PanelMain/VBox/HBoxBody/PanelList/Margin/VBoxList"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.9, 0.9, 1, 1)
+text = "Festival Continentali (Tasti 1 - 6):"
+
+[node name="Scroll" type="ScrollContainer" parent="PanelMain/VBox/HBoxBody/PanelList/Margin/VBoxList"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxFestivals" type="VBoxContainer" parent="PanelMain/VBox/HBoxBody/PanelList/Margin/VBoxList/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PanelDetails" type="PanelContainer" parent="PanelMain/VBox/HBoxBody"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Margin" type="MarginContainer" parent="PanelMain/VBox/HBoxBody/PanelDetails"]
+layout_mode = 2
+
+[node name="VBoxDetails" type="VBoxContainer" parent="PanelMain/VBox/HBoxBody/PanelDetails/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="LabelFestName" type="Label" parent="PanelMain/VBox/HBoxBody/PanelDetails/Margin/VBoxDetails"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(1, 0.9, 0.5, 1)
+text = "Nome Festival"
+
+[node name="LabelFestInfo" type="Label" parent="PanelMain/VBox/HBoxBody/PanelDetails/Margin/VBoxDetails"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.85, 0.9, 0.95, 1)
+text = "Città | Arena | Giorno | Capienza"
+
+[node name="LabelFestRival" type="Label" parent="PanelMain/VBox/HBoxBody/PanelDetails/Margin/VBoxDetails"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(1, 0.6, 0.5, 1)
+text = "Rivale sul Cartellone: The Chrome Shadows (Score: 74)"
+
+[node name="HSeparator2" type="HSeparator" parent="PanelMain/VBox/HBoxBody/PanelDetails/Margin/VBoxDetails"]
+layout_mode = 2
+
+[node name="LabelSlotTitle" type="Label" parent="PanelMain/VBox/HBoxBody/PanelDetails/Margin/VBoxDetails"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.8, 0.9, 1, 1)
+text = "Seleziona Slot di Esibizione (Tasti P, T, H):"
+
+[node name="HBoxSlot" type="HBoxContainer" parent="PanelMain/VBox/HBoxBody/PanelDetails/Margin/VBoxDetails"]
+layout_mode = 2
+
+[node name="OptSlot" type="OptionButton" parent="PanelMain/VBox/HBoxBody/PanelDetails/Margin/VBoxDetails/HBoxSlot"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LabelSlotDetails" type="Label" parent="PanelMain/VBox/HBoxBody/PanelDetails/Margin/VBoxDetails"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+text = "Dettagli Slot, Orario, Pubblico, Cachet e Requisiti"
+
+[node name="HBoxActions" type="HBoxContainer" parent="PanelMain/VBox/HBoxBody/PanelDetails/Margin/VBoxDetails"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="BtnBookSlot" type="Button" parent="PanelMain/VBox/HBoxBody/PanelDetails/Margin/VBoxDetails/HBoxActions"]
+custom_minimum_size = Vector2(180, 36)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Candidati allo Slot (C)"
+
+[node name="BtnPerformFestival" type="Button" parent="PanelMain/VBox/HBoxBody/PanelDetails/Margin/VBoxDetails/HBoxActions"]
+custom_minimum_size = Vector2(220, 36)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Suona al Festival (Spazio / S)"
+
+[node name="LabelStatus" type="Label" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+text = "Stato"
+
+[node name="HBoxBottom" type="HBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+alignment = 2
+
+[node name="BtnClose" type="Button" parent="PanelMain/VBox/HBoxBottom"]
+custom_minimum_size = Vector2(140, 34)
+layout_mode = 2
+text = "Chiudi (Esc)"

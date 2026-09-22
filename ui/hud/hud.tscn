@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://c6hudworldtour01"]
+[gd_scene load_steps=14 format=3 uid="uid://c6hudworldtour01"]
 
 [ext_resource type="Script" path="res://ui/hud/hud.gd" id="1_hud"]
 [ext_resource type="PackedScene" path="res://ui/music/song_catalog.tscn" id="2_catalog"]
@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" path="res://ui/industry/dilemma_modal.tscn" id="11_dilemma"]
 [ext_resource type="PackedScene" path="res://ui/travel/travel_modal.tscn" id="12_travel"]
 [ext_resource type="PackedScene" path="res://ui/tour/tour_modal.tscn" id="13_tour"]
+[ext_resource type="PackedScene" path="res://ui/festival/festival_modal.tscn" id="14_fest"]
 
 [node name="HUD" type="Control"]
 layout_mode = 3
@@ -205,8 +206,15 @@ text = "Viaggi (V)"
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnTravel")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
-focus_neighbor_right = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
+focus_neighbor_right = NodePath("../BtnFestival")
 text = "Tour (O)"
+
+[node name="BtnFestival" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnTour")
+focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
+focus_neighbor_right = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
+text = "Festival (F)"
 
 [node name="SongCatalog" parent="." instance=ExtResource("2_catalog")]
 visible = false
@@ -255,4 +263,9 @@ layout_mode = 1
 [node name="TourModal" parent="." instance=ExtResource("13_tour")]
 visible = false
 layout_mode = 1
+
+[node name="FestivalModal" parent="." instance=ExtResource("14_fest")]
+visible = false
+layout_mode = 1
+
 

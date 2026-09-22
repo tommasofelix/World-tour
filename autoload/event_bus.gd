@@ -90,5 +90,10 @@ signal tour_stop_completed(stop_index: int, concert_result: Dictionary)
 signal tour_finished(summary: Dictionary)
 signal tour_screen_requested()
 
+# Segnali Grandi Festival Estivi (SP-11 / F8.3)
+signal festival_slot_booked(festival_id: String, slot: int)
+signal festival_performed(festival_id: String, result: Dictionary)
+signal festival_screen_requested()
+
 
 
