@@ -39,10 +39,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -380.0
-offset_top = -280.0
-offset_right = 380.0
-offset_bottom = 280.0
+offset_left = -480.0
+offset_top = -330.0
+offset_right = 480.0
+offset_bottom = 330.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_main")
@@ -50,13 +50,13 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_main")
 [node name="Margin" type="MarginContainer" parent="PanelMain"]
 layout_mode = 2
 theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 20
+theme_override_constants/margin_top = 18
 theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 20
+theme_override_constants/margin_bottom = 18
 
 [node name="VBox" type="VBoxContainer" parent="PanelMain/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 12
 
 [node name="HBoxHeader" type="HBoxContainer" parent="PanelMain/Margin/VBox"]
 layout_mode = 2
@@ -74,7 +74,7 @@ theme_override_font_sizes/font_size = 16
 text = "Saldo: 500.00 €"
 
 [node name="BtnClose" type="Button" parent="PanelMain/Margin/VBox/HBoxHeader"]
-custom_minimum_size = Vector2(80, 0)
+custom_minimum_size = Vector2(90, 0)
 layout_mode = 2
 text = "Chiudi (Esc)"
 
@@ -119,7 +119,32 @@ text = "Gestione Residenza: l'alloggio determina la qualità del riposo e la spe
 
 [node name="LabelHousingCurrent" type="Label" parent="PanelMain/Margin/VBox/PanelHousing"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.85, 0.4, 1)
 text = "Alloggio Attuale: Stanzetta (15.00 € / giorno | Recupero Sonno standard)"
+
+[node name="VBoxHousingList" type="VBoxContainer" parent="PanelMain/Margin/VBox/PanelHousing"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BtnHousing1" type="Button" parent="PanelMain/Margin/VBox/PanelHousing/VBoxHousingList"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+text = "1. Stanzetta Singola (15.00 €/giorno) — Nessun requisito"
+
+[node name="BtnHousing2" type="Button" parent="PanelMain/Margin/VBox/PanelHousing/VBoxHousingList"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+text = "2. Appartamento Condiviso con Band (25.00 €/giorno diviso tra membri)"
+
+[node name="BtnHousing3" type="Button" parent="PanelMain/Margin/VBox/PanelHousing/VBoxHousingList"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+text = "3. Loft con Sala Prove Inclusa (50.00 €/giorno) — Sala prove integrata"
+
+[node name="BtnHousing4" type="Button" parent="PanelMain/Margin/VBox/PanelHousing/VBoxHousingList"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+text = "4. Villa di Lusso con Studio (150.00 €/giorno) — Richiede Fenomeno Indie"
 
 [node name="PanelRehearsal" type="VBoxContainer" parent="PanelMain/Margin/VBox"]
 visible = false
@@ -133,7 +158,33 @@ text = "Sala Prove: un ambiente trattato acusticamente riduce l'affaticamento e 
 
 [node name="LabelRehearsalCurrent" type="Label" parent="PanelMain/Margin/VBox/PanelRehearsal"]
 layout_mode = 2
-text = "Allestimento Attuale: Garage di periferia (Nessun trattamento acustico)"
+theme_override_colors/font_color = Color(0.2, 0.85, 0.4, 1)
+text = "Allestimento Attuale: Garage rumoroso (Stress prova +10)"
+
+[node name="VBoxRehearsalList" type="VBoxContainer" parent="PanelMain/Margin/VBox/PanelRehearsal"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BtnRehearsal1" type="Button" parent="PanelMain/Margin/VBox/PanelRehearsal/VBoxRehearsalList"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+text = "A. Pannelli Fonoassorbenti Base (300.00 €) — Stress prove ridotto a 7"
+
+[node name="BtnRehearsal2" type="Button" parent="PanelMain/Margin/VBox/PanelRehearsal/VBoxRehearsalList"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+text = "B. Insonorizzazione Professionale (800.00 €) — Stress prove ridotto a 4, +5% Affinità"
+
+[node name="BtnRehearsal3" type="Button" parent="PanelMain/Margin/VBox/PanelRehearsal/VBoxRehearsalList"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+text = "C. Studio Acustico Perfetto & Lounge (2.000.00 €) — Zero Stress, Massima Coesione"
+
+[node name="BtnActionRehearse" type="Button" parent="PanelMain/Margin/VBox/PanelRehearsal"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.9, 0.9, 1)
+text = "Avvia Sessione di Prove con la Band (P) — Consuma 15% Energia, aumenta chimica"
 
 [node name="PanelGear" type="VBoxContainer" parent="PanelMain/Margin/VBox"]
 visible = false
@@ -143,11 +194,65 @@ theme_override_constants/separation = 10
 
 [node name="LabelGearDesc" type="Label" parent="PanelMain/Margin/VBox/PanelGear"]
 layout_mode = 2
-text = "Negozio Strumenti: strumenti di qualità superiore aumentano il carisma sul palco e la resa tecnica."
+text = "Negozio Strumenti: acquista strumentazione professionale per te e i tuoi compagni."
+
+[node name="HBoxGearCats" type="HBoxContainer" parent="PanelMain/Margin/VBox/PanelGear"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BtnCatGuitar" type="Button" parent="PanelMain/Margin/VBox/PanelGear/HBoxGearCats"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Chitarre (G)"
+
+[node name="BtnCatBass" type="Button" parent="PanelMain/Margin/VBox/PanelGear/HBoxGearCats"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Bassi (B)"
+
+[node name="BtnCatDrums" type="Button" parent="PanelMain/Margin/VBox/PanelGear/HBoxGearCats"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Batterie (D)"
+
+[node name="BtnCatVocals" type="Button" parent="PanelMain/Margin/VBox/PanelGear/HBoxGearCats"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Microfoni (V)"
+
+[node name="BtnCatKeys" type="Button" parent="PanelMain/Margin/VBox/PanelGear/HBoxGearCats"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Tastiere (K)"
 
 [node name="LabelGearCurrent" type="Label" parent="PanelMain/Margin/VBox/PanelGear"]
 layout_mode = 2
-text = "Strumentazione: Strumenti base di partenza (Livello 10)"
+theme_override_colors/font_color = Color(0.2, 0.85, 0.4, 1)
+text = "Dotazione Attuale: Chitarra da Studio Starter (Liv. 0)"
+
+[node name="VBoxGearList" type="VBoxContainer" parent="PanelMain/Margin/VBox/PanelGear"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BtnGear1" type="Button" parent="PanelMain/Margin/VBox/PanelGear/VBoxGearList"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+text = "A. Stage Semi-Pro"
+
+[node name="BtnGear2" type="Button" parent="PanelMain/Margin/VBox/PanelGear/VBoxGearList"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+text = "B. Vintage Professional"
+
+[node name="BtnGear3" type="Button" parent="PanelMain/Margin/VBox/PanelGear/VBoxGearList"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+text = "C. Custom Master Signature"
+
+[node name="LabelGearCompare" type="Label" parent="PanelMain/Margin/VBox/PanelGear"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.85, 0.3, 1)
+text = "Confronto: Seleziona un modello per visualizzare il delta statistico."
 
 [node name="PanelStudio" type="VBoxContainer" parent="PanelMain/Margin/VBox"]
 visible = false
@@ -157,11 +262,31 @@ theme_override_constants/separation = 10
 
 [node name="LabelStudioDesc" type="Label" parent="PanelMain/Margin/VBox/PanelStudio"]
 layout_mode = 2
-text = "Hardware di Registrazione: microfoni professionali e schede audio innalzano il limite di qualità brani."
+text = "Hardware di Registrazione: innalza il limite esecutivo casalingo da 60 a 100 e ottieni bonus disco a costo zero."
 
 [node name="LabelStudioCurrent" type="Label" parent="PanelMain/Margin/VBox/PanelStudio"]
 layout_mode = 2
-text = "Studio Setup: Registratore portatile base"
+theme_override_colors/font_color = Color(0.2, 0.85, 0.4, 1)
+text = "Hardware Attuale: Microfono Integrato Base (Cap Esecutivo: 60, Bonus Qualità: +0)"
+
+[node name="VBoxStudioList" type="VBoxContainer" parent="PanelMain/Margin/VBox/PanelStudio"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BtnStudio1" type="Button" parent="PanelMain/Margin/VBox/PanelStudio/VBoxStudioList"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+text = "A. Microfono a Condensatore & Scheda USB (400.00 €) — Cap 75, Bonus +5"
+
+[node name="BtnStudio2" type="Button" parent="PanelMain/Margin/VBox/PanelStudio/VBoxStudioList"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+text = "B. Preamplificatore Valvolare & Monitor Studio (1.200.00 €) — Cap 90, Bonus +10"
+
+[node name="BtnStudio3" type="Button" parent="PanelMain/Margin/VBox/PanelStudio/VBoxStudioList"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+text = "C. Banco Mixer Analogico & Suite Mastering (3.500.00 €) — Cap 100, Bonus +15"
 
 [node name="LabelFeedback" type="Label" parent="PanelMain/Margin/VBox"]
 custom_minimum_size = Vector2(0, 24)

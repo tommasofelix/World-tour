@@ -189,6 +189,9 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 	# 4. Calcolo Concert Score
 	var perf_level: float = float(player_data.get_skill_level("performance"))
 	var charisma_level: float = float(player_data.get_skill_level("charisma"))
+	if player_data:
+		var inst_bonus: Dictionary = player_data.get_primary_instrument_bonus()
+		charisma_level += float(inst_bonus.get("charisma_bonus", 0))
 	var base_score: float = Formulas.calculate_concert_score(
 		perf_level,
 		charisma_level,

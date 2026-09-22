@@ -80,9 +80,13 @@ I nuovi sottopiani per la Fase 9 (V5.0 Endgame) risiedono in [`docs/piani/attivi
 
 ### Sottopiani Attivi in Lavorazione (Fase 9 — V5.0)
 
-14. **[`SP-14`: Riorganizzazione UI, Menu di Sistema & Macro-Aree](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/attivi/sottopiani/14_riorganizzazione_ui_menu_sistema_e_macro_aree.md)** [/]  
+14. **[`SP-14`: Riorganizzazione UI, Menu di Sistema & Macro-Aree](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/attivi/sottopiani/14_riorganizzazione_ui_menu_sistema_e_macro_aree.md)** [x]  
     *Competenze*: UI/UX Engineering, Screen Reader Accessibility (NVDA Zero Mouse), Simmetria Universale.  
     *Oggetto*: Architettura HUD a 5 sezioni, Top Bar fissa, Menu di Sistema su tasto `Esc` e selettore a 4 Macro-Aree tematiche.
+
+15. **[`SP-15`: Skills, Upgrade Hub & Strumentazione](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/attivi/sottopiani/15_skills_upgrade_hub_e_strumentazione.md)** [x]  
+    *Competenze*: Music Economy, Lifestyle & Housing, Instrument Crafting, Rehearsal Dynamics & Studio Gear.  
+    *Oggetto*: Modello dati UpgradeData, lifestyle abitativo, sala prove insonorizzata, negozio strumenti multicategoria con comparatore e hardware home studio.
 
 ---
 
@@ -191,7 +195,7 @@ I nuovi sottopiani per la Fase 9 (V5.0 Endgame) risiedono in [`docs/piani/attivi
 
 ### FASE 9: Architettura UI a 5 Sezioni, Menu di Sistema & Espansione V5.0 (Endgame)
 - [x] `F9.0`: **Riorganizzazione Architetturale UI (Top Bar Permanente, Menu Sistema Esc & 4 Macro-Aree)**: Scorporo dell'HUD orizzontale a 15 tasti; consolidamento Top Bar fissa permanente; creazione modale `SystemMenuModal` (Riprendi, Salva Partita atomico, Impostazioni volumi/voce/lingua, Torna al Menu Principale) su tasto `Esc` a riposo; selettore 4 Macro-Aree (`1` Hub Personale, `2` Creazione & Produzione, `3` Carriera & Band, `4` Skills & Upgrade con modale `UpgradesModal`) con conservazione di tutti i 15 tasti rapidi diretti storici; suite di test `test_v5_ui_overhaul.gd`. Convalidato con 18/18 suite di test headless superate al 100% con 0 errori.
-- [ ] `F9.1`: **Skills, Upgrade Hub & Strumentazione (`UpgradesModal`)**: Lifestyle residenziale (alloggi), sala prove insonorizzata, negozio strumenti musicali con bonus carisma/abilità, hardware home studio/registrazione per innalzamento Quality Score.
+- [x] `F9.1`: **Skills, Upgrade Hub & Strumentazione (`UpgradesModal`)**: Lifestyle residenziale (alloggi), sala prove insonorizzata con mitigazione stress e azione diretta prove band, negozio strumenti multicategoria (chitarre, bassi, batterie, microfoni, tastiere) con comparatore e bonus carisma/abilità, hardware home studio/registrazione per innalzamento Quality Score; fix viewport 1920x1080 e riorganizzazione dinamica della seconda barra HUD (Città | Status | Livelli). Convalidato con la nuova suite `test_upgrades_system.gd` (68 test) e 19/19 suite headless superate al 100% con 0 errori.
 - [ ] `F9.2`: **Grandi Stadi, Palasport & Mega-Eventi**: Tournée mondiali, arene da 15.000 a 80.000 spettatori, allestimenti scenici, service audio/luci e logistica da superstar.
 - [ ] `F9.3`: **Legacy, Premi alla Carriera & Finale di Gioco**: Hall of Fame, Dischi d'Oro/Platino/Diamante, Grammy Awards, condizioni di vittoria e pensione musicale.
 - [ ] `F9.4`: **Suite di Test Headless Globale & Collaudo Congiunto V5.0**: Verifica complessiva congiunta su tutte le suite di test con 0 errori, zero regressioni e release finale V5.0.

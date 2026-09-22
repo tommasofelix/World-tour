@@ -4,6 +4,7 @@ extends RefCounted
 
 ## Motore del Ciclo Creativo e della Produzione Discografica per World-tour
 ## Governa la pipeline in 5 stadi, la generazione del Quality Score, i Tratti Emergenti e il rilascio dei Singoli.
+const UpgradeData = preload("res://data/models/upgrade_data.gd")
 
 var player_data: PlayerData
 var calendar_data: CalendarData
@@ -78,6 +79,10 @@ func record_tracks(song: SongData, use_pro_studio: bool = false) -> Dictionary:
 	if not player_data.consume_energy(25):
 		return {"success": false, "reason": "energy_insufficient"}
 		
+	var hw_tier: int = player_data.studio_hardware_tier if player_data else 0
+	var hw_cap: float = UpgradeData.get_studio_hardware_cap(hw_tier)
+	var hw_bonus: float = UpgradeData.get_studio_hardware_bonus(hw_tier)
+	
 	if use_pro_studio:
 		if player_data.money < 50.0:
 			return {"success": false, "reason": "money_insufficient"}
@@ -85,14 +90,18 @@ func record_tracks(song: SongData, use_pro_studio: bool = false) -> Dictionary:
 		EventBus.money_changed.emit(player_data.money, -50.0, "studio_fee")
 		song.studio_bonus = 15.0
 	else:
-		song.studio_bonus = 0.0
+		song.studio_bonus = hw_bonus
 		
 	player_data.add_stress(8)
 	
 	var base_exec: float = float(skill_system.get_skill_level("instrument")) if skill_system else 10.0
-	# Se Home Studio, c'è un tetto massimo di resa esecutiva grezza di 60
+	if player_data:
+		var inst_bonus: Dictionary = player_data.get_primary_instrument_bonus()
+		base_exec += float(inst_bonus.get("skill_bonus", 0))
+		
+	# Se Home Studio, il tetto massimo di resa esecutiva scala con l'hardware
 	if not use_pro_studio:
-		base_exec = minf(base_exec, 60.0)
+		base_exec = minf(base_exec, hw_cap)
 		
 	song.exec_skill_used = base_exec
 	song.stage = Enums.SongStage.RECORDING

@@ -197,6 +197,9 @@ func _ready() -> void:
 	EventBus.contract_completed.connect(func(_d): _update_hud_display())
 	EventBus.manager_hired.connect(func(_d): _update_hud_display())
 	EventBus.manager_fired.connect(func(_d): _update_hud_display())
+	EventBus.skill_leveled_up.connect(func(_s, _l): _update_hud_display())
+	EventBus.career_tier_promoted.connect(func(_t, _n): _update_hud_display())
+	EventBus.housing_changed.connect(func(_t, _r): _update_hud_display())
 	
 	# Configurazione semantica AccessKit e testi iniziali
 	_refresh_ui_text()
@@ -809,28 +812,28 @@ func _update_hud_display() -> void:
 		label_money.text = tr("HUD_MONEY") % GameManager.player_data.money
 		
 		if label_player_summary:
-			var skills_summary: String = ""
-			if GameManager.skill_system:
-				var summaries: Array[Dictionary] = GameManager.skill_system.get_all_skills_summary()
-				var parts: Array[String] = []
-				for s in summaries:
-					parts.append("%s L%d" % [s["name"], s["level"]])
-				skills_summary = ", ".join(parts)
-			else:
-				skills_summary = "Strumento L10"
-			
+			var city_name: String = GameManager.player_data.get_current_city_name()
 			var tier_name: String = "Principiante"
 			if GameManager.career_system:
 				tier_name = GameManager.career_system.get_tier_name(GameManager.player_data.career_tier)
 				
-			var city_name: String = GameManager.player_data.get_current_city_name()
-			label_player_summary.text = "%s (%s) | Città: %s | Status: %s | %s" % [
-				GameManager.player_data.player_name,
-				GameManager.player_data.get_background_name(),
+			var lv_songwriting: int = GameManager.player_data.get_skill_level("songwriting")
+			var lv_comp: int = GameManager.player_data.get_skill_level("composition")
+			var lv_inst: int = GameManager.player_data.get_skill_level("instrument")
+			var lv_prod: int = GameManager.player_data.get_skill_level("production")
+			var inst_name: String = GameManager.player_data.primary_instrument.capitalize()
+			
+			var summary_text: String = "Città: %s | Status: %s | Livello: Scrittura testi Lv. %d, Composizione Lv. %d, %s Lv. %d, Produzione Lv. %d" % [
 				city_name,
 				tier_name,
-				skills_summary
+				lv_songwriting,
+				lv_comp,
+				inst_name,
+				lv_inst,
+				lv_prod
 			]
+			label_player_summary.text = summary_text
+			label_player_summary.set_accessibility_name("Panoramica Carriera: %s" % summary_text)
 
 func _on_time_ticked(_remaining_sec: float, _time_str: String, _period: int) -> void:
 	_update_hud_display()

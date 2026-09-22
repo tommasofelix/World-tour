@@ -3,6 +3,7 @@ class_name PlayerData
 extends RefCounted
 
 ## Modello Dati Runtime del Personaggio Giocante per World-tour
+const UpgradeData = preload("res://data/models/upgrade_data.gd")
 
 var player_name: String = "Alex"
 var primary_instrument: String = "Chitarra Elettrica"
@@ -55,6 +56,47 @@ var revenue_split_mode: int = Enums.RevenueSplit.EQUAL_SPLIT
 
 # Lifestyle & Alloggi
 var current_housing_tier: int = Enums.HousingTier.STARTER_BEDROOM
+
+# Skills, Upgrade Hub & Strumentazione (World-tour V5.0 / F9.1)
+var rehearsal_tier: int = 0
+var studio_hardware_tier: int = 0
+var owned_instruments: Dictionary = {
+	"guitar": 0,
+	"bass": 0,
+	"drums": 0,
+	"vocals": 0,
+	"keyboards": 0
+}
+
+func get_instrument_tier(category: String) -> int:
+	return int(owned_instruments.get(category, 0))
+
+func set_instrument_tier(category: String, tier: int) -> void:
+	owned_instruments[category] = tier
+
+func get_total_gear_synergy_bonus() -> float:
+	var total: float = 0.0
+	for cat in owned_instruments:
+		var tier: int = int(owned_instruments[cat])
+		var inst: Dictionary = UpgradeData.get_instrument(cat, tier)
+		if not inst.is_empty():
+			total += float(inst.get("band_synergy_bonus", 0.0))
+	return total
+
+func get_primary_instrument_bonus() -> Dictionary:
+	var cat: String = "guitar"
+	var p_lower: String = primary_instrument.to_lower()
+	if p_lower.contains("bass"):
+		cat = "bass"
+	elif p_lower.contains("drum") or p_lower.contains("batteria"):
+		cat = "drums"
+	elif p_lower.contains("voc") or p_lower.contains("cant") or p_lower.contains("voice"):
+		cat = "vocals"
+	elif p_lower.contains("key") or p_lower.contains("tast") or p_lower.contains("piano"):
+		cat = "keyboards"
+	
+	var tier: int = get_instrument_tier(cat)
+	return UpgradeData.get_instrument(cat, tier)
 
 # Mappa Geografica & Fanbase Territoriale (World-tour V4.0 / F8.1)
 var current_city_id: int = Enums.CityId.MILANO
@@ -401,6 +443,9 @@ func to_dict() -> Dictionary:
 		"band_name": band_name,
 		"revenue_split_mode": revenue_split_mode,
 		"current_housing_tier": current_housing_tier,
+		"rehearsal_tier": rehearsal_tier,
+		"studio_hardware_tier": studio_hardware_tier,
+		"owned_instruments": owned_instruments.duplicate(true),
 		"band_members": serialized_members,
 		"albums": serialized_albums,
 		"active_contract": active_contract.to_dict() if active_contract else {},
@@ -448,6 +493,11 @@ func from_dict(dict: Dictionary) -> void:
 	band_name = dict.get("band_name", band_name)
 	revenue_split_mode = int(dict.get("revenue_split_mode", revenue_split_mode))
 	current_housing_tier = int(dict.get("current_housing_tier", current_housing_tier))
+	rehearsal_tier = int(dict.get("rehearsal_tier", rehearsal_tier))
+	studio_hardware_tier = int(dict.get("studio_hardware_tier", studio_hardware_tier))
+	if dict.has("owned_instruments") and dict["owned_instruments"] is Dictionary:
+		for k in dict["owned_instruments"]:
+			owned_instruments[str(k)] = int(dict["owned_instruments"][k])
 	
 	band_members.clear()
 	if dict.has("band_members") and dict["band_members"] is Array:

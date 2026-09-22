@@ -5,6 +5,7 @@ extends RefCounted
 ## Gestore Centralizzato della Band, Reclutamento e Dinamiche Umane (World-tour V2.0)
 ## Governa la chimica di gruppo (Affinità, Rispetto, Tensione), le audizioni dei candidati,
 ## la divisione dei compensi (Revenue Split) e l'impatto sonoro sui concerti dal vivo.
+const UpgradeData = preload("res://data/models/upgrade_data.gd")
 
 var player_data: PlayerData
 var calendar_data: CalendarData
@@ -224,7 +225,53 @@ func get_band_synergy_bonus() -> float:
 	# Sinergia sonora: Affinità e rispetto arricchiscono il sound (+25 max), la tensione genera dissonanze (-15 max)
 	var raw_synergy: float = ((avg_aff * 0.40) + (avg_resp * 0.60)) - (avg_tens * 0.70)
 	var bonus: float = (raw_synergy / 100.0) * 25.0
-	return clampf(bonus, -15.0, 25.0)
+	if player_data:
+		bonus += player_data.get_total_gear_synergy_bonus()
+	return clampf(bonus, -15.0, 35.0)
+
+## Conduce una sessione di prove con la band
+func hold_rehearsal_session() -> Dictionary:
+	if not player_data:
+		return {"success": false, "reason": "no_player_data"}
+	if player_data.band_members.is_empty():
+		return {
+			"success": false,
+			"reason": "no_band",
+			"message": "Non hai ancora una band con cui provare. Recluta prima dei musicisti!"
+		}
+	if not player_data.consume_energy(15):
+		return {
+			"success": false,
+			"reason": "energy_insufficient",
+			"message": "Energia insufficiente per una sessione di prove (richiesta 15%)."
+		}
+		
+	var r_tier: int = player_data.rehearsal_tier
+	if player_data.current_housing_tier == Enums.HousingTier.LOFT_STUDIO:
+		r_tier = maxi(r_tier, 2)
+	elif player_data.current_housing_tier == Enums.HousingTier.LUXURY_VILLA:
+		r_tier = maxi(r_tier, 3)
+		
+	var stress_gain: int = UpgradeData.get_rehearsal_stress(r_tier)
+	if stress_gain > 0:
+		player_data.add_stress(stress_gain)
+		
+	# Prove aumentano affinità e rispetto, e riducono tensione
+	for m in player_data.band_members:
+		m.modify_affinity(4.0)
+		m.modify_respect(5.0)
+		m.modify_tension(-8.0)
+		
+	_emit_chemistry_changed()
+	
+	var msg: String = "Sessione di prove completata! La coesione del gruppo è aumentata (Stress accumulato: +%d)." % stress_gain
+	AccessibilityManager.announce(msg, true)
+	return {
+		"success": true,
+		"stress_gain": stress_gain,
+		"rehearsal_tier": r_tier,
+		"message": msg
+	}
 
 func process_post_concert_dynamics(concert_score: float) -> Array[Dictionary]:
 	var crisis_events: Array[Dictionary] = []
