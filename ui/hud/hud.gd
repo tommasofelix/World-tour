@@ -53,6 +53,7 @@ func _ready() -> void:
 	# Connessione modali musicali
 	song_catalog_modal.closed.connect(close_catalog)
 	song_catalog_modal.new_song_requested.connect(_on_catalog_new_song_requested)
+	song_catalog_modal.edit_song_requested.connect(open_song_editor)
 	song_creator_modal.creation_finished.connect(_on_song_created_or_finished)
 	song_creator_modal.creation_canceled.connect(close_song_creator)
 	
@@ -136,6 +137,13 @@ func close_song_creator() -> void:
 	song_creator_modal.visible = false
 	GameManager.close_menu()
 	btn_new_song.grab_focus()
+
+func open_song_editor(song: SongData) -> void:
+	if song_catalog_modal.visible:
+		song_catalog_modal.visible = false
+	song_creator_modal.visible = true
+	song_creator_modal.edit_existing_song(song)
+	GameManager.open_menu()
 
 func _on_catalog_new_song_requested() -> void:
 	close_catalog()

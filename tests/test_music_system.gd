@@ -20,6 +20,7 @@ func _ready() -> void:
 	test_single_release_mechanics()
 	test_song_traits_and_quality()
 	test_ui_scenes_instantiation()
+	test_draft_modification_and_resuming()
 	
 	print("\n--------------------------------------------------------")
 	print("ESITO COMPLESSIVO TEST CICLO CREATIVO:")
@@ -335,3 +336,61 @@ func test_ui_scenes_instantiation() -> void:
 	assert_true(crt_inst.find_child("OptGenre", true, false) != null, "OptGenre presente nel creator")
 	assert_true(crt_inst.find_child("BtnAction", true, false) != null, "BtnAction presente nel creator")
 	crt_inst.free()
+
+# 9. Test Modifica Bozza & Resuming Step (RRU-03)
+func test_draft_modification_and_resuming() -> void:
+	print("\n9. Verifica Modifica Bozza e Resuming Step (RRU-03):")
+	var p := PlayerData.new()
+	p.energy = 100
+	var ss := SkillSystem.new(p)
+	var cal := CalendarData.new()
+	var ms := MusicSystem.new(p, ss, cal)
+	
+	# Creazione bozza iniziale (Stage CONCEPT)
+	var song := ms.create_draft("Bozza Iniziale", Enums.MusicalGenre.ROCK, "love")
+	assert_eq(song.title, "Bozza Iniziale", "Titolo iniziale bozza corretto")
+	assert_eq(song.genre, Enums.MusicalGenre.ROCK, "Genere iniziale ROCK")
+	assert_eq(song.stage, Enums.SongStage.CONCEPT, "Stato iniziale CONCEPT")
+	assert_eq(song.get_stage_name(), tr("STAGE_CONCEPT"), "Nome fase CONCEPT localizzato")
+	
+	# Modifica anagrafica (titolo, genere, tema)
+	song.title = "Bozza Ridenominata"
+	song.genre = Enums.MusicalGenre.METAL
+	song.theme = "rebellion"
+	assert_eq(song.title, "Bozza Ridenominata", "Titolo bozza aggiornato")
+	assert_eq(song.genre, Enums.MusicalGenre.METAL, "Genere bozza aggiornato a METAL")
+	
+	# Avanzamento a composizione
+	var comp_res := ms.work_on_composition(song, false)
+	assert_true(comp_res["success"], "Composizione completata")
+	assert_eq(song.stage, Enums.SongStage.COMPOSITION, "Stadio aggiornato a COMPOSITION")
+	assert_eq(song.get_stage_name(), tr("STAGE_COMPOSITION"), "Nome fase COMPOSITION localizzato")
+	
+	# Test interazione scene per modifica bozza
+	var cat_scene: PackedScene = load("res://ui/music/song_catalog.tscn")
+	var cat_inst: Node = cat_scene.instantiate()
+	add_child(cat_inst)
+	if GameManager and GameManager.player_data:
+		GameManager.player_data.songs.clear()
+		GameManager.player_data.add_song(song)
+		cat_inst.refresh_catalog()
+		var btn_edit: Button = cat_inst.find_child("BtnEdit", true, false)
+		assert_true(btn_edit != null, "Pulsante BtnEdit presente per bozze in catalogo (RRU-03)")
+		assert_eq(btn_edit.text, tr("CATALOG_BTN_EDIT"), "Testo BtnEdit localizzato correttamente")
+		GameManager.player_data.songs.clear()
+	remove_child(cat_inst)
+	cat_inst.free()
+	
+	var crt_scene: PackedScene = load("res://ui/music/song_creator.tscn")
+	var crt_inst: Node = crt_scene.instantiate()
+	add_child(crt_inst)
+	crt_inst.edit_existing_song(song)
+	assert_eq(crt_inst.current_song.id, song.id, "SongCreator ha agganciato la canzone esistente")
+	assert_eq(crt_inst.resume_step, 3, "Resuming step impostato a 3 (Lyrics) dopo COMPOSITION")
+	assert_eq(crt_inst.current_step, 3, "SongCreator apre direttamente lo step 3")
+	var btn_edit_info: Button = crt_inst.find_child("BtnEditInfo", true, false)
+	assert_true(btn_edit_info != null, "Pulsante BtnEditInfo presente in SongCreator (RRU-03)")
+	assert_true(btn_edit_info.visible, "BtnEditInfo visibile allo step 3 per bozza esistente")
+	remove_child(crt_inst)
+	crt_inst.free()
+

@@ -46,22 +46,26 @@ func _load_translations() -> void:
 func _init_language_from_system_or_settings() -> void:
 	var chosen_lang := ""
 	
-	# 1. Verifica se esiste già un'impostazione salvata
+	# 1. Verifica se esiste già un'impostazione salvata valida
 	if FileAccess.file_exists("user://settings.json"):
 		var s_file := FileAccess.open("user://settings.json", FileAccess.READ)
 		if s_file:
 			var s_json := JSON.new()
 			if s_json.parse(s_file.get_as_text()) == OK and s_json.data is Dictionary:
-				chosen_lang = str(s_json.data.get("language", ""))
+				chosen_lang = str(s_json.data.get("language", "")).strip_edges()
 			s_file.close()
 	
-	# 2. Se non c'è impostazione salvata, rileva la lingua dell'OS
+	# 2. Se non c'è impostazione salvata valida, rileva la lingua dell'OS con fallback rigoroso su 'it'
 	if chosen_lang.is_empty() or not (chosen_lang in SUPPORTED_LOCALES):
 		var os_lang := OS.get_locale_language().to_lower()
-		if os_lang.begins_with("it"):
-			chosen_lang = "it"
-		else:
+		if os_lang.is_empty():
+			os_lang = OS.get_locale().to_lower()
+			
+		if os_lang.begins_with("en"):
 			chosen_lang = "en"
+		else:
+			chosen_lang = DEFAULT_LOCALE # Rigorosamente "it" come default di progetto
+			
 		_persist_settings_language(chosen_lang)
 	
 	set_language(chosen_lang, false)

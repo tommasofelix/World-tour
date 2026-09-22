@@ -103,6 +103,8 @@
 	"CATALOG_TITLE": "Catalogo Discografico",
 	"CATALOG_EMPTY": "Nessun brano nel catalogo. Premi 'N' per creare una nuova canzone!",
 	"CATALOG_BTN_NEW": "Nuova Canzone (N)",
+	"CATALOG_BTN_EDIT": "Modifica Bozza",
+	"CATALOG_BTN_EDIT_ACC_DESC": "Riprende la lavorazione del brano dallo stadio attuale o ne modifica i metadati.",
 	"CATALOG_BTN_RELEASE": "Rilascia come Singolo",
 	"CATALOG_BTN_CLOSE": "Chiudi (Esc)",
 	"CATALOG_FILTER_ALL": "Tutti",
@@ -110,7 +112,15 @@
 	"CATALOG_FILTER_PRODUCED": "Pronti",
 	"CATALOG_FILTER_RELEASED": "Rilasciati",
 
+	"STAGE_CONCEPT": "Ideazione",
+	"STAGE_COMPOSITION": "Composizione",
+	"STAGE_SONGWRITING": "Testi",
+	"STAGE_RECORDING": "Registrazione",
+	"STAGE_MIXING": "Missaggio",
+	"STAGE_COMPLETED": "Completato",
+
 	"CREATOR_TITLE": "Studio Musicale — Nuova Canzone",
+	"CREATOR_TITLE_EDIT": "Studio Musicale — Modifica Bozza",
 	"CREATOR_STEP1": "Fase 1: Titolo e Genere",
 	"CREATOR_STEP2": "Fase 2: Composizione Riff e Accordi",
 	"CREATOR_STEP3": "Fase 3: Scrittura Testo",
@@ -121,6 +131,7 @@
 	"CREATOR_BTN_NEXT": "Procedi allo Step Successivo",
 	"CREATOR_BTN_FINISH": "Completa e Salva Master",
 	"CREATOR_BTN_CANCEL": "Annulla e Torna Indietro",
+	"CREATOR_BTN_EDIT_INFO": "Modifica Info Brano",
 
 	"MSG_LEVEL_UP": "Fantastico! L'abilità %s è salita al livello %d!",
 	"MSG_SONG_RELEASED": "Il singolo '%s' è stato pubblicato sul mercato! Qualità finale: %.1f / 100.",

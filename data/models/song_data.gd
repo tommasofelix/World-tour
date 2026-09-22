@@ -154,3 +154,21 @@ func get_trait_name() -> String:
 			return tr("TRAIT_ROUGH_DIAMOND")
 		_:
 			return tr("TRAIT_NONE")
+
+func get_stage_name() -> String:
+	match stage:
+		Enums.SongStage.CONCEPT:
+			return tr("STAGE_CONCEPT")
+		Enums.SongStage.COMPOSITION:
+			return tr("STAGE_COMPOSITION")
+		Enums.SongStage.SONGWRITING:
+			return tr("STAGE_SONGWRITING")
+		Enums.SongStage.RECORDING:
+			return tr("STAGE_RECORDING")
+		Enums.SongStage.MIXING:
+			return tr("STAGE_MIXING")
+		Enums.SongStage.COMPLETED:
+			return tr("STAGE_COMPLETED")
+		_:
+			return tr("STAGE_CONCEPT")
+

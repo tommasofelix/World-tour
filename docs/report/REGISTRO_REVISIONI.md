@@ -4,7 +4,7 @@ Questo documento contiene esclusivamente anomalie confermate ancora aperte, atti
 
 ## Revisioni attive
 
-Nessuna revisione attiva.
+*Nessuna anomalia o revisione aperta al momento. Tutte le revisioni sono state validate e archiviate in [`ARCHIVIO_REVISIONI.md`](./ARCHIVIO_REVISIONI.md).*
 
 ## Modello di voce
 

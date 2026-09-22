@@ -7,6 +7,7 @@ extends Control
 
 signal closed()
 signal new_song_requested()
+signal edit_song_requested(song: SongData)
 
 @onready var label_title: Label = $PanelMain/VBox/Header/LabelTitle
 @onready var btn_filter_all: Button = $PanelMain/VBox/HBoxFilters/BtnFilterAll
@@ -35,6 +36,7 @@ func _ready() -> void:
 	EventBus.language_changed.connect(_on_language_changed)
 	EventBus.song_released.connect(func(_data): refresh_catalog())
 	EventBus.song_created.connect(func(_data): refresh_catalog())
+	EventBus.song_updated.connect(func(_data): refresh_catalog())
 	
 	_refresh_ui_text()
 	refresh_catalog()
@@ -109,12 +111,33 @@ func _create_song_row(index: int, song: SongData) -> HBoxContainer:
 		index, song.title, genre_str, status_str, song.quality_score, trait_str
 	]
 	var acc_desc := "Premi Invio per visualizzare dettagli o compiere azioni."
-	AccessibilityManager.hook_control_accessibility(btn, acc_name, acc_desc)
-	row.add_child(btn)
 	
-	# Se è in stato PRODUCED, aggiungi bottone per rilasciare come Singolo
-	if song.status == Enums.SongStatus.PRODUCED:
+	# Se è in stato DRAFT, aggancia la modifica sia sul click principale che sul bottone dedicato
+	if song.status == Enums.SongStatus.DRAFT:
+		var stage_str := song.get_stage_name()
+		acc_name = "Bozza %d: %s. Genere %s. Fase %s. Qualità %.1f su 100." % [
+			index, song.title, genre_str, stage_str, song.quality_score
+		]
+		acc_desc = tr("CATALOG_BTN_EDIT_ACC_DESC")
+		btn.pressed.connect(func():
+			edit_song_requested.emit(song)
+		)
+		
+		var btn_edit := Button.new()
+		btn_edit.name = "BtnEdit"
+		btn_edit.text = tr("CATALOG_BTN_EDIT")
+		AccessibilityManager.hook_control_accessibility(btn_edit, tr("CATALOG_BTN_EDIT"), tr("CATALOG_BTN_EDIT_ACC_DESC"))
+		btn_edit.pressed.connect(func():
+			edit_song_requested.emit(song)
+		)
+		AccessibilityManager.hook_control_accessibility(btn, acc_name, acc_desc)
+		row.add_child(btn)
+		row.add_child(btn_edit)
+	elif song.status == Enums.SongStatus.PRODUCED:
+		AccessibilityManager.hook_control_accessibility(btn, acc_name, acc_desc)
+		row.add_child(btn)
 		var btn_release := Button.new()
+		btn_release.name = "BtnRelease"
 		btn_release.text = tr("CATALOG_BTN_RELEASE")
 		AccessibilityManager.hook_control_accessibility(btn_release, tr("CATALOG_BTN_RELEASE"), "Pubblica il brano sul mercato musicale.")
 		btn_release.pressed.connect(func():
@@ -123,6 +146,9 @@ func _create_song_row(index: int, song: SongData) -> HBoxContainer:
 				refresh_catalog()
 		)
 		row.add_child(btn_release)
+	else:
+		AccessibilityManager.hook_control_accessibility(btn, acc_name, acc_desc)
+		row.add_child(btn)
 		
 	return row
 

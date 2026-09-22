@@ -103,6 +103,8 @@
 	"CATALOG_TITLE": "Discography Catalog",
 	"CATALOG_EMPTY": "No tracks in catalog. Press 'N' to create a new song!",
 	"CATALOG_BTN_NEW": "New Song (N)",
+	"CATALOG_BTN_EDIT": "Edit Draft",
+	"CATALOG_BTN_EDIT_ACC_DESC": "Resumes crafting from current stage or edits song metadata.",
 	"CATALOG_BTN_RELEASE": "Release as Single",
 	"CATALOG_BTN_CLOSE": "Close (Esc)",
 	"CATALOG_FILTER_ALL": "All",
@@ -110,7 +112,15 @@
 	"CATALOG_FILTER_PRODUCED": "Ready",
 	"CATALOG_FILTER_RELEASED": "Released",
 
+	"STAGE_CONCEPT": "Concept",
+	"STAGE_COMPOSITION": "Composition",
+	"STAGE_SONGWRITING": "Lyrics",
+	"STAGE_RECORDING": "Recording",
+	"STAGE_MIXING": "Mixing",
+	"STAGE_COMPLETED": "Completed",
+
 	"CREATOR_TITLE": "Music Studio — New Track",
+	"CREATOR_TITLE_EDIT": "Music Studio — Edit Draft",
 	"CREATOR_STEP1": "Stage 1: Title & Genre",
 	"CREATOR_STEP2": "Stage 2: Riff & Chord Composition",
 	"CREATOR_STEP3": "Stage 3: Songwriting",
@@ -121,6 +131,7 @@
 	"CREATOR_BTN_NEXT": "Proceed to Next Stage",
 	"CREATOR_BTN_FINISH": "Complete & Save Master",
 	"CREATOR_BTN_CANCEL": "Cancel & Return",
+	"CREATOR_BTN_EDIT_INFO": "Edit Track Info",
 
 	"MSG_LEVEL_UP": "Fantastic! %s reached level %d!",
 	"MSG_SONG_RELEASED": "Single '%s' has been released! Final quality: %.1f / 100.",

@@ -180,7 +180,14 @@ custom_minimum_size = Vector2(220, 45)
 layout_mode = 2
 text = "Salva Bozza ed Esci"
 
+[node name="BtnEditInfo" type="Button" parent="PanelMain/VBox/HBoxBottom"]
+visible = false
+custom_minimum_size = Vector2(200, 45)
+layout_mode = 2
+text = "Modifica Info Brano"
+
 [node name="BtnCancel" type="Button" parent="PanelMain/VBox/HBoxBottom"]
 custom_minimum_size = Vector2(160, 45)
 layout_mode = 2
 text = "Annulla"
+

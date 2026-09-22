@@ -19,6 +19,7 @@ signal action_canceled(action_id: String)
 
 # --- Segnali Musicali & Spettacoli ---
 signal song_created(song_data: Dictionary)
+signal song_updated(song_data: Dictionary)
 signal song_stage_completed(song_id: String, stage: int)
 signal song_released(song_data: Dictionary)
 signal skill_leveled_up(skill_key: String, new_level: int)

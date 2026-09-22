@@ -127,6 +127,8 @@ func test_save_manager_settings() -> void:
 	var loaded := SaveManager.load_settings()
 	assert_eq(int(loaded.get("test_key", 0)), 123, "Lettura chiave impostazioni corretta")
 	assert_eq(str(loaded.get("language", "")), "en", "Lettura lingua salvata corretta")
+	# Teardown di isolamento: ripristina la lingua di default 'it' per i lanci in-game successivi
+	SaveManager.save_settings({"language": "it"})
 
 func test_main_menu_instantiation() -> void:
 	print("\n6. Verifica Istanziazione e Nodi Scena Main Menu:")
