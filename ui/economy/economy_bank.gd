@@ -12,6 +12,9 @@ signal closed()
 @onready var label_balance: Label = $PanelMain/VBox/OverviewContainer/LabelBalance
 @onready var label_runway: Label = $PanelMain/VBox/OverviewContainer/LabelRunway
 @onready var label_status: Label = $PanelMain/VBox/OverviewContainer/LabelStatus
+@onready var label_housing: Label = $PanelMain/VBox/OverviewContainer/HBoxHousing/LabelHousing
+@onready var opt_housing: OptionButton = $PanelMain/VBox/OverviewContainer/HBoxHousing/OptHousing
+@onready var btn_change_housing: Button = $PanelMain/VBox/OverviewContainer/HBoxHousing/BtnChangeHousing
 
 @onready var label_job_header: Label = $PanelMain/VBox/JobContainer/LabelJobHeader
 @onready var label_job_desc: Label = $PanelMain/VBox/JobContainer/LabelJobDesc
@@ -25,9 +28,13 @@ func _ready() -> void:
 	btn_work_shift.pressed.connect(_on_work_shift_pressed)
 	btn_resign.pressed.connect(_on_resign_pressed)
 	btn_close.pressed.connect(close)
+	if btn_change_housing:
+		btn_change_housing.pressed.connect(_on_change_housing_pressed)
+	_populate_housing_dropdown()
 	
 	EventBus.language_changed.connect(func(_l): _refresh_ui_text())
 	EventBus.money_changed.connect(func(_b, _d, _r): refresh_view())
+	EventBus.housing_changed.connect(func(_t, _r): refresh_view())
 	
 	_setup_accessibility_hooks()
 	_refresh_ui_text()
@@ -36,6 +43,10 @@ func _setup_accessibility_hooks() -> void:
 	AccessibilityManager.hook_control_accessibility(btn_work_shift, tr("BANK_BTN_WORK"), "Consuma energia ed effettua un turno di lavoro per incassare lo stipendio.")
 	AccessibilityManager.hook_control_accessibility(btn_resign, tr("BANK_BTN_RESIGN"), "Licenziati dal lavoro ordinario per dedicarti esclusivamente alla musica a tempo pieno.")
 	AccessibilityManager.hook_control_accessibility(btn_close, tr("BANK_BTN_CLOSE"), "Chiude la schermata economica e ritorna all'HUD di gioco.")
+	if opt_housing:
+		AccessibilityManager.hook_control_accessibility(opt_housing, "Scelta nuova residenza", "Seleziona tra Stanzetta, Appartamento condiviso con la Band, Loft con sala prove o Villa.")
+	if btn_change_housing:
+		AccessibilityManager.hook_control_accessibility(btn_change_housing, "Trasloca", "Conferma il cambio di alloggio e aggiorna il canone di affitto.")
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not visible:
@@ -89,6 +100,23 @@ func refresh_view() -> void:
 	var tier_name: String = career.get_tier_name(player.career_tier) if career else "Beginner"
 	label_status.text = tr("BANK_STATUS") % tier_name
 	
+	# Aggiornamento stato alloggio
+	if label_housing:
+		var h_tier: int = player.current_housing_tier
+		var h_name: String = HousingData.get_tier_name(h_tier)
+		var h_rent: float = HousingData.get_tier_rent(h_tier)
+		if h_tier == Enums.HousingTier.SHARED_FLAT and not player.band_members.is_empty():
+			var share: float = snappedf(h_rent / float(1 + player.band_members.size()), 0.01)
+			label_housing.text = "Alloggio: %s (Quota Alex: %.2f € su %.2f € totali)" % [h_name, share, h_rent]
+		else:
+			label_housing.text = "Alloggio: %s (Canone: %.2f €/giorno)" % [h_name, h_rent]
+			
+	if opt_housing:
+		for i in range(opt_housing.item_count):
+			if opt_housing.get_item_id(i) == player.current_housing_tier:
+				opt_housing.select(i)
+				break
+	
 	# Aggiornamento stato lavoro
 	if econ:
 		var job: Dictionary = econ.get_current_job()
@@ -105,6 +133,37 @@ func refresh_view() -> void:
 			
 		# Popolamento transazioni
 		_populate_transactions(econ.get_recent_transactions(12))
+
+func _populate_housing_dropdown() -> void:
+	if not opt_housing:
+		return
+	opt_housing.clear()
+	opt_housing.add_item("Stanzetta Singola (15 €/giorno)", Enums.HousingTier.STARTER_BEDROOM)
+	opt_housing.add_item("Appartamento Condiviso con Band (25 €/giorno)", Enums.HousingTier.SHARED_FLAT)
+	opt_housing.add_item("Loft con Sala Prove Inclusa (50 €/giorno)", Enums.HousingTier.LOFT_STUDIO)
+	opt_housing.add_item("Villa di Lusso con Studio (150 €/giorno)", Enums.HousingTier.LUXURY_VILLA)
+
+func _on_change_housing_pressed() -> void:
+	if not GameManager or not GameManager.economy_system:
+		return
+	var selected_tier: int = opt_housing.get_selected_id()
+	var res: Dictionary = GameManager.economy_system.change_housing(selected_tier)
+	if res.success:
+		refresh_view()
+	else:
+		var err_msg := "Trasloco non consentito: "
+		match res.reason:
+			"already_current":
+				err_msg += "Stai già vivendo in questo alloggio."
+			"no_band_members":
+				err_msg += "Devi avere almeno un compagno nella band per condividere un appartamento!"
+			"career_too_low":
+				err_msg += "La villa richiede uno status di carriera almeno da Artista Indipendente."
+			"money_insufficient":
+				err_msg += "Fondi insufficienti per pagare il canone iniziale di questo alloggio."
+			_:
+				err_msg += res.reason
+		AccessibilityManager.announce(err_msg, true)
 
 func _populate_transactions(tx_list: Array[Dictionary]) -> void:
 	if not vbox_transactions:

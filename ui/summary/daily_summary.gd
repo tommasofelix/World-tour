@@ -34,28 +34,44 @@ func show_summary(summary_data: Dictionary) -> void:
 	
 	var day_num: int = int(summary_data.get("completed_day", 1))
 	var expenses: float = float(summary_data.get("expenses", 25.0))
+	var food: float = float(summary_data.get("food", 10.0))
+	var rent: float = float(summary_data.get("rent", 15.0))
+	var royalties: float = float(summary_data.get("royalties", 0.0))
+	var album_count: int = int(summary_data.get("album_count", 0))
+	var housing_name: String = str(summary_data.get("housing_name", "Stanzetta"))
 	var new_balance: float = float(summary_data.get("new_balance", 0.0))
 	var cur_energy: int = int(summary_data.get("current_energy", 100))
 	var cur_stress: int = int(summary_data.get("current_stress", 0))
+	var band_crises: Array = summary_data.get("band_crises", [])
 	
 	label_title.text = "Riepilogo Notturno — Fine Giornata %d" % day_num
-	label_day_info.text = "Giorno %d terminato con successo." % day_num
-	label_expenses.text = "Spese di Sussistenza: %.2f € (10 € vitto, 15 € alloggio)" % expenses
+	label_day_info.text = "Giorno %d terminato | Alloggio: %s" % [day_num, housing_name]
+	
+	var exp_str := "Spese di Sussistenza: -%.2f € (Vitto: %.2f €, Affitto: %.2f €)" % [expenses, food, rent]
+	if royalties > 0.0:
+		exp_str += "\nRoyalties Catalogo: +%.2f € da %d album/EP" % [royalties, album_count]
+	if not band_crises.is_empty():
+		exp_str += "\n⚠️ TENSIONE CRITICA BAND: %s rischia di abbandonare!" % ", ".join(band_crises)
+		
+	label_expenses.text = exp_str
 	label_balance.text = "Nuovo Saldo Disponibile: %.2f €" % new_balance
-	label_sleep.text = "Sonno Ristoratore: +%d Energia, -%d Stress" % [
-		Constants.SLEEP_STANDARD_ENERGY,
-		Constants.SLEEP_STANDARD_STRESS_RELIEF
-	]
+	label_sleep.text = "Sonno Ristoratore Completato"
 	label_stats.text = "Condizione Attuale: Energia %d%% | Stress %d%%" % [cur_energy, cur_stress]
 	
-	var speech: String = "Riepilogo Giorno %d concluso. Spese di sussistenza: %.2f euro. Nuovo saldo: %.2f euro. Sonno: energia al %d%%, stress al %d%%. Premi Invio per iniziare il Giorno %d." % [
-		day_num,
-		expenses,
+	var speech: String = "Riepilogo Giorno %d concluso. Alloggio: %s. Spese: %.2f euro." % [
+		day_num, housing_name, expenses
+	]
+	if royalties > 0.0:
+		speech += " Royalties catalogo: +%.2f euro." % royalties
+	speech += " Nuovo saldo: %.2f euro. Condizione: energia %d%%, stress %d%%. Premi Invio per iniziare il Giorno %d." % [
 		new_balance,
 		cur_energy,
 		cur_stress,
 		day_num + 1
 	]
+	if not band_crises.is_empty():
+		speech += " ATTENZIONE: Tensione critica per %s!" % ", ".join(band_crises)
+		
 	AccessibilityManager.announce(speech, true)
 	btn_next_day.grab_focus()
 

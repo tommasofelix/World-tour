@@ -85,6 +85,30 @@ func test_player_data_model() -> void:
 	p2.from_dict(d2)
 	assert_equal(p2.trait_id, "resilient", "Ripristino serializzazione: Trait ID resilient")
 	assert_equal(p2.background_id, "conservatory", "Ripristino serializzazione: Background ID conservatory")
+	
+	# Test Band, Album e Alloggi (World-tour V2.0)
+	var member := BandMemberData.new("bass_01", "Marco Bass", Enums.BandRole.BASS, Enums.BandPersonality.RELIABLE, Enums.MusicalGenre.ROCK, 15)
+	assert_true(p.add_band_member(member), "Aggiunta membro band riuscita")
+	assert_equal(p.band_members.size(), 1, "Numero membri band = 1")
+	assert_equal(p.get_band_member_by_role(Enums.BandRole.BASS).member_name, "Marco Bass", "Recupero bassista per ruolo corretto")
+	
+	var album := AlbumData.new("ep_01", "First Demo EP", Enums.AlbumType.EP)
+	album.song_ids = ["s1", "s2", "s3"]
+	p.add_album(album)
+	assert_equal(p.albums.size(), 1, "Numero album registrati = 1")
+	
+	p.revenue_split_mode = Enums.RevenueSplit.LEADER_BALANCED
+	p.current_housing_tier = Enums.HousingTier.SHARED_FLAT
+	
+	var d3: Dictionary = p.to_dict()
+	var p3: PlayerData = PlayerData.new()
+	p3.from_dict(d3)
+	assert_equal(p3.band_members.size(), 1, "Ripristino serializzazione: 1 membro band")
+	assert_equal(p3.band_members[0].member_name, "Marco Bass", "Ripristino nome membro: Marco Bass")
+	assert_equal(p3.albums.size(), 1, "Ripristino serializzazione: 1 album")
+	assert_equal(p3.albums[0].title, "First Demo EP", "Ripristino titolo album")
+	assert_equal(p3.revenue_split_mode, Enums.RevenueSplit.LEADER_BALANCED, "Ripristino revenue split")
+	assert_equal(p3.current_housing_tier, Enums.HousingTier.SHARED_FLAT, "Ripristino housing tier")
 
 func test_calendar_data_model() -> void:
 	print("\n2. Verifica Modello CalendarData:")

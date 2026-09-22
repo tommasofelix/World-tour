@@ -117,6 +117,18 @@ func load_game() -> bool:
 		GameManager.music_system.calendar_data = GameManager.calendar_data
 		GameManager.music_system.skill_system = GameManager.skill_system
 
+	if not GameManager.band_system:
+		GameManager.band_system = BandSystem.new(GameManager.player_data, GameManager.calendar_data)
+	else:
+		GameManager.band_system.player_data = GameManager.player_data
+		GameManager.band_system.calendar_data = GameManager.calendar_data
+		
+	if not GameManager.album_system:
+		GameManager.album_system = AlbumSystem.new(GameManager.player_data, GameManager.calendar_data)
+	else:
+		GameManager.album_system.player_data = GameManager.player_data
+		GameManager.album_system.calendar_data = GameManager.calendar_data
+
 	GameManager.change_state(Enums.GameState.GAMEPLAY_IDLE)
 	
 	# Allineamento della lingua salvata nella scheda giocatore se presente

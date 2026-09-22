@@ -83,3 +83,48 @@ enum StageEventType {
 	ENTHUSIASTIC_FAN  # Fan che sale sul palco
 }
 
+enum BandRole {
+	BASS,             # Bassista (Groove & stabilità)
+	DRUMS,            # Batterista (Ritmo & potenza sonora)
+	KEYBOARDS,        # Tastierista (Atmosfera & armonie)
+	GUITAR_RHYTHM     # Chitarrista ritmico (Muro di suono)
+}
+
+enum BandPersonality {
+	RELIABLE,         # Affidabile e calmo: -Tensione, +Puntualità
+	PERFECTIONIST,    # Perfezionista: +Qualità live, genera Tensione con performance scarse
+	WILD_PARTY,       # Animale da festa: +Presenza scenica, rischio imprevisti
+	EGO_ARTIST        # Ego smisurato: grande talento, permaloso su scaletta e compensi
+}
+
+enum RevenueSplit {
+	EQUAL_SPLIT,      # Paritaria (25% a ciascun membro attivo)
+	LEADER_BALANCED,  # Leader 40%, compagni 20% ciascuno
+	LEADER_PREDATORY  # Leader 70%, compagni 10% ciascuno
+}
+
+enum AlbumType {
+	EP,               # Extended Play (3-5 tracce)
+	LP                # Long Play / Full Album (6-10 tracce)
+}
+
+enum AlbumConcept {
+	CONCEPTUAL,       # Album tematico concettuale (+Recensioni critiche)
+	COMMERCIAL_HIT,   # Orientato alle hit radiofoniche (+Vendite/Streaming)
+	RAW_UNDERGROUND   # Registrazione grezza e autentica (+Fan fedeli live)
+}
+
+enum ArtworkStyle {
+	MINIMALIST,
+	RETRO_PSYCHEDELIC,
+	DARK_METAL,
+	STREET_GRAFFITI
+}
+
+enum HousingTier {
+	STARTER_BEDROOM,  # Stanzetta singola (15 €/giorno)
+	SHARED_FLAT,      # Appartamento condiviso con la band (25 €/giorno totali)
+	LOFT_STUDIO,      # Loft con sala prove inclusa (50 €/giorno)
+	LUXURY_VILLA      # Villa con studio professionale (150 €/giorno)
+}
+

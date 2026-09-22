@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cnfqs6d3w53ie"]
+
+[ext_resource type="Script" path="res://tests/test_album_system.gd" id="1_test_album"]
+
+[node name="TestAlbumSystemRunner" type="Node"]
+script = ExtResource("1_test_album")

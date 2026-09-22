@@ -83,6 +83,10 @@ text = "Pronti"
 layout_mode = 2
 text = "Rilasciati"
 
+[node name="BtnFilterAlbums" type="Button" parent="PanelMain/VBox/HBoxFilters"]
+layout_mode = 2
+text = "Album / EP"
+
 [node name="HSeparator1" type="HSeparator" parent="PanelMain/VBox"]
 layout_mode = 2
 
@@ -109,9 +113,14 @@ layout_mode = 2
 theme_override_constants/separation = 20
 
 [node name="BtnNewSong" type="Button" parent="PanelMain/VBox/HBoxBottom"]
-custom_minimum_size = Vector2(220, 45)
+custom_minimum_size = Vector2(200, 45)
 layout_mode = 2
 text = "Nuova Canzone (N)"
+
+[node name="BtnNewAlbum" type="Button" parent="PanelMain/VBox/HBoxBottom"]
+custom_minimum_size = Vector2(220, 45)
+layout_mode = 2
+text = "Produci Album / EP (P)"
 
 [node name="BtnClose" type="Button" parent="PanelMain/VBox/HBoxBottom"]
 custom_minimum_size = Vector2(160, 45)

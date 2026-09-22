@@ -24,6 +24,7 @@ extends Control
 @onready var btn_new_song: Button = $VBoxMain/PanelCenter/HBoxActions/BtnNewSong
 @onready var btn_concert: Button = $VBoxMain/PanelCenter/HBoxActions/BtnConcert
 @onready var btn_economy: Button = $VBoxMain/PanelCenter/HBoxActions/BtnEconomy
+@onready var btn_band: Button = $VBoxMain/PanelCenter/HBoxActions/BtnBand
 
 @onready var song_catalog_modal: Control = $SongCatalog
 @onready var song_creator_modal: Control = $SongCreator
@@ -31,6 +32,8 @@ extends Control
 @onready var economy_bank_modal: Control = $EconomyBank
 @onready var daily_summary_modal: Control = $DailySummary
 @onready var character_sheet_modal: Control = $CharacterSheet
+@onready var band_hub_modal: Control = $BandHub
+@onready var album_creator_modal: Control = $AlbumCreator
 
 var action_system: ActionSystem
 var quick_practice_action: ActionData
@@ -62,12 +65,13 @@ func _ready() -> void:
 	btn_new_song.pressed.connect(open_song_creator)
 	btn_concert.pressed.connect(open_live_concert)
 	btn_economy.pressed.connect(open_economy_bank)
+	btn_band.pressed.connect(open_band_hub)
 	btn_speed.pressed.connect(_on_btn_speed_pressed)
 	btn_pause.pressed.connect(_on_btn_pause_pressed)
 	btn_save.pressed.connect(_on_btn_save_pressed)
 	btn_main_menu.pressed.connect(_on_btn_main_menu_pressed)
 	
-	# Connessione modali musicali, concerti, economia e scheda personaggio
+	# Connessione modali musicali, concerti, economia, scheda personaggio e band
 	song_catalog_modal.closed.connect(close_catalog)
 	song_catalog_modal.new_song_requested.connect(_on_catalog_new_song_requested)
 	song_catalog_modal.edit_song_requested.connect(open_song_editor)
@@ -80,6 +84,12 @@ func _ready() -> void:
 		daily_summary_modal.day_advanced.connect(_on_day_advanced)
 	if character_sheet_modal:
 		character_sheet_modal.closed.connect(close_character_sheet)
+	if band_hub_modal:
+		band_hub_modal.closed.connect(close_band_hub)
+	if album_creator_modal:
+		album_creator_modal.closed.connect(close_album_creator)
+		album_creator_modal.album_published.connect(_on_album_published)
+	song_catalog_modal.new_album_requested.connect(open_album_creator)
 		
 	# Connessione Fine Giornata (EndDaySystem)
 	if GameManager:
@@ -102,6 +112,8 @@ func _ready() -> void:
 	EventBus.song_creator_requested.connect(open_song_creator)
 	EventBus.live_concert_requested.connect(open_live_concert)
 	EventBus.economy_screen_requested.connect(open_economy_bank)
+	EventBus.band_hub_requested.connect(open_band_hub)
+	EventBus.album_creator_requested.connect(open_album_creator)
 	
 	# Configurazione semantica AccessKit e testi iniziali
 	_refresh_ui_text()
@@ -126,12 +138,17 @@ func _unhandled_input(event: InputEvent) -> void:
 	   (live_concert_modal and live_concert_modal.visible) or \
 	   (economy_bank_modal and economy_bank_modal.visible) or \
 	   (daily_summary_modal and daily_summary_modal.visible) or \
-	   (character_sheet_modal and character_sheet_modal.visible):
+	   (character_sheet_modal and character_sheet_modal.visible) or \
+	   (band_hub_modal and band_hub_modal.visible) or \
+	   (album_creator_modal and album_creator_modal.visible):
 		return
 	
 	match event.keycode:
 		KEY_C:
 			open_character_sheet()
+			get_viewport().set_input_as_handled()
+		KEY_G:
+			open_band_hub()
 			get_viewport().set_input_as_handled()
 		KEY_L:
 			open_live_concert()
@@ -173,6 +190,7 @@ func _refresh_ui_text() -> void:
 	btn_new_song.text = tr("HUD_BTN_NEW_SONG")
 	btn_concert.text = tr("HUD_BTN_CONCERT")
 	btn_economy.text = tr("HUD_BTN_ECONOMY")
+	btn_band.text = tr("HUD_BTN_BAND")
 	
 	var current_spd: float = GameManager.time_system.time_scale if GameManager and GameManager.time_system else 1.0
 	btn_speed.text = tr("HUD_BTN_SPEED") % current_spd
@@ -189,6 +207,7 @@ func _refresh_ui_text() -> void:
 	AccessibilityManager.hook_control_accessibility(btn_new_song, tr("HUD_BTN_NEW_SONG_ACC_NAME"), tr("HUD_BTN_NEW_SONG_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_concert, tr("HUD_BTN_CONCERT_ACC_NAME"), tr("HUD_BTN_CONCERT_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_economy, tr("HUD_BTN_ECONOMY_ACC_NAME"), tr("HUD_BTN_ECONOMY_ACC_DESC"))
+	AccessibilityManager.hook_control_accessibility(btn_band, tr("HUD_BTN_BAND_ACC_NAME"), tr("HUD_BTN_BAND_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_speed, tr("HUD_BTN_SPEED_ACC_NAME"), tr("HUD_BTN_SPEED_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_pause, tr("HUD_BTN_PAUSE_ACC_NAME"), tr("HUD_BTN_PAUSE_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_save, tr("HUD_BTN_SAVE_ACC_NAME"), tr("HUD_BTN_SAVE_ACC_DESC"))
@@ -207,7 +226,7 @@ func _on_btn_speed_pressed() -> void:
 func _on_speed_changed(new_speed: float) -> void:
 	btn_speed.text = tr("HUD_BTN_SPEED") % new_speed
 
-func open_catalog() -> void:
+func open_catalog(show_albums: bool = false) -> void:
 	if song_creator_modal.visible:
 		song_creator_modal.visible = false
 	if live_concert_modal.visible:
@@ -216,10 +235,17 @@ func open_catalog() -> void:
 		economy_bank_modal.visible = false
 	if character_sheet_modal and character_sheet_modal.visible:
 		character_sheet_modal.visible = false
+	if band_hub_modal and band_hub_modal.visible:
+		band_hub_modal.visible = false
+	if album_creator_modal and album_creator_modal.visible:
+		album_creator_modal.visible = false
 	if vbox_main:
 		vbox_main.visible = false
 	song_catalog_modal.visible = true
-	song_catalog_modal.refresh_catalog()
+	if show_albums:
+		song_catalog_modal.show_albums_section()
+	else:
+		song_catalog_modal.refresh_catalog()
 	GameManager.open_menu()
 
 func close_catalog() -> void:
@@ -238,6 +264,8 @@ func open_song_creator() -> void:
 		economy_bank_modal.visible = false
 	if character_sheet_modal and character_sheet_modal.visible:
 		character_sheet_modal.visible = false
+	if band_hub_modal and band_hub_modal.visible:
+		band_hub_modal.visible = false
 	if vbox_main:
 		vbox_main.visible = false
 	song_creator_modal.visible = true
@@ -260,6 +288,8 @@ func open_song_editor(song: SongData) -> void:
 		economy_bank_modal.visible = false
 	if character_sheet_modal and character_sheet_modal.visible:
 		character_sheet_modal.visible = false
+	if band_hub_modal and band_hub_modal.visible:
+		band_hub_modal.visible = false
 	if vbox_main:
 		vbox_main.visible = false
 	song_creator_modal.visible = true
@@ -275,6 +305,8 @@ func open_live_concert() -> void:
 		economy_bank_modal.visible = false
 	if character_sheet_modal and character_sheet_modal.visible:
 		character_sheet_modal.visible = false
+	if band_hub_modal and band_hub_modal.visible:
+		band_hub_modal.visible = false
 	if vbox_main:
 		vbox_main.visible = false
 	live_concert_modal.visible = true
@@ -298,6 +330,8 @@ func open_economy_bank() -> void:
 		live_concert_modal.visible = false
 	if character_sheet_modal and character_sheet_modal.visible:
 		character_sheet_modal.visible = false
+	if band_hub_modal and band_hub_modal.visible:
+		band_hub_modal.visible = false
 	if vbox_main:
 		vbox_main.visible = false
 	economy_bank_modal.open()
@@ -322,6 +356,8 @@ func open_character_sheet() -> void:
 		economy_bank_modal.visible = false
 	if daily_summary_modal and daily_summary_modal.visible:
 		daily_summary_modal.visible = false
+	if band_hub_modal and band_hub_modal.visible:
+		band_hub_modal.visible = false
 	if vbox_main:
 		vbox_main.visible = false
 	if character_sheet_modal:
@@ -337,6 +373,70 @@ func close_character_sheet() -> void:
 	btn_character.grab_focus()
 	_update_hud_display()
 
+func open_band_hub() -> void:
+	if song_catalog_modal and song_catalog_modal.visible:
+		song_catalog_modal.visible = false
+	if song_creator_modal and song_creator_modal.visible:
+		song_creator_modal.visible = false
+	if live_concert_modal and live_concert_modal.visible:
+		live_concert_modal.visible = false
+	if economy_bank_modal and economy_bank_modal.visible:
+		economy_bank_modal.visible = false
+	if daily_summary_modal and daily_summary_modal.visible:
+		daily_summary_modal.visible = false
+	if character_sheet_modal and character_sheet_modal.visible:
+		character_sheet_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = false
+	if band_hub_modal:
+		band_hub_modal.open()
+	GameManager.open_menu()
+
+func close_band_hub() -> void:
+	if band_hub_modal:
+		band_hub_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = true
+	GameManager.close_menu()
+	btn_band.grab_focus()
+	_update_hud_display()
+
+func open_album_creator() -> void:
+	if song_catalog_modal and song_catalog_modal.visible:
+		song_catalog_modal.visible = false
+	if song_creator_modal and song_creator_modal.visible:
+		song_creator_modal.visible = false
+	if live_concert_modal and live_concert_modal.visible:
+		live_concert_modal.visible = false
+	if economy_bank_modal and economy_bank_modal.visible:
+		economy_bank_modal.visible = false
+	if daily_summary_modal and daily_summary_modal.visible:
+		daily_summary_modal.visible = false
+	if character_sheet_modal and character_sheet_modal.visible:
+		character_sheet_modal.visible = false
+	if band_hub_modal and band_hub_modal.visible:
+		band_hub_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = false
+	if album_creator_modal:
+		album_creator_modal.open()
+	GameManager.open_menu()
+
+func close_album_creator() -> void:
+	if album_creator_modal:
+		album_creator_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = true
+	GameManager.close_menu()
+	btn_catalog.grab_focus()
+	_update_hud_display()
+
+func _on_album_published(_album_data: Dictionary) -> void:
+	if album_creator_modal:
+		album_creator_modal.visible = false
+	open_catalog(true)
+	_update_hud_display()
+
 func open_daily_summary(summary_data: Dictionary) -> void:
 	if song_catalog_modal.visible:
 		song_catalog_modal.visible = false
@@ -348,6 +448,8 @@ func open_daily_summary(summary_data: Dictionary) -> void:
 		economy_bank_modal.visible = false
 	if character_sheet_modal and character_sheet_modal.visible:
 		character_sheet_modal.visible = false
+	if band_hub_modal and band_hub_modal.visible:
+		band_hub_modal.visible = false
 	if vbox_main:
 		vbox_main.visible = false
 	if daily_summary_modal:

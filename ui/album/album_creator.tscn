@@ -1,0 +1,153 @@
+[gd_scene load_steps=3 format=3 uid="uid://dmalbumcrwt01"]
+
+[ext_resource type="Script" path="res://ui/album/album_creator.gd" id="1_albumcr"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_albumcr"]
+content_margin_left = 24.0
+content_margin_top = 24.0
+content_margin_right = 24.0
+content_margin_bottom = 24.0
+bg_color = Color(0.08, 0.09, 0.13, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.35, 0.5, 0.65, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="AlbumCreator" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_albumcr")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.05, 0.05, 0.08, 1)
+
+[node name="PanelMain" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -480.0
+offset_top = -310.0
+offset_right = 480.0
+offset_bottom = 310.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_albumcr")
+
+[node name="VBox" type="VBoxContainer" parent="PanelMain"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Header" type="VBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+
+[node name="LabelTitle" type="Label" parent="PanelMain/VBox/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "PRODUZIONE DISCOGRAFICA — CREA ALBUM O EP"
+horizontal_alignment = 1
+
+[node name="HSeparator1" type="HSeparator" parent="PanelMain/VBox"]
+layout_mode = 2
+
+[node name="GridForm" type="GridContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_constants/h_separation = 16
+theme_override_constants/v_separation = 10
+columns = 2
+
+[node name="LblTitle" type="Label" parent="PanelMain/VBox/GridForm"]
+layout_mode = 2
+text = "Titolo dell'Album:"
+
+[node name="EditTitle" type="LineEdit" parent="PanelMain/VBox/GridForm"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "es. Night City Anthems"
+
+[node name="LblType" type="Label" parent="PanelMain/VBox/GridForm"]
+layout_mode = 2
+text = "Formato Produzione:"
+
+[node name="OptAlbumType" type="OptionButton" parent="PanelMain/VBox/GridForm"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LblConcept" type="Label" parent="PanelMain/VBox/GridForm"]
+layout_mode = 2
+text = "Concept Tematico:"
+
+[node name="OptConcept" type="OptionButton" parent="PanelMain/VBox/GridForm"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LblArtwork" type="Label" parent="PanelMain/VBox/GridForm"]
+layout_mode = 2
+text = "Stile della Copertina:"
+
+[node name="OptArtwork" type="OptionButton" parent="PanelMain/VBox/GridForm"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LblLead" type="Label" parent="PanelMain/VBox/GridForm"]
+layout_mode = 2
+text = "Traccia Trainante (Lead Single):"
+
+[node name="OptLeadSingle" type="OptionButton" parent="PanelMain/VBox/GridForm"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LblTracks" type="Label" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Tracce da includere nell'opera (Spazio per selezionare):"
+
+[node name="ScrollTracks" type="ScrollContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxTracks" type="VBoxContainer" parent="PanelMain/VBox/ScrollTracks"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="LabelSummary" type="Label" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.9, 1, 1)
+text = "Riepilogo parametri opera..."
+autowrap_mode = 2
+
+[node name="HSeparator2" type="HSeparator" parent="PanelMain/VBox"]
+layout_mode = 2
+
+[node name="HBoxBottom" type="HBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="BtnPublish" type="Button" parent="PanelMain/VBox/HBoxBottom"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Pubblica Album (Invio)"
+
+[node name="BtnClose" type="Button" parent="PanelMain/VBox/HBoxBottom"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Annulla (Esc)"

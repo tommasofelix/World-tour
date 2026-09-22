@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://c6hudworldtour01"]
+[gd_scene load_steps=10 format=3 uid="uid://c6hudworldtour01"]
 
 [ext_resource type="Script" path="res://ui/hud/hud.gd" id="1_hud"]
 [ext_resource type="PackedScene" path="res://ui/music/song_catalog.tscn" id="2_catalog"]
@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" path="res://ui/economy/economy_bank.tscn" id="5_bank"]
 [ext_resource type="PackedScene" path="res://ui/summary/daily_summary.tscn" id="6_summary"]
 [ext_resource type="PackedScene" path="res://ui/character/character_sheet.tscn" id="7_charsheet"]
+[ext_resource type="PackedScene" path="res://ui/band/band_hub.tscn" id="8_bandhub"]
+[ext_resource type="PackedScene" path="res://ui/album/album_creator.tscn" id="9_albumcr"]
 
 [node name="HUD" type="Control"]
 layout_mode = 3
@@ -164,8 +166,15 @@ text = "Concerti (L)"
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnConcert")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
-focus_neighbor_right = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
+focus_neighbor_right = NodePath("../BtnBand")
 text = "Bilancio (B)"
+
+[node name="BtnBand" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnEconomy")
+focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
+focus_neighbor_right = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
+text = "Band (G)"
 
 [node name="SongCatalog" parent="." instance=ExtResource("2_catalog")]
 visible = false
@@ -188,5 +197,13 @@ visible = false
 layout_mode = 1
 
 [node name="CharacterSheet" parent="." instance=ExtResource("7_charsheet")]
+visible = false
+layout_mode = 1
+
+[node name="BandHub" parent="." instance=ExtResource("8_bandhub")]
+visible = false
+layout_mode = 1
+
+[node name="AlbumCreator" parent="." instance=ExtResource("9_albumcr")]
 visible = false
 layout_mode = 1

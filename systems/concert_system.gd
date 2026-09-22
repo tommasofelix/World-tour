@@ -172,7 +172,10 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 	)
 	
 	var soundcheck_bonus: float = 5.0 if is_soundcheck else 0.0
-	var final_score: float = clampf((base_score * closer_bonus_mult) + event_score_delta + soundcheck_bonus, 1.0, 100.0)
+	var band_synergy: float = 0.0
+	if GameManager and GameManager.band_system:
+		band_synergy = GameManager.band_system.get_band_synergy_bonus()
+	var final_score: float = clampf((base_score * closer_bonus_mult) + event_score_delta + soundcheck_bonus + band_synergy, 1.0, 100.0)
 	
 	# 5. Conversione Fan
 	var new_fans: int = Formulas.calculate_fan_conversion(audience, final_score, charisma_level)
@@ -181,12 +184,26 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 		
 	player_data.fans += new_fans
 	
-	# 6. Economia Serata
+	# 6. Economia Serata & Ripartizione Compensi (Revenue Split)
 	var gross_revenue: float = float(audience) * ticket_price
 	var net_revenue: float = gross_revenue - venue.rent_cost
-	if gross_revenue > 0.0:
-		player_data.modify_money(gross_revenue)
-		EventBus.money_changed.emit(player_data.money, gross_revenue, "concert_tickets")
+	var player_share: float = gross_revenue
+	var band_share: float = 0.0
+	var active_members: Array[BandMemberData] = player_data.get_active_band_members() if player_data else []
+	if not active_members.is_empty():
+		var total_members: int = 1 + active_members.size()
+		match player_data.revenue_split_mode:
+			Enums.RevenueSplit.EQUAL_SPLIT:
+				player_share = gross_revenue / float(total_members)
+			Enums.RevenueSplit.LEADER_BALANCED:
+				player_share = gross_revenue * 0.40
+			Enums.RevenueSplit.LEADER_PREDATORY:
+				player_share = gross_revenue * 0.70
+		band_share = gross_revenue - player_share
+		
+	if player_share > 0.0:
+		player_data.modify_money(player_share)
+		EventBus.money_changed.emit(player_data.money, player_share, "concert_tickets")
 		
 	# 7. Crescita notorietà & statistiche
 	var pop_gain: float = (final_score / 100.0) * (float(audience) / float(venue.capacity)) * 3.0
@@ -203,6 +220,10 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 		skill_system.add_xp("performance", 25.0)
 		skill_system.add_xp("charisma", 20.0)
 		
+	# 9. Dinamiche post-concerto della Band
+	if GameManager and GameManager.band_system:
+		GameManager.band_system.process_post_concert_dynamics(final_score)
+		
 	var result := {
 		"success": true,
 		"venue_id": venue.id,
@@ -213,6 +234,9 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 		"gross_revenue": gross_revenue,
 		"rent_cost": venue.rent_cost,
 		"net_revenue": net_revenue,
+		"player_share": player_share,
+		"band_share": band_share,
+		"band_synergy_bonus": band_synergy,
 		"concert_score": final_score,
 		"new_fans": new_fans,
 		"popularity_gained": pop_gain,

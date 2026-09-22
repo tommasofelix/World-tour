@@ -45,3 +45,15 @@ signal ui_focus_changed(control_name: String, control_role: String, control_valu
 
 # --- Segnali di Sistema & Localizzazione ---
 signal language_changed(new_language: String)
+
+# --- Segnali Band & Dinamiche Umane (World-tour V2.0) ---
+signal band_member_joined(member: BandMemberData)
+signal band_member_left(member: BandMemberData, reason: String)
+signal band_chemistry_changed(affinity: float, respect: float, tension: float)
+signal band_revenue_split_changed(new_mode: int)
+signal band_hub_requested()
+signal album_created(album_data: Dictionary)
+signal album_released(album_data: Dictionary)
+signal album_sales_updated(total_royalties: float, album_count: int)
+signal album_creator_requested()
+signal housing_changed(new_tier: int, rent: float)

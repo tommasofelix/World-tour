@@ -48,6 +48,17 @@ var fans: int = 0
 var reputation: float = 5.0
 var popularity: float = 1.0
 
+# Band, Compagni e Dinamiche Umane (World-tour V2.0)
+var band_name: String = "The Rebels"
+var band_members: Array[BandMemberData] = []
+var revenue_split_mode: int = Enums.RevenueSplit.EQUAL_SPLIT
+
+# Lifestyle & Alloggi
+var current_housing_tier: int = Enums.HousingTier.STARTER_BEDROOM
+
+# Raccolte Discografiche (EP / Album)
+var albums: Array[AlbumData] = []
+
 var skills: Dictionary = {
 	"instrument": {"level": 10, "xp": 0.0},
 	"composition": {"level": 10, "xp": 0.0},
@@ -232,10 +243,81 @@ func reduce_stress(amount: int) -> void:
 func modify_money(delta: float) -> void:
 	money += delta
 
+func get_active_band_members() -> Array[BandMemberData]:
+	var result: Array[BandMemberData] = []
+	for m in band_members:
+		if m.is_active:
+			result.append(m)
+	return result
+
+func add_band_member(member: BandMemberData) -> bool:
+	if band_members.size() >= Constants.MAX_BAND_MEMBERS:
+		return false
+	band_members.append(member)
+	return true
+
+func remove_band_member(member_id: String) -> bool:
+	for i in range(band_members.size()):
+		if band_members[i].id == member_id:
+			band_members.remove_at(i)
+			return true
+	return false
+
+func get_band_member_by_role(role: int) -> BandMemberData:
+	for m in band_members:
+		if m.role == role and m.is_active:
+			return m
+	return null
+
+func has_full_band() -> bool:
+	return band_members.size() >= Constants.MAX_BAND_MEMBERS
+
+func get_revenue_split_name() -> String:
+	match revenue_split_mode:
+		Enums.RevenueSplit.EQUAL_SPLIT:
+			return tr("SPLIT_EQUAL")
+		Enums.RevenueSplit.LEADER_BALANCED:
+			return tr("SPLIT_LEADER_BALANCED")
+		Enums.RevenueSplit.LEADER_PREDATORY:
+			return tr("SPLIT_LEADER_PREDATORY")
+		_:
+			return tr("SPLIT_EQUAL")
+
+func get_leader_revenue_share() -> float:
+	if band_members.is_empty():
+		return 1.0
+	match revenue_split_mode:
+		Enums.RevenueSplit.EQUAL_SPLIT:
+			return 1.0 / float(1 + band_members.size())
+		Enums.RevenueSplit.LEADER_BALANCED:
+			return 0.40
+		Enums.RevenueSplit.LEADER_PREDATORY:
+			return 0.70
+		_:
+			return 1.0 / float(1 + band_members.size())
+
+func add_album(album: AlbumData) -> void:
+	albums.append(album)
+
+func get_released_albums() -> Array[AlbumData]:
+	var result: Array[AlbumData] = []
+	for a in albums:
+		if a.is_released:
+			result.append(a)
+	return result
+
 func to_dict() -> Dictionary:
 	var serialized_songs: Array = []
 	for s in songs:
 		serialized_songs.append(s.to_dict())
+		
+	var serialized_members: Array = []
+	for m in band_members:
+		serialized_members.append(m.to_dict())
+		
+	var serialized_albums: Array = []
+	for a in albums:
+		serialized_albums.append(a.to_dict())
 		
 	return {
 		"player_name": player_name,
@@ -252,7 +334,12 @@ func to_dict() -> Dictionary:
 		"reputation": reputation,
 		"popularity": popularity,
 		"skills": skills.duplicate(true),
-		"songs": serialized_songs
+		"songs": serialized_songs,
+		"band_name": band_name,
+		"revenue_split_mode": revenue_split_mode,
+		"current_housing_tier": current_housing_tier,
+		"band_members": serialized_members,
+		"albums": serialized_albums
 	}
 
 func from_dict(dict: Dictionary) -> void:
@@ -279,3 +366,23 @@ func from_dict(dict: Dictionary) -> void:
 				var s := SongData.new()
 				s.from_dict(s_dict)
 				songs.append(s)
+				
+	band_name = dict.get("band_name", band_name)
+	revenue_split_mode = int(dict.get("revenue_split_mode", revenue_split_mode))
+	current_housing_tier = int(dict.get("current_housing_tier", current_housing_tier))
+	
+	band_members.clear()
+	if dict.has("band_members") and dict["band_members"] is Array:
+		for m_dict in dict["band_members"]:
+			if m_dict is Dictionary:
+				var m := BandMemberData.new()
+				m.from_dict(m_dict)
+				band_members.append(m)
+				
+	albums.clear()
+	if dict.has("albums") and dict["albums"] is Array:
+		for a_dict in dict["albums"]:
+			if a_dict is Dictionary:
+				var a := AlbumData.new()
+				a.from_dict(a_dict)
+				albums.append(a)

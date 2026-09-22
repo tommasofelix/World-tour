@@ -39,12 +39,38 @@ func _on_external_money_changed(new_bal: float, delta: float, reason: String) ->
 
 func get_daily_fixed_expenses() -> Dictionary:
 	var food: float = Constants.DAILY_FOOD_EXPENSE
-	var rent: float = Constants.DAILY_ROOM_RENT
+	var tier: int = player_data.current_housing_tier if player_data else Enums.HousingTier.STARTER_BEDROOM
+	var base_rent: float = HousingData.get_tier_rent(tier)
+	var rent: float = base_rent
+	if player_data and tier == Enums.HousingTier.SHARED_FLAT:
+		var roommates: int = 1 + player_data.band_members.size()
+		rent = snappedf(base_rent / float(roommates), 0.01)
 	return {
 		"food": food,
 		"rent": rent,
 		"total": food + rent
 	}
+
+## Permette di cambiare residenza / alloggio
+func change_housing(new_tier: int) -> Dictionary:
+	if not player_data:
+		return { "success": false, "reason": "no_player" }
+	if player_data.current_housing_tier == new_tier:
+		return { "success": false, "reason": "already_current" }
+	var rent: float = HousingData.get_tier_rent(new_tier)
+	if new_tier == Enums.HousingTier.SHARED_FLAT and player_data.band_members.is_empty():
+		return { "success": false, "reason": "no_band_members" }
+	if new_tier == Enums.HousingTier.LUXURY_VILLA and player_data.career_tier < Enums.CareerTier.INDIE_SENSATION:
+		return { "success": false, "reason": "career_too_low" }
+	if player_data.money < rent:
+		return { "success": false, "reason": "money_insufficient" }
+		
+	player_data.current_housing_tier = new_tier
+	EventBus.housing_changed.emit(new_tier, rent)
+	AccessibilityManager.announce("Alloggio cambiato in: %s. Canone giornaliero: %.2f euro." % [
+		HousingData.get_tier_name(new_tier), rent
+	], true)
+	return { "success": true, "new_tier": new_tier, "rent": rent }
 
 func get_financial_runway_days() -> float:
 	if not player_data or player_data.money <= 0.0:

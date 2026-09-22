@@ -85,6 +85,24 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Status di Carriera: Musicista da Cameretta"
 
+[node name="HBoxHousing" type="HBoxContainer" parent="PanelMain/VBox/OverviewContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="LabelHousing" type="Label" parent="PanelMain/VBox/OverviewContainer/HBoxHousing"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Alloggio: Stanzetta Singola"
+
+[node name="OptHousing" type="OptionButton" parent="PanelMain/VBox/OverviewContainer/HBoxHousing"]
+custom_minimum_size = Vector2(320, 38)
+layout_mode = 2
+
+[node name="BtnChangeHousing" type="Button" parent="PanelMain/VBox/OverviewContainer/HBoxHousing"]
+custom_minimum_size = Vector2(130, 38)
+layout_mode = 2
+text = "Trasloca"
+
 [node name="HSeparator2" type="HSeparator" parent="PanelMain/VBox"]
 layout_mode = 2
 

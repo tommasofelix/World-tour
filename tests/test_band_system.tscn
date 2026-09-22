@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cxu60k12nl7ab"]
+
+[ext_resource type="Script" path="res://tests/test_band_system.gd" id="1_test_band"]
+
+[node name="TestBandSystemRunner" type="Node"]
+script = ExtResource("1_test_band")

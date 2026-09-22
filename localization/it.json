@@ -218,5 +218,54 @@
 	"BANK_BTN_WORK": "Svolgi Turno di Lavoro",
 	"BANK_BTN_RESIGN": "Compi il Salto nel Vuoto (Licenziati)",
 	"BANK_HISTORY_TITLE": "Registro Ultime Transazioni:",
-	"BANK_BTN_CLOSE": "Chiudi Bilancio (Esc / B)"
+	"BANK_BTN_CLOSE": "Chiudi Bilancio (Esc / B)",
+
+	"ROLE_BASS": "Basso",
+	"ROLE_DRUMS": "Batteria",
+	"ROLE_KEYBOARDS": "Tastiere",
+	"ROLE_GUITAR_RHYTHM": "Chitarra Ritmica",
+
+	"PERSONALITY_RELIABLE": "Affidabile e Preciso",
+	"PERSONALITY_PERFECTIONIST": "Perfezionista Esigente",
+	"PERSONALITY_WILD_PARTY": "Animale da Palco",
+	"PERSONALITY_EGO_ARTIST": "Ego Artistico Sensibile",
+
+	"SPLIT_EQUAL": "Divisione Equa (25% a testa)",
+	"SPLIT_LEADER_BALANCED": "Leader Equilibrato (40% Leader, 20% Compagni)",
+	"SPLIT_LEADER_PREDATORY": "Quota Leader (70% Leader, 10% Compagni)",
+
+	"ALBUM_TYPE_EP": "EP (Extended Play)",
+	"ALBUM_TYPE_LP": "Album (Long Play)",
+
+	"CONCEPT_CONCEPTUAL": "Album Concettuale / Tematico",
+	"CONCEPT_COMMERCIAL_HIT": "Hit Commerciali da Classifica",
+	"CONCEPT_RAW_UNDERGROUND": "Registrazione Autentica Underground",
+
+	"ARTWORK_MINIMALIST": "Minimalista ed Elegante",
+	"ARTWORK_RETRO_PSYCHEDELIC": "Psichedelico Retrò",
+	"ARTWORK_DARK_METAL": "Oscuro e Gotico",
+	"ARTWORK_STREET_GRAFFITI": "Street Art e Graffiti",
+
+	"HOUSING_BEDROOM": "Stanzetta Singola (15 €/giorno)",
+	"HOUSING_SHARED_FLAT": "Appartamento Condiviso con la Band (25 €/giorno)",
+	"HOUSING_LOFT_STUDIO": "Loft con Sala Prove Inclusa (50 €/giorno)",
+	"HOUSING_LUXURY_VILLA": "Villa con Studio di Registrazione (150 €/giorno)",
+
+	"HUD_BTN_BAND": "Band (G)",
+	"HUD_BTN_BAND_ACC_NAME": "Apri Gestione Band e Membri",
+	"HUD_BTN_BAND_ACC_DESC": "Tasto rapido G. Consulta i membri della band, l'affinità, il rispetto, la tensione e la bacheca audizioni.",
+
+	"CATALOG_TITLE": "Catalogo Discografico",
+	"CATALOG_FILTER_ALL": "Tutti",
+	"CATALOG_FILTER_DRAFTS": "Bozze",
+	"CATALOG_FILTER_PRODUCED": "Pronti",
+	"CATALOG_FILTER_RELEASED": "Singoli",
+	"CATALOG_FILTER_ALBUMS": "Album / EP",
+	"CATALOG_EMPTY": "Nessun elemento nel catalogo. Premi 'N' per comporre o 'P' per produrre un album!",
+	"CATALOG_BTN_NEW": "Nuova Canzone (N)",
+	"CATALOG_BTN_NEW_ALBUM": "Produci Album / EP (P)",
+	"CATALOG_BTN_CLOSE": "Chiudi (Esc)",
+	"CATALOG_BTN_EDIT": "Modifica Bozza",
+	"CATALOG_BTN_EDIT_ACC_DESC": "Apre lo studio di composizione per completare le fasi della bozza.",
+	"CATALOG_BTN_RELEASE": "Pubblica Singolo"
 }

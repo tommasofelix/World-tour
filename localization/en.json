@@ -218,5 +218,54 @@
 	"BANK_BTN_WORK": "Work a Job Shift",
 	"BANK_BTN_RESIGN": "Take the Leap (Resign from Day Job)",
 	"BANK_HISTORY_TITLE": "Recent Transactions Log:",
-	"BANK_BTN_CLOSE": "Close Finances (Esc / B)"
+	"BANK_BTN_CLOSE": "Close Finances (Esc / B)",
+
+	"ROLE_BASS": "Bass",
+	"ROLE_DRUMS": "Drums",
+	"ROLE_KEYBOARDS": "Keyboards",
+	"ROLE_GUITAR_RHYTHM": "Rhythm Guitar",
+
+	"PERSONALITY_RELIABLE": "Reliable & Steady",
+	"PERSONALITY_PERFECTIONIST": "Demanding Perfectionist",
+	"PERSONALITY_WILD_PARTY": "Stage Wild Animal",
+	"PERSONALITY_EGO_ARTIST": "Sensitive Artistic Ego",
+
+	"SPLIT_EQUAL": "Equal Split (25% each)",
+	"SPLIT_LEADER_BALANCED": "Balanced Leader (40% Leader, 20% Members)",
+	"SPLIT_LEADER_PREDATORY": "Predatory Leader (70% Leader, 10% Members)",
+
+	"ALBUM_TYPE_EP": "EP (Extended Play)",
+	"ALBUM_TYPE_LP": "Album (Long Play)",
+
+	"CONCEPT_CONCEPTUAL": "Conceptual / Thematic Album",
+	"CONCEPT_COMMERCIAL_HIT": "Chart Commercial Hits",
+	"CONCEPT_RAW_UNDERGROUND": "Raw Underground Recording",
+
+	"ARTWORK_MINIMALIST": "Minimalist & Clean",
+	"ARTWORK_RETRO_PSYCHEDELIC": "Retro Psychedelic",
+	"ARTWORK_DARK_METAL": "Dark & Gothic",
+	"ARTWORK_STREET_GRAFFITI": "Street Art & Graffiti",
+
+	"HOUSING_BEDROOM": "Starter Bedroom (15 €/day)",
+	"HOUSING_SHARED_FLAT": "Shared Band Flat (25 €/day)",
+	"HOUSING_LOFT_STUDIO": "Loft with Rehearsal Space (50 €/day)",
+	"HOUSING_LUXURY_VILLA": "Luxury Villa with Studio (150 €/day)",
+
+	"HUD_BTN_BAND": "Band (G)",
+	"HUD_BTN_BAND_ACC_NAME": "Open Band Management",
+	"HUD_BTN_BAND_ACC_DESC": "Shortcut G. View band members, affinity, respect, tension, and recruitment board.",
+
+	"CATALOG_TITLE": "Music Catalog",
+	"CATALOG_FILTER_ALL": "All",
+	"CATALOG_FILTER_DRAFTS": "Drafts",
+	"CATALOG_FILTER_PRODUCED": "Ready",
+	"CATALOG_FILTER_RELEASED": "Singles",
+	"CATALOG_FILTER_ALBUMS": "Albums / EPs",
+	"CATALOG_EMPTY": "No music in catalog. Press 'N' to compose or 'P' to produce an album!",
+	"CATALOG_BTN_NEW": "New Song (N)",
+	"CATALOG_BTN_NEW_ALBUM": "Produce Album / EP (P)",
+	"CATALOG_BTN_CLOSE": "Close (Esc)",
+	"CATALOG_BTN_EDIT": "Edit Draft",
+	"CATALOG_BTN_EDIT_ACC_DESC": "Opens music creator to finish drafting stages.",
+	"CATALOG_BTN_RELEASE": "Release Single"
 }

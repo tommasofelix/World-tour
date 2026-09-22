@@ -83,3 +83,26 @@ const AUDIO_SAFE_VOLUME_LINEAR: float = 0.75
 const ACCESSIBILITY_LIVE_OFF: int = 0
 const ACCESSIBILITY_LIVE_POLITE: int = 1
 const ACCESSIBILITY_LIVE_ASSERTIVE: int = 2
+
+# --- Band e Compagni di Gruppo (World-tour V2.0) ---
+const MAX_BAND_MEMBERS: int = 3 # Oltre ad Alex (formazione completa 4 elementi)
+const BAND_TENSION_SAFE: float = 40.0
+const BAND_TENSION_WARNING: float = 70.0
+const BAND_TENSION_CRITICAL: float = 85.0 # Rischio abbandono band
+const BAND_AUDITION_FEE: float = 30.0
+
+# --- Formati Album (EP / LP) ---
+const ALBUM_EP_MIN_TRACKS: int = 3
+const ALBUM_EP_MAX_TRACKS: int = 5
+const ALBUM_LP_MIN_TRACKS: int = 6
+const ALBUM_LP_MAX_TRACKS: int = 10
+const ALBUM_EP_PRODUCTION_COST: float = 80.0
+const ALBUM_LP_PRODUCTION_COST: float = 200.0
+const ALBUM_EP_ROYALTY_RATE: float = 0.35
+const ALBUM_LP_ROYALTY_RATE: float = 0.60
+
+# --- Alloggi & Lifestyle (Canoni Giornalieri) ---
+const RENT_BEDROOM: float = 15.0
+const RENT_SHARED_FLAT: float = 25.0
+const RENT_LOFT_STUDIO: float = 50.0
+const RENT_LUXURY_VILLA: float = 150.0

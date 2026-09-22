@@ -129,16 +129,27 @@ Il materiale del Game Design Document originario è stato organizzato e disaccop
 
 ---
 
-### FASE 6: Identità Artistica & Espansione V2.0 (The Musician's Life)
+### FASE 6: Identità Artistica & Espansione V2.0 (The Musician's Life & Band System)
 - [x] `F6.1`: **L'Identità del Musicista & Scheda Personaggio (Opzione 1)**: Protagonista pronto per i test (Alex, Chitarra Elettrica, Autodidatta, Carismatico, 7 abilità a Liv. 10), integrazione bisogni vitali (Stress e Morale) e riquadro riassuntivo artistico nell'HUD, pulsante `Personaggio (C)` e scorciatoia `C`, modale ad alto contrasto `CharacterSheet` con matrice dinamica delle 7 abilità e annuncio vocale per NVDA (convalidato con 35/35 file verificati e 6/6 test suite).
-- [ ] `F6.2`: **Dinamiche di Routine, Recupero Psico-Fisico & Lifestyle**: Attività quotidiane di svago per gestire lo Stress e ripristinare il Morale (ascolto musica, cinema, passeggiata, sessioni jam libere).
-- [ ] `F6.3`: **Formati Discografici Estesi**: Produzione e rilascio di EP (3-5 tracce) e Album / LP (8-12 tracce) con booklet, recensioni della critica musicale e campagne promozionali.
-- [ ] `F6.4`: **Sistema Band & Reclutamento Musicisti**: Formazione del gruppo, annunci per musicisti, provini, chimica relazionale e gestione delle personalità.
+- [x] `F6.2`: **Sistema Band, Reclutamento & Dinamiche Umane**: Reclutamento compagni di band (Basso, Batteria, Tastiere, Chitarra Ritmica), bacheca audizioni (30 €), 4 personalità distinte, indicatori vitali di gruppo (Affinità Umana, Rispetto Musicale, Tensione Interna), sinergia palco (-15% a +25%), gestione delle politiche di incasso (Revenue Split: Equa 25%, Leader 40%, Predatoria 70%) e rischio abbandono su tensione critica (> 85%). Modale dedicata `BandHub` e tasto rapido `G`.
+- [x] `F6.3`: **Formati Discografici Estesi (EP & LP)**: Modulo `AlbumSystem` (`systems/album_system.gd`) e modale `AlbumCreator` (`ui/album/album_creator.tscn`), supporto compilazione EP (3-5 tracce) e LP (6-10 tracce), selezione concept artistico, stile artwork e traccia trainante (lead single). Calcolo qualità complessiva, recensioni della critica musicale (1.0 - 5.0 stelle ⭐), vendite Day 1, conversione fan/reputazione e ripartizione incassi con la band. Tasto rapido `P` e visualizzazione discografia in `SongCatalog`.
+- [x] `F6.4`: **Lifestyle, Alloggi & Royalties a Catalogo**: 4 categorie di residenza (`HousingData`: Stanzetta 15€, Appartamento condiviso con la Band 25€ con canone ripartito tra coinquilini e dinamiche relazionali, Loft con sala prove 50€, Villa con studio 150€), integrazione in `EconomyBank` con possibilità di trasloco, incasso automatico royalties passive giornaliere a catalogo con decadimento fisiologico in `EndDaySystem` e riepilogo notturno completo in `DailySummary`.
+- [x] `F6.5`: **Suite di Test Automatizzati V2.0**: 8 suite di test su 8 superate al 100% in modalità headless (`test_band_system.gd` e `test_album_system.gd` con 105 test dedicati superati con 0 errori).
+- [x] `F6.6`: **Chiusura Ufficiale Fase 6 & Risoluzione Catalogo Album**: Collaudo congiunto superato da Luca (NVDA/tastiera) e Holy Diver (monitor/mouse), risoluzione sincronizzazione e visibilità dischi nel catalogo con separazione rigida delle sezioni e tasti rapidi `A` (Album/EP) e `S` (Brani), vocalizzazione della tracklist, 8/8 suite di test a 0 errori e chiusura formale della V2.0.
+
+---
+
+### FASE 7: L'Industria Musicale, Manager, Contratti & Bivi Etici (Versione 3.0)
+- [ ] `F7.1`: **Modello Dati Industria & Contratti (`ContractData`, `ManagerData`, `LabelData`)**: Definizione strutture dati per tipologia di contratto (Autoproduzione, Indie, Major), anticipi, percentuali royalties, obblighi di consegna dischi, clausole di recupero (*Recoupment*) e 3 profili di manager (Amico, Professionista, Squalo).
+- [ ] `F7.2`: **Sottosistema Industria e Negoziazione (`IndustrySystem`)**: Modulo di gestione delle offerte contrattuali in base a Reputazione e Fan, calcolo del recoupment passivo su vendite e royalties, e impatto del manager su concerti e stress.
+- [ ] `F7.3`: **Sistema dei Bivi Etico-Narrativi (`DilemmaSystem`)**: Motore di eventi periodici a bivio (es. spot commerciale vs integrità artistica, sponsorizzazioni controverse, liti con la major) con effetti deterministici su Morale, Denaro, Fan, Reputazione e Tensione della band.
+- [ ] `F7.4`: **Dashboard Industria, Contratti & Accessibilità NVDA (`ui/industry/`)**: Interfaccia a schede ad alto contrasto per Holy Diver e procedura 100% accessibile da tastiera per Luca con tasto rapido `K`, lettura riga per riga di clausole e percentuali prima della firma.
+- [ ] `F7.5`: **Suite di Test Headless & Collaudo Congiunto V3.0**: Nuove suite di test automatizzate headless per `IndustrySystem` e `DilemmaSystem`, test di regressione sulle 8 suite esistenti e collaudo reale con NVDA.
 
 ---
 
 ### ROADMAP DI ESPANSIONE (V2.0 – V5.0)
-- [ ] `V2.0`: Sistema Band, reclutamento musicisti, dinamiche relazionali, creazione EP e Album, lifestyle approfondito.
-- [ ] `V3.0`: Industria musicale, manager, etichette Indie vs Major, contratti ed eventi narrativi a bivi morali.
+- [x] `V2.0`: Sistema Band, reclutamento musicisti, dinamiche relazionali, creazione EP e Album, lifestyle e royalties di catalogo (completato e convalidato al 100%).
+- [/] `V3.0`: Industria musicale, manager, etichette Indie vs Major, contratti ed eventi narrativi a bivi morali (in lavorazione).
 - [ ] `V4.0`: Mondo dinamico, mercati musicali fluttuanti, festival estivi, tour interurbani, artisti rivali e social media.
 - [ ] `V5.0`: Endgame e Superstar mondiale, concerti negli stadi, mega-produzioni, premi alla carriera e Legacy finale.
