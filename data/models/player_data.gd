@@ -1,0 +1,105 @@
+# res://data/models/player_data.gd
+class_name PlayerData
+extends RefCounted
+
+## Modello Dati Runtime del Personaggio Giocante per World-tour
+
+var player_name: String = "Alex"
+var primary_instrument: String = "Chitarra Elettrica"
+var background_id: String = "self_taught"
+
+# Risorse fisiologiche e finanziarie
+var energy: int = Constants.MAX_ENERGY
+var stress: int = Constants.MIN_STRESS
+var morale: int = Constants.MAX_MORALE
+var money: float = 500.0
+
+# Carriera e notorietà
+var career_tier: int = Enums.CareerTier.BEDROOM_MUSICIAN
+var fans: int = 0
+var reputation: float = 5.0
+var popularity: float = 1.0
+
+# Dizionario delle 7 abilità con livello ed esperienza accumulata
+var skills: Dictionary = {
+	"instrument": {"level": 10, "xp": 0.0},
+	"composition": {"level": 10, "xp": 0.0},
+	"songwriting": {"level": 10, "xp": 0.0},
+	"production": {"level": 10, "xp": 0.0},
+	"performance": {"level": 10, "xp": 0.0},
+	"charisma": {"level": 10, "xp": 0.0},
+	"business": {"level": 10, "xp": 0.0}
+}
+
+func get_skill_level(skill_key: String) -> int:
+	if skills.has(skill_key):
+		return skills[skill_key]["level"]
+	return 10
+
+func add_xp_to_skill(skill_key: String, xp_amount: float) -> bool:
+	if not skills.has(skill_key):
+		return false
+	
+	var data: Dictionary = skills[skill_key]
+	data["xp"] += xp_amount
+	var current_level: int = data["level"]
+	var required_xp: int = Formulas.calculate_xp_for_level(current_level)
+	var leveled_up: bool = false
+	
+	while data["xp"] >= float(required_xp) and current_level < 99:
+		data["xp"] -= float(required_xp)
+		data["level"] += 1
+		current_level = data["level"]
+		required_xp = Formulas.calculate_xp_for_level(current_level)
+		leveled_up = true
+	
+	return leveled_up
+
+func consume_energy(amount: int) -> bool:
+	if energy < amount:
+		return false
+	energy = maxi(Constants.MIN_ENERGY, energy - amount)
+	return true
+
+func add_energy(amount: int) -> void:
+	energy = mini(Constants.MAX_ENERGY, energy + amount)
+
+func add_stress(amount: int) -> void:
+	stress = mini(Constants.MAX_STRESS, stress + amount)
+
+func reduce_stress(amount: int) -> void:
+	stress = maxi(Constants.MIN_STRESS, stress - amount)
+
+func modify_money(delta: float) -> void:
+	money += delta
+
+func to_dict() -> Dictionary:
+	return {
+		"player_name": player_name,
+		"primary_instrument": primary_instrument,
+		"background_id": background_id,
+		"energy": energy,
+		"stress": stress,
+		"morale": morale,
+		"money": money,
+		"career_tier": career_tier,
+		"fans": fans,
+		"reputation": reputation,
+		"popularity": popularity,
+		"skills": skills.duplicate(true)
+	}
+
+func from_dict(dict: Dictionary) -> void:
+	player_name = dict.get("player_name", player_name)
+	primary_instrument = dict.get("primary_instrument", primary_instrument)
+	background_id = dict.get("background_id", background_id)
+	energy = int(dict.get("energy", energy))
+	stress = int(dict.get("stress", stress))
+	morale = int(dict.get("morale", morale))
+	money = float(dict.get("money", money))
+	career_tier = int(dict.get("career_tier", career_tier))
+	fans = int(dict.get("fans", fans))
+	reputation = float(dict.get("reputation", reputation))
+	popularity = float(dict.get("popularity", popularity))
+	if dict.has("skills") and dict["skills"] is Dictionary:
+		skills = dict["skills"].duplicate(true)

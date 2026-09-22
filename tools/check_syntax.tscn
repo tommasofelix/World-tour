@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://b8y9xq7m5w21k"]
+
+[ext_resource type="Script" path="res://tools/check_syntax.gd" id="1_check"]
+
+[node name="CheckSyntaxRunner" type="Node"]
+script = ExtResource("1_check")

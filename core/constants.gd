@@ -69,3 +69,8 @@ const FAN_CONVERSION_EXPONENT: float = 2.2
 const AUDIO_MAX_VOLUME_DB: float = -2.5 # Corrisponde a circa 0.75f lineare
 const AUDIO_DUCKING_RATIO: float = 0.40 # Riduzione al 40% durante sintesi
 const AUDIO_SAFE_VOLUME_LINEAR: float = 0.75
+
+# Live Region Modes per AccessKit / Screen Reader
+const ACCESSIBILITY_LIVE_OFF: int = 0
+const ACCESSIBILITY_LIVE_POLITE: int = 1
+const ACCESSIBILITY_LIVE_ASSERTIVE: int = 2

@@ -53,7 +53,15 @@ foreach ($test in $TestsToRun) {
     $TestRel = Split-Path $test -Leaf
     Write-Host "`nEsecuzione test: $TestRel..." -ForegroundColor Yellow
     
-    $proc = Start-Process -FilePath $GodotExe -ArgumentList @("--path", $ProjectRoot, "--headless", "-s", $test) -NoNewWindow -Wait -PassThru
+    $matchingScene = $test -replace '\.gd$', '.tscn'
+    $testArgs = @("--path", $ProjectRoot, "--headless")
+    if (Test-Path $matchingScene) {
+        $testArgs += $matchingScene
+    } else {
+        $testArgs += @("-s", $test)
+    }
+    
+    $proc = Start-Process -FilePath $GodotExe -ArgumentList $testArgs -NoNewWindow -Wait -PassThru
     
     if ($proc.ExitCode -eq 0) {
         Write-Host "[OK] Test superato: $TestRel" -ForegroundColor Green

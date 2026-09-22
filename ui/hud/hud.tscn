@@ -1,0 +1,75 @@
+[gd_scene load_steps=2 format=3 uid="uid://c6hudworldtour01"]
+
+[ext_resource type="Script" path="res://ui/hud/hud.gd" id="1_hud"]
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_hud")
+
+[node name="VBoxMain" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = 40.0
+offset_right = -40.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelTop" type="PanelContainer" parent="VBoxMain"]
+layout_mode = 2
+
+[node name="HBoxTop" type="HBoxContainer" parent="VBoxMain/PanelTop"]
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="LabelTime" type="Label" parent="VBoxMain/PanelTop/HBoxTop"]
+layout_mode = 2
+text = "Giorno 1 — Ore 06:00 (Mattina)"
+
+[node name="LabelEnergy" type="Label" parent="VBoxMain/PanelTop/HBoxTop"]
+layout_mode = 2
+text = "Energia: 100%"
+
+[node name="LabelMoney" type="Label" parent="VBoxMain/PanelTop/HBoxTop"]
+layout_mode = 2
+text = "Saldo: 500.00 €"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxMain"]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="PanelCenter" type="VBoxContainer" parent="VBoxMain"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="LabelStatus" type="Label" parent="VBoxMain/PanelCenter"]
+layout_mode = 2
+text = "Stato: In attesa (Pronto per agire)"
+
+[node name="HBoxActions" type="HBoxContainer" parent="VBoxMain/PanelCenter"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="BtnPractice" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+layout_mode = 2
+focus_neighbor_right = NodePath("../BtnPause")
+text = "1. Allenamento Rapido (10s)"
+
+[node name="BtnPause" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnPractice")
+focus_neighbor_right = NodePath("../BtnSave")
+text = "Pausa (Spazio)"
+
+[node name="BtnSave" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnPause")
+text = "Salva Partita"

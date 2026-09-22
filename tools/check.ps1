@@ -45,12 +45,20 @@ if ($FilesToCheck.Count -eq 0) {
 }
 
 Write-Host "=== VERIFICA SINTATTICA GDSCRIPT (GODOT 4.7) ===" -ForegroundColor Cyan
+
+if (-not $TargetFile) {
+    # Verifica globale di progetto con Autoload inclusi
+    $proc = Start-Process -FilePath $GodotExe -ArgumentList @("--path", $ProjectRoot.Path, "--headless", "res://tools/check_syntax.tscn") -NoNewWindow -Wait -PassThru
+    exit $proc.ExitCode
+}
+
+# Verifica file singolo
 $Errors = 0
 $Checked = 0
 
 foreach ($file in $FilesToCheck) {
     $Rel = $file.Replace($ProjectRoot.Path + "\", "")
-    $proc = Start-Process -FilePath $GodotExe -ArgumentList @("--path", $ProjectRoot, "--headless", "--check-only", "-s", $file) -NoNewWindow -Wait -PassThru
+    $proc = Start-Process -FilePath $GodotExe -ArgumentList @("--path", $ProjectRoot.Path, "--headless", "--check-only", "-s", $file) -NoNewWindow -Wait -PassThru
     $Checked++
     
     if ($proc.ExitCode -eq 0) {

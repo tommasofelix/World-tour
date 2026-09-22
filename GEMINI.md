@@ -1,7 +1,7 @@
 # World-tour — Hub di contesto locale
 
 - Framework: ASTRALIS, baseline pubblica `main@d28d1f9`.
-- Stato del progetto: Fase 1 (Fondamenta e Ambiente); stack confermato Godot Engine 4.7.2 win64.
+- Stato del progetto: Fase 2 completata (Vertical Slice V1.0 collaudato con successo); in preparazione Fase 3 (Ciclo Creativo); stack confermato Godot Engine 4.7.2 win64.
 - Repository: pubblico; mantenere fuori dati personali e governance privata.
 - AI primaria: Antigravity, salvo diversa decisione esplicita del responsabile del progetto.
 - Collaboratori ausiliari: attivati soltanto quando presenti o richiesti.

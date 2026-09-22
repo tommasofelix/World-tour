@@ -9,11 +9,15 @@ config_version=5
 config/name="World Tour"
 config/description="Music Career & Life Simulator"
 config/version="1.0.0"
+run/main_scene="res://ui/hud/hud.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 
 [autoload]
 
 EventBus="*res://autoload/event_bus.gd"
+GameManager="*res://autoload/game_manager.gd"
+AccessibilityManager="*res://autoload/accessibility_manager.gd"
+SaveManager="*res://autoload/save_manager.gd"
 
 [display]
 

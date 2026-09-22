@@ -4,6 +4,19 @@ Le modifiche rilevanti sono registrate in ordine cronologico inverso. Una voce d
 
 ## Non rilasciato
 
+### 2026-09-22 — Chiusura Fase 2: Vertical Slice V1.0 (Core Loop Vitale)
+- Implementati i modelli dati runtime in `data/models/` (`PlayerData`, `CalendarData`, `ActionData`) con serializzazione e deserializzazione atomica.
+- Realizzato il motore temporale `TimeSystem` con orologio giornaliero da 600 secondi (24 ore virtuali), fasce orarie e velocità 1x/2x/5x.
+- Realizzata la macchina a stati globale `GameManager` (`BOOT`, `IDLE`, `BUSY`, `PAUSED`, `DAILY_SUMMARY`) con Pausa Dinamica.
+- Realizzato `AccessibilityManager` con integrazione AccessKit, cattura automatica del focus, navigazione tastiera circolare, scorciatoie globali (`Spazio`, `1-3`, `T`, `R`, `K`) e sonificazione con volume calibrato a 0.75f con ducking.
+- Implementato `ActionSystem` con prima azione "Allenamento Rapido" (10s, 15 energia, +5 stress, XP con rendimenti marginali decrescenti).
+- Implementato `EndDaySystem` con passaggio a `DAILY_SUMMARY`, spese fisse giornaliere di sussistenza (25€), sonno ristoratore (+70 energia, -15 stress) e reset orologio.
+- Implementato `SaveManager` con salvataggio JSON atomico (`.tmp` -> `.json`) e blocco di sicurezza durante gli stati `BUSY`.
+- Creata l'interfaccia HUD simmetrica (`ui/hud/hud.tscn`, `ui/hud/hud.gd`) e configurata come scena principale in `project.godot`.
+- Estesa la suite di test con `tests/test_vertical_slice.gd` (43 test) portando il totale a 67/67 test superati con successo.
+- Creato il runner headless di validazione sintattica globale `tools/check_syntax.tscn` e aggiornati `tools/check.ps1` e `tools/test.ps1`.
+- Eseguito con esito positivo il primo collaudo reale congiunto: accessibilità 100% Zero Mouse con NVDA per Luca ed ergonomia visiva ad alto contrasto per Holy Diver (Tom).
+
 ### 2026-09-22 — Chiusura Fase 1: Fondamenta e Sistemi Base (Godot 4.7.2)
 
 - Inizializzato il progetto Godot 4.7.2 con supporto nativo ad AccessKit (`--accessibility-driver accesskit`) per piena accessibilità con NVDA e UI Automation.
