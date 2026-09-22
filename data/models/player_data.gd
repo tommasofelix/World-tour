@@ -59,6 +59,21 @@ var current_housing_tier: int = Enums.HousingTier.STARTER_BEDROOM
 # Raccolte Discografiche (EP / Album)
 var albums: Array[AlbumData] = []
 
+# Industria Discografica, Contratti & Manager (World-tour V3.0)
+const ContractDataScript = preload("res://data/models/contract_data.gd")
+const ManagerDataScript = preload("res://data/models/manager_data.gd")
+
+var active_contract: RefCounted = null
+var active_manager: RefCounted = null
+var available_contracts: Array = []
+var resolved_dilemmas: Array[String] = []
+
+func has_active_contract() -> bool:
+	return active_contract != null and active_contract.is_active
+
+func has_manager() -> bool:
+	return active_manager != null and active_manager.is_hired
+
 var skills: Dictionary = {
 	"instrument": {"level": 10, "xp": 0.0},
 	"composition": {"level": 10, "xp": 0.0},
@@ -339,7 +354,10 @@ func to_dict() -> Dictionary:
 		"revenue_split_mode": revenue_split_mode,
 		"current_housing_tier": current_housing_tier,
 		"band_members": serialized_members,
-		"albums": serialized_albums
+		"albums": serialized_albums,
+		"active_contract": active_contract.to_dict() if active_contract else {},
+		"active_manager": active_manager.to_dict() if active_manager else {},
+		"resolved_dilemmas": resolved_dilemmas.duplicate()
 	}
 
 func from_dict(dict: Dictionary) -> void:
@@ -386,3 +404,21 @@ func from_dict(dict: Dictionary) -> void:
 				var a := AlbumData.new()
 				a.from_dict(a_dict)
 				albums.append(a)
+				
+	if dict.has("active_contract") and dict["active_contract"] is Dictionary and not dict["active_contract"].is_empty():
+		active_contract = ContractDataScript.new()
+		active_contract.from_dict(dict["active_contract"])
+	else:
+		active_contract = null
+		
+	if dict.has("active_manager") and dict["active_manager"] is Dictionary and not dict["active_manager"].is_empty():
+		active_manager = ManagerDataScript.new()
+		active_manager.from_dict(dict["active_manager"])
+	else:
+		active_manager = null
+		
+	resolved_dilemmas.clear()
+	if dict.has("resolved_dilemmas") and dict["resolved_dilemmas"] is Array:
+		for d_id in dict["resolved_dilemmas"]:
+			resolved_dilemmas.append(str(d_id))
+

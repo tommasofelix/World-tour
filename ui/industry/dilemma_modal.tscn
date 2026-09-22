@@ -1,0 +1,160 @@
+[gd_scene load_steps=4 format=3 uid="uid://dmdilemmamodwt01"]
+
+[ext_resource type="Script" path="res://ui/industry/dilemma_modal.gd" id="1_dilemma"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dilemma"]
+content_margin_left = 28.0
+content_margin_top = 28.0
+content_margin_right = 28.0
+content_margin_bottom = 28.0
+bg_color = Color(0.09, 0.08, 0.12, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.85, 0.65, 0.2, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_option"]
+content_margin_left = 16.0
+content_margin_top = 16.0
+content_margin_right = 16.0
+content_margin_bottom = 16.0
+bg_color = Color(0.13, 0.13, 0.18, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.3, 0.35, 0.5, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="DilemmaModal" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_dilemma")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.04, 0.04, 0.06, 0.9)
+
+[node name="PanelMain" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -440.0
+offset_top = -280.0
+offset_right = 440.0
+offset_bottom = 280.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_dilemma")
+
+[node name="VBox" type="VBoxContainer" parent="PanelMain"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Header" type="VBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="LabelCategory" type="Label" parent="PanelMain/VBox/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.75, 0.3, 1)
+theme_override_font_sizes/font_size = 13
+text = "BIVIO ETICO — INTEGRITÀ ARTISTICA"
+
+[node name="LabelTitle" type="Label" parent="PanelMain/VBox/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Titolo del Bivio Etico"
+
+[node name="HSeparator1" type="HSeparator" parent="PanelMain/VBox"]
+layout_mode = 2
+
+[node name="LabelDescription" type="Label" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.92, 0.96, 1)
+theme_override_font_sizes/font_size = 14
+text = "Descrizione dettagliata della situazione e del dilemma morale o commerciale."
+autowrap_mode = 2
+
+[node name="HSeparator2" type="HSeparator" parent="PanelMain/VBox"]
+layout_mode = 2
+
+[node name="VBoxOptions" type="VBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="PanelOption1" type="PanelContainer" parent="PanelMain/VBox/VBoxOptions"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_option")
+
+[node name="VBox" type="VBoxContainer" parent="PanelMain/VBox/VBoxOptions/PanelOption1"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="LabelOption1Title" type="Label" parent="PanelMain/VBox/VBoxOptions/PanelOption1/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "1. Prima Opzione"
+
+[node name="LabelOption1Desc" type="Label" parent="PanelMain/VBox/VBoxOptions/PanelOption1/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.75, 0.8, 0.85, 1)
+theme_override_font_sizes/font_size = 13
+text = "Conseguenze della prima opzione."
+autowrap_mode = 2
+
+[node name="BtnOption1" type="Button" parent="PanelMain/VBox/VBoxOptions/PanelOption1/VBox"]
+layout_mode = 2
+text = "Scegli Opzione 1 (Tasto 1)"
+
+[node name="PanelOption2" type="PanelContainer" parent="PanelMain/VBox/VBoxOptions"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_option")
+
+[node name="VBox" type="VBoxContainer" parent="PanelMain/VBox/VBoxOptions/PanelOption2"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="LabelOption2Title" type="Label" parent="PanelMain/VBox/VBoxOptions/PanelOption2/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "2. Seconda Opzione"
+
+[node name="LabelOption2Desc" type="Label" parent="PanelMain/VBox/VBoxOptions/PanelOption2/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.75, 0.8, 0.85, 1)
+theme_override_font_sizes/font_size = 13
+text = "Conseguenze della seconda opzione."
+autowrap_mode = 2
+
+[node name="BtnOption2" type="Button" parent="PanelMain/VBox/VBoxOptions/PanelOption2/VBox"]
+layout_mode = 2
+text = "Scegli Opzione 2 (Tasto 2)"

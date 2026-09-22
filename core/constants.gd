@@ -106,3 +106,31 @@ const RENT_BEDROOM: float = 15.0
 const RENT_SHARED_FLAT: float = 25.0
 const RENT_LOFT_STUDIO: float = 50.0
 const RENT_LUXURY_VILLA: float = 150.0
+
+# --- Contratti Discografici & Industria (World-tour V3.0) ---
+const CONTRACT_INDIE_ADVANCE_DEFAULT: float = 8000.0
+const CONTRACT_MAJOR_ADVANCE_DEFAULT: float = 60000.0
+const CONTRACT_INDIE_ROYALTY_RATE: float = 0.45
+const CONTRACT_MAJOR_ROYALTY_RATE: float = 0.15
+const CONTRACT_SELF_ROYALTY_RATE: float = 1.00
+const CONTRACT_INDIE_ALBUMS_REQ: int = 2
+const CONTRACT_MAJOR_ALBUMS_REQ: int = 3
+const CONTRACT_MAJOR_MIN_QUALITY: float = 65.0
+
+# --- Manager & Agenzie di Booking ---
+const MANAGER_FRIEND_COMMISSION: float = 0.10
+const MANAGER_PRO_COMMISSION: float = 0.15
+const MANAGER_SHARK_COMMISSION: float = 0.22
+
+const MANAGER_FRIEND_HIRING_FEE: float = 50.0
+const MANAGER_PRO_HIRING_FEE: float = 400.0
+const MANAGER_SHARK_HIRING_FEE: float = 2000.0
+
+const MANAGER_FRIEND_CACHET_MULT: float = 1.10
+const MANAGER_PRO_CACHET_MULT: float = 1.25
+const MANAGER_SHARK_CACHET_MULT: float = 1.50
+
+const MANAGER_FRIEND_STRESS_RELIEF: float = 1.0
+const MANAGER_PRO_STRESS_RELIEF: float = 2.5
+const MANAGER_SHARK_STRESS_RELIEF: float = 4.0
+

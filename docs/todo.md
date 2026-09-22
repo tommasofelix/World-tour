@@ -140,16 +140,28 @@ Il materiale del Game Design Document originario è stato organizzato e disaccop
 ---
 
 ### FASE 7: L'Industria Musicale, Manager, Contratti & Bivi Etici (Versione 3.0)
-- [ ] `F7.1`: **Modello Dati Industria & Contratti (`ContractData`, `ManagerData`, `LabelData`)**: Definizione strutture dati per tipologia di contratto (Autoproduzione, Indie, Major), anticipi, percentuali royalties, obblighi di consegna dischi, clausole di recupero (*Recoupment*) e 3 profili di manager (Amico, Professionista, Squalo).
-- [ ] `F7.2`: **Sottosistema Industria e Negoziazione (`IndustrySystem`)**: Modulo di gestione delle offerte contrattuali in base a Reputazione e Fan, calcolo del recoupment passivo su vendite e royalties, e impatto del manager su concerti e stress.
-- [ ] `F7.3`: **Sistema dei Bivi Etico-Narrativi (`DilemmaSystem`)**: Motore di eventi periodici a bivio (es. spot commerciale vs integrità artistica, sponsorizzazioni controverse, liti con la major) con effetti deterministici su Morale, Denaro, Fan, Reputazione e Tensione della band.
-- [ ] `F7.4`: **Dashboard Industria, Contratti & Accessibilità NVDA (`ui/industry/`)**: Interfaccia a schede ad alto contrasto per Holy Diver e procedura 100% accessibile da tastiera per Luca con tasto rapido `K`, lettura riga per riga di clausole e percentuali prima della firma.
-- [ ] `F7.5`: **Suite di Test Headless & Collaudo Congiunto V3.0**: Nuove suite di test automatizzate headless per `IndustrySystem` e `DilemmaSystem`, test di regressione sulle 8 suite esistenti e collaudo reale con NVDA.
+- [x] `F7.1`: **Modello Dati Industria & Contratti (`ContractData`, `ManagerData`, `DilemmaData`)**: Definizione strutture dati per tipologia di contratto (Autoproduzione, Indie, Major), anticipi liquidi immediati, tracciamento del debito di recupero (*Recoupment*), percentuale royalties (45% indie vs 15% major), obblighi di consegna dischi e 3 profili di manager (Amico Fidato, Professionista Indipendente, Squalo dell'Industria).
+- [x] `F7.2`: **Sottosistema Industria e Negoziazione (`IndustrySystem`)**: Modulo di gestione delle offerte contrattuali in base a Reputazione e Fan, calcolo del recoupment passivo su vendite e royalties, e impatto del manager su concerti (cachet e provvigione) e stress notturno.
+- [x] `F7.3`: **Sistema dei Bivi Etico-Narrativi (`DilemmaSystem`)**: Motore di eventi periodici a bivio (es. spot commerciale vs integrità artistica, ghostwriting, pay to play, sponsorizzazioni controverse, plagio, liti con la major) con effetti deterministici su Morale, Denaro, Fan, Reputazione e Tensione della band.
+- [x] `F7.4`: **Dashboard Industria, Contratti & Accessibilità NVDA (`ui/industry/`)**: Interfaccia a schede ad alto contrasto per Holy Diver e procedura 100% accessibile da tastiera per Luca con tasto rapido `K`, navigazione schede con `1` e `2`, lettura riga per riga di clausole e percentuali prima della firma e finestra di risoluzione dei bivi morali.
+- [x] `F7.5`: **Suite di Test Headless & Collaudo Congiunto V3.0**: Nuove suite di test automatizzate headless per `IndustrySystem` (60 test superati) e `DilemmaSystem` (5 blocchi superati), test di regressione sulle 8 suite esistenti (10/10 suite superate con 0 errori) e collaudo reale con NVDA.
+- [x] `F7.6`: **Chiusura Ufficiale Fase 7 (Versione 3.0)**: Approvazione congiunta di Luca (NVDA/tastiera) e Holy Diver (monitor/mouse), 53 file verificati senza errori di compilazione, archiviazione formale della V3.0 e transizione a Fase 8.
+
+---
+
+### FASE 8: Il Mondo Dinamico, Tour Interurbani, Festival Estivi & Social Media (Versione 4.0)
+- [ ] `F8.1`: **Mappa Geografica & Sistema delle Città (`CityData`, `TravelSystem`)**: Rete di città e scene musicali (Milano, Bologna, Roma, Londra, Berlino), ciascuna con affinità di genere, costo di viaggio, stanchezza da spostamento e livello di penetrazione della fanbase.
+- [ ] `F8.2`: **Pianificazione & Gestione del Tour (`TourSystem`, `TourData`)**: Modulo per organizzare una serie di tappe live consecutive (date, trasporti con furgone scassato vs tour bus di lusso, alloggi in tour, stanchezza cumulativa e gestione del logorio della band).
+- [ ] `F8.3`: **I Grandi Festival Estivi (`FestivalEvent`, `FestivalSystem`)**: Stagione dei festival all'aperto, slot di esibizione (pomeriggio, tramonto, headliner serale), competizione tra band e impatto massivo su notorietà e vendite merch.
+- [ ] `F8.4`: **Social Media, Fan Engagement & Viralità (`SocialMediaSystem`)**: Canali social della band, pubblicazione di contenuti e clip dietro le quinte, hype virale, gestione delle polemiche online e impatto sul buzz dei singoli.
+- [ ] `F8.5`: **Artisti Rivali & Classifiche Musicali (`RivalSystem`, `ChartSystem`)**: Hit parade settimanale dei singoli e degli album, band rivali della scena underground e mainstream con cui confrontarsi per il primato in classifica.
+- [ ] `F8.6`: **Dashboard Tour & Accessibilità NVDA (`ui/tour/`, `ui/social/`)**: Interfaccia di viaggio interurbano e social ad alto contrasto per Holy Diver e comandi lineari rapidi da tastiera per Luca, con calcolo automatico di costi e stanchezza del viaggio.
+- [ ] `F8.7`: **Suite di Test Headless & Collaudo Congiunto V4.0**: Suite di test automatizzate headless per tour, città, festival e social, verifica di non regressione e collaudo congiunto.
 
 ---
 
 ### ROADMAP DI ESPANSIONE (V2.0 – V5.0)
 - [x] `V2.0`: Sistema Band, reclutamento musicisti, dinamiche relazionali, creazione EP e Album, lifestyle e royalties di catalogo (completato e convalidato al 100%).
-- [/] `V3.0`: Industria musicale, manager, etichette Indie vs Major, contratti ed eventi narrativi a bivi morali (in lavorazione).
-- [ ] `V4.0`: Mondo dinamico, mercati musicali fluttuanti, festival estivi, tour interurbani, artisti rivali e social media.
+- [x] `V3.0`: Industria musicale, manager, etichette Indie vs Major, contratti ed eventi narrativi a bivi morali (completato e convalidato al 100%).
+- [/] `V4.0`: Mondo dinamico, mercati musicali fluttuanti, festival estivi, tour interurbani, artisti rivali e social media (in lavorazione).
 - [ ] `V5.0`: Endgame e Superstar mondiale, concerti negli stadi, mega-produzioni, premi alla carriera e Legacy finale.

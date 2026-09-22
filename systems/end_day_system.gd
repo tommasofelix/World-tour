@@ -63,6 +63,15 @@ func _on_day_ended(day_num: int) -> void:
 		for m in player_data.band_members:
 			if m.tension >= Constants.BAND_TENSION_CRITICAL:
 				band_crises.append(m.name)
+				
+	# Sgravio stress organizzativo dal Manager
+	if GameManager and GameManager.industry_system:
+		GameManager.industry_system.apply_daily_manager_stress_relief()
+		
+	# Valutazione dilemmi etici serali
+	var pending_dilemma: DilemmaData = null
+	if GameManager and GameManager.dilemma_system:
+		pending_dilemma = GameManager.dilemma_system.evaluate_daily_dilemma()
 		
 	var summary: Dictionary = {
 		"completed_day": day_num,
@@ -75,7 +84,8 @@ func _on_day_ended(day_num: int) -> void:
 		"current_energy": player_data.energy if player_data else 100,
 		"current_stress": player_data.stress if player_data else 0,
 		"housing_name": HousingData.get_tier_name(tier),
-		"band_crises": band_crises
+		"band_crises": band_crises,
+		"pending_dilemma": pending_dilemma.to_dict() if pending_dilemma else {}
 	}
 	
 	summary_ready.emit(summary)

@@ -298,6 +298,9 @@ func create_and_release_album(
 	EventBus.album_created.emit(album.to_dict())
 	EventBus.album_released.emit(album.to_dict())
 	
+	if GameManager and GameManager.industry_system:
+		GameManager.industry_system.process_album_delivery(album)
+	
 	var type_str := album.get_type_name()
 	var speech := "Pubblicato il nuovo %s '%s'! Recensioni: %.1f stelle su 5. Vendite iniziali: %.0f copie. Incasso netto leader: %.2f euro." % [
 		type_str, title, metrics.review_stars, metrics.initial_sales, player_share
@@ -338,6 +341,10 @@ func process_daily_royalties() -> Dictionary:
 		var royalty_rate: float = Constants.ALBUM_EP_ROYALTY_RATE if album.album_type == Enums.AlbumType.EP else Constants.ALBUM_LP_ROYALTY_RATE
 		var gross_album_royalty: float = daily_units * royalty_rate
 		var player_album_royalty: float = snappedf(gross_album_royalty * leader_ratio, 0.01)
+		
+		if GameManager and GameManager.industry_system and player_data and player_data.has_active_contract():
+			var recoup_res: Dictionary = GameManager.industry_system.process_royalties_recoupment(player_album_royalty)
+			player_album_royalty = recoup_res.artist_received
 		
 		album.total_sales += daily_units
 		total_player_royalties += player_album_royalty

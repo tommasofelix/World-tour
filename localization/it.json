@@ -267,5 +267,19 @@
 	"CATALOG_BTN_CLOSE": "Chiudi (Esc)",
 	"CATALOG_BTN_EDIT": "Modifica Bozza",
 	"CATALOG_BTN_EDIT_ACC_DESC": "Apre lo studio di composizione per completare le fasi della bozza.",
-	"CATALOG_BTN_RELEASE": "Pubblica Singolo"
+	"CATALOG_BTN_RELEASE": "Pubblica Singolo",
+
+	"HUD_BTN_INDUSTRY": "Industria (K)",
+	"HUD_BTN_INDUSTRY_ACC_NAME": "Apri Industria e Contratti",
+	"HUD_BTN_INDUSTRY_ACC_DESC": "Tasto rapido K. Consulta contratti Indie e Major, stato del recupero anticipi e gestione manager.",
+	"INDUSTRY_TITLE": "Industria Musicale & Contratti",
+	"INDUSTRY_TAB_CONTRACTS": "1. Contratti Discografici (Tasto 1)",
+	"INDUSTRY_TAB_MANAGER": "2. Manager & Rappresentanza (Tasto 2)",
+	"CONTRACT_TYPE_SELF": "Autoproduzione",
+	"CONTRACT_TYPE_INDIE": "Etichetta Indipendente (Indie)",
+	"CONTRACT_TYPE_MAJOR": "Major Discografica",
+	"MANAGER_TYPE_NONE": "Nessun Manager",
+	"MANAGER_TYPE_FRIEND": "Amico Fidato",
+	"MANAGER_TYPE_PRO": "Manager Indipendente",
+	"MANAGER_TYPE_SHARK": "Squalo del Settore"
 }

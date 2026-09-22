@@ -128,6 +128,18 @@ func load_game() -> bool:
 	else:
 		GameManager.album_system.player_data = GameManager.player_data
 		GameManager.album_system.calendar_data = GameManager.calendar_data
+		
+	if not GameManager.industry_system:
+		GameManager.industry_system = IndustrySystem.new(GameManager.player_data, GameManager.calendar_data)
+	else:
+		GameManager.industry_system.player_data = GameManager.player_data
+		GameManager.industry_system.calendar_data = GameManager.calendar_data
+		
+	if not GameManager.dilemma_system:
+		GameManager.dilemma_system = DilemmaSystem.new(GameManager.player_data, GameManager.calendar_data)
+	else:
+		GameManager.dilemma_system.player_data = GameManager.player_data
+		GameManager.dilemma_system.calendar_data = GameManager.calendar_data
 
 	GameManager.change_state(Enums.GameState.GAMEPLAY_IDLE)
 	

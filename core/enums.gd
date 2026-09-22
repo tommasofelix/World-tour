@@ -128,3 +128,23 @@ enum HousingTier {
 	LUXURY_VILLA      # Villa con studio professionale (150 €/giorno)
 }
 
+enum ContractType {
+	SELF_RELEASED,    # Autoproduzione / Indipendente totale (100% royalties, 0 anticipo)
+	INDIE_LABEL,      # Etichetta indipendente (45% royalties, anticipo modesto, piena libertà)
+	MAJOR_LABEL       # Major multinazionale (15% royalties, grande anticipo, recoupment e vincoli A&R)
+}
+
+enum ManagerType {
+	NONE,             # Nessun manager
+	TRUSTED_FRIEND,   # Amico fidato (10% commissione, bonus live modesto)
+	PRO_INDIE,        # Professionista indipendente (15% commissione, ottimo booking)
+	INDUSTRY_SHARK    # Squalo dell'industria (22% commissione, mega booking e contatti top)
+}
+
+enum DilemmaCategory {
+	COMMERCIAL_ETHICS, # Scelte tra soldi facili e dignità artistica
+	BAND_INTERNAL,     # Conflitti interni e gelosie
+	MEDIA_SCANDAL,     # Dichiarazioni e relazioni pubbliche
+	ARTISTIC_INTEGRITY # Richieste di compromesso sui testi/musica
+}
+

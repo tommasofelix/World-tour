@@ -1,0 +1,220 @@
+[gd_scene load_steps=3 format=3 uid="uid://dmindhubwt01"]
+
+[ext_resource type="Script" path="res://ui/industry/industry_hub.gd" id="1_indhub"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_indhub"]
+content_margin_left = 24.0
+content_margin_top = 24.0
+content_margin_right = 24.0
+content_margin_bottom = 24.0
+bg_color = Color(0.08, 0.09, 0.13, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.5, 0.7, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="IndustryHub" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_indhub")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.05, 0.05, 0.08, 1)
+
+[node name="PanelMain" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -480.0
+offset_top = -300.0
+offset_right = 480.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_indhub")
+
+[node name="VBox" type="VBoxContainer" parent="PanelMain"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Header" type="VBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="LabelTitle" type="Label" parent="PanelMain/VBox/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Industria Musicale, Contratti Discografici & Manager"
+
+[node name="LabelStatusSummary" type="Label" parent="PanelMain/VBox/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.75, 0.85, 0.95, 1)
+text = "Contratto: Autoproduzione | Manager: Nessuno"
+
+[node name="HSeparator1" type="HSeparator" parent="PanelMain/VBox"]
+layout_mode = 2
+
+[node name="HBoxTabs" type="HBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="BtnTabContracts" type="Button" parent="PanelMain/VBox/HBoxTabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "1. Contratti Discografici (Tasto 1)"
+
+[node name="BtnTabManagers" type="Button" parent="PanelMain/VBox/HBoxTabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "2. Manager & Rappresentanza (Tasto 2)"
+
+[node name="HSeparator2" type="HSeparator" parent="PanelMain/VBox"]
+layout_mode = 2
+
+[node name="TabContracts" type="VBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="PanelActiveContract" type="PanelContainer" parent="PanelMain/VBox/TabContracts"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="PanelMain/VBox/TabContracts/PanelActiveContract"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="LabelActiveContractTitle" type="Label" parent="PanelMain/VBox/TabContracts/PanelActiveContract/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Regime di Autoproduzione (Indipendente)"
+
+[node name="LabelActiveContractDetails" type="Label" parent="PanelMain/VBox/TabContracts/PanelActiveContract/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.8, 0.85, 0.9, 1)
+text = "Trattieni il 100% dei ricavi sui brani e album. Nessun anticipo né vincolo discografico."
+
+[node name="HBoxActions" type="HBoxContainer" parent="PanelMain/VBox/TabContracts/PanelActiveContract/VBox"]
+layout_mode = 2
+
+[node name="BtnRescindContract" type="Button" parent="PanelMain/VBox/TabContracts/PanelActiveContract/VBox/HBoxActions"]
+visible = false
+layout_mode = 2
+text = "Rescindi Contratto"
+
+[node name="HBoxOffersHeader" type="HBoxContainer" parent="PanelMain/VBox/TabContracts"]
+layout_mode = 2
+
+[node name="LabelOffersTitle" type="Label" parent="PanelMain/VBox/TabContracts/HBoxOffersHeader"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Offerte Discografiche Disponibili:"
+
+[node name="Spacer" type="Control" parent="PanelMain/VBox/TabContracts/HBoxOffersHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BtnRefreshOffers" type="Button" parent="PanelMain/VBox/TabContracts/HBoxOffersHeader"]
+layout_mode = 2
+text = "Cerca Nuove Offerte (R)"
+
+[node name="LabelNoOffers" type="Label" parent="PanelMain/VBox/TabContracts"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+text = "Nessuna offerta al momento. Fai concerti e pubblica musica per aumentare la tua Reputazione!"
+
+[node name="ScrollOffers" type="ScrollContainer" parent="PanelMain/VBox/TabContracts"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxOffersList" type="VBoxContainer" parent="PanelMain/VBox/TabContracts/ScrollOffers"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="TabManagers" type="VBoxContainer" parent="PanelMain/VBox"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="PanelActiveManager" type="PanelContainer" parent="PanelMain/VBox/TabManagers"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="PanelMain/VBox/TabManagers/PanelActiveManager"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="LabelActiveManagerTitle" type="Label" parent="PanelMain/VBox/TabManagers/PanelActiveManager/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Nessun Manager Attivo"
+
+[node name="LabelActiveManagerDetails" type="Label" parent="PanelMain/VBox/TabManagers/PanelActiveManager/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.8, 0.85, 0.9, 1)
+text = "Nessun professionista cura i tuoi ingaggi dal vivo o la tua agenda."
+
+[node name="HBoxActions" type="HBoxContainer" parent="PanelMain/VBox/TabManagers/PanelActiveManager/VBox"]
+layout_mode = 2
+
+[node name="BtnFireManager" type="Button" parent="PanelMain/VBox/TabManagers/PanelActiveManager/VBox/HBoxActions"]
+visible = false
+layout_mode = 2
+text = "Licenzia Manager"
+
+[node name="LabelManagersTitle" type="Label" parent="PanelMain/VBox/TabManagers"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Profili Manager per la tua Carriera:"
+
+[node name="ScrollManagers" type="ScrollContainer" parent="PanelMain/VBox/TabManagers"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxManagersList" type="VBoxContainer" parent="PanelMain/VBox/TabManagers/ScrollManagers"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="HSeparator3" type="HSeparator" parent="PanelMain/VBox"]
+layout_mode = 2
+
+[node name="HBoxFooter" type="HBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+
+[node name="LabelHelp" type="Label" parent="PanelMain/VBox/HBoxFooter"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 12
+text = "1: Contratti | 2: Manager | R: Nuove Offerte | Esc/K: Chiudi"
+
+[node name="Spacer" type="Control" parent="PanelMain/VBox/HBoxFooter"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BtnClose" type="Button" parent="PanelMain/VBox/HBoxFooter"]
+layout_mode = 2
+text = "Chiudi (Esc / K)"

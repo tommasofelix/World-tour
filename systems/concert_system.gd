@@ -184,22 +184,30 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 		
 	player_data.fans += new_fans
 	
-	# 6. Economia Serata & Ripartizione Compensi (Revenue Split)
+	# 6. Economia Serata & Ripartizione Compensi (Revenue Split & Manager)
 	var gross_revenue: float = float(audience) * ticket_price
+	var manager_cut: float = 0.0
+	var pool_revenue: float = gross_revenue
+	if GameManager and GameManager.industry_system and player_data.has_manager():
+		var rev_calc: Dictionary = GameManager.industry_system.calculate_live_concert_revenue(gross_revenue)
+		gross_revenue = rev_calc.gross_cachet
+		manager_cut = rev_calc.manager_cut
+		pool_revenue = rev_calc.net_band_revenue
+		
 	var net_revenue: float = gross_revenue - venue.rent_cost
-	var player_share: float = gross_revenue
+	var player_share: float = pool_revenue
 	var band_share: float = 0.0
 	var active_members: Array[BandMemberData] = player_data.get_active_band_members() if player_data else []
 	if not active_members.is_empty():
 		var total_members: int = 1 + active_members.size()
 		match player_data.revenue_split_mode:
 			Enums.RevenueSplit.EQUAL_SPLIT:
-				player_share = gross_revenue / float(total_members)
+				player_share = pool_revenue / float(total_members)
 			Enums.RevenueSplit.LEADER_BALANCED:
-				player_share = gross_revenue * 0.40
+				player_share = pool_revenue * 0.40
 			Enums.RevenueSplit.LEADER_PREDATORY:
-				player_share = gross_revenue * 0.70
-		band_share = gross_revenue - player_share
+				player_share = pool_revenue * 0.70
+		band_share = pool_revenue - player_share
 		
 	if player_share > 0.0:
 		player_data.modify_money(player_share)

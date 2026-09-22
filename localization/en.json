@@ -267,5 +267,19 @@
 	"CATALOG_BTN_CLOSE": "Close (Esc)",
 	"CATALOG_BTN_EDIT": "Edit Draft",
 	"CATALOG_BTN_EDIT_ACC_DESC": "Opens music creator to finish drafting stages.",
-	"CATALOG_BTN_RELEASE": "Release Single"
+	"CATALOG_BTN_RELEASE": "Release Single",
+
+	"HUD_BTN_INDUSTRY": "Industry (K)",
+	"HUD_BTN_INDUSTRY_ACC_NAME": "Open Music Industry & Contracts",
+	"HUD_BTN_INDUSTRY_ACC_DESC": "Shortcut K. Inspect Indie and Major record deals, recoupment debt and hire a manager.",
+	"INDUSTRY_TITLE": "Music Industry & Record Deals",
+	"INDUSTRY_TAB_CONTRACTS": "1. Record Contracts (Key 1)",
+	"INDUSTRY_TAB_MANAGER": "2. Manager & Representation (Key 2)",
+	"CONTRACT_TYPE_SELF": "Self-Released",
+	"CONTRACT_TYPE_INDIE": "Independent Label (Indie)",
+	"CONTRACT_TYPE_MAJOR": "Major Label",
+	"MANAGER_TYPE_NONE": "No Manager",
+	"MANAGER_TYPE_FRIEND": "Trusted Friend",
+	"MANAGER_TYPE_PRO": "Independent Manager",
+	"MANAGER_TYPE_SHARK": "Industry Shark"
 }
