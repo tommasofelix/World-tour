@@ -112,10 +112,11 @@ Il materiale del Game Design Document originario è stato organizzato e disaccop
 ---
 
 ### FASE 4: Vertical Slice V1.2 — Il Palco dal Vivo (Live Performance)
-- [ ] `F4.1`: Definizione del catalogo dei locali iniziali (`VenueData`: Garage, Bar, Club).
-- [ ] `F4.2`: Schermata di selezione della scaletta concerti (`Setlist Selector`).
-- [ ] `F4.3`: Motore di risoluzione concerti (`ConcertSystem`: calcolo Concert Score, spettatori presenti, conversione fan, incasso).
-- [ ] `F4.4`: Test funzionale del live show e aggiornamento delle statistiche del giocatore.
+- [x] `F4.1`: Definizione del catalogo dei locali iniziali (`VenueData`: Garage, Pub, Piccolo Club, Club di Tendenza con bilanciamento affitto, capacità e requisiti).
+- [x] `F4.2`: Schermata e pannello di preparazione live (`LiveConcert`: selezione locale, prezzo biglietto, soundcheck e selettore scaletta da 1 a 4 brani pronti/pubblicati).
+- [x] `F4.3`: Motore di simulazione concerti (`ConcertSystem`: calcolo affluenza su popolarità e prezzo biglietto, stage events con bivi Carisma/Performance, closer bonus con tratti `STAGE_BEAST` e `CULT_CLASSIC`, conversione fan ed economia).
+- [x] `F4.4`: Test funzionali e suite automatizzata (`tests/test_concert_system.gd`: 53 test unitari/integrazione superati, copertura 100% headless, AccessKit e scorciatoie da tastiera 'L', '1', '2', 'Esc').
+- [x] `F4.5`: **Chiusura Ufficiale Fase 4**: Collaudo congiunto superato da Luca e Tom, risoluzione e archiviazione anomalia `RRU-04` (isolamento AccessKit HUD e backdrop opaco modali), 5 suite test su 5 superate con 0 errori e transizione a Fase 5.
 
 ---
 

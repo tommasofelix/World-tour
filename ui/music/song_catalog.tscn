@@ -1,6 +1,22 @@
-[gd_scene load_steps=2 format=3 uid="uid://dmsongcat01"]
+[gd_scene load_steps=3 format=3 uid="uid://dmsongcat01"]
 
 [ext_resource type="Script" path="res://ui/music/song_catalog.gd" id="1_catalog"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_catalog"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.09, 0.1, 0.14, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.35, 0.5, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="SongCatalog" type="Control"]
 layout_mode = 3
@@ -10,6 +26,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_catalog")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.05, 0.05, 0.08, 1)
 
 [node name="PanelMain" type="PanelContainer" parent="."]
 layout_mode = 1
@@ -22,6 +48,7 @@ offset_right = -60.0
 offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_catalog")
 
 [node name="VBox" type="VBoxContainer" parent="PanelMain"]
 layout_mode = 2

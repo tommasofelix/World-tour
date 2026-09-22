@@ -74,6 +74,14 @@ func get_released_singles() -> Array[SongData]:
 			result.append(s)
 	return result
 
+func get_playable_songs() -> Array[SongData]:
+	var result: Array[SongData] = []
+	for s in songs:
+		if s.status == Enums.SongStatus.PRODUCED or s.status == Enums.SongStatus.RELEASED:
+			result.append(s)
+	return result
+
+
 func get_skill_level(skill_key: String) -> int:
 	if skills.has(skill_key):
 		return skills[skill_key]["level"]

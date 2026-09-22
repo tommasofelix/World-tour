@@ -5,6 +5,7 @@ extends Control
 ## Implementa l'architettura a Layer Differenziati per Simmetria Universale (Luca & Holy Diver)
 ## e supporta la localizzazione dinamica multilingua (i18n).
 
+@onready var vbox_main: VBoxContainer = $VBoxMain
 @onready var label_time: Label = $VBoxMain/PanelTop/HBoxTop/LabelTime
 @onready var label_energy: Label = $VBoxMain/PanelTop/HBoxTop/LabelEnergy
 @onready var label_money: Label = $VBoxMain/PanelTop/HBoxTop/LabelMoney
@@ -12,12 +13,14 @@ extends Control
 @onready var btn_practice: Button = $VBoxMain/PanelCenter/HBoxActions/BtnPractice
 @onready var btn_catalog: Button = $VBoxMain/PanelCenter/HBoxActions/BtnCatalog
 @onready var btn_new_song: Button = $VBoxMain/PanelCenter/HBoxActions/BtnNewSong
+@onready var btn_concert: Button = $VBoxMain/PanelCenter/HBoxActions/BtnConcert
 @onready var btn_pause: Button = $VBoxMain/PanelCenter/HBoxActions/BtnPause
 @onready var btn_save: Button = $VBoxMain/PanelCenter/HBoxActions/BtnSave
 @onready var btn_main_menu: Button = $VBoxMain/PanelCenter/HBoxActions/BtnMainMenu
 
 @onready var song_catalog_modal: Control = $SongCatalog
 @onready var song_creator_modal: Control = $SongCreator
+@onready var live_concert_modal: Control = $LiveConcert
 
 var action_system: ActionSystem
 var quick_practice_action: ActionData
@@ -46,16 +49,19 @@ func _ready() -> void:
 	btn_practice.pressed.connect(_on_btn_practice_pressed)
 	btn_catalog.pressed.connect(open_catalog)
 	btn_new_song.pressed.connect(open_song_creator)
+	btn_concert.pressed.connect(open_live_concert)
 	btn_pause.pressed.connect(_on_btn_pause_pressed)
 	btn_save.pressed.connect(_on_btn_save_pressed)
 	btn_main_menu.pressed.connect(_on_btn_main_menu_pressed)
 	
-	# Connessione modali musicali
+	# Connessione modali musicali e concerti
 	song_catalog_modal.closed.connect(close_catalog)
 	song_catalog_modal.new_song_requested.connect(_on_catalog_new_song_requested)
 	song_catalog_modal.edit_song_requested.connect(open_song_editor)
 	song_creator_modal.creation_finished.connect(_on_song_created_or_finished)
 	song_creator_modal.creation_canceled.connect(close_song_creator)
+	live_concert_modal.closed.connect(close_live_concert)
+	live_concert_modal.concert_completed.connect(_on_concert_completed)
 	
 	# Connessione EventBus
 	EventBus.time_ticked.connect(_on_time_ticked)
@@ -66,6 +72,7 @@ func _ready() -> void:
 	EventBus.language_changed.connect(_on_language_changed)
 	EventBus.song_catalog_requested.connect(open_catalog)
 	EventBus.song_creator_requested.connect(open_song_creator)
+	EventBus.live_concert_requested.connect(open_live_concert)
 	
 	# Configurazione semantica AccessKit e testi iniziali
 	_refresh_ui_text()
@@ -79,6 +86,30 @@ func _process(delta: float) -> void:
 		GameManager.time_system.advance_time(delta)
 	if action_system and action_system.is_running:
 		action_system.update_action(delta)
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not (event is InputEventKey) or not event.is_pressed() or event.is_echo():
+		return
+	
+	# Se una modale è aperta, non intercettare scorciatoie di navigazione HUD
+	if (song_catalog_modal and song_catalog_modal.visible) or \
+	   (song_creator_modal and song_creator_modal.visible) or \
+	   (live_concert_modal and live_concert_modal.visible):
+		return
+	
+	match event.keycode:
+		KEY_L:
+			open_live_concert()
+			get_viewport().set_input_as_handled()
+		KEY_M:
+			open_catalog()
+			get_viewport().set_input_as_handled()
+		KEY_N:
+			open_song_creator()
+			get_viewport().set_input_as_handled()
+		KEY_P:
+			_on_btn_pause_pressed()
+			get_viewport().set_input_as_handled()
 
 func _get_localized_period(period: int) -> String:
 	match period:
@@ -98,6 +129,7 @@ func _refresh_ui_text() -> void:
 	btn_practice.text = tr("HUD_BTN_PRACTICE")
 	btn_catalog.text = tr("HUD_BTN_CATALOG")
 	btn_new_song.text = tr("HUD_BTN_NEW_SONG")
+	btn_concert.text = tr("HUD_BTN_CONCERT")
 	var is_paused: bool = GameManager.time_system.is_paused if GameManager.time_system else false
 	btn_pause.text = tr("HUD_BTN_RESUME") if is_paused else tr("HUD_BTN_PAUSE")
 	btn_save.text = tr("HUD_BTN_SAVE")
@@ -107,6 +139,7 @@ func _refresh_ui_text() -> void:
 	AccessibilityManager.hook_control_accessibility(btn_practice, tr("HUD_BTN_PRACTICE_ACC_NAME"), tr("HUD_BTN_PRACTICE_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_catalog, tr("HUD_BTN_CATALOG_ACC_NAME"), tr("HUD_BTN_CATALOG_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_new_song, tr("HUD_BTN_NEW_SONG_ACC_NAME"), tr("HUD_BTN_NEW_SONG_ACC_DESC"))
+	AccessibilityManager.hook_control_accessibility(btn_concert, tr("HUD_BTN_CONCERT_ACC_NAME"), tr("HUD_BTN_CONCERT_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_pause, tr("HUD_BTN_PAUSE_ACC_NAME"), tr("HUD_BTN_PAUSE_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_save, tr("HUD_BTN_SAVE_ACC_NAME"), tr("HUD_BTN_SAVE_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_main_menu, tr("HUD_BTN_MAIN_MENU_ACC_NAME"), tr("HUD_BTN_MAIN_MENU_ACC_DESC"))
@@ -116,41 +149,79 @@ func _refresh_ui_text() -> void:
 
 func open_catalog() -> void:
 	if song_creator_modal.visible:
-		close_song_creator()
+		song_creator_modal.visible = false
+	if live_concert_modal.visible:
+		live_concert_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = false
 	song_catalog_modal.visible = true
 	song_catalog_modal.refresh_catalog()
 	GameManager.open_menu()
 
 func close_catalog() -> void:
 	song_catalog_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = true
 	GameManager.close_menu()
 	btn_catalog.grab_focus()
 
 func open_song_creator() -> void:
 	if song_catalog_modal.visible:
-		close_catalog()
+		song_catalog_modal.visible = false
+	if live_concert_modal.visible:
+		live_concert_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = false
 	song_creator_modal.visible = true
 	song_creator_modal.start_new_song()
 	GameManager.open_menu()
 
 func close_song_creator() -> void:
 	song_creator_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = true
 	GameManager.close_menu()
 	btn_new_song.grab_focus()
 
 func open_song_editor(song: SongData) -> void:
 	if song_catalog_modal.visible:
 		song_catalog_modal.visible = false
+	if live_concert_modal.visible:
+		live_concert_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = false
 	song_creator_modal.visible = true
 	song_creator_modal.edit_existing_song(song)
 	GameManager.open_menu()
 
+func open_live_concert() -> void:
+	if song_catalog_modal.visible:
+		song_catalog_modal.visible = false
+	if song_creator_modal.visible:
+		song_creator_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = false
+	live_concert_modal.visible = true
+	live_concert_modal.open_preparation()
+	GameManager.open_menu()
+
+func close_live_concert() -> void:
+	live_concert_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = true
+	GameManager.close_menu()
+	btn_concert.grab_focus()
+	_update_hud_display()
+
+func _on_concert_completed(_result: Dictionary) -> void:
+	_update_hud_display()
+
 func _on_catalog_new_song_requested() -> void:
-	close_catalog()
+	song_catalog_modal.visible = false
 	open_song_creator()
 
 func _on_song_created_or_finished(_song: SongData) -> void:
-	close_song_creator()
+	song_creator_modal.visible = false
 	open_catalog()
 
 func _update_hud_display() -> void:

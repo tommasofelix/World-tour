@@ -4,6 +4,21 @@ Le revisioni vengono archiviate qui soltanto dopo risoluzione verificata e accet
 
 ## Revisioni archiviate
 
+### RRU-04 — Trasparenza Finestre Modali e Interferenza Lettura AccessKit/NVDA con HUD Sottostante
+
+- Stato: `[x] RISOLTA E VALIDATA`.
+- Data di chiusura: `2026-09-22`.
+- Componente: `ui/hud/hud.gd`, `ui/music/song_catalog.tscn`, `ui/music/song_creator.tscn`, `ui/concert/live_concert.tscn`.
+- Sintomo osservato: Durante l'apertura delle schede/modali di gioco (Catalogo, Creazione brano, Concerti), lo screen reader NVDA leggeva le etichette dell'HUD sottostante ("Giorno 1", "Allenamento", "Pausa", ecc.), e visivamente la trasparenza dei margini/pannelli mostrava i comandi dell'HUD a monitor.
+- Evidenza: `VBoxMain` nell'HUD manteneva `visible = true`, esponendo i suoi nodi all'albero UIA/AccessKit; assenza di fondale a tutto schermo (`Backdrop`) e assenza di `StyleBoxFlat` opaco su `PanelMain`.
+- Causa radice: Compenetrazione di visibilità tra HUD e modali sia nel rendering grafico che nell'albero UIA di Godot 4 AccessKit.
+- Soluzione applicata:
+  1. Toggle sistemico di `$VBoxMain.visible = false` in `ui/hud/hud.gd` all'apertura delle modali e ripristino a `true` alla chiusura con focus sul pulsante relativo.
+  2. Aggiunta del nodo `Backdrop: ColorRect` (100% schermo, colore opaco `#050508`, `mouse_filter = 0`) in tutte le modali.
+  3. Applicazione di `StyleBoxFlat` solido opaco con bordo di contrasto su `PanelMain`.
+- Test automatici eseguiti: 5 suite su 5 superate (53/53 test concerti, 125/125 test crafting, 43/43 test vertical slice).
+- Collaudo manuale eseguito: Collaudo reale in-game confermato da Luca con NVDA (isolamento totale del focus e zero lettura sotto la scheda) e da Tom a monitor (zero trasparenze indesiderate).
+
 ### RRU-02 — Fallback Lingua OS e Inquinamento settings.json da Suite di Test
 
 - Stato: `[x] RISOLTA E VALIDATA`.

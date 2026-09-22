@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://ui/hud/hud.gd" id="1_hud"]
 [ext_resource type="PackedScene" path="res://ui/music/song_catalog.tscn" id="2_catalog"]
 [ext_resource type="PackedScene" path="res://ui/music/song_creator.tscn" id="3_creator"]
+[ext_resource type="PackedScene" path="res://ui/concert/live_concert.tscn" id="4_concert"]
 
 [node name="HUD" type="Control"]
 layout_mode = 3
@@ -75,12 +76,18 @@ text = "Catalogo (M)"
 [node name="BtnNewSong" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnCatalog")
-focus_neighbor_right = NodePath("../BtnPause")
+focus_neighbor_right = NodePath("../BtnConcert")
 text = "Nuovo Brano (N)"
+
+[node name="BtnConcert" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnNewSong")
+focus_neighbor_right = NodePath("../BtnPause")
+text = "Concerti (L)"
 
 [node name="BtnPause" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
 layout_mode = 2
-focus_neighbor_left = NodePath("../BtnNewSong")
+focus_neighbor_left = NodePath("../BtnConcert")
 focus_neighbor_right = NodePath("../BtnSave")
 text = "Pausa (Spazio)"
 
@@ -103,3 +110,8 @@ layout_mode = 1
 [node name="SongCreator" parent="." instance=ExtResource("3_creator")]
 visible = false
 layout_mode = 1
+
+[node name="LiveConcert" parent="." instance=ExtResource("4_concert")]
+visible = false
+layout_mode = 1
+

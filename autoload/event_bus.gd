@@ -27,6 +27,7 @@ signal concert_resolved(concert_result: Dictionary)
 signal stage_event_triggered(event_data: Dictionary)
 signal song_catalog_requested()
 signal song_creator_requested()
+signal live_concert_requested()
 
 # --- Segnali Economia & Carriera ---
 signal money_changed(new_balance: float, delta: float, reason: String)

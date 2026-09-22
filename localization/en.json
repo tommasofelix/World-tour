@@ -53,6 +53,10 @@
 	"HUD_BTN_NEW_SONG_ACC_NAME": "Create New Musical Track",
 	"HUD_BTN_NEW_SONG_ACC_DESC": "Shortcut N. Open the creation studio to craft a new song.",
 
+	"HUD_BTN_CONCERT": "Live Gigs (L)",
+	"HUD_BTN_CONCERT_ACC_NAME": "Organize Live Concert",
+	"HUD_BTN_CONCERT_ACC_DESC": "Shortcut L. Pick a venue, prepare setlist, and perform live for your crowd.",
+
 	"PERIOD_MORNING": "Morning",
 	"PERIOD_AFTERNOON": "Afternoon",
 	"PERIOD_EVENING": "Evening",
@@ -135,5 +139,41 @@
 
 	"MSG_LEVEL_UP": "Fantastic! %s reached level %d!",
 	"MSG_SONG_RELEASED": "Single '%s' has been released! Final quality: %.1f / 100.",
-	"MSG_SONG_SAVED_DRAFT": "Draft '%s' saved in catalog."
+	"MSG_SONG_SAVED_DRAFT": "Draft '%s' saved in catalog.",
+
+	"VENUE_GARAGE_NAME": "Garage / Rehearsal Room",
+	"VENUE_GARAGE_DESC": "Friends and acquaintances: easy applause, zero revenue.",
+	"VENUE_PUB_NAME": "Local Pub & Brewery",
+	"VENUE_PUB_DESC": "Distracted patrons: charisma needed to quiet the bar.",
+	"VENUE_SMALL_CLUB_NAME": "Small Live Club",
+	"VENUE_SMALL_CLUB_DESC": "Music enthusiasts: attentive listening, high fan conversion.",
+	"VENUE_TRENDY_CLUB_NAME": "Trendy Club",
+	"VENUE_TRENDY_CLUB_DESC": "Critics and industry insiders: springboard to the national scene.",
+
+	"EVENT_STRING_TITLE": "Broken guitar string!",
+	"EVENT_STRING_DESC": "Right in the middle of the song, a string snaps with a loud crack!",
+	"EVENT_STRING_CHOICE_1": "1. Sing a cappella with crowd (Charisma)",
+	"EVENT_STRING_CHOICE_2": "2. Lightning instrument swap (Performance)",
+	"EVENT_AUDIO_TITLE": "Deafening monitor feedback!",
+	"EVENT_AUDIO_DESC": "A violent acoustic feedback shrieks through the PA system!",
+	"EVENT_AUDIO_CHOICE_1": "1. Make a witty joke on mic (Charisma)",
+	"EVENT_AUDIO_CHOICE_2": "2. Keep the beat clapping hands (Performance)",
+	"EVENT_FAN_TITLE": "Enthusiastic fan rushes the stage!",
+	"EVENT_FAN_DESC": "An excited spectator leaps onto the stage grabbing the microphone stand!",
+	"EVENT_FAN_CHOICE_1": "1. Hug them and share the chorus (Charisma)",
+	"EVENT_FAN_CHOICE_2": "2. Leap away and keep rocking (Performance)",
+	"EVENT_OUTCOME_SUCCESS": "Brilliant success! The crowd erupts in enthusiastic cheering!",
+	"EVENT_OUTCOME_FAILURE": "Awkward moment barely recovered amidst disappointed murmurs.",
+
+	"CONCERT_TITLE_PREP": "Live Stage — Gig Organization",
+	"CONCERT_TITLE_LIVE": "Live Stage — Live Performance!",
+	"CONCERT_TITLE_SUMMARY": "Live Gig Summary",
+	"CONCERT_LABEL_VENUE": "Venue:",
+	"CONCERT_LABEL_PRICE": "Ticket Price (€):",
+	"CONCERT_LABEL_SOUNDCHECK": "Perform Soundcheck (-15 Energy, +5% acoustic, zero audio issues)",
+	"CONCERT_LABEL_SETLIST": "Setlist Selection (pick up to 4 tracks):",
+	"CONCERT_BTN_START": "Hit the Stage! (Enter)",
+	"CONCERT_BTN_CANCEL": "Cancel & Return to HUD (Esc)",
+	"CONCERT_BTN_CLOSE_SUMMARY": "Collect & Return to HUD (Enter / Esc)",
+	"CONCERT_NO_PLAYABLE_SONGS": "No ready or released tracks. Produce a song in the Music Studio (N) before organizing a gig!"
 }

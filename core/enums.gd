@@ -75,3 +75,11 @@ enum SongTrait {
 	AUDIOPHILE_GEM, # Gemma per Audiofili (recensioni eccellenti, req. Prod >= 70)
 	ROUGH_DIAMOND   # Diamante Grezzo (buona composizione ma registrata low-fi)
 }
+
+enum StageEventType {
+	NONE,
+	BROKEN_STRING,    # Corda spezzata
+	AUDIO_FEEDBACK,   # Fischio monitor
+	ENTHUSIASTIC_FAN  # Fan che sale sul palco
+}
+

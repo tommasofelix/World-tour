@@ -1,0 +1,255 @@
+[gd_scene load_steps=3 format=3 uid="uid://c8liveconct01"]
+
+[ext_resource type="Script" path="res://ui/concert/live_concert.gd" id="1_concert"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_concert"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.09, 0.1, 0.14, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.35, 0.5, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="LiveConcert" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_concert")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.05, 0.05, 0.08, 1)
+
+[node name="PanelMain" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 50.0
+offset_top = 30.0
+offset_right = -50.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_concert")
+
+[node name="VBox" type="VBoxContainer" parent="PanelMain"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Header" type="HBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+
+[node name="LabelTitle" type="Label" parent="PanelMain/VBox/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "Palco dal Vivo — Organizzazione Concerto"
+
+[node name="HSeparator1" type="HSeparator" parent="PanelMain/VBox"]
+layout_mode = 2
+
+[node name="PrepContainer" type="VBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+
+[node name="HBoxVenue" type="HBoxContainer" parent="PanelMain/VBox/PrepContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="LabelVenuePrompt" type="Label" parent="PanelMain/VBox/PrepContainer/HBoxVenue"]
+layout_mode = 2
+text = "Locale:"
+
+[node name="OptVenue" type="OptionButton" parent="PanelMain/VBox/PrepContainer/HBoxVenue"]
+custom_minimum_size = Vector2(280, 40)
+layout_mode = 2
+
+[node name="LabelVenueDetails" type="Label" parent="PanelMain/VBox/PrepContainer/HBoxVenue"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Capienza: 15 | Affitto: 0 € | Popolarità richiesta: 0%"
+
+[node name="HBoxPrice" type="HBoxContainer" parent="PanelMain/VBox/PrepContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="LabelPricePrompt" type="Label" parent="PanelMain/VBox/PrepContainer/HBoxPrice"]
+layout_mode = 2
+text = "Prezzo Biglietto (€):"
+
+[node name="SpinPrice" type="SpinBox" parent="PanelMain/VBox/PrepContainer/HBoxPrice"]
+custom_minimum_size = Vector2(100, 40)
+layout_mode = 2
+min_value = 0.0
+max_value = 100.0
+step = 1.0
+value = 5.0
+
+[node name="LabelFairPrice" type="Label" parent="PanelMain/VBox/PrepContainer/HBoxPrice"]
+layout_mode = 2
+text = "(Prezzo consigliato dal locale: 5 €)"
+
+[node name="ChkSoundcheck" type="CheckBox" parent="PanelMain/VBox/PrepContainer"]
+layout_mode = 2
+text = "Esegui Soundcheck (-15 Energia, +5% resa audio, zero guasti tecnici)"
+
+[node name="LabelSetlistHeader" type="Label" parent="PanelMain/VBox/PrepContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Composizione Scaletta (seleziona da 1 a 4 brani):"
+
+[node name="ScrollSetlist" type="ScrollContainer" parent="PanelMain/VBox/PrepContainer"]
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxSongs" type="VBoxContainer" parent="PanelMain/VBox/PrepContainer/ScrollSetlist"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="LabelSetlistSummary" type="Label" parent="PanelMain/VBox/PrepContainer"]
+layout_mode = 2
+text = "Scaletta attuale: [Nessun brano selezionato]"
+
+[node name="HBoxPrepButtons" type="HBoxContainer" parent="PanelMain/VBox/PrepContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="BtnStartConcert" type="Button" parent="PanelMain/VBox/PrepContainer/HBoxPrepButtons"]
+custom_minimum_size = Vector2(250, 48)
+layout_mode = 2
+text = "Sali sul Palco! (Invio)"
+
+[node name="BtnCancelPrep" type="Button" parent="PanelMain/VBox/PrepContainer/HBoxPrepButtons"]
+custom_minimum_size = Vector2(180, 48)
+layout_mode = 2
+text = "Annulla e Torna all'HUD (Esc)"
+
+[node name="ShowContainer" type="VBoxContainer" parent="PanelMain/VBox"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="LabelShowStatus" type="Label" parent="PanelMain/VBox/ShowContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Il concerto è iniziato! La folla è in fermento!"
+
+[node name="HBoxHype" type="HBoxContainer" parent="PanelMain/VBox/ShowContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="LabelHype" type="Label" parent="PanelMain/VBox/ShowContainer/HBoxHype"]
+layout_mode = 2
+text = "Entusiasmo Folla (Hype):"
+
+[node name="BarHype" type="ProgressBar" parent="PanelMain/VBox/ShowContainer/HBoxHype"]
+custom_minimum_size = Vector2(300, 24)
+layout_mode = 2
+value = 75.0
+
+[node name="PanelEvent" type="PanelContainer" parent="PanelMain/VBox/ShowContainer"]
+layout_mode = 2
+
+[node name="VBoxEvent" type="VBoxContainer" parent="PanelMain/VBox/ShowContainer/PanelEvent"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="LabelEventTitle" type="Label" parent="PanelMain/VBox/ShowContainer/PanelEvent/VBoxEvent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Imprevisto sul Palco!"
+
+[node name="LabelEventDesc" type="Label" parent="PanelMain/VBox/ShowContainer/PanelEvent/VBoxEvent"]
+layout_mode = 2
+text = "Una corda della chitarra si è spezzata!"
+
+[node name="HBoxChoices" type="HBoxContainer" parent="PanelMain/VBox/ShowContainer/PanelEvent/VBoxEvent"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="BtnChoice1" type="Button" parent="PanelMain/VBox/ShowContainer/PanelEvent/VBoxEvent/HBoxChoices"]
+custom_minimum_size = Vector2(320, 48)
+layout_mode = 2
+text = "1. Canta a cappella col pubblico (Carisma)"
+
+[node name="BtnChoice2" type="Button" parent="PanelMain/VBox/ShowContainer/PanelEvent/VBoxEvent/HBoxChoices"]
+custom_minimum_size = Vector2(320, 48)
+layout_mode = 2
+text = "2. Cambio strumento fulmineo (Performance)"
+
+[node name="LabelEventOutcome" type="Label" parent="PanelMain/VBox/ShowContainer/PanelEvent/VBoxEvent"]
+layout_mode = 2
+text = ""
+
+[node name="HBoxShowButtons" type="HBoxContainer" parent="PanelMain/VBox/ShowContainer"]
+layout_mode = 2
+
+[node name="BtnNextPhase" type="Button" parent="PanelMain/VBox/ShowContainer/HBoxShowButtons"]
+custom_minimum_size = Vector2(280, 48)
+layout_mode = 2
+text = "Concludi Show e Scopri i Risultati"
+
+[node name="SummaryContainer" type="VBoxContainer" parent="PanelMain/VBox"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="LabelSummaryTitle" type="Label" parent="PanelMain/VBox/SummaryContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Trionfo dal Vivo! Resoconto del Concerto"
+
+[node name="LabelVenueAudience" type="Label" parent="PanelMain/VBox/SummaryContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Spettatori Presenti: 45 / 60"
+
+[node name="LabelConcertScore" type="Label" parent="PanelMain/VBox/SummaryContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Punteggio Esibizione: 82.5 / 100"
+
+[node name="LabelNewFans" type="Label" parent="PanelMain/VBox/SummaryContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Nuovi Fan Fidelizzati: +15"
+
+[node name="LabelFinancials" type="Label" parent="PanelMain/VBox/SummaryContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Incasso Lordo: 225.00 € | Spese Affitto: 50.00 € | Guadagno Netto: +175.00 €"
+
+[node name="LabelStatsGained" type="Label" parent="PanelMain/VBox/SummaryContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Popolarità Aumentata: +1.8% | XP Performance: +25 | XP Carisma: +20"
+
+[node name="HBoxSummaryButtons" type="HBoxContainer" parent="PanelMain/VBox/SummaryContainer"]
+layout_mode = 2
+
+[node name="BtnFinishConcert" type="Button" parent="PanelMain/VBox/SummaryContainer/HBoxSummaryButtons"]
+custom_minimum_size = Vector2(260, 48)
+layout_mode = 2
+text = "Incassa e Torna all'HUD (Invio / Esc)"

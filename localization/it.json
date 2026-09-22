@@ -53,6 +53,10 @@
 	"HUD_BTN_NEW_SONG_ACC_NAME": "Crea Nuovo Brano Musicale",
 	"HUD_BTN_NEW_SONG_ACC_DESC": "Tasto rapido N. Apre lo studio di composizione per creare una nuova canzone.",
 
+	"HUD_BTN_CONCERT": "Concerti (L)",
+	"HUD_BTN_CONCERT_ACC_NAME": "Organizza Concerto dal Vivo",
+	"HUD_BTN_CONCERT_ACC_DESC": "Tasto rapido L. Scegli un locale, imposta la scaletta e suona dal vivo per il tuo pubblico.",
+
 	"PERIOD_MORNING": "Mattina",
 	"PERIOD_AFTERNOON": "Pomeriggio",
 	"PERIOD_EVENING": "Sera",
@@ -135,5 +139,41 @@
 
 	"MSG_LEVEL_UP": "Fantastico! L'abilità %s è salita al livello %d!",
 	"MSG_SONG_RELEASED": "Il singolo '%s' è stato pubblicato sul mercato! Qualità finale: %.1f / 100.",
-	"MSG_SONG_SAVED_DRAFT": "Bozza '%s' salvata nel catalogo."
+	"MSG_SONG_SAVED_DRAFT": "Bozza '%s' salvata nel catalogo.",
+
+	"VENUE_GARAGE_NAME": "Garage / Sala Prove",
+	"VENUE_GARAGE_DESC": "Amici e conoscenti: applausi facili, zero incassi.",
+	"VENUE_PUB_NAME": "Pub / Birreria Locale",
+	"VENUE_PUB_DESC": "Avventori distratti: occorre carisma per zittire il bar.",
+	"VENUE_SMALL_CLUB_NAME": "Piccolo Club Live",
+	"VENUE_SMALL_CLUB_DESC": "Appassionati di musica: ascolto attento, alta conversione fan.",
+	"VENUE_TRENDY_CLUB_NAME": "Club di Tendenza",
+	"VENUE_TRENDY_CLUB_DESC": "Critici e addetti ai lavori: trampolino per la scena nazionale.",
+
+	"EVENT_STRING_TITLE": "Corda della chitarra spezzata!",
+	"EVENT_STRING_DESC": "Nel bel mezzo del brano, una corda si spezza con uno schiocco secco!",
+	"EVENT_STRING_CHOICE_1": "1. Canta a cappella col pubblico (Carisma)",
+	"EVENT_STRING_CHOICE_2": "2. Cambio strumento fulmineo (Performance)",
+	"EVENT_AUDIO_TITLE": "Fischio assordante dai monitor!",
+	"EVENT_AUDIO_DESC": "Un violento ritorno acustico fischia nell'impianto audio!",
+	"EVENT_AUDIO_CHOICE_1": "1. Sdrammatizza al microfono con ironia (Carisma)",
+	"EVENT_AUDIO_CHOICE_2": "2. Trascina il ritmo battendo le mani (Performance)",
+	"EVENT_FAN_TITLE": "Fan entusiasta che invade il palco!",
+	"EVENT_FAN_DESC": "Uno spettatore esagitato salta sul palco afferrando l'asta del microfono!",
+	"EVENT_FAN_CHOICE_1": "1. Abbraccialo e fagli cantare il ritornello (Carisma)",
+	"EVENT_FAN_CHOICE_2": "2. Salto acrobatico e prosegui l'assolo (Performance)",
+	"EVENT_OUTCOME_SUCCESS": "Successo brillante! La folla esplode in un boato di entusiasmo!",
+	"EVENT_OUTCOME_FAILURE": "Momento di imbarazzo superato a fatica tra mormorii delusi.",
+
+	"CONCERT_TITLE_PREP": "Palco dal Vivo — Organizzazione Concerto",
+	"CONCERT_TITLE_LIVE": "Palco dal Vivo — Esibizione in Corso!",
+	"CONCERT_TITLE_SUMMARY": "Resoconto della Serata Live",
+	"CONCERT_LABEL_VENUE": "Locale:",
+	"CONCERT_LABEL_PRICE": "Prezzo Biglietto (€):",
+	"CONCERT_LABEL_SOUNDCHECK": "Esegui Soundcheck (-15 Energia, +5% acustica, zero rischi tecnici)",
+	"CONCERT_LABEL_SETLIST": "Composizione Scaletta (seleziona fino a 4 brani):",
+	"CONCERT_BTN_START": "Sali sul Palco! (Invio)",
+	"CONCERT_BTN_CANCEL": "Annulla e Torna all'HUD (Esc)",
+	"CONCERT_BTN_CLOSE_SUMMARY": "Incassa e Torna all'HUD (Invio / Esc)",
+	"CONCERT_NO_PLAYABLE_SONGS": "Nessun brano pronto o rilasciato. Produci una canzone nello Studio Musicale (N) prima di organizzare un concerto!"
 }
