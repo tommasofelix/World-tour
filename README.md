@@ -1,6 +1,6 @@
 # World-tour
 
-Repository in fase di inizializzazione. Il dominio applicativo, lo stack tecnico e i comandi di esecuzione non sono ancora definiti nel contenuto versionato.
+Simulatore di Carriera Musicale e di Vita (*Music Career & Life Simulator*). Progetto orientato all'accessibilità universale (Zero Mouse con NVDA) e all'eccellenza grafica in Godot Engine 4.x.
 
 ## Governance ASTRALIS
 
@@ -20,10 +20,13 @@ L’integrazione riguarda esclusivamente governance, accessibilità e tracciabil
 
 ## Stato tecnico
 
-- Dominio applicativo: da definire.
-- Linguaggi e framework: da definire.
-- Build, test ed esecuzione: non ancora disponibili.
-- Licenza del progetto: da definire dal proprietario del repository.
+- **Dominio applicativo**: Simulazione di vita e carriera musicale (percorsi Live, Studio, Lifestyle).
+- **Linguaggi e framework**: Godot Engine 4.7.2 win64, GDScript 2.0, Clean Architecture e AccessKit nativo (Windows UI Automation per NVDA).
+- **Build, test ed esecuzione**:
+  - Validazione sintattica: `powershell -File tools/check.ps1`
+  - Test unitari headless: `powershell -File tools/test.ps1`
+  - Esecuzione gioco: `powershell -File tools/run.ps1`
+- **Fase attiva**: Fase 1 completata; in avvio Fase 2 (Vertical Slice V1.0 — Ciclo Vitale Minimo).
 
 ## Riservatezza
 

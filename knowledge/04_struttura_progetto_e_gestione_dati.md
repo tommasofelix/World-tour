@@ -20,6 +20,15 @@
 
 I contenuti locali o riservati non devono essere copiati nel repository. I percorsi persistenti devono essere relativi o risolti tramite variabili d’ambiente.
 
-## Stato applicativo
+## Stato applicativo e struttura del codice (Godot 4.7)
 
-La struttura del codice e dei dati applicativi non è ancora definita. Nessuna cartella `src/`, formato dati o strategia di persistenza viene presunta.
+L'albero del codice sorgente adotta la Clean Architecture disaccoppiata in Godot 4:
+
+- `project.godot`: file di configurazione radice (1920x1080, stretch canvas_items, aspect keep).
+- `core/`: costanti centralizzate di bilanciamento (`constants.gd`), enumerazioni globali (`enums.gd`), algoritmi matematici puri deterministici (`formulas.gd`).
+- `data/`: modelli di dati runtime in `data/models/` e definizioni statiche in `data/definitions/`.
+- `systems/`: motori logici di dominio indipendenti dalla UI (`TimeSystem`, `PlayerSystem`, `ActionSystem`, `MusicSystem`, `ConcertSystem`, `EconomySystem`).
+- `autoload/`: moduli singleton globali (`event_bus.gd` disaccoppiato a segnali, `game_manager.gd`, `save_manager.gd`, `accessibility_manager.gd`).
+- `ui/`: interfacce visive a layer differenziati in `ui/common/`, `ui/hud/`, `ui/menus/`.
+- `tests/`: test unitari automatici eseguibili in modalità headless (`test_formulas.gd`).
+- `tools/`: script di automazione PowerShell per lo sviluppo e il collaudo CLI-First (`check.ps1`, `test.ps1`, `run.ps1`).

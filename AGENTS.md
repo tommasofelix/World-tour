@@ -26,8 +26,12 @@
 
 ## Fonti operative
 
+- Coordinatore Master e Roadmap: [`docs/todo.md`](./docs/todo.md).
+- Sottopiani tematici per competenze: [`docs/piani/attivi/sottopiani/`](./docs/piani/attivi/sottopiani/).
+- Rapporto di analisi e consolidamento: [`docs/report/ANALISI_E_CONSOLIDAMENTO_WORLD_TOUR.md`](./docs/report/ANALISI_E_CONSOLIDAMENTO_WORLD_TOUR.md).
 - Governance e gating: [`knowledge/00_consuetudini_operative_e_sinergia_assistente.md`](./knowledge/00_consuetudini_operative_e_sinergia_assistente.md).
 - Accessibilità: [`knowledge/01_accessibilita_vocale_e_interazione_tastiera.md`](./knowledge/01_accessibilita_vocale_e_interazione_tastiera.md).
 - Stack rilevato: [`knowledge/02_architettura_stack_e_runtime.md`](./knowledge/02_architettura_stack_e_runtime.md).
 - Git: [`knowledge/03_standard_git_branching_e_commit.md`](./knowledge/03_standard_git_branching_e_commit.md).
 - Piani e verifiche: [`knowledge/10_standard_piani_verifiche_e_living_documentation.md`](./knowledge/10_standard_piani_verifiche_e_living_documentation.md).
+
