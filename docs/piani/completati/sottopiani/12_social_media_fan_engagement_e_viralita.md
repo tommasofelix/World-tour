@@ -1,6 +1,7 @@
 # Sottopiano 12 — Social Media, Fan Engagement & Viralità (SocialMediaSystem)
 
 - ID Sottopiano: `SP-12`
+- Stato: `[x] Archiviato` — Completato e Convalidato al 100% con 17 test suite headless (0 errori)
 - Versione: 1.0 — Canali Social della Band, Tipologie di Contenuto, Viralità Procedurale e Gestione Polemiche
 - Autore: Luca & Antigravity (Pair Programming Senior)
 - Tema: Canali social della band ("BandFeed" / "SoundTok"), pubblicazione di clip di prove, teaser di brani, retroscena del tour e post provocatori. Algoritmo di visualizzazioni, follower, like e commenti procedurali, hype virale a supporto delle uscite musicali e risoluzione delle polemiche online (shitstorm).

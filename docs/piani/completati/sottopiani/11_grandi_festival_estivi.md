@@ -1,6 +1,7 @@
 # Sottopiano 11 — I Grandi Festival Estivi (FestivalSystem & FestivalData)
 
 - ID Sottopiano: `SP-11`
+- Stato: `[x] Archiviato` — Completato e Convalidato al 100% con 17 test suite headless (0 errori)
 - Versione: 1.0 — Architettura Stagionale, Slot di Esibizione, Competizione tra Band e Merchandising Massivo
 - Autore: Luca & Antigravity (Pair Programming Senior)
 - Tema: Stagione dei grandi festival all'aperto nei mesi estivi (Mesi 4-6 / Giorni 85-168), slot orari di esibizione (Pomeriggio, Tramonto, Headliner), confronto con band rivali sul cartellone ("Rubare la Scena"), moltiplicatore vendite merch (x3 - x5) e spinta massiva di popolarità

@@ -1,6 +1,7 @@
 # Sottopiano 13 — Artisti Rivali & Classifiche Musicali (ChartSystem & RivalSystem)
 
 - ID Sottopiano: `SP-13`
+- Stato: `[x] Archiviato` — Completato e Convalidato al 100% con 17 test suite headless (0 errori)
 - Versione: 1.0 — Hit Parade Settimanale Singoli e Album, Band Rivali Underground & Mainstream, Faide e Dinamiche di Classifica
 - Autore: Luca & Antigravity (Pair Programming Senior)
 - Tema: Hit parade settimanale (Top 10 Singoli e Top 10 Album) aggiornata ogni Domenica sera, artisti e band rivali della scena underground e mainstream con tratti competitivi e faide, monitoraggio delle posizioni in classifica, picchi storici (#1 Hit), impatto sulle vendite, concerti e reputazione con la label.

@@ -40,7 +40,7 @@ Consultare in quest’ordine e soltanto nella misura necessaria:
 
 ## Parametri del progetto
 
-- Scopo e dominio: Music Career Simulator / Life Simulation (GDD e sottopiani in [`docs/piani/attivi/sottopiani/`](./docs/piani/attivi/sottopiani/)).
+- Scopo e dominio: Music Career Simulator / Life Simulation (GDD e sottopiani archiviati in [`docs/piani/completati/sottopiani/`](./docs/piani/completati/sottopiani/) e attivi in [`docs/piani/attivi/sottopiani/`](./docs/piani/attivi/sottopiani/)).
 - Responsabili: Luca & Holy Diver.
 - Coordinatore operativo: [`docs/todo.md`](./docs/todo.md).
 - Stack confermato: Godot Engine 4.7.2 win64, GDScript 2.0, Clean Architecture e AccessKit nativo.

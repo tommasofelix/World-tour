@@ -1,6 +1,7 @@
 # Sottopiano 10 — Pianificazione & Gestione del Tour (Tournée Multi-Tappa e Logistica)
 
 - ID Sottopiano: `SP-10`
+- Stato: `[x] Archiviato` — Completato e Convalidato al 100% con 17 test suite headless (0 errori)
 - Versione: 1.0 — Architettura Sistemica, Mezzi di Trasporto, Hype Progressivo e Dinamiche di Gruppo
 - Autore: Luca & Antigravity (Pair Programming Senior)
 - Tema: Organizzazione di tournée multi-tappa (3-8 date consecutive in città diverse), scelta del veicolo di trasporto (Rusty Van, Pro Van, Luxury Bus), logistica, alloggi in tour, stanchezza cumulativa e logorio della band

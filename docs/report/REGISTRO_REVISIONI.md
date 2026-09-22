@@ -1,10 +1,10 @@
 # Registro attivo delle revisioni — World-tour
 
-Questo documento contiene esclusivamente anomalie confermate ancora aperte, attività in telemetria o collaudi non conclusi. Le voci chiuse vengono trasferite in [`ARCHIVIO_REVISIONI.md`](./ARCHIVIO_REVISIONI.md) soltanto dopo verifica.
+Questo documento contiene esclusivamente anomalie confermate ancora aperte, attività in telemetria o collaudi non conclusi. Le voci chiuse vengono trasferite in [`ARCHIVIO_REVISIONI.md`](./archivio/ARCHIVIO_REVISIONI.md) soltanto dopo verifica.
 
 ## Revisioni attive
 
-*Nessuna anomalia o revisione aperta al momento. Tutte le revisioni sono state validate e archiviate in [`ARCHIVIO_REVISIONI.md`](./ARCHIVIO_REVISIONI.md).*
+*Nessuna anomalia o revisione aperta al momento. Tutte le revisioni sono state validate e archiviate in [`ARCHIVIO_REVISIONI.md`](./archivio/ARCHIVIO_REVISIONI.md).*
 
 ## Modello di voce
 

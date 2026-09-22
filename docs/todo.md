@@ -21,43 +21,62 @@ Orchestra i sottopiani tematici specializzati, definisce la roadmap di implement
 
 ## 2. MAPPA DEI SOTTOPIANI TEMATICI (PER COMPETENZE)
 
-Il materiale del Game Design Document originario è stato organizzato e disaccoppiato in 8 sottopiani tematici specialistici:
+I sottopiani tematici specialistici delle Fasi 1–8 (V1.0 – V4.0) sono stati completati, convalidati e archiviati in [`docs/piani/completati/sottopiani/`](./piani/completati/sottopiani/).  
+I nuovi sottopiani per la Fase 9 (V5.0 Endgame) risiedono in [`docs/piani/attivi/sottopiani/`](./piani/attivi/sottopiani/).
 
-1. **[`SP-01`: Game Design, Visione e Progressione](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/attivi/sottopiani/01_game_design_visione_e_progressione.md)**  
+### Sottopiani Archiviati e Convalidati (V1.0 – V4.0)
+
+1. **[`SP-01`: Game Design, Visione e Progressione](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/completati/sottopiani/01_game_design_visione_e_progressione.md)** [x]  
    *Competenze*: Game Design, Creative Direction, Narrative & Worldbuilding.  
-   *Oggetto*: Fantasia del giocatore, High concept, 8 stadi di carriera (da "Nessuno" a "Superstar") e macro-roadmap da V1 a V5.
+   *Oggetto*: Fantasia del giocatore, High concept, 8 stadi di carriera e macro-roadmap.
 
-2. **[`SP-02`: Simulazione Vita, Gestione Tempo e Routine](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/attivi/sottopiani/02_simulazione_vita_tempo_e_routine.md)**  
+2. **[`SP-02`: Simulazione Vita, Gestione Tempo e Routine](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/completati/sottopiani/02_simulazione_vita_tempo_e_routine.md)** [x]  
    *Competenze*: Core Mechanics, Life Simulation, Ergonomia & Pacing.  
-   *Oggetto*: Orologio giornaliero (600s), stati IDLE/BUSY, Pausa Dinamica automatica nei menu, triade risorse (Tempo, Energia, Denaro, Stress, Morale), trasporti e ciclo di Fine Giornata.
+   *Oggetto*: Orologio giornaliero, stati IDLE/BUSY, Pausa Dinamica automatica nei menu, triade risorse e ciclo Fine Giornata.
 
-3. **[`SP-03`: Sistema Musicale, Abilità e Creazione Brani](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/attivi/sottopiani/03_sistema_musicale_abilita_e_creazione_brani.md)**  
+3. **[`SP-03`: Sistema Musicale, Abilità e Creazione Brani](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/completati/sottopiani/03_sistema_musicale_abilita_e_creazione_brani.md)** [x]  
    *Competenze*: Music Crafting System, Audio/Musical Design.  
-   *Oggetto*: Le 7 abilità musicali, 6 generi di partenza, pipeline di creazione brani in 5 fasi, attributi musicali, calcolo del Quality Score e formati disco (Singolo, EP, Album).
+   *Oggetto*: Le 7 abilità musicali, generi, pipeline creazione brani, Quality Score e formati disco (Singolo, EP, Album).
 
-4. **[`SP-04`: Concerti, Locali, Pubblico e Fanbase](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/attivi/sottopiani/04_concerti_locali_pubblico_e_fanbase.md)**  
+4. **[`SP-04`: Concerti, Locali, Pubblico e Fanbase](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/completati/sottopiani/04_concerti_locali_pubblico_e_fanbase.md)** [x]  
    *Competenze*: Live Events Design, PR & Audience Simulation.  
-   *Oggetto*: Tipologie di locali (garage, pub, piccolo club), selezione scaletta brani, calcolo del Concert Score, affluenza spettatori, conversione in fan stabili e cassa della serata.
+   *Oggetto*: Tipologie di locali, scaletta brani, Concert Score, affluenza, conversione fan e incassi live.
 
-5. **[`SP-05`: Economia, Carriera, Band e Industria](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/attivi/sottopiani/05_economia_carriera_band_e_industria.md)**  
+5. **[`SP-05`: Economia, Carriera, Band e Industria](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/completati/sottopiani/05_economia_carriera_band_e_industria.md)** [x]  
    *Competenze*: Economy Simulation, Social & Relational Systems, Narrative Events.  
-   *Oggetto*: Flussi economici (entrate/uscite fisse), 6 fasi di indipendenza economica, dinamiche di band (personalità, affinità, conflitti), etichette Indie vs Major, manager ed eventi etici.
+   *Oggetto*: Flussi economici, indipendenza economica, dinamiche di band, etichette Indie vs Major, manager e bivi etici.
 
-6. **[`SP-06`: Formule Matematiche e Bilanciamento](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/attivi/sottopiani/06_formule_matematiche_e_bilanciamento.md)**  
+6. **[`SP-06`: Formule Matematiche e Bilanciamento](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/completati/sottopiani/06_formule_matematiche_e_bilanciamento.md)** [x]  
    *Competenze*: Mathematical Modeling, Game Balancing, Algorithmic Design.  
-   *Oggetto*: Tutte le formule matematiche del gioco (progressione XP a salita esponenziale, rendimenti marginali decrescenti, freno da stress/morale, formule pubblico e conversione fan, costanti centralizzate).
+   *Oggetto*: Formule matematiche del gioco (XP esponenziali, rendimenti marginali, freno stress, formule pubblico/fan).
 
-7. **[`SP-07`: Architettura Software, Sistemi e Modello Dati](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/attivi/sottopiani/07_architettura_software_sistemi_e_modello_dati.md)**  
+7. **[`SP-07`: Architettura Software, Sistemi e Modello Dati](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/completati/sottopiani/07_architettura_software_sistemi_e_modello_dati.md)** [x]  
    *Competenze*: Software Architecture, Systems Engineering, Data Modeling.  
-   *Oggetto*: Clean Architecture, albero cartelle, EventBus disaccoppiato a segnali, macchina a stati globale (GameManager), modello dati runtime (PlayerData, CalendarData, SongData, VenueData) e salvataggio atomico JSON.
+   *Oggetto*: Clean Architecture, EventBus disaccoppiato, FSM GameManager, modelli dati e salvataggio atomico JSON.
 
-8. **[`SP-08`: Accessibilità Vocale, Tastiera e Simmetria Universale](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/attivi/sottopiani/08_accessibilita_vocale_interfaccia_e_simmetria.md)**  
+8. **[`SP-08`: Accessibilità Vocale, Tastiera e Simmetria Universale](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/completati/sottopiani/08_accessibilita_vocale_interfaccia_e_simmetria.md)** [x]  
    *Competenze*: Accessibility Engineering, Screen Reader Integration, Universal UX.  
-   *Oggetto*: Principio di Simmetria Universale (Luca con tastiera/NVDA e Holy Diver con grafica moderna e mouse), modulo AccessibilityManager (`nvdaControllerClient.dll`/SAPI), scorciatoie 1–9, sonificazione e volumi di sicurezza (0.7f–0.8f con ducking).
+   *Oggetto*: Principio di Simmetria Universale, bridge AccessibilityManager con NVDA/SAPI, scorciatoie e volumi sicuri (0.7f–0.8f).
 
-9. **[`SP-09`: Calendario Sistemico, Agenda, Cicli Temporali e Programmazione Eventi](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/attivi/sottopiani/09_calendario_sistemico_agenda_e_cicli_temporali.md)**  
+9. **[`SP-09`: Calendario Sistemico, Agenda, Cicli Temporali e Programmazione Eventi](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/completati/sottopiani/09_calendario_sistemico_agenda_e_cicli_temporali.md)** [x]  
    *Competenze*: Systems Engineering, Life Simulation, Dynamic World Pacing.  
-   *Oggetto*: Scansione multi-livello del tempo (giorni della settimana da Lunedì a Domenica, mese convenzionale a 28 giorni, 4 stagioni, anno di carriera), modello `CalendarEventData` e motore `ScheduleSystem` per la gestione dell'agenda impegni della band, scadenze discografiche, serate live e programmazione dei locali.
+   *Oggetto*: Scansione temporale a 28 giorni per mese, 4 stagioni, modello CalendarEventData e motore ScheduleSystem.
+
+10. **[`SP-10`: Pianificazione & Gestione del Tour](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/completati/sottopiani/10_pianificazione_e_gestione_del_tour.md)** [x]  
+    *Competenze*: Core Systems Architecture, Simulation Design, Tour Management.  
+    *Oggetto*: Tournée multi-tappa, logistica con 3 veicoli (Rusty Van, Pro Van, Luxury Bus), Hype progressivo e dinamiche band.
+
+11. **[`SP-11`: I Grandi Festival Estivi](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/completati/sottopiani/11_grandi_festival_estivi.md)** [x]  
+    *Competenze*: Festival Management, Outdoor Event Simulation, Merchandising.  
+    *Oggetto*: Stagione estiva (mesi 4-6), 3 slot orari di esibizione, moltiplicatore merch (x2.5 - x5.5) e meccanica "Rubare la Scena".
+
+12. **[`SP-12`: Social Media, Fan Engagement & Viralità](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/completati/sottopiani/12_social_media_fan_engagement_e_viralita.md)** [x]  
+    *Competenze*: Social Media Simulation, Community Dynamics, PR Controversies.  
+    *Oggetto*: Canale BandFeed, 4 tipologie post, algoritmo visualizzazioni/follower, buzz virale sui concerti e gestione polemiche.
+
+13. **[`SP-13`: Artisti Rivali & Classifiche Musicali](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/completati/sottopiani/13_artisti_rivali_e_classifiche_musicali.md)** [x]  
+    *Competenze*: Competitive Systems, Chart Tracking, Industry Dynamics.  
+    *Oggetto*: 10 band rivali continentali, Hit Parade settimanale Top 10 Singoli e Top 10 Album, movimenti, picchi e conquista del #1.
 
 ---
 
@@ -65,7 +84,7 @@ Il materiale del Game Design Document originario è stato organizzato e disaccop
 
 ### FASE 0: Organizzazione Sistemica & Allineamento Multi-AI
 - [x] `F0.1`: Analisi esplorativa completa del corpus originario di 9.357 righe.
-- [x] `F0.2`: Redazione del Rapporto di Analisi e Consolidamento in [`docs/report/ANALISI_E_CONSOLIDAMENTO_WORLD_TOUR.md`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/report/ANALISI_E_CONSOLIDAMENTO_WORLD_TOUR.md).
+- [x] `F0.2`: Redazione del Rapporto di Analisi e Consolidamento in [`docs/report/archivio/ANALISI_E_CONSOLIDAMENTO_WORLD_TOUR.md`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/report/archivio/ANALISI_E_CONSOLIDAMENTO_WORLD_TOUR.md).
 - [x] `F0.3`: Scorporo della documentazione negli 8 sottopiani tematici in `docs/piani/attivi/sottopiani/`.
 - [x] `F0.4`: Creazione del Master Roadmap Coordinator in [`docs/todo.md`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/todo.md).
 - [x] `F0.5`: Aggiornamento del report di sessione e sincronizzazione delle direttive per OpenAI Codex GPT in [`AGENTS.md`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/AGENTS.md).
