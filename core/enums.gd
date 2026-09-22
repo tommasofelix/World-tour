@@ -250,5 +250,19 @@ static func get_festival_slot_name(slot: int) -> String:
 		_:
 			return "Slot Non Assegnato"
 
+static func get_social_post_type_name(post_type: int) -> String:
+	match post_type:
+		SocialPostType.PRACTICE_CLIP:
+			return "Clip delle Prove"
+		SocialPostType.TRACK_TEASER:
+			return "Teaser di un Brano"
+		SocialPostType.BEHIND_THE_SCENES:
+			return "Dietro le Quinte / Backstage"
+		SocialPostType.PROVOCATION:
+			return "Post Provocatorio / Meme"
+		_:
+			return "Post Sconosciuto"
+
+
 
 

@@ -30,6 +30,7 @@ extends Control
 @onready var btn_travel: Button = $VBoxMain/PanelCenter/HBoxActions/BtnTravel
 @onready var btn_tour: Button = $VBoxMain/PanelCenter/HBoxActions/BtnTour
 @onready var btn_festival: Button = $VBoxMain/PanelCenter/HBoxActions/BtnFestival
+@onready var btn_social: Button = $VBoxMain/PanelCenter/HBoxActions/BtnSocial
 
 @onready var song_catalog_modal: Control = $SongCatalog
 @onready var song_creator_modal: Control = $SongCreator
@@ -44,6 +45,7 @@ extends Control
 @onready var travel_modal: Control = $TravelModal
 @onready var tour_modal: Control = $TourModal
 @onready var festival_modal: Control = $FestivalModal
+@onready var social_modal: Control = $SocialModal
 
 var _pending_dilemma_at_day_end: Dictionary = {}
 
@@ -83,6 +85,7 @@ func _ready() -> void:
 	btn_travel.pressed.connect(open_travel_modal)
 	btn_tour.pressed.connect(open_tour_modal)
 	btn_festival.pressed.connect(open_festival_modal)
+	btn_social.pressed.connect(open_social_modal)
 	btn_speed.pressed.connect(_on_btn_speed_pressed)
 	btn_pause.pressed.connect(_on_btn_pause_pressed)
 	btn_save.pressed.connect(_on_btn_save_pressed)
@@ -90,6 +93,7 @@ func _ready() -> void:
 	
 	AccessibilityManager.hook_control_accessibility(btn_tour, "Tournée e Concerti (O)", "Apre la gestione e pianificazione delle tournée multi-tappa.")
 	AccessibilityManager.hook_control_accessibility(btn_festival, "Grandi Festival Estivi (F)", "Apre la schermata dei festival estivi e la selezione degli slot.")
+	AccessibilityManager.hook_control_accessibility(btn_social, "Social Media (Y)", "Apre il canale social della band per pubblicare contenuti e gestire il feed dei fan.")
 	
 	# Connessione modali musicali, concerti, economia, scheda personaggio, band e industria
 	song_catalog_modal.closed.connect(close_catalog)
@@ -119,6 +123,8 @@ func _ready() -> void:
 		tour_modal.closed.connect(close_tour_modal)
 	if festival_modal:
 		festival_modal.closed.connect(close_festival_modal)
+	if social_modal:
+		social_modal.closed.connect(close_social_modal)
 	song_catalog_modal.new_album_requested.connect(open_album_creator)
 		
 	# Connessione Fine Giornata (EndDaySystem)
@@ -146,6 +152,7 @@ func _ready() -> void:
 	EventBus.album_creator_requested.connect(open_album_creator)
 	EventBus.industry_hub_requested.connect(open_industry_hub)
 	EventBus.travel_screen_requested.connect(open_travel_modal)
+	EventBus.social_screen_requested.connect(open_social_modal)
 	EventBus.city_changed.connect(func(_o, _n): _update_hud_display())
 	EventBus.dilemma_triggered.connect(_on_dilemma_triggered)
 	EventBus.contract_signed.connect(func(_d): _update_hud_display())
@@ -184,7 +191,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	   (dilemma_modal and dilemma_modal.visible) or \
 	   (travel_modal and travel_modal.visible) or \
 	   (tour_modal and tour_modal.visible) or \
-	   (festival_modal and festival_modal.visible):
+	   (festival_modal and festival_modal.visible) or \
+	   (social_modal and social_modal.visible):
 		return
 	
 	match event.keycode:
@@ -221,6 +229,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		KEY_F:
 			open_festival_modal()
 			get_viewport().set_input_as_handled()
+		KEY_Y:
+			open_social_modal()
+			get_viewport().set_input_as_handled()
 		KEY_T:
 			_on_btn_speed_pressed()
 			get_viewport().set_input_as_handled()
@@ -253,6 +264,12 @@ func _refresh_ui_text() -> void:
 	btn_industry.text = tr("HUD_BTN_INDUSTRY")
 	btn_agenda.text = "Agenda (A)"
 	btn_travel.text = "Viaggi (V)"
+	if btn_tour:
+		btn_tour.text = "Tour (O)"
+	if btn_festival:
+		btn_festival.text = "Festival (F)"
+	if btn_social:
+		btn_social.text = "Social (Y)"
 	
 	var current_spd: float = GameManager.time_system.time_scale if GameManager and GameManager.time_system else 1.0
 	btn_speed.text = tr("HUD_BTN_SPEED") % current_spd
@@ -645,6 +662,8 @@ func open_festival_modal() -> void:
 		travel_modal.visible = false
 	if tour_modal and tour_modal.visible:
 		tour_modal.visible = false
+	if social_modal and social_modal.visible:
+		social_modal.visible = false
 	if vbox_main:
 		vbox_main.visible = false
 	if festival_modal:
@@ -658,6 +677,48 @@ func close_festival_modal() -> void:
 		vbox_main.visible = true
 	GameManager.close_menu()
 	btn_festival.grab_focus()
+	_update_hud_display()
+
+func open_social_modal() -> void:
+	if song_catalog_modal and song_catalog_modal.visible:
+		song_catalog_modal.visible = false
+	if song_creator_modal and song_creator_modal.visible:
+		song_creator_modal.visible = false
+	if live_concert_modal and live_concert_modal.visible:
+		live_concert_modal.visible = false
+	if economy_bank_modal and economy_bank_modal.visible:
+		economy_bank_modal.visible = false
+	if daily_summary_modal and daily_summary_modal.visible:
+		daily_summary_modal.visible = false
+	if character_sheet_modal and character_sheet_modal.visible:
+		character_sheet_modal.visible = false
+	if band_hub_modal and band_hub_modal.visible:
+		band_hub_modal.visible = false
+	if album_creator_modal and album_creator_modal.visible:
+		album_creator_modal.visible = false
+	if industry_hub_modal and industry_hub_modal.visible:
+		industry_hub_modal.visible = false
+	if dilemma_modal and dilemma_modal.visible:
+		dilemma_modal.visible = false
+	if travel_modal and travel_modal.visible:
+		travel_modal.visible = false
+	if tour_modal and tour_modal.visible:
+		tour_modal.visible = false
+	if festival_modal and festival_modal.visible:
+		festival_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = false
+	if social_modal:
+		social_modal.open()
+	GameManager.open_menu()
+
+func close_social_modal() -> void:
+	if social_modal:
+		social_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = true
+	GameManager.close_menu()
+	btn_social.grab_focus()
 	_update_hud_display()
 
 func _on_dilemma_triggered(dilemma_dict: Dictionary) -> void:

@@ -28,7 +28,8 @@ func save_game() -> bool:
 		"schedule": GameManager.schedule_system.to_dict() if GameManager.schedule_system else [],
 		"travel": GameManager.travel_system.to_dict() if GameManager.travel_system else {},
 		"tour": GameManager.tour_system.to_dict() if GameManager.tour_system else {},
-		"festivals": GameManager.festival_system.to_dict() if GameManager.festival_system else {}
+		"festivals": GameManager.festival_system.to_dict() if GameManager.festival_system else {},
+		"social": GameManager.social_media_system.to_dict() if GameManager.social_media_system else {}
 	}
 	
 	var json_string: String = JSON.stringify(save_dict, "\t")
@@ -188,6 +189,17 @@ func load_game() -> bool:
 
 	if save_dict.has("festivals") and save_dict["festivals"] is Dictionary:
 		GameManager.festival_system.from_dict(save_dict["festivals"] as Dictionary)
+
+	if not GameManager.social_media_system:
+		GameManager.social_media_system = SocialMediaSystem.new(GameManager.player_data, GameManager.calendar_data, GameManager.band_system, GameManager.music_system)
+	else:
+		GameManager.social_media_system.player_data = GameManager.player_data
+		GameManager.social_media_system.calendar_data = GameManager.calendar_data
+		GameManager.social_media_system.band_system = GameManager.band_system
+		GameManager.social_media_system.music_system = GameManager.music_system
+
+	if save_dict.has("social") and save_dict["social"] is Dictionary:
+		GameManager.social_media_system.from_dict(save_dict["social"] as Dictionary)
 
 	GameManager.change_state(Enums.GameState.GAMEPLAY_IDLE)
 	

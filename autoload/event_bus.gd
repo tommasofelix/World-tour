@@ -95,5 +95,9 @@ signal festival_slot_booked(festival_id: String, slot: int)
 signal festival_performed(festival_id: String, result: Dictionary)
 signal festival_screen_requested()
 
-
-
+# --- Segnali Social Media & Fan Engagement (World-tour V4.0 / SP-12 / F8.4) ---
+signal social_post_published(post: SocialPostData)
+signal social_controversy_triggered(controversy_data: Dictionary)
+signal social_controversy_resolved(choice: int, outcome: Dictionary)
+signal social_buzz_updated(new_buzz: float)
+signal social_screen_requested()

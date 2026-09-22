@@ -1,0 +1,194 @@
+[gd_scene load_steps=4 format=3 uid="uid://dmsocialmodal01"]
+
+[ext_resource type="Script" path="res://ui/social/social_modal.gd" id="1_social"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.08, 0.1, 0.14, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.6, 0.8, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_contro"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+bg_color = Color(0.2, 0.08, 0.08, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9, 0.3, 0.2, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="SocialModal" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_social")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.03, 0.05, 0.95)
+
+[node name="PanelMain" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -480.0
+offset_top = -320.0
+offset_right = 480.0
+offset_bottom = 320.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_main")
+
+[node name="VBox" type="VBoxContainer" parent="PanelMain"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+
+[node name="LabelTitle" type="Label" parent="PanelMain/VBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Canale Social Media della Band (BandFeed)"
+
+[node name="LabelStats" type="Label" parent="PanelMain/VBox/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+text = "Follower: 150 | Hype: 1.00x | Post Oggi: 0/3"
+
+[node name="PanelControversy" type="PanelContainer" parent="PanelMain/VBox"]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_contro")
+
+[node name="VBoxContro" type="VBoxContainer" parent="PanelMain/VBox/PanelControversy"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LabelControTitle" type="Label" parent="PanelMain/VBox/PanelControversy/VBoxContro"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.3, 0.2, 1)
+theme_override_font_sizes/font_size = 16
+text = "⚠️ POLEMICA ONLINE IN CORSO (SHITSTORM)"
+
+[node name="LabelControDesc" type="Label" parent="PanelMain/VBox/PanelControversy/VBoxContro"]
+layout_mode = 2
+autowrap_mode = 3
+text = "Argomento polemica..."
+
+[node name="HBoxControButtons" type="HBoxContainer" parent="PanelMain/VBox/PanelControversy/VBoxContro"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BtnIgnore" type="Button" parent="PanelMain/VBox/PanelControversy/VBoxContro/HBoxControButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "[A] Ignora (Silenzio Stampa)"
+
+[node name="BtnApology" type="Button" parent="PanelMain/VBox/PanelControversy/VBoxContro/HBoxControButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "[B] Scuse Formali"
+
+[node name="BtnDoubleDown" type="Button" parent="PanelMain/VBox/PanelControversy/VBoxContro/HBoxControButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "[C] Raddoppia la Posta (Double Down)"
+
+[node name="LabelActionsPrompt" type="Label" parent="PanelMain/VBox"]
+layout_mode = 2
+text = "Pubblica un nuovo contenuto sui canali della band (Tasti 1-4):"
+
+[node name="HBoxActions" type="HBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BtnPractice" type="Button" parent="PanelMain/VBox/HBoxActions"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "[1] Clip Prove (-10 En)"
+
+[node name="BtnTeaser" type="Button" parent="PanelMain/VBox/HBoxActions"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "[2] Teaser Brano (-15 En)"
+
+[node name="BtnBTS" type="Button" parent="PanelMain/VBox/HBoxActions"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "[3] Backstage (-10 En)"
+
+[node name="BtnProvocation" type="Button" parent="PanelMain/VBox/HBoxActions"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "[4] Post Provocatorio (-15 En)"
+
+[node name="PanelFeed" type="PanelContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Margin" type="MarginContainer" parent="PanelMain/VBox/PanelFeed"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxFeed" type="VBoxContainer" parent="PanelMain/VBox/PanelFeed/Margin"]
+layout_mode = 2
+
+[node name="LabelFeedHeader" type="Label" parent="PanelMain/VBox/PanelFeed/Margin/VBoxFeed"]
+layout_mode = 2
+text = "Feed Recente e Reazioni dei Fan:"
+
+[node name="ScrollFeed" type="ScrollContainer" parent="PanelMain/VBox/PanelFeed/Margin/VBoxFeed"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxPosts" type="VBoxContainer" parent="PanelMain/VBox/PanelFeed/Margin/VBoxFeed/ScrollFeed"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="LabelStatus" type="Label" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.3, 1)
+text = "Premi un tasto per pubblicare o Esc per tornare all'HUD."
+
+[node name="HBoxBottom" type="HBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+alignment = 2
+
+[node name="BtnClose" type="Button" parent="PanelMain/VBox/HBoxBottom"]
+layout_mode = 2
+text = "Chiudi (Esc / Y)"

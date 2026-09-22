@@ -300,6 +300,12 @@ func modify_morale(delta: int) -> void:
 func modify_money(delta: float) -> void:
 	money += delta
 
+func add_fans(amount: int) -> void:
+	fans = maxi(0, fans + amount)
+
+func modify_fans(delta: int) -> void:
+	fans = maxi(0, fans + delta)
+
 func get_active_band_members() -> Array[BandMemberData]:
 	var result: Array[BandMemberData] = []
 	for m in band_members:

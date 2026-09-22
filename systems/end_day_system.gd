@@ -68,6 +68,10 @@ func _on_day_ended(day_num: int) -> void:
 	if GameManager and GameManager.industry_system:
 		GameManager.industry_system.apply_daily_manager_stress_relief()
 		
+	# Decadimento notturno hype social e reset limite post giornalieri
+	if GameManager and GameManager.social_media_system:
+		GameManager.social_media_system.process_daily_decay()
+		
 	# Valutazione dilemmi etici serali
 	var pending_dilemma: DilemmaData = null
 	if GameManager and GameManager.dilemma_system:

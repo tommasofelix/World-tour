@@ -166,6 +166,13 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 		tour_hype_mult = GameManager.tour_system.get_tour_hype_multiplier()
 	if tour_hype_mult > 1.0:
 		audience = mini(venue.capacity, int(round(float(audience) * tour_hype_mult)))
+		
+	# Moltiplicatore Social Buzz (Hype generato da post e viralità)
+	var social_buzz_mult: float = 1.0
+	if GameManager and GameManager.social_media_system:
+		social_buzz_mult = GameManager.social_media_system.get_live_buzz_multiplier()
+	if social_buzz_mult > 1.0:
+		audience = mini(venue.capacity, int(round(float(audience) * social_buzz_mult)))
 	
 	# 3. Valutazione scaletta e qualità media
 	var total_qual: float = 0.0

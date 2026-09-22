@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://test_social_sys_scene"]
+
+[ext_resource type="Script" path="res://tests/test_social_media_system.gd" id="1_social_test"]
+
+[node name="TestSocialMediaSystem" type="Node"]
+script = ExtResource("1_social_test")
