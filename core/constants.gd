@@ -47,6 +47,24 @@ const EARLY_SLEEP_STRESS_BONUS_NIGHT_EARLY: int = 5
 # Soglie fisiologiche di emergenza
 const ENERGY_BURNOUT_THRESHOLD: int = 15
 const STRESS_PANIC_THRESHOLD: int = 80
+const MORALE_CREATIVE_BLOCK_THRESHOLD: int = 20
+
+# --- Recupero Attivo Diurno (Sezione 1.3) ---
+const RECOVERY_COFFEE_ENERGY: int = 15
+const RECOVERY_COFFEE_STRESS: int = 5
+const RECOVERY_COFFEE_COST: float = 2.0
+const RECOVERY_COFFEE_DURATION: float = 5.0
+
+const RECOVERY_WALK_STRESS_RELIEF: int = 15
+const RECOVERY_WALK_MORALE: int = 5
+const RECOVERY_WALK_ENERGY_COST: int = 5
+const RECOVERY_WALK_DURATION: float = 10.0
+
+const RECOVERY_MUSIC_MORALE: int = 20
+const RECOVERY_MUSIC_STRESS_RELIEF: int = 10
+const RECOVERY_MUSIC_DURATION: float = 12.0
+const RECOVERY_MUSIC_SPARK_CHANCE: float = 0.35
+const RECOVERY_MUSIC_SPARK_XP: float = 15.0
 
 # --- Finanze e Spese Quotidiane ---
 const DAILY_FOOD_EXPENSE: float = 10.0

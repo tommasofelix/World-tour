@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dmvital_res_01"]
+
+[ext_resource type="Script" path="res://tests/test_vital_resources_system.gd" id="1_testvital"]
+
+[node name="TestVitalResourcesSystem" type="Node"]
+script = ExtResource("1_testvital")

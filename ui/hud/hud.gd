@@ -41,6 +41,7 @@ extends Control
 @onready var btn_social: Button = $VBoxMain/PanelCenter/HBoxActions/BtnSocial
 @onready var btn_chart: Button = $VBoxMain/PanelCenter/HBoxActions/BtnChart
 @onready var btn_upgrades: Button = $VBoxMain/PanelCenter/HBoxActions/BtnUpgrades
+@onready var btn_relax: Button = $VBoxMain/PanelCenter/HBoxActions/BtnRelax
 
 @onready var song_catalog_modal: Control = $SongCatalog
 @onready var song_creator_modal: Control = $SongCreator
@@ -59,6 +60,7 @@ extends Control
 @onready var chart_modal: Control = $ChartModal
 @onready var system_menu_modal: Control = $SystemMenuModal
 @onready var upgrades_modal: Control = $UpgradesModal
+@onready var relax_modal: Control = $RelaxModal
 
 var current_category_tab: int = 1
 var _pending_dilemma_at_day_end: Dictionary = {}
@@ -164,6 +166,11 @@ func _ready() -> void:
 		system_menu_modal.resume_requested.connect(close_system_menu)
 	if upgrades_modal:
 		upgrades_modal.closed.connect(close_upgrades_modal)
+	if btn_relax:
+		btn_relax.pressed.connect(open_relax_modal)
+	if relax_modal:
+		relax_modal.closed.connect(close_relax_modal)
+		relax_modal.activity_selected.connect(_on_relax_activity_selected)
 	song_catalog_modal.new_album_requested.connect(open_album_creator)
 	
 	# Inizializza la visualizzazione sulla prima categoria (Hub Personale)
@@ -238,7 +245,8 @@ func _is_any_modal_open() -> bool:
 	   (social_modal and social_modal.visible) or \
 	   (chart_modal and chart_modal.visible) or \
 	   (system_menu_modal and system_menu_modal.visible) or \
-	   (upgrades_modal and upgrades_modal.visible)
+	   (upgrades_modal and upgrades_modal.visible) or \
+	   (relax_modal and relax_modal.visible)
 
 ## Chiude e occulta sistematicamente tutte le finestre modali del gioco
 func _hide_all_modals() -> void:
@@ -276,6 +284,8 @@ func _hide_all_modals() -> void:
 		system_menu_modal.visible = false
 	if upgrades_modal:
 		upgrades_modal.visible = false
+	if relax_modal:
+		relax_modal.visible = false
 	if vbox_main:
 		vbox_main.visible = false
 
@@ -363,6 +373,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		KEY_Z:
 			_on_btn_sleep_pressed()
 			get_viewport().set_input_as_handled()
+		KEY_R:
+			open_relax_modal()
+			get_viewport().set_input_as_handled()
 
 func _get_localized_period(period: int) -> String:
 	match period:
@@ -413,6 +426,9 @@ func _refresh_ui_text() -> void:
 	# Hook AccessKit semantici per NVDA
 	AccessibilityManager.hook_control_accessibility(btn_character, tr("HUD_BTN_CHARACTER_ACC_NAME"), tr("HUD_BTN_CHARACTER_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_practice, tr("HUD_BTN_PRACTICE_ACC_NAME"), tr("HUD_BTN_PRACTICE_ACC_DESC"))
+	if btn_relax:
+		btn_relax.text = "Relax (R)"
+		AccessibilityManager.hook_control_accessibility(btn_relax, "Relax e Recupero Attivo (R)", "Apre il menu per prendere un caffè, fare una passeggiata o ascoltare un disco.")
 	AccessibilityManager.hook_control_accessibility(btn_catalog, tr("HUD_BTN_CATALOG_ACC_NAME"), tr("HUD_BTN_CATALOG_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_new_song, tr("HUD_BTN_NEW_SONG_ACC_NAME"), tr("HUD_BTN_NEW_SONG_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_concert, tr("HUD_BTN_CONCERT_ACC_NAME"), tr("HUD_BTN_CONCERT_ACC_DESC"))
@@ -698,16 +714,38 @@ func close_upgrades_modal() -> void:
 	btn_upgrades.grab_focus()
 	_update_hud_display()
 
+func open_relax_modal() -> void:
+	_hide_all_modals()
+	if relax_modal:
+		relax_modal.open()
+	GameManager.open_menu()
+
+func close_relax_modal() -> void:
+	if relax_modal:
+		relax_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = true
+	GameManager.close_menu()
+	select_category_tab(1)
+	if btn_relax:
+		btn_relax.grab_focus()
+	_update_hud_display()
+
+func _on_relax_activity_selected(action: ActionData) -> void:
+	if action_system:
+		action_system.start_action(action)
+
 func select_category_tab(tab_idx: int) -> void:
 	current_category_tab = tab_idx
 	
-	# Categoria 1: Hub Personale (Personaggio, Agenda, Bilancio, Viaggi, Allenamento)
+	# Categoria 1: Hub Personale (Personaggio, Agenda, Bilancio, Viaggi, Allenamento, Relax)
 	var is_personal: bool = (tab_idx == 1)
 	if btn_character: btn_character.visible = is_personal
 	if btn_agenda: btn_agenda.visible = is_personal
 	if btn_economy: btn_economy.visible = is_personal
 	if btn_travel: btn_travel.visible = is_personal
 	if btn_practice: btn_practice.visible = is_personal
+	if btn_relax: btn_relax.visible = is_personal
 	
 	# Categoria 2: Creazione & Produzione (Catalogo, Nuovo Brano)
 	var is_creation: bool = (tab_idx == 2)
@@ -732,7 +770,7 @@ func select_category_tab(tab_idx: int) -> void:
 	match tab_idx:
 		1:
 			if btn_tab_personal: btn_tab_personal.grab_focus()
-			AccessibilityManager.speak("Area 1: Hub Personale. Opzioni: Personaggio C, Agenda A, Bilancio B, Viaggi V, Allenamento Rapido 1.")
+			AccessibilityManager.speak("Area 1: Hub Personale. Opzioni: Personaggio C, Agenda A, Bilancio B, Viaggi V, Allenamento Rapido 1, Relax R.")
 		2:
 			if btn_tab_creation: btn_tab_creation.grab_focus()
 			AccessibilityManager.speak("Area 2: Creazione e Produzione. Opzioni: Catalogo M, Nuovo Brano N, Album P.")
