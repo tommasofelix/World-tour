@@ -120,6 +120,8 @@ func book_concert_date(venue_id: String, venue_name: String, days_in_advance: in
 		true # È un concerto concordato con il locale: saltarlo è penalizzante
 	)
 	add_event(ev)
+	if GameManager and GameManager.concert_system:
+		GameManager.concert_system.book_venue_date(venue_id, target_day)
 	return ev
 
 ## Registra una scadenza di consegna album concordata con la label

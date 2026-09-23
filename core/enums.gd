@@ -83,7 +83,18 @@ enum StageEventType {
 	NONE,
 	BROKEN_STRING,    # Corda spezzata
 	AUDIO_FEEDBACK,   # Fischio monitor
-	ENTHUSIASTIC_FAN  # Fan che sale sul palco
+	ENTHUSIASTIC_FAN, # Fan che sale sul palco
+	BLACKOUT,         # Calo improvviso di tensione elettrica
+	CROWD_CHANT,      # Cori da stadio spontanei della folla
+	PIT_FIGHT,        # Rissa nel mosh pit
+	STAGE_DIVING      # Tuffo dal palco / crowd surfing
+}
+
+enum VenueBookingStatus {
+	FREE,             # Libero per stasera o per prenotazioni future
+	BOOKED_OTHER,     # Occupato da altra band o serata a tema
+	MAINTENANCE,      # Chiuso per riposo o manutenzione tecnica
+	BOOKED_PLAYER     # Già prenotato da Alex e dalla band
 }
 
 enum BandRole {
@@ -271,6 +282,34 @@ static func get_social_post_type_name(post_type: int) -> String:
 		_:
 			return "Post Sconosciuto"
 
+static func get_venue_booking_status_name(status: int) -> String:
+	match status:
+		VenueBookingStatus.FREE:
+			return "Libero"
+		VenueBookingStatus.BOOKED_OTHER:
+			return "Occupato da altra band"
+		VenueBookingStatus.MAINTENANCE:
+			return "Chiuso per manutenzione"
+		VenueBookingStatus.BOOKED_PLAYER:
+			return "Tuo concerto in programma"
+		_:
+			return "Sconosciuto"
 
-
-
+static func get_stage_event_type_name(event_type: int) -> String:
+	match event_type:
+		StageEventType.BROKEN_STRING:
+			return "Corda Spezzata"
+		StageEventType.AUDIO_FEEDBACK:
+			return "Fischio Monitor"
+		StageEventType.ENTHUSIASTIC_FAN:
+			return "Fan sul Palco"
+		StageEventType.BLACKOUT:
+			return "Blackout Elettrico"
+		StageEventType.CROWD_CHANT:
+			return "Cori della Folla"
+		StageEventType.PIT_FIGHT:
+			return "Rissa nel Pit"
+		StageEventType.STAGE_DIVING:
+			return "Tuffo dal Palco"
+		_:
+			return "Nessun Imprevisto"

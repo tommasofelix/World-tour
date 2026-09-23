@@ -22,6 +22,7 @@ var prod_skill_used: float = 10.0
 var studio_bonus: float = 0.0
 var inspiration_bonus: float = 0.0
 var quality_score: float = 0.0
+var is_cover: bool = false
 
 # Tratto speciale emergente
 var traits: Array[int] = []
@@ -85,7 +86,8 @@ func to_dict() -> Dictionary:
 		"plays": plays,
 		"plays_count": plays,
 		"revenue": revenue,
-		"revenue_generated": revenue
+		"revenue_generated": revenue,
+		"is_cover": is_cover
 	}
 
 func from_dict(dict: Dictionary) -> void:
@@ -104,6 +106,7 @@ func from_dict(dict: Dictionary) -> void:
 		studio_bonus = 15.0
 	inspiration_bonus = float(dict.get("inspiration_bonus", inspiration_bonus))
 	quality_score = float(dict.get("quality_score", quality_score))
+	is_cover = bool(dict.get("is_cover", is_cover))
 	traits.clear()
 	if dict.has("traits") and dict["traits"] is Array:
 		for t in dict["traits"]:
@@ -113,6 +116,28 @@ func from_dict(dict: Dictionary) -> void:
 	release_day = int(dict.get("release_day", release_day))
 	plays = int(dict.get("plays", dict.get("plays_count", plays)))
 	revenue = float(dict.get("revenue", dict.get("revenue_generated", revenue)))
+
+static func create_cover_song(p_genre: int, skill_level: float = 10.0) -> SongData:
+	var cover_title := "Cover Hit di Repertorio"
+	match p_genre:
+		Enums.MusicalGenre.ROCK:
+			cover_title = "Classic Rock Anthem (Cover)"
+		Enums.MusicalGenre.POP:
+			cover_title = "Pop Radio Banger (Cover)"
+		Enums.MusicalGenre.METAL:
+			cover_title = "Heavy Metal Riff (Cover)"
+		Enums.MusicalGenre.INDIE:
+			cover_title = "Underground Indie Hit (Cover)"
+		Enums.MusicalGenre.ELECTRONIC:
+			cover_title = "Club Electro Beat (Cover)"
+		Enums.MusicalGenre.HIPHOP:
+			cover_title = "Old School Hip Hop (Cover)"
+	var song := SongData.new("cover_%d_%d" % [Time.get_ticks_msec(), randi() % 1000], cover_title, p_genre, "life")
+	song.status = Enums.SongStatus.RELEASED
+	song.stage = Enums.SongStage.COMPLETED
+	song.is_cover = true
+	song.quality_score = clampf(55.0 + (skill_level * 0.30), 55.0, 85.0)
+	return song
 
 func get_genre_name() -> String:
 	match genre:

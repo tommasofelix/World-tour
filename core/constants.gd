@@ -204,5 +204,32 @@ const REHEARSAL_SUBLET_DAILY_TIER_2: float = 20.0
 const REHEARSAL_SUBLET_DAILY_TIER_3: float = 50.0
 const REHEARSAL_NEIGHBOR_FINE_TIER_0: float = 150.0
 
+# --- Concerti, Locali, Scaletta, Merchandising & Encore (Sezione 5) ---
+const WEEKEND_RENT_SURCHARGE: float = 1.20 # +20% affitto per Venerdì e Sabato
+
+# Merchandising al Foyer
+const MERCH_PIN_COST: float = 0.50
+const MERCH_PIN_PRICE: float = 2.00
+const MERCH_TSHIRT_COST: float = 6.00
+const MERCH_TSHIRT_PRICE: float = 20.00
+const MERCH_POSTER_COST: float = 2.00
+const MERCH_POSTER_PRICE: float = 8.00
+const MERCH_PICKS_COST: float = 1.00
+const MERCH_PICKS_PRICE: float = 5.00
+
+# Momento Bis / Encore
+const ENCORE_SCORE_THRESHOLD: float = 85.0
+const ENCORE_ENERGY_COST: int = 10
+const ENCORE_FAN_BONUS_MULT: float = 1.10
+const ENCORE_BAND_MORALE_BONUS: int = 5
+const ENCORE_EXTRA_CASH: float = 50.0
+
+# Drammaturgia della Scaletta
+const OPENING_HYPE_BONUS: float = 15.0
+const OPENING_SCORE_MULT: float = 1.05
+const BALLAD_STRESS_RELIEF: int = 5
+const BALLAD_FAN_MULT: float = 1.15
+
+
 
 

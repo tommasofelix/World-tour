@@ -139,6 +139,11 @@ custom_minimum_size = Vector2(250, 48)
 layout_mode = 2
 text = "Sali sul Palco! (Invio)"
 
+[node name="BtnAddCover" type="Button" parent="PanelMain/VBox/PrepContainer/HBoxPrepButtons"]
+custom_minimum_size = Vector2(220, 48)
+layout_mode = 2
+text = "Aggiungi Cover di Repertorio"
+
 [node name="BtnCancelPrep" type="Button" parent="PanelMain/VBox/PrepContainer/HBoxPrepButtons"]
 custom_minimum_size = Vector2(180, 48)
 layout_mode = 2
@@ -210,6 +215,48 @@ custom_minimum_size = Vector2(280, 48)
 layout_mode = 2
 text = "Concludi Show e Scopri i Risultati"
 
+[node name="EncoreContainer" type="VBoxContainer" parent="PanelMain/VBox"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="LabelEncoreTitle" type="Label" parent="PanelMain/VBox/EncoreContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Il pubblico invoca a gran voce il Bis!"
+
+[node name="LabelEncoreDesc" type="Label" parent="PanelMain/VBox/EncoreContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Concert Score straordinario! La folla è in estasi e urla: 'Ancora un pezzo!'"
+
+[node name="HBoxEncoreChoices" type="HBoxContainer" parent="PanelMain/VBox/EncoreContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="BtnGrantEncore" type="Button" parent="PanelMain/VBox/EncoreContainer/HBoxEncoreChoices"]
+custom_minimum_size = Vector2(360, 48)
+layout_mode = 2
+text = "1. Concedi il Bis (-10 Energia, +10% Fan, +50 €)"
+
+[node name="BtnDeclineEncore" type="Button" parent="PanelMain/VBox/EncoreContainer/HBoxEncoreChoices"]
+custom_minimum_size = Vector2(300, 48)
+layout_mode = 2
+text = "2. Saluta e chiudi lo show (Nessun consumo)"
+
+[node name="LabelEncoreOutcome" type="Label" parent="PanelMain/VBox/EncoreContainer"]
+layout_mode = 2
+text = ""
+
+[node name="HBoxEncoreNext" type="HBoxContainer" parent="PanelMain/VBox/EncoreContainer"]
+layout_mode = 2
+
+[node name="BtnProceedSummary" type="Button" parent="PanelMain/VBox/EncoreContainer/HBoxEncoreNext"]
+custom_minimum_size = Vector2(280, 48)
+layout_mode = 2
+text = "Passa al Resoconto Finale"
+
 [node name="SummaryContainer" type="VBoxContainer" parent="PanelMain/VBox"]
 visible = false
 layout_mode = 2
@@ -240,6 +287,11 @@ text = "Nuovi Fan Fidelizzati: +15"
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Incasso Lordo: 225.00 € | Spese Affitto: 50.00 € | Guadagno Netto: +175.00 €"
+
+[node name="LabelMerch" type="Label" parent="PanelMain/VBox/SummaryContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Banchetto Merchandising: Venduti 0 articoli | Guadagno netto: 0.00 €"
 
 [node name="LabelStatsGained" type="Label" parent="PanelMain/VBox/SummaryContainer"]
 layout_mode = 2

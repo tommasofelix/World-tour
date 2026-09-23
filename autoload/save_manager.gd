@@ -31,7 +31,8 @@ func save_game() -> bool:
 		"festivals": GameManager.festival_system.to_dict() if GameManager.festival_system else {},
 		"social": GameManager.social_media_system.to_dict() if GameManager.social_media_system else {},
 		"rivals": GameManager.rival_system.to_dict() if GameManager.rival_system else {},
-		"charts": GameManager.chart_system.to_dict() if GameManager.chart_system else {}
+		"charts": GameManager.chart_system.to_dict() if GameManager.chart_system else {},
+		"concerts": GameManager.concert_system.to_dict() if GameManager.concert_system else {}
 	}
 	
 	var json_string: String = JSON.stringify(save_dict, "\t")
@@ -123,6 +124,16 @@ func load_game() -> bool:
 		GameManager.music_system.player_data = GameManager.player_data
 		GameManager.music_system.calendar_data = GameManager.calendar_data
 		GameManager.music_system.skill_system = GameManager.skill_system
+
+	if not GameManager.concert_system:
+		GameManager.concert_system = ConcertSystem.new(GameManager.player_data, GameManager.calendar_data, GameManager.skill_system)
+	else:
+		GameManager.concert_system.player_data = GameManager.player_data
+		GameManager.concert_system.calendar_data = GameManager.calendar_data
+		GameManager.concert_system.skill_system = GameManager.skill_system
+
+	if save_dict.has("concerts") and save_dict["concerts"] is Dictionary:
+		GameManager.concert_system.from_dict(save_dict["concerts"] as Dictionary)
 
 	if not GameManager.band_system:
 		GameManager.band_system = BandSystem.new(GameManager.player_data, GameManager.calendar_data)
