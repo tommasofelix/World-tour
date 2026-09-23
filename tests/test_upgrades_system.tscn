@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://dm9upgradestest01"]
+[gd_scene format=3 uid="uid://boh8ylvc3e4xg"]
 
 [ext_resource type="Script" uid="uid://cf87testupgradwt01" path="res://tests/test_upgrades_system.gd" id="1_test"]
 
