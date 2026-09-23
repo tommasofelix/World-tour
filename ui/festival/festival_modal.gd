@@ -28,6 +28,7 @@ signal festival_performed(festival_id: String, result: Dictionary)
 var current_fest_index: int = 0
 var current_festivals: Array[FestivalData] = []
 var selected_slot: int = Enums.FestivalSlot.OPENING_AFTERNOON
+var selected_extreme_move: int = Enums.FestivalExtremeMove.NONE
 
 func _ready() -> void:
 	btn_close.pressed.connect(close)
@@ -47,6 +48,8 @@ func _ready() -> void:
 		
 	EventBus.festival_slot_booked.connect(func(_f, _s): refresh_view())
 	EventBus.festival_performed.connect(func(_f, _r): refresh_view())
+	if EventBus.has_signal("battle_of_bands_completed"):
+		EventBus.battle_of_bands_completed.connect(func(_r): refresh_view())
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not visible:
@@ -55,10 +58,30 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.keycode == KEY_ESCAPE or event.keycode == KEY_F:
 			close()
 			get_viewport().set_input_as_handled()
-		elif event.keycode >= KEY_1 and event.keycode <= KEY_6:
+		elif event.keycode >= KEY_1 and event.keycode <= KEY_9:
 			var idx: int = event.keycode - KEY_1
 			if idx < current_festivals.size():
 				select_festival(idx)
+				get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_0:
+			if current_festivals.size() > 9:
+				select_festival(9)
+				get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_MINUS:
+			if current_festivals.size() > 10:
+				select_festival(10)
+				get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_EQUAL:
+			if current_festivals.size() > 11:
+				select_festival(11)
+				get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_UP:
+			if current_fest_index > 0:
+				select_festival(current_fest_index - 1)
+				get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_DOWN:
+			if current_fest_index < current_festivals.size() - 1:
+				select_festival(current_fest_index + 1)
 				get_viewport().set_input_as_handled()
 		elif event.keycode == KEY_P:
 			select_slot(Enums.FestivalSlot.OPENING_AFTERNOON)
@@ -68,6 +91,21 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		elif event.keycode == KEY_H:
 			select_slot(Enums.FestivalSlot.HEADLINER_NIGHT)
+			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_M:
+			select_stage_type(Enums.FestivalStageType.MAIN_STAGE)
+			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_U:
+			select_stage_type(Enums.FestivalStageType.UNDERGROUND_TENT)
+			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_E:
+			cycle_extreme_move()
+			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_O:
+			cycle_sponsor()
+			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_B:
+			_on_battle_of_bands_pressed()
 			get_viewport().set_input_as_handled()
 		elif event.keycode == KEY_ENTER or event.keycode == KEY_C:
 			if btn_book_slot and btn_book_slot.is_inside_tree() and not btn_book_slot.disabled:
@@ -82,7 +120,7 @@ func open() -> void:
 	visible = true
 	GameManager.change_state(Enums.GameState.GAMEPLAY_PAUSED)
 	refresh_view()
-	AccessibilityManager.announce("Aperta schermata Grandi Festival Estivi. Premi da 1 a 6 per selezionare un festival, P/T/H per scegliere lo slot, Invio per candidarti, Spazio per suonare.", true)
+	AccessibilityManager.announce("Aperta schermata Grandi Festival Estivi. Premi da 1 a 9, 0, meno o uguale per scegliere tra i 12 festival mondiali. P/T/H per gli slot, M per Main Stage, U per Tenda Underground, B per Battle of the Bands primaverile, E per mosse estreme, O per sponsor, Invio per candidarti, Spazio per suonare.", true)
 	if btn_close:
 		btn_close.grab_focus()
 
@@ -188,19 +226,100 @@ func _on_slot_selected(index: int) -> void:
 	]
 	AccessibilityManager.announce(speech, false)
 
+func select_stage_type(stage_type: int) -> void:
+	var fest: FestivalData = current_festivals[current_fest_index]
+	GameManager.festival_system.set_festival_stage_type(fest.id, stage_type)
+	refresh_view()
+	var speech := "Selezionato %s per %s." % [Enums.get_festival_stage_type_name(stage_type), fest.name]
+	AccessibilityManager.announce(speech, true)
+
+func cycle_extreme_move() -> void:
+	match selected_extreme_move:
+		Enums.FestivalExtremeMove.NONE:
+			selected_extreme_move = Enums.FestivalExtremeMove.STAGE_DIVING
+		Enums.FestivalExtremeMove.STAGE_DIVING:
+			selected_extreme_move = Enums.FestivalExtremeMove.RIGGING_CLIMB
+		Enums.FestivalExtremeMove.RIGGING_CLIMB:
+			selected_extreme_move = Enums.FestivalExtremeMove.CROWD_SOLO
+		Enums.FestivalExtremeMove.CROWD_SOLO:
+			selected_extreme_move = Enums.FestivalExtremeMove.NONE
+		_:
+			selected_extreme_move = Enums.FestivalExtremeMove.NONE
+	refresh_view()
+	var speech := "Mossa Scenica selezionata: %s." % Enums.get_festival_extreme_move_name(selected_extreme_move)
+	AccessibilityManager.announce(speech, true)
+
+func cycle_sponsor() -> void:
+	var fest: FestivalData = current_festivals[current_fest_index]
+	var next_sponsor: int = Enums.FestivalSponsorType.NONE
+	match fest.active_sponsor:
+		Enums.FestivalSponsorType.NONE:
+			next_sponsor = Enums.FestivalSponsorType.ENERGY_DRINK
+		Enums.FestivalSponsorType.ENERGY_DRINK:
+			next_sponsor = Enums.FestivalSponsorType.CRAFT_BEER
+		Enums.FestivalSponsorType.CRAFT_BEER:
+			next_sponsor = Enums.FestivalSponsorType.STREETWEAR_GEAR
+		Enums.FestivalSponsorType.STREETWEAR_GEAR:
+			next_sponsor = Enums.FestivalSponsorType.NONE
+		_:
+			next_sponsor = Enums.FestivalSponsorType.NONE
+	GameManager.festival_system.sign_festival_sponsor(fest.id, next_sponsor)
+	refresh_view()
+	var speech := "Sponsor festival: %s." % Enums.get_festival_sponsor_type_name(next_sponsor)
+	AccessibilityManager.announce(speech, true)
+
+func _on_battle_of_bands_pressed() -> void:
+	var check := GameManager.festival_system.can_enter_battle_of_bands()
+	if not check.allowed:
+		var err_msg := "Battle of the Bands non disponibile: "
+		match check.reason:
+			"not_spring_season":
+				err_msg += "Il contest si tiene solo in Primavera (Mese 3 / Giorni 57-84)."
+			"already_won":
+				err_msg += "Hai già vinto il contest quest'anno e possiedi il Pass Speciale!"
+			"no_songs_available":
+				err_msg += "Serve almeno una canzone pronta per esibirsi al contest."
+			_:
+				err_msg += check.reason
+		AccessibilityManager.announce(err_msg, true)
+		return
+		
+	var songs: Array = GameManager.player_data.songs if GameManager.player_data else []
+	var res := GameManager.festival_system.compete_in_battle_of_bands(songs)
+	if res.get("won", false):
+		var speech := "Trionfo epico alla Battle of the Bands! Punteggio %.1f contro %.1f della rivale %s! Guadagnati 300 euro, +8 reputazione e il Pass Speciale per i festival estivi!" % [
+			res.concert_score,
+			res.rival_score,
+			check.rival_band_name
+		]
+		AccessibilityManager.announce(speech, true)
+	else:
+		var speech := "Esibizione alla Battle of the Bands conclusa. Punteggio %.1f contro %.1f. La rivale vince il contest, ma guadagni +2 reputazione per l'esperienza." % [
+			res.concert_score,
+			res.rival_score
+		]
+		AccessibilityManager.announce(speech, true)
+	refresh_view()
+
 func _update_details(fest: FestivalData) -> void:
 	label_fest_name.text = fest.name
-	label_fest_info.text = "Città: %s | Arena: %s | Giorno: %d (Mese %d - Estate) | Capienza: %d persone" % [
+	var pass_marker := " [Pass Battle of the Bands: Requisiti Agevolati]" if (GameManager.player_data and GameManager.player_data.battle_of_bands_pass) else ""
+	label_fest_info.text = "Città: %s | Arena: %s | Giorno: %d (Mese %d - Estate) | Capienza: %d | Palco: %s | Meteo: %s | Sponsor: %s%s" % [
 		Enums.get_city_name(fest.city_id),
 		fest.location_name,
 		fest.day_number,
 		fest.season_month,
-		fest.capacity
+		fest.capacity,
+		Enums.get_festival_stage_type_name(fest.stage_type),
+		Enums.get_festival_weather_name(fest.weather),
+		Enums.get_festival_sponsor_type_name(fest.active_sponsor),
+		pass_marker
 	]
 	
-	label_fest_rival.text = "Rivale sul Cartellone: %s (Punteggio Benchmark: %.1f) - Obiettivo: Steal the Show!" % [
+	label_fest_rival.text = "Rivale sul Cartellone: %s (Punteggio Benchmark: %.1f) - Mossa Estrema: %s" % [
 		fest.rival_band_name,
-		fest.rival_band_score
+		fest.rival_band_score,
+		Enums.get_festival_extreme_move_name(selected_extreme_move)
 	]
 	
 	if fest.is_completed:
@@ -242,17 +361,19 @@ func _on_book_slot_pressed() -> void:
 func _on_perform_festival_pressed() -> void:
 	var fest: FestivalData = current_festivals[current_fest_index]
 	var songs: Array = GameManager.player_data.songs if GameManager.player_data else []
-	var res: Dictionary = GameManager.festival_system.perform_festival_concert(fest.id, songs)
+	var res: Dictionary = GameManager.festival_system.perform_festival_concert(fest.id, songs, -1.0, selected_extreme_move)
 	
 	if res.get("success", false):
 		var steal_msg := "Hai battuto la rivale %s rubando la scena!" % fest.rival_band_name if res.stole_the_show else "Concerto concluso."
-		var speech := "Trionfo al Festival %s! Score: %.1f. %s Pubblico: %d. Incasso: %.2f euro. Nuovi fan: %d." % [
+		var speech := "Trionfo al Festival %s! Palco: %s. Score: %.1f. %s Pubblico: %d. Incasso: %.2f euro. Nuovi fan: %d. %s" % [
 			fest.name,
+			res.stage_type_name,
 			res.concert_score,
 			steal_msg,
 			res.actual_audience,
 			res.player_share,
-			res.new_fans
+			res.new_fans,
+			res.backstage_reaction
 		]
 		AccessibilityManager.announce(speech, true)
 		refresh_view()

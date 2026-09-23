@@ -226,6 +226,10 @@ var jet_lag_days: int = 0
 var visited_city_stickers: Array[int] = []
 var vehicle_custom_name: String = ""
 
+# Grandi Festival Estivi & Battle of the Bands (Sezione 7)
+var battle_of_bands_pass: bool = false
+var festival_trophies: Array[String] = []
+
 func get_current_city_name() -> String:
 	return Enums.get_city_name(current_city_id)
 
@@ -566,7 +570,9 @@ func to_dict() -> Dictionary:
 		"city_popularity": city_popularity.duplicate(true),
 		"jet_lag_days": jet_lag_days,
 		"visited_city_stickers": visited_city_stickers.duplicate(),
-		"vehicle_custom_name": vehicle_custom_name
+		"vehicle_custom_name": vehicle_custom_name,
+		"battle_of_bands_pass": battle_of_bands_pass,
+		"festival_trophies": festival_trophies.duplicate()
 	}
 
 func from_dict(dict: Dictionary) -> void:
@@ -588,6 +594,11 @@ func from_dict(dict: Dictionary) -> void:
 	current_city_id = int(dict.get("current_city_id", current_city_id))
 	jet_lag_days = int(dict.get("jet_lag_days", jet_lag_days))
 	vehicle_custom_name = str(dict.get("vehicle_custom_name", vehicle_custom_name))
+	battle_of_bands_pass = bool(dict.get("battle_of_bands_pass", battle_of_bands_pass))
+	festival_trophies.clear()
+	if dict.has("festival_trophies") and dict["festival_trophies"] is Array:
+		for tr in dict["festival_trophies"]:
+			festival_trophies.append(str(tr))
 	visited_city_stickers.clear()
 	if dict.has("visited_city_stickers") and dict["visited_city_stickers"] is Array:
 		for st_id in dict["visited_city_stickers"]:

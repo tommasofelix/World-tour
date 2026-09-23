@@ -237,6 +237,31 @@ enum FestivalSlot {
 	HEADLINER_NIGHT = 2    # Headliner notturno principale
 }
 
+enum FestivalStageType {
+	MAIN_STAGE = 0,        # Palco principale (folla oceanica, massima visibilità)
+	UNDERGROUND_TENT = 1   # Tenda underground (intima, generi viscerali, +50% conv. fan, +30% merch)
+}
+
+enum FestivalExtremeMove {
+	NONE = 0,         # Performance regolare e pulita senza rischi
+	STAGE_DIVING = 1, # Tuffo nella folla (check Fisico/Carisma)
+	RIGGING_CLIMB = 2,# Scalata tralicci luci (check Performance)
+	CROWD_SOLO = 3    # Assolo/cantato in mezzo alla folla (check Abilità Strumento)
+}
+
+enum FestivalSponsorType {
+	NONE = 0,            # Nessuno sponsor
+	ENERGY_DRINK = 1,    # Energy drink (denaro + boost energia)
+	CRAFT_BEER = 2,      # Birrificio artigianale (denaro + morale/tensione)
+	STREETWEAR_GEAR = 3  # Abbigliamento streetwear/rock (denaro + carisma)
+}
+
+enum FestivalWeather {
+	SUNNY_HEATWAVE = 0,  # Sole cocente / Canicola estiva (più fatica, più vendite merch/bibite)
+	PERFECT_MILD = 1,    # Clima mite ideale (nessun malus)
+	SUMMER_STORM = 2     # Temporale estivo e fango (bivio: suonare sotto il diluvio vs stop)
+}
+
 enum SocialPostType {
 	PRACTICE_CLIP = 0,     # Video prove / backstage
 	TRACK_TEASER = 1,      # Teaser di un brano o singolo
@@ -369,3 +394,49 @@ static func get_stage_event_type_name(event_type: int) -> String:
 			return "Tuffo dal Palco"
 		_:
 			return "Nessun Imprevisto"
+
+static func get_festival_stage_type_name(stage_type: int) -> String:
+	match stage_type:
+		FestivalStageType.MAIN_STAGE:
+			return "Palco Principale (Main Stage)"
+		FestivalStageType.UNDERGROUND_TENT:
+			return "Tenda Underground (Stage Secondario)"
+		_:
+			return "Palco Principale"
+
+static func get_festival_extreme_move_name(move: int) -> String:
+	match move:
+		FestivalExtremeMove.STAGE_DIVING:
+			return "Stage Diving (Salto nella Folla)"
+		FestivalExtremeMove.RIGGING_CLIMB:
+			return "Arrampicata sui Tralicci Luci"
+		FestivalExtremeMove.CROWD_SOLO:
+			return "Assolo in Mezzo alla Folla"
+		FestivalExtremeMove.NONE:
+			return "Show Regolare (Zero Rischi)"
+		_:
+			return "Nessuna Mossa"
+
+static func get_festival_sponsor_type_name(sponsor: int) -> String:
+	match sponsor:
+		FestivalSponsorType.ENERGY_DRINK:
+			return "Sponsor Energy Drink Extreme"
+		FestivalSponsorType.CRAFT_BEER:
+			return "Sponsor Birrificio Artigianale"
+		FestivalSponsorType.STREETWEAR_GEAR:
+			return "Sponsor Marchio Streetwear & Rock"
+		FestivalSponsorType.NONE:
+			return "Nessuno Sponsor"
+		_:
+			return "Nessuno Sponsor"
+
+static func get_festival_weather_name(weather: int) -> String:
+	match weather:
+		FestivalWeather.SUNNY_HEATWAVE:
+			return "Sole Cocente (Canicola Estiva)"
+		FestivalWeather.PERFECT_MILD:
+			return "Clima Mite Ideale"
+		FestivalWeather.SUMMER_STORM:
+			return "Temporale Estivo & Fango"
+		_:
+			return "Clima Variabile"

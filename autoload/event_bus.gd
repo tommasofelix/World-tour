@@ -94,10 +94,12 @@ signal road_dilemma_resolved(choice: int, outcome: Dictionary)
 signal tour_radio_interview_completed(interview_data: Dictionary)
 signal city_sticker_collected(city_id: int)
 
-# Segnali Grandi Festival Estivi (SP-11 / F8.3)
+# Segnali Grandi Festival Estivi (SP-11 / F8.3 / Sezione 7)
 signal festival_slot_booked(festival_id: String, slot: int)
 signal festival_performed(festival_id: String, result: Dictionary)
 signal festival_screen_requested()
+signal battle_of_bands_completed(result: Dictionary)
+signal festival_sponsor_signed(festival_id: String, sponsor_type: int)
 
 # --- Segnali Social Media & Fan Engagement (World-tour V4.0 / SP-12 / F8.4) ---
 signal social_post_published(post: SocialPostData)
