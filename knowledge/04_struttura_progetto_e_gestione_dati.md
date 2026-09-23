@@ -50,5 +50,13 @@ La struttura del progetto separa rigorosamente logica di dominio, gestione dati 
   - `ui/menus/`: Menu principale, impostazioni, schermata di fine giornata e dialoghi;
   - `ui/music/`: Studio di registrazione, catalogo brani e creatore canzoni;
   - `ui/concert/`: Schermata ingaggio concerti, scaletta e riepilogo live.
-- `tests/`: Le 17 suite di test unitari automatici eseguibili in modalità headless via console CLI.
+- `tests/`: Le 23 suite di test unitari automatici eseguibili in modalità headless via console CLI.
 - `tools/`: Script PowerShell per validazione rapida (`check.ps1`), test (`test.ps1`) e avvio accessibile (`run.ps1`).
+
+---
+
+## 4. Convenzioni di Modellazione Dati e Accessor Tipizzati
+
+1. **Accessor Getter per Collezioni e Mappe Indicizzate**:
+   - Quando una risorsa o modello dati puro (`PlayerData`, `TourData`, `CalendarData`) gestisce dizionari interni o collezioni indicizzate da enumerazioni o ID (es. `city_fans: Dictionary`, `city_popularity: Dictionary`, `owned_instruments: Dictionary`), il modello deve sempre incapsulare la struttura esponendo metodi getter sicuri e fortemente tipizzati (es. `get_city_fans(city_id: int) -> int`, `get_city_popularity(city_id: int) -> float`).
+   - I metodi accessor devono obbligatoriamente utilizzare `.get(key, fallback)` con valore di default tipizzato (es. `0` o `0.0`), proteggendo i sistemi di dominio e le modali UI da chiavi non inizializzate o errori di accesso runtime (`SCRIPT ERROR: Invalid access / call`).

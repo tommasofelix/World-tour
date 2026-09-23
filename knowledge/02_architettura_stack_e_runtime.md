@@ -54,6 +54,14 @@ Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal r
    - L'invocazione diretta di file `.gd` (senza scena o con flag `-s`) su script che estendono `Node` provoca il freeze a tempo indefinito dell'engine, poiché `_ready()` non viene invocato e `quit()` non viene raggiunto.
    - Tutti gli script di test runner automatizzati (`tools/test.ps1`) integrano un watchdog timeout (15 secondi) tramite `.NET Process` per prevenire qualsiasi freeze della console di sviluppo.
 
+5. **Pattern Quiet Day / Rest Guard nelle Macchine di Avanzamento Logistico**:
+   - Nei motori di simulazione a tappe discrete (tournée, viaggi a tappe, itinerari geografici) che integrano sia spostamenti attivi sia giornate di riposo/sosta statica ("Day Off"), la funzione di avanzamento deve disaccoppiare categoricamente la sosta dal tragitto cinetico tramite una guardia predittiva prioritaria (`if cur_stop.is_day_off`).
+   - L'usura del veicolo, lo stress da trasporto e il consumo energetico di viaggio devono essere saltati a monte: la sosta applica puramente e direttamente la rigenerazione psicofisica e il consolidamento relazionale del gruppo, prevenendo la diluizione o l'erosione dei benefici da parte di penalità logistiche.
+
+6. **Pre-Flight Margining Pattern per Risorse Saturabili a Soglia Zero**:
+   - Nelle suite di test deterministiche per scenari procedurali o catene di eventi che applicano decrementi su risorse limitate inferiormente da vincoli di clamping (es. `stress` limitato a `0.0` da `maxf/clampf`), ogni sotto-blocco di test che intende verificare un delta negativo deve predisporre un margine positivo sicuro prima dell'esecuzione (es. `player.stress = 30.0`).
+   - Questo pattern garantisce il determinismo assoluto e previene falsi negativi dovuti all'azzeramento anticipato della risorsa da parte di asserzioni precedenti.
+
 ---
 
 ## Comandi Operativi di Riferimento
