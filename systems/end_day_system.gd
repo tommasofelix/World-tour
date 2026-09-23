@@ -82,6 +82,7 @@ func process_day_end(day_num: int = 1, p_early_sleep_override: bool = false) -> 
 		player_data.reduce_stress(stress_relief)
 		
 	# Incasso automatico royalties passive dagli album a catalogo
+	# Incasso automatico royalties passive dagli album a catalogo
 	var royalties_earned: float = 0.0
 	var album_count: int = 0
 	if GameManager and GameManager.album_system:
@@ -89,12 +90,24 @@ func process_day_end(day_num: int = 1, p_early_sleep_override: bool = false) -> 
 		royalties_earned = roy_res.get("total_royalties", 0.0)
 		album_count = roy_res.get("album_count", 0)
 		
+	# Incasso automatico sub-affitto passivo della sala prove (Tier 2 e 3)
+	var sublet_earned: float = 0.0
+	if player_data and player_data.rehearsal_sublet_active and player_data.rehearsal_tier >= UpgradeData.RehearsalTier.PRO_ISOLATION:
+		if player_data.rehearsal_tier == UpgradeData.RehearsalTier.MASTER_STUDIO:
+			sublet_earned = Constants.REHEARSAL_SUBLET_DAILY_TIER_3
+		else:
+			sublet_earned = Constants.REHEARSAL_SUBLET_DAILY_TIER_2
+		player_data.modify_money(sublet_earned)
+		EventBus.money_changed.emit(player_data.money, sublet_earned, "rehearsal_sublet_income")
+		if GameManager and GameManager.economy_system:
+			GameManager.economy_system.log_transaction(sublet_earned, "income", "Sub-affitto Sala Prove", day_num)
+		
 	# Rilevamento tensioni critiche nei compagni di band
 	var band_crises: Array[String] = []
 	if player_data and not player_data.band_members.is_empty():
 		for m in player_data.band_members:
 			if m.tension >= Constants.BAND_TENSION_CRITICAL:
-				band_crises.append(m.name)
+				band_crises.append(m.member_name)
 				
 	# Sgravio stress organizzativo dal Manager
 	if GameManager and GameManager.industry_system:
@@ -121,6 +134,7 @@ func process_day_end(day_num: int = 1, p_early_sleep_override: bool = false) -> 
 		"food": food_exp,
 		"royalties": royalties_earned,
 		"album_count": album_count,
+		"sublet_income": sublet_earned,
 		"new_balance": player_data.money if player_data else 0.0,
 		"current_energy": player_data.energy if player_data else 100,
 		"current_stress": player_data.stress if player_data else 0,
@@ -142,6 +156,8 @@ func process_day_end(day_num: int = 1, p_early_sleep_override: bool = false) -> 
 	]
 	if royalties_earned > 0.0:
 		speech += " Royalties catalogo: +%.2f euro da %d album." % [royalties_earned, album_count]
+	if sublet_earned > 0.0:
+		speech += " Sub-affitto sala prove: +%.2f euro." % sublet_earned
 	speech += " Nuovo saldo: %.2f euro. Sonno ristoratore completato." % [
 		player_data.money if player_data else 0.0
 	]

@@ -128,7 +128,7 @@ func resolve_stage_event_choice(event_data: Dictionary, choice_index: int) -> Di
 	}
 
 ## Risolve completamente il concerto live, calcolando spettatori, score, incasso e fan
-func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: float, is_soundcheck: bool = false, event_score_delta: float = 0.0) -> Dictionary:
+func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: float, is_soundcheck: bool = false, event_score_delta: float = 0.0, force_stage_accident: Variant = null) -> Dictionary:
 	var check := can_play_concert(venue, setlist)
 	if not check.get("allowed", false):
 		return {"success": false, "reason": check.get("reason", "error"), "message": check.get("message", "")}
@@ -204,6 +204,35 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 	if GameManager and GameManager.band_system:
 		band_synergy = GameManager.band_system.get_band_synergy_bonus()
 	
+	# Sound Shaping Bonus (Pedalboard + Amplificatore)
+	var sound_shaping_bonus: float = 0.0
+	if player_data:
+		sound_shaping_bonus = player_data.get_sound_shaping_genre_bonus(last_song.genre)
+		
+	# Gestione usura strumento ed eventuali Stage Accidents
+	var stage_accident: bool = false
+	var accident_saved_by_backup: bool = false
+	var accident_penalty: float = 0.0
+	if player_data:
+		var p_cat: String = player_data.get_primary_category()
+		var cond: float = player_data.get_instrument_condition(p_cat)
+		var trigger_accident: bool = false
+		if force_stage_accident != null:
+			trigger_accident = bool(force_stage_accident)
+		elif cond <= Constants.CONDITION_CRITICAL:
+			trigger_accident = randf() <= Constants.STAGE_ACCIDENT_CHANCE
+			
+		if trigger_accident:
+			stage_accident = true
+			if player_data.has_backup_instrument:
+				accident_saved_by_backup = true
+				AccessibilityManager.announce("Corda rotta sul palco! Sostituzione istantanea con il muletto nel van: lo show continua senza intoppi!", true)
+			else:
+				accident_penalty = Constants.STAGE_ACCIDENT_SCORE_PENALTY
+				AccessibilityManager.announce("ATTENZIONE: Guasto tecnico allo strumento durante il concerto! Nessun muletto di riserva: penalità di -15 allo score!", true)
+				
+		player_data.apply_instrument_wear(p_cat, Constants.WEAR_PER_CONCERT)
+	
 	# Calcolo affinità media della scaletta con la scena musicale della città corrente
 	var city_affinity_mult: float = 1.0
 	if GameManager and GameManager.travel_system:
@@ -214,7 +243,7 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 				total_aff += cur_city.get_affinity_for_genre(s.genre)
 			city_affinity_mult = total_aff / float(maxi(1, setlist.size()))
 			
-	var raw_score: float = (base_score * closer_bonus_mult) + event_score_delta + soundcheck_bonus + band_synergy
+	var raw_score: float = (base_score * closer_bonus_mult) + event_score_delta + soundcheck_bonus + band_synergy + sound_shaping_bonus - accident_penalty
 	var final_score: float = clampf(raw_score * city_affinity_mult, 1.0, 100.0)
 	
 	# 5. Conversione Fan
@@ -301,6 +330,10 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 		"player_share": player_share,
 		"band_share": band_share,
 		"band_synergy_bonus": band_synergy,
+		"sound_shaping_bonus": sound_shaping_bonus,
+		"stage_accident": stage_accident,
+		"accident_saved": accident_saved_by_backup,
+		"accident_penalty": accident_penalty,
 		"concert_score": final_score,
 		"city_affinity_mult": city_affinity_mult,
 		"tour_hype_mult": tour_hype_mult,

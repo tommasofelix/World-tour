@@ -299,7 +299,7 @@ func get_band_synergy_bonus() -> float:
 	return clampf(bonus, -15.0, 35.0)
 
 ## Conduce una sessione di prove con la band
-func hold_rehearsal_session() -> Dictionary:
+func hold_rehearsal_session(check_noise_complaint: bool = false) -> Dictionary:
 	if not player_data:
 		return {"success": false, "reason": "no_player_data"}
 	if player_data.band_members.is_empty():
@@ -308,12 +308,6 @@ func hold_rehearsal_session() -> Dictionary:
 			"reason": "no_band",
 			"message": "Non hai ancora una band con cui provare. Recluta prima dei musicisti!"
 		}
-	if not player_data.consume_energy(15):
-		return {
-			"success": false,
-			"reason": "energy_insufficient",
-			"message": "Energia insufficiente per una sessione di prove (richiesta 15%)."
-		}
 		
 	var r_tier: int = player_data.rehearsal_tier
 	if player_data.current_housing_tier == Enums.HousingTier.LOFT_STUDIO:
@@ -321,9 +315,26 @@ func hold_rehearsal_session() -> Dictionary:
 	elif player_data.current_housing_tier == Enums.HousingTier.LUXURY_VILLA:
 		r_tier = maxi(r_tier, 3)
 		
+	# Tier 1+ riduce l'affaticamento del 30% (consumo energia scende da 15 a 10)
+	var energy_cost: int = 10 if r_tier >= UpgradeData.RehearsalTier.ACOUSTIC_PANELS else 15
+	if not player_data.consume_energy(energy_cost):
+		return {
+			"success": false,
+			"reason": "energy_insufficient",
+			"message": "Energia insufficiente per una sessione di prove (richiesta %d%%)." % energy_cost
+		}
+		
 	var stress_gain: int = UpgradeData.get_rehearsal_stress(r_tier)
 	if stress_gain > 0:
 		player_data.add_stress(stress_gain)
+		
+	# Tier 3 (Studio Acustico Perfetto & Lounge): +8 morale ad Alex
+	if r_tier >= UpgradeData.RehearsalTier.MASTER_STUDIO:
+		player_data.add_morale(8)
+		
+	# Usura dello strumento attivo durante le prove (-3%)
+	var p_cat: String = player_data.get_primary_category()
+	player_data.apply_instrument_wear(p_cat, Constants.WEAR_PER_REHEARSAL)
 		
 	# Prove aumentano affinità e rispetto, e riducono tensione, con bonus speciali da personalità
 	var has_peacemaker: bool = false
@@ -335,6 +346,10 @@ func hold_rehearsal_session() -> Dictionary:
 			has_perfectionist = true
 			
 	var aff_delta: float = 6.0 if has_peacemaker else 4.0
+	# Tier 2 (Insonorizzazione Pro): +5% extra affinità band
+	if r_tier >= UpgradeData.RehearsalTier.PRO_ISOLATION:
+		aff_delta += 5.0
+		
 	var resp_delta: float = 7.0 if has_perfectionist else 5.0
 	var tens_delta: float = -10.0 if has_peacemaker else -8.0
 	
@@ -345,12 +360,31 @@ func hold_rehearsal_session() -> Dictionary:
 		
 	_emit_chemistry_changed()
 	
-	var msg: String = "Sessione di prove completata! La coesione del gruppo è aumentata (Stress accumulato: +%d)." % stress_gain
+	# Controllo disturbo della quiete pubblica (se richiesto dal contesto o dalle prove)
+	var noise_incident: bool = false
+	var noise_message: String = ""
+	if check_noise_complaint:
+		if r_tier == UpgradeData.RehearsalTier.NONE:
+			noise_incident = true
+			var fine: float = Constants.REHEARSAL_NEIGHBOR_FINE_TIER_0
+			if player_data.money >= fine:
+				player_data.modify_money(-fine)
+				EventBus.money_changed.emit(player_data.money, -fine, "neighbor_complaint_fine")
+			player_data.add_stress(10)
+			noise_message = " I vicini hanno protestato per il rumore nel garage: sanzione di %.0f € e +10 Stress!" % fine
+		elif r_tier == UpgradeData.RehearsalTier.ACOUSTIC_PANELS:
+			noise_incident = true
+			player_data.add_stress(5)
+			noise_message = " I vicini hanno bussato lamentando vibrazioni dei bassi (+5 Stress)."
+	
+	var msg: String = "Sessione di prove completata! La coesione del gruppo è aumentata (Stress accumulato: +%d).%s" % [stress_gain, noise_message]
 	AccessibilityManager.announce(msg, true)
 	return {
 		"success": true,
 		"stress_gain": stress_gain,
 		"rehearsal_tier": r_tier,
+		"energy_cost": energy_cost,
+		"noise_incident": noise_incident,
 		"message": msg
 	}
 

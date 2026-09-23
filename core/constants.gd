@@ -186,4 +186,23 @@ const WEEKEND_SATURDAY_FAN_MULT: float = 1.50
 const TUESDAY_STUDIO_DISCOUNT: float = 0.20
 const WEDNESDAY_BAND_XP_MULT: float = 1.20
 
+# --- Strumenti, Usura e Manutenzione Liuteria (Sezione 4) ---
+const CONDITION_MAX: float = 100.0
+const CONDITION_WARNING: float = 40.0
+const CONDITION_CRITICAL: float = 20.0
+const WEAR_PER_CONCERT: float = 8.0
+const WEAR_PER_REHEARSAL: float = 3.0
+const COST_LUTHIER_BASIC: float = 30.0
+const COST_LUTHIER_FULL: float = 80.0
+const COST_BACKUP_INSTRUMENT: float = 150.0
+const STAGE_ACCIDENT_CHANCE: float = 0.35
+const STAGE_ACCIDENT_SCORE_PENALTY: float = 15.0
+
+# --- Registrazione Analogica e Sub-Affitto Sala Prove (Sezione 4) ---
+const ANALOG_TAPE_COST: float = 25.0
+const REHEARSAL_SUBLET_DAILY_TIER_2: float = 20.0
+const REHEARSAL_SUBLET_DAILY_TIER_3: float = 50.0
+const REHEARSAL_NEIGHBOR_FINE_TIER_0: float = 150.0
+
+
 

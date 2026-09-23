@@ -220,6 +220,30 @@ func load_game() -> bool:
 	if save_dict.has("charts") and save_dict["charts"] is Dictionary:
 		GameManager.chart_system.from_dict(save_dict["charts"] as Dictionary)
 
+	if not GameManager.concert_system:
+		GameManager.concert_system = ConcertSystem.new(GameManager.player_data, GameManager.calendar_data, GameManager.skill_system)
+	else:
+		GameManager.concert_system.player_data = GameManager.player_data
+		GameManager.concert_system.calendar_data = GameManager.calendar_data
+		GameManager.concert_system.skill_system = GameManager.skill_system
+
+	if not GameManager.career_system:
+		GameManager.career_system = CareerSystem.new(GameManager.player_data)
+	else:
+		GameManager.career_system.player_data = GameManager.player_data
+
+	if not GameManager.economy_system:
+		GameManager.economy_system = EconomySystem.new(GameManager.player_data, GameManager.calendar_data)
+	else:
+		GameManager.economy_system.player_data = GameManager.player_data
+		GameManager.economy_system.calendar_data = GameManager.calendar_data
+
+	if not GameManager.end_day_system:
+		GameManager.end_day_system = EndDaySystem.new(GameManager.player_data, GameManager.calendar_data)
+	else:
+		GameManager.end_day_system.player_data = GameManager.player_data
+		GameManager.end_day_system.calendar_data = GameManager.calendar_data
+
 	GameManager.change_state(Enums.GameState.GAMEPLAY_IDLE)
 	
 	# Allineamento della lingua salvata nella scheda giocatore se presente

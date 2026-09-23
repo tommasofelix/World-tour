@@ -74,14 +74,16 @@ func work_on_lyrics(song: SongData) -> Dictionary:
 	EventBus.song_stage_completed.emit(song.id, song.stage)
 	return {"success": true, "lyrics_skill_used": song.lyrics_skill_used}
 
-## Stadio 4: Registrazione Tracce (Home Studio vs Studio Pro)
-func record_tracks(song: SongData, use_pro_studio: bool = false) -> Dictionary:
+## Stadio 4: Registrazione Tracce (Home Studio vs Studio Pro, Nastro Analogico vs Digitale)
+func record_tracks(song: SongData, use_pro_studio: bool = false, philosophy_override: int = -1) -> Dictionary:
 	if not player_data.consume_energy(25):
 		return {"success": false, "reason": "energy_insufficient"}
 		
 	var hw_tier: int = player_data.studio_hardware_tier if player_data else 0
 	var hw_cap: float = UpgradeData.get_studio_hardware_cap(hw_tier)
 	var hw_bonus: float = UpgradeData.get_studio_hardware_bonus(hw_tier)
+	
+	song.recorded_in_pro_studio = use_pro_studio
 	
 	if use_pro_studio:
 		var studio_cost: float = 50.0
@@ -100,8 +102,32 @@ func record_tracks(song: SongData, use_pro_studio: bool = false) -> Dictionary:
 			AccessibilityManager.announce("Sconto Martedì del 20%% applicato allo Studio Professionale! Spesa: %.2f euro" % studio_cost, true)
 	else:
 		song.studio_bonus = hw_bonus
+		var phil: int = philosophy_override
+		if phil < 0 and player_data:
+			phil = player_data.recording_philosophy
+			
+		if phil == UpgradeData.RecordingPhilosophy.ANALOG_TAPE:
+			var tape_cost: float = Constants.ANALOG_TAPE_COST
+			if player_data and player_data.money >= tape_cost:
+				player_data.modify_money(-tape_cost)
+				EventBus.money_changed.emit(player_data.money, -tape_cost, "analog_tape_cost")
+				if song.genre == Enums.MusicalGenre.ROCK or song.genre == Enums.MusicalGenre.INDIE:
+					song.studio_bonus += 5.0
+				AccessibilityManager.announce("Incisione su Nastro Magnetico completata (+5 qualità calore analogico). Spesa bobine: %.2f €." % tape_cost, true)
+			else:
+				if song.genre == Enums.MusicalGenre.POP or song.genre == Enums.MusicalGenre.ELECTRONIC:
+					song.studio_bonus += 3.0
+				AccessibilityManager.announce("Fondi insufficienti per le bobine di nastro: registrazione effettuata in Digitale HD.", true)
+		else:
+			# Digitale HD
+			if song.genre == Enums.MusicalGenre.POP or song.genre == Enums.MusicalGenre.ELECTRONIC:
+				song.studio_bonus += 3.0
 		
 	player_data.add_stress(8)
+	
+	if player_data:
+		var p_cat: String = player_data.get_primary_category()
+		player_data.apply_instrument_wear(p_cat, 2.0)
 	
 	var base_exec: float = float(skill_system.get_skill_level("instrument")) if skill_system else 10.0
 	if player_data:

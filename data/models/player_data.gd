@@ -91,7 +91,7 @@ var revenue_split_mode: int = Enums.RevenueSplit.EQUAL_SPLIT
 # Lifestyle & Alloggi
 var current_housing_tier: int = Enums.HousingTier.STARTER_BEDROOM
 
-# Skills, Upgrade Hub & Strumentazione (World-tour V5.0 / F9.1)
+# Skills, Upgrade Hub & Strumentazione (World-tour V5.0 / F9.1 & Sezione 4)
 var rehearsal_tier: int = 0
 var studio_hardware_tier: int = 0
 var owned_instruments: Dictionary = {
@@ -101,6 +101,19 @@ var owned_instruments: Dictionary = {
 	"vocals": 0,
 	"keyboards": 0
 }
+var instrument_condition: Dictionary = {
+	"guitar": 100.0,
+	"bass": 100.0,
+	"drums": 100.0,
+	"vocals": 100.0,
+	"keyboards": 100.0
+}
+var has_backup_instrument: bool = false
+var owned_pedals: Array[String] = []
+var active_pedalboard: Array[String] = []
+var current_amp_tier: int = 0
+var rehearsal_sublet_active: bool = false
+var recording_philosophy: int = 0
 
 func get_instrument_tier(category: String) -> int:
 	return int(owned_instruments.get(category, 0))
@@ -108,16 +121,7 @@ func get_instrument_tier(category: String) -> int:
 func set_instrument_tier(category: String, tier: int) -> void:
 	owned_instruments[category] = tier
 
-func get_total_gear_synergy_bonus() -> float:
-	var total: float = 0.0
-	for cat in owned_instruments:
-		var tier: int = int(owned_instruments[cat])
-		var inst: Dictionary = UpgradeData.get_instrument(cat, tier)
-		if not inst.is_empty():
-			total += float(inst.get("band_synergy_bonus", 0.0))
-	return total
-
-func get_primary_instrument_bonus() -> Dictionary:
+func get_primary_category() -> String:
 	var cat: String = "guitar"
 	var p_lower: String = primary_instrument.to_lower()
 	if p_lower.contains("bass"):
@@ -128,7 +132,61 @@ func get_primary_instrument_bonus() -> Dictionary:
 		cat = "vocals"
 	elif p_lower.contains("key") or p_lower.contains("tast") or p_lower.contains("piano"):
 		cat = "keyboards"
-	
+	return cat
+
+func get_instrument_condition(category: String) -> float:
+	return clampf(float(instrument_condition.get(category, 100.0)), 0.0, 100.0)
+
+func apply_instrument_wear(category: String, amount: float) -> void:
+	var cur: float = get_instrument_condition(category)
+	instrument_condition[category] = clampf(cur - amount, 0.0, 100.0)
+
+func repair_instrument(category: String, full_service: bool = false) -> Dictionary:
+	var cost: float = Constants.COST_LUTHIER_FULL if full_service else Constants.COST_LUTHIER_BASIC
+	if money < cost:
+		return {"success": false, "reason": "money_insufficient", "cost": cost}
+	modify_money(-cost)
+	EventBus.money_changed.emit(money, -cost, "luthier_repair")
+	instrument_condition[category] = 100.0
+	return {"success": true, "cost": cost, "full_service": full_service}
+
+func equip_pedal(pedal_id: String) -> bool:
+	if not owned_pedals.has(pedal_id):
+		return false
+	if active_pedalboard.has(pedal_id):
+		return true
+	if active_pedalboard.size() >= 3:
+		return false
+	active_pedalboard.append(pedal_id)
+	return true
+
+func unequip_pedal(pedal_id: String) -> void:
+	active_pedalboard.erase(pedal_id)
+
+func get_sound_shaping_genre_bonus(target_genre: int) -> float:
+	return UpgradeData.calculate_sound_shaping_bonus(active_pedalboard, current_amp_tier, target_genre)
+
+func equip_band_member(member_id: String, tier: int) -> bool:
+	for m in band_members:
+		if m.id == member_id:
+			m.equip_gear(tier)
+			return true
+	return false
+
+func get_total_gear_synergy_bonus() -> float:
+	var total: float = 0.0
+	for cat in owned_instruments:
+		var tier: int = int(owned_instruments[cat])
+		var inst: Dictionary = UpgradeData.get_instrument(cat, tier)
+		if not inst.is_empty():
+			total += float(inst.get("band_synergy_bonus", 0.0))
+	for m in band_members:
+		if m and m.is_active and m.equipped_gear_tier > 0:
+			total += float(m.equipped_gear_tier) * 2.0
+	return total
+
+func get_primary_instrument_bonus() -> Dictionary:
+	var cat: String = get_primary_category()
 	var tier: int = get_instrument_tier(cat)
 	return UpgradeData.get_instrument(cat, tier)
 
@@ -482,6 +540,13 @@ func to_dict() -> Dictionary:
 		"rehearsal_tier": rehearsal_tier,
 		"studio_hardware_tier": studio_hardware_tier,
 		"owned_instruments": owned_instruments.duplicate(true),
+		"instrument_condition": instrument_condition.duplicate(true),
+		"has_backup_instrument": has_backup_instrument,
+		"owned_pedals": owned_pedals.duplicate(),
+		"active_pedalboard": active_pedalboard.duplicate(),
+		"current_amp_tier": current_amp_tier,
+		"rehearsal_sublet_active": rehearsal_sublet_active,
+		"recording_philosophy": recording_philosophy,
 		"band_members": serialized_members,
 		"albums": serialized_albums,
 		"active_contract": active_contract.to_dict() if active_contract else {},
@@ -536,6 +601,21 @@ func from_dict(dict: Dictionary) -> void:
 	if dict.has("owned_instruments") and dict["owned_instruments"] is Dictionary:
 		for k in dict["owned_instruments"]:
 			owned_instruments[str(k)] = int(dict["owned_instruments"][k])
+	if dict.has("instrument_condition") and dict["instrument_condition"] is Dictionary:
+		for k in dict["instrument_condition"]:
+			instrument_condition[str(k)] = float(dict["instrument_condition"][k])
+	has_backup_instrument = bool(dict.get("has_backup_instrument", has_backup_instrument))
+	if dict.has("owned_pedals") and dict["owned_pedals"] is Array:
+		owned_pedals.clear()
+		for p in dict["owned_pedals"]:
+			owned_pedals.append(str(p))
+	if dict.has("active_pedalboard") and dict["active_pedalboard"] is Array:
+		active_pedalboard.clear()
+		for p in dict["active_pedalboard"]:
+			active_pedalboard.append(str(p))
+	current_amp_tier = int(dict.get("current_amp_tier", current_amp_tier))
+	rehearsal_sublet_active = bool(dict.get("rehearsal_sublet_active", rehearsal_sublet_active))
+	recording_philosophy = int(dict.get("recording_philosophy", recording_philosophy))
 	
 	band_members.clear()
 	if dict.has("band_members") and dict["band_members"] is Array:

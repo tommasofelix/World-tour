@@ -61,9 +61,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		
 	var key_event: InputEventKey = event as InputEventKey
 	
-	# Non intercettare se un LineEdit ha il focus attivo
+	# Non intercettare se un LineEdit ha il focus attivo o se siamo nei menu/modali
 	var focused_node: Control = get_viewport().gui_get_focus_owner()
 	if focused_node is LineEdit or focused_node is TextEdit:
+		return
+	if GameManager and GameManager.current_state != Enums.GameState.GAMEPLAY_IDLE and GameManager.current_state != Enums.GameState.GAMEPLAY_BUSY:
 		return
 		
 	match key_event.keycode:
