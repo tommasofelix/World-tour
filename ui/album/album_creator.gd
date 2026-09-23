@@ -110,7 +110,7 @@ func _update_tracks_list() -> void:
 		chk.text = "%d. '%s' [%s] — Qualità: %.1f | Tratto: %s" % [
 			i + 1, song.title, song.get_genre_name(), song.quality_score, song.get_trait_name()
 		]
-		var acc_name := "Brano %d: %s. Qualità %.1f su 100." % [i + 1, song.title, song.quality_score]
+		var acc_name := "Brano %d: %s. Qualità %.1f su 100. Tratto: %s." % [i + 1, song.title, song.quality_score, song.get_trait_name()]
 		var acc_desc := "Barra spaziatrice per includere o escludere questo brano dall'album."
 		AccessibilityManager.hook_control_accessibility(chk, acc_name, acc_desc)
 		

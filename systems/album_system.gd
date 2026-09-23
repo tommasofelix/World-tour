@@ -136,9 +136,27 @@ func calculate_album_metrics(
 	var lead_bonus: float = 0.0
 	if lead_song:
 		lead_bonus = (lead_song.quality_score / 100.0) * 8.0
+		if lead_song.special_trait == Enums.SongTrait.GENERATIONAL_ANTHEM:
+			lead_bonus += 2.0
+		elif lead_song.special_trait == Enums.SongTrait.EARWORM:
+			lead_bonus += 1.5
 	else:
 		lead_bonus = 2.0 # Default minimo se nessuna traccia speciale indicata
 		
+	# Bonus Tratti Speciali delle Tracce
+	var traits_bonus: float = 0.0
+	for s_id in song_ids:
+		for s in player_data.songs:
+			if s.id == s_id:
+				if s.special_trait == Enums.SongTrait.AUDIOPHILE_GEM:
+					traits_bonus += 1.0
+				elif s.special_trait == Enums.SongTrait.EPIC_RIFF:
+					traits_bonus += 0.8
+				elif s.special_trait == Enums.SongTrait.TEARJERKER_BALLAD:
+					traits_bonus += 0.8
+				break
+	traits_bonus = minf(traits_bonus, 5.0)
+
 	# Bonus Concept e Artwork
 	var concept_bonus: float = 3.0
 	match concept:
@@ -170,7 +188,7 @@ func calculate_album_metrics(
 		band_bonus = (avg_chem / 100.0) * 8.0
 		
 	var overall_quality: float = clampf(
-		avg_quality + lead_bonus + concept_bonus + artwork_bonus + band_bonus,
+		avg_quality + lead_bonus + concept_bonus + artwork_bonus + band_bonus + traits_bonus,
 		Constants.SONG_MIN_QUALITY,
 		Constants.SONG_MAX_QUALITY
 	)

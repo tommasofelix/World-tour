@@ -5,6 +5,8 @@ extends RefCounted
 ## Classe Pura di Calcolo Matematico e Algoritmi di Gioco per World-tour
 ## Tutte le funzioni sono statiche, deterministiche e prive di side-effect.
 
+const LyricThemeData = preload("res://data/models/lyric_theme_data.gd")
+
 # --- 1. Progressione ed Esperienza (XP) ---
 
 ## Calcola l'esperienza totale necessaria per salire dal livello attuale al livello successivo
@@ -45,8 +47,12 @@ static func calculate_training_xp(base_xp: float, duration_seconds: float, daily
 
 # --- 2. Qualità dei Brani Musicali ---
 
+## Calcola il bonus/malus di sinergia artistica tra tema lirico e genere musicale
+static func calculate_theme_genre_affinity(theme: String, genre: int) -> float:
+	return LyricThemeData.get_affinity_for_genre(theme, genre)
+
 ## Calcola il punteggio di qualità finale di un brano musicale [1.0, 100.0]
-static func calculate_song_quality(comp_skill: float, lyric_skill: float, exec_skill: float, prod_skill: float, studio_bonus: float, morale: float, rng_roll: float = 0.0) -> float:
+static func calculate_song_quality(comp_skill: float, lyric_skill: float, exec_skill: float, prod_skill: float, studio_bonus: float, morale: float, rng_roll: float = 0.0, theme_affinity: float = 0.0) -> float:
 	var c_skill: float = clampf(comp_skill, 1.0, 100.0)
 	var l_skill: float = clampf(lyric_skill, 1.0, 100.0)
 	var e_skill: float = clampf(exec_skill, 1.0, 100.0)
@@ -62,7 +68,7 @@ static func calculate_song_quality(comp_skill: float, lyric_skill: float, exec_s
 	
 	var morale_modifier: float = 0.85 + (0.30 * (safe_morale / 100.0))
 	var bounded_rng: float = clampf(rng_roll, -Constants.SONG_RANDOM_VARIATION_RANGE, Constants.SONG_RANDOM_VARIATION_RANGE)
-	var final_quality: float = (skill_base * morale_modifier) + bounded_rng
+	var final_quality: float = (skill_base * morale_modifier) + bounded_rng + theme_affinity
 	
 	return clampf(final_quality, Constants.SONG_MIN_QUALITY, Constants.SONG_MAX_QUALITY)
 

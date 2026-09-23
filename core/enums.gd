@@ -68,12 +68,15 @@ enum SongStage {
 }
 
 enum SongTrait {
-	NONE,           # Nessun tratto speciale
-	EARWORM,        # Tormentone (+25% ascolti nei primi 30gg)
-	CULT_CLASSIC,   # Pezzo Cult (converte x2 fan ai live)
-	STAGE_BEAST,    # Bomba dal Vivo (+15% Concert Score se in chiusura)
-	AUDIOPHILE_GEM, # Gemma per Audiofili (recensioni eccellenti, req. Prod >= 70)
-	ROUGH_DIAMOND   # Diamante Grezzo (buona composizione ma registrata low-fi)
+	NONE,                # Nessun tratto speciale
+	EARWORM,             # Tormentone (+25% ascolti nei primi 30gg)
+	CULT_CLASSIC,        # Pezzo Cult (converte x2 fan ai live)
+	STAGE_BEAST,         # Bomba dal Vivo (+15% Concert Score se in chiusura)
+	AUDIOPHILE_GEM,      # Gemma per Audiofili (recensioni eccellenti, req. Prod >= 70)
+	ROUGH_DIAMOND,       # Diamante Grezzo (buona composizione ma registrata low-fi)
+	GENERATIONAL_ANTHEM, # Inno Generazionale (+30% engagement nei live, boost reputazione)
+	TEARJERKER_BALLAD,   # Ballata Strappalacrime (+20% morale del pubblico nei live)
+	EPIC_RIFF            # Riff Epico (+20% memorabilità live per generi rock/metal)
 }
 
 enum StageEventType {

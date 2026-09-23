@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dmadv_craft_01"]
+
+[ext_resource type="Script" path="res://tests/test_advanced_crafting_system.gd" id="1_testcraft"]
+
+[node name="TestAdvancedCraftingSystem" type="Node"]
+script = ExtResource("1_testcraft")

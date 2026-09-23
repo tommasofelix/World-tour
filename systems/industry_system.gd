@@ -250,7 +250,7 @@ func sign_contract(contract_id: String) -> Dictionary:
 	if GameManager and GameManager.schedule_system:
 		var deadline_days: int = 56 if found_contract.contract_type == Enums.ContractType.MAJOR_LABEL else 84
 		GameManager.schedule_system.schedule_album_deadline(
-			"Album Contratto #%d" % (found_contract.albums_delivered + 1),
+			"Album Contratto #%d" % (found_contract.delivered_albums + 1),
 			deadline_days,
 			found_contract.label_name
 		)

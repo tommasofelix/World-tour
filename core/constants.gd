@@ -93,6 +93,14 @@ const SONG_SKILL_WEIGHT_EXECUTION: float = 0.25
 const SONG_SKILL_WEIGHT_PRODUCTION: float = 0.20
 const SONG_RANDOM_VARIATION_RANGE: float = 4.0
 
+# Sinergia Tematica e Nuovi Tratti Canzone (Sezione 2)
+const SONG_THEME_SYNERGY_HIGH: float = 3.5
+const SONG_THEME_SYNERGY_NEUTRAL: float = 0.0
+const SONG_THEME_SYNERGY_LOW: float = -1.5
+const TRAIT_ANTHEM_REP_BOOST: float = 2.0
+const TRAIT_BALLAD_MORALE_BOOST: float = 15.0
+const TRAIT_RIFF_LIVE_BONUS: float = 12.0
+
 # --- Concerti, Pubblico e Fanbase ---
 const MIN_AUDIENCE_DEFAULT: int = 3
 const FAIR_TICKET_PRICE_DEFAULT: float = 10.0

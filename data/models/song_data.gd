@@ -5,6 +5,8 @@ extends RefCounted
 ## Modello Dati del Brano Musicale per World-tour
 ## Rappresenta una canzone attraverso le 5 fasi di lavorazione, il rilascio e la permanenza in catalogo.
 
+const LyricThemeData = preload("res://data/models/lyric_theme_data.gd")
+
 var id: String = ""
 var title: String = "Untitled Track"
 var genre: int = Enums.MusicalGenre.ROCK
@@ -152,8 +154,18 @@ func get_trait_name() -> String:
 			return tr("TRAIT_AUDIOPHILE_GEM")
 		Enums.SongTrait.ROUGH_DIAMOND:
 			return tr("TRAIT_ROUGH_DIAMOND")
+		Enums.SongTrait.GENERATIONAL_ANTHEM:
+			return tr("TRAIT_GENERATIONAL_ANTHEM")
+		Enums.SongTrait.TEARJERKER_BALLAD:
+			return tr("TRAIT_TEARJERKER_BALLAD")
+		Enums.SongTrait.EPIC_RIFF:
+			return tr("TRAIT_EPIC_RIFF")
 		_:
 			return tr("TRAIT_NONE")
+
+func get_theme_name() -> String:
+	var theme_obj := LyricThemeData.get_theme_by_id(theme)
+	return theme_obj.get_localized_name()
 
 func get_stage_name() -> String:
 	match stage:

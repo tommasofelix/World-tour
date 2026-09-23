@@ -8,6 +8,8 @@ extends Control
 signal creation_finished(song: SongData)
 signal creation_canceled()
 
+const LyricThemeData = preload("res://data/models/lyric_theme_data.gd")
+
 @onready var label_title: Label = $PanelMain/VBox/Header/LabelTitle
 @onready var label_step_title: Label = $PanelMain/VBox/Header/LabelStepTitle
 @onready var label_step_info: Label = $PanelMain/VBox/Header/LabelStepInfo
@@ -49,6 +51,9 @@ func _ready() -> void:
 	btn_release_now.pressed.connect(_on_btn_release_now_pressed)
 	btn_done.pressed.connect(_on_btn_done_pressed)
 	
+	opt_genre.item_selected.connect(_on_genre_or_theme_changed)
+	opt_theme.item_selected.connect(_on_genre_or_theme_changed)
+	
 	EventBus.language_changed.connect(_on_language_changed)
 	
 	start_new_song()
@@ -63,37 +68,57 @@ func _setup_options() -> void:
 	opt_genre.add_item(tr("GENRE_ELECTRONIC"), Enums.MusicalGenre.ELECTRONIC)
 	opt_genre.add_item(tr("GENRE_INDIE"), Enums.MusicalGenre.INDIE)
 	
-	# Temi lirici
+	# Temi lirici da LyricThemeData (10 temi)
 	opt_theme.clear()
-	opt_theme.add_item(tr("THEME_LOVE"), 0)
-	opt_theme.set_item_metadata(0, "love")
-	opt_theme.add_item(tr("THEME_REBELLION"), 1)
-	opt_theme.set_item_metadata(1, "rebellion")
-	opt_theme.add_item(tr("THEME_MELANCHOLY"), 2)
-	opt_theme.set_item_metadata(2, "melancholy")
-	opt_theme.add_item(tr("THEME_SUCCESS"), 3)
-	opt_theme.set_item_metadata(3, "success")
-	opt_theme.add_item(tr("THEME_NIGHT"), 4)
-	opt_theme.set_item_metadata(4, "night")
+	var all_themes: Array = LyricThemeData.get_all_themes()
+	for i in range(all_themes.size()):
+		var t = all_themes[i]
+		opt_theme.add_item(t.get_localized_name(), i)
+		opt_theme.set_item_metadata(i, t.id)
 	
-	# Scelta dello Studio
+	# Scelta dello Studio con rilevamento dinamico dello sconto del Martedì
 	opt_studio.clear()
 	opt_studio.add_item(tr("CREATOR_STUDIO_HOME"), 0)
 	opt_studio.set_item_metadata(0, false)
-	opt_studio.add_item(tr("CREATOR_STUDIO_PRO"), 1)
+	
+	var is_tuesday: bool = false
+	if GameManager and GameManager.calendar_data:
+		is_tuesday = (GameManager.calendar_data.get_weekday() == Enums.Weekday.TUESDAY)
+	var studio_pro_text: String = "Studio Professionale (40 € - Sconto Martedì 20% applicato)" if is_tuesday else "Studio Professionale (50 €)"
+	opt_studio.add_item(studio_pro_text, 1)
 	opt_studio.set_item_metadata(1, true)
 	
 	# Hook semantici per l'accessibilità da tastiera e NVDA
 	AccessibilityManager.hook_control_accessibility(edit_title, "Titolo Brano", "Inserisci il titolo della canzone da creare.")
 	AccessibilityManager.hook_control_accessibility(opt_genre, "Genere Musicale", "Seleziona il genere musicale tra Rock, Pop, Metal, HipHop, Elettronica, Indie.")
-	AccessibilityManager.hook_control_accessibility(opt_theme, "Tema Lirico", "Seleziona il tema ispiratore per il testo.")
-	AccessibilityManager.hook_control_accessibility(opt_studio, "Studio di Registrazione", "Scegli tra Home Studio gratuito o Studio Professionale a 50 euro.")
+	AccessibilityManager.hook_control_accessibility(opt_theme, "Tema Lirico", "Seleziona il tema ispiratore per il testo. Verrà vocalizzata l'affinità con il genere.")
+	var acc_studio_desc: String = "Studio Professionale a 40 euro con sconto martedì 20%" if is_tuesday else "Scegli tra Home Studio gratuito o Studio Professionale a 50 euro."
+	AccessibilityManager.hook_control_accessibility(opt_studio, "Studio di Registrazione", acc_studio_desc)
 	AccessibilityManager.hook_control_accessibility(chk_burst, "Ispirazione Improvvisa", "Spunta per tentare un guizzo creativo con bonus qualità.")
 	AccessibilityManager.hook_control_accessibility(btn_produce_all, "Produci Brano Completo", "Registra e finalizza l'intero brano in un'unica sessione se hai energia e fondi sufficienti.")
 	AccessibilityManager.hook_control_accessibility(btn_action, "Avanza Prossima Fase", "Avanza di un singolo stadio nella produzione del brano.")
 	AccessibilityManager.hook_control_accessibility(btn_save_draft, "Salva Bozza", "Salva lo stato corrente della bozza e ritorna al catalogo.")
 	AccessibilityManager.hook_control_accessibility(btn_edit_info, "Modifica Titolo", "Sposta il focus sul campo titolo per modificarlo velocemente.")
 	AccessibilityManager.hook_control_accessibility(btn_cancel, "Annulla", "Chiude lo studio musicale senza salvare ulteriori modifiche.")
+	
+	_on_genre_or_theme_changed(0)
+
+func _on_genre_or_theme_changed(_index: int = 0) -> void:
+	if not opt_genre or not opt_theme or opt_genre.selected < 0 or opt_theme.selected < 0:
+		return
+	var s_genre: int = opt_genre.get_selected_id()
+	var s_theme: String = str(opt_theme.get_item_metadata(opt_theme.selected))
+	var affinity := LyricThemeData.get_affinity_for_genre(s_theme, s_genre)
+	var theme_obj := LyricThemeData.get_theme_by_id(s_theme)
+	var aff_desc := ""
+	if affinity > 0:
+		aff_desc = "Alta sinergia artistica (+%.1f qualità)." % affinity
+	elif affinity < 0:
+		aff_desc = "Sinergia contrastante (%.1f qualità)." % affinity
+	else:
+		aff_desc = "Sinergia neutra."
+	var acc_theme_desc := "%s. %s %s" % [theme_obj.get_localized_name(), theme_obj.get_localized_description(), aff_desc]
+	AccessibilityManager.hook_control_accessibility(opt_theme, "Tema Lirico", acc_theme_desc)
 
 func start_new_song() -> void:
 	current_song = null
