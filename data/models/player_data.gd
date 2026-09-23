@@ -190,7 +190,7 @@ func get_primary_instrument_bonus() -> Dictionary:
 	var tier: int = get_instrument_tier(cat)
 	return UpgradeData.get_instrument(cat, tier)
 
-# Mappa Geografica & Fanbase Territoriale (World-tour V4.0 / F8.1)
+# Mappa Geografica & Fanbase Territoriale (World-tour V4.0 / F8.1 & F8.2 / Sezione 6)
 var current_city_id: int = Enums.CityId.MILANO
 var city_fans: Dictionary = {
 	Enums.CityId.MILANO: 0,
@@ -198,7 +198,13 @@ var city_fans: Dictionary = {
 	Enums.CityId.ROMA: 0,
 	Enums.CityId.NAPOLI: 0,
 	Enums.CityId.LONDRA: 0,
-	Enums.CityId.BERLINO: 0
+	Enums.CityId.BERLINO: 0,
+	Enums.CityId.DUBLINO: 0,
+	Enums.CityId.PARIGI: 0,
+	Enums.CityId.MADRID: 0,
+	Enums.CityId.NEW_YORK: 0,
+	Enums.CityId.LOS_ANGELES: 0,
+	Enums.CityId.TOKYO: 0
 }
 var city_popularity: Dictionary = {
 	Enums.CityId.MILANO: 1.0,
@@ -206,25 +212,28 @@ var city_popularity: Dictionary = {
 	Enums.CityId.ROMA: 0.0,
 	Enums.CityId.NAPOLI: 0.0,
 	Enums.CityId.LONDRA: 0.0,
-	Enums.CityId.BERLINO: 0.0
+	Enums.CityId.BERLINO: 0.0,
+	Enums.CityId.DUBLINO: 0.0,
+	Enums.CityId.PARIGI: 0.0,
+	Enums.CityId.MADRID: 0.0,
+	Enums.CityId.NEW_YORK: 0.0,
+	Enums.CityId.LOS_ANGELES: 0.0,
+	Enums.CityId.TOKYO: 0.0
 }
 
+# Logistica di Viaggio, Jet Lag & Diario Adesivi Mezzo (Sezione 6)
+var jet_lag_days: int = 0
+var visited_city_stickers: Array[int] = []
+var vehicle_custom_name: String = ""
+
 func get_current_city_name() -> String:
-	match current_city_id:
-		Enums.CityId.MILANO:
-			return "Milano"
-		Enums.CityId.BOLOGNA:
-			return "Bologna"
-		Enums.CityId.ROMA:
-			return "Roma"
-		Enums.CityId.NAPOLI:
-			return "Napoli"
-		Enums.CityId.LONDRA:
-			return "Londra"
-		Enums.CityId.BERLINO:
-			return "Berlino"
-		_:
-			return "Milano"
+	return Enums.get_city_name(current_city_id)
+
+func get_city_fans(city_id: int) -> int:
+	return int(city_fans.get(city_id, 0))
+
+func get_city_popularity(city_id: int) -> float:
+	return float(city_popularity.get(city_id, 0.0))
 
 # Raccolte Discografiche (EP / Album)
 var albums: Array[AlbumData] = []
@@ -554,7 +563,10 @@ func to_dict() -> Dictionary:
 		"resolved_dilemmas": resolved_dilemmas.duplicate(),
 		"current_city_id": current_city_id,
 		"city_fans": city_fans.duplicate(true),
-		"city_popularity": city_popularity.duplicate(true)
+		"city_popularity": city_popularity.duplicate(true),
+		"jet_lag_days": jet_lag_days,
+		"visited_city_stickers": visited_city_stickers.duplicate(),
+		"vehicle_custom_name": vehicle_custom_name
 	}
 
 func from_dict(dict: Dictionary) -> void:
@@ -574,6 +586,12 @@ func from_dict(dict: Dictionary) -> void:
 	reputation = float(dict.get("reputation", reputation))
 	popularity = float(dict.get("popularity", popularity))
 	current_city_id = int(dict.get("current_city_id", current_city_id))
+	jet_lag_days = int(dict.get("jet_lag_days", jet_lag_days))
+	vehicle_custom_name = str(dict.get("vehicle_custom_name", vehicle_custom_name))
+	visited_city_stickers.clear()
+	if dict.has("visited_city_stickers") and dict["visited_city_stickers"] is Array:
+		for st_id in dict["visited_city_stickers"]:
+			visited_city_stickers.append(int(st_id))
 	if dict.has("city_fans") and dict["city_fans"] is Dictionary:
 		city_fans.clear()
 		for k in dict["city_fans"]:

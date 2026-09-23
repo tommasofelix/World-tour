@@ -621,7 +621,11 @@ creando uno dei principali sistemi di progressione della carriera avanzata.
 
 -----------------------------------------------------------------------------------------------------------------------------
 
-
+## Stato di Implementazione & Convalida (V4.6.0)
+- **Stato**: [x] [COMPLETATO E CONVALIDATO AL 100%]
+- **Piano di Riferimento**: [`docs/piani/completati/PIANO_SEZIONE_6_GEOGRAFIA_METROPOLI_E_TOURNEE.md`](../piani/completati/PIANO_SEZIONE_6_GEOGRAFIA_METROPOLI_E_TOURNEE.md)
+- **Suite di Test Headless**: 23/23 suite a 0 errori (`test_tour_system.gd` con 98 test, `test_travel_system.gd` con 64 test).
+- **Data Convalida & Release AVF**: 2026-09-24 — Versione AVF `V4.6.0`.
 ### 6.4 Gestione della Stanchezza On the Road & Imprevisti di Viaggio
 - **Dettagli Tecnici & Meccaniche Già Implementate**:
   - Calcolo della fatica cumulativa della band lungo le tappe consecutive.

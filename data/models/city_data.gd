@@ -14,6 +14,7 @@ var country: String = "Italia"
 var description: String = ""
 var genre_affinities: Dictionary = {}
 var is_international: bool = false
+var is_transoceanic: bool = false
 var min_reputation_req: float = 0.0
 var venues: Array[VenueData] = []
 
@@ -25,7 +26,8 @@ func _init(
 	p_affinities: Dictionary = {},
 	p_intl: bool = false,
 	p_min_rep: float = 0.0,
-	p_venues: Array[VenueData] = []
+	p_venues: Array[VenueData] = [],
+	p_transoceanic: bool = false
 ) -> void:
 	id = p_id
 	name = p_name
@@ -35,6 +37,7 @@ func _init(
 	is_international = p_intl
 	min_reputation_req = p_min_rep
 	venues = p_venues.duplicate()
+	is_transoceanic = p_transoceanic
 
 ## Restituisce il moltiplicatore di affinità per un determinato genere musicale (default: 1.0)
 func get_affinity_for_genre(genre: int) -> float:
@@ -42,14 +45,18 @@ func get_affinity_for_genre(genre: int) -> float:
 
 ## Restituisce una descrizione lineare per lo screen reader NVDA
 func get_summary_speech() -> String:
-	var intl_tag: String = " (Città Internazionale)" if is_international else ""
+	var intl_tag: String = ""
+	if is_transoceanic:
+		intl_tag = " (Oltreoceano Intercontinentale)"
+	elif is_international:
+		intl_tag = " (Città Internazionale)"
 	var aff_descriptions: Array[String] = []
 	for g in genre_affinities:
 		var mult: float = float(genre_affinities[g])
 		var bonus_pct: int = int(round((mult - 1.0) * 100.0))
 		aff_descriptions.append("%s (+%d%%)" % [Enums.get_genre_name(int(g)), bonus_pct])
 	var aff_str: String = ", ".join(aff_descriptions) if not aff_descriptions.is_empty() else "Neutro per tutti i generi"
-	
+
 	return "%s, %s%s. %s. Generi favoriti: %s. Locali disponibili: %d." % [
 		name,
 		country,
@@ -63,7 +70,7 @@ func to_dict() -> Dictionary:
 	var venues_arr: Array = []
 	for v in venues:
 		venues_arr.append(v.to_dict())
-		
+
 	return {
 		"id": id,
 		"name": name,
@@ -71,6 +78,7 @@ func to_dict() -> Dictionary:
 		"description": description,
 		"genre_affinities": genre_affinities.duplicate(true),
 		"is_international": is_international,
+		"is_transoceanic": is_transoceanic,
 		"min_reputation_req": min_reputation_req,
 		"venues": venues_arr
 	}
@@ -83,8 +91,9 @@ func from_dict(dict: Dictionary) -> void:
 	if dict.has("genre_affinities") and dict["genre_affinities"] is Dictionary:
 		genre_affinities = dict["genre_affinities"].duplicate(true)
 	is_international = bool(dict.get("is_international", is_international))
+	is_transoceanic = bool(dict.get("is_transoceanic", is_transoceanic))
 	min_reputation_req = float(dict.get("min_reputation_req", min_reputation_req))
-	
+
 	venues.clear()
 	if dict.has("venues") and dict["venues"] is Array:
 		for v_dict in dict["venues"]:
@@ -103,7 +112,7 @@ static func get_city(city_id: int) -> CityData:
 ## Catalogo predefinito di tutte le 6 città di World-tour
 static func get_all_cities() -> Array[CityData]:
 	var list: Array[CityData] = []
-	
+
 	# 1. MILANO (Italia) - Pop, Rock, Elettronica
 	var milano_venues: Array[VenueData] = [
 		VenueDataScript.new("milano_garage", "Garage San Siro", 15, 0.0, 0.0, 0.0, 0.0, "La classica sala prove milanese.", "Grezzo"),
@@ -121,7 +130,7 @@ static func get_all_cities() -> Array[CityData]:
 		0.0,
 		milano_venues
 	))
-	
+
 	# 2. BOLOGNA (Italia) - Punk, Indie Rock
 	var bologna_venues: Array[VenueData] = [
 		VenueDataScript.new("bologna_cellar", "Cantina del Pratello", 25, 10.0, 0.0, 5.0, 2.0, "Seminterrato caldo nel cuore di Bologna.", "Grezzo"),
@@ -138,7 +147,7 @@ static func get_all_cities() -> Array[CityData]:
 		0.0,
 		bologna_venues
 	))
-	
+
 	# 3. ROMA (Italia) - Cantautorato, Rock, Pop
 	var roma_venues: Array[VenueData] = [
 		VenueDataScript.new("roma_pub", "Trastevere Blues Bar", 50, 45.0, 5.0, 12.0, 6.0, "Locale intimo nei vicoli romani.", "Rumoroso"),
@@ -155,7 +164,7 @@ static func get_all_cities() -> Array[CityData]:
 		0.0,
 		roma_venues
 	))
-	
+
 	# 4. NAPOLI (Italia) - Rap, Rock, World
 	var napoli_venues: Array[VenueData] = [
 		VenueDataScript.new("napoli_bar", "Spaccanapoli Live Bar", 40, 30.0, 5.0, 10.0, 5.0, "Atmosfera verace e calorosa.", "Rumoroso"),
@@ -172,7 +181,7 @@ static func get_all_cities() -> Array[CityData]:
 		0.0,
 		napoli_venues
 	))
-	
+
 	# 5. LONDRA (Regno Unito) - Rock, Indie, Brit-pop (Internazionale)
 	var londra_venues: Array[VenueData] = [
 		VenueDataScript.new("london_pub", "Camden Black Heart", 70, 90.0, 15.0, 25.0, 10.0, "Pub intriso di storia rock a Camden.", "Rumoroso"),
@@ -189,7 +198,7 @@ static func get_all_cities() -> Array[CityData]:
 		30.0, # Reputazione minima richiesta
 		londra_venues
 	))
-	
+
 	# 6. BERLINO (Germania) - Elettronica, Industrial, Metal (Internazionale)
 	var berlino_venues: Array[VenueData] = [
 		VenueDataScript.new("berlin_basement", "Kreuzberg Keller", 60, 70.0, 15.0, 20.0, 8.0, "Cantina alternativa nel quartiere più artistico.", "Underground"),
@@ -206,5 +215,113 @@ static func get_all_cities() -> Array[CityData]:
 		30.0, # Reputazione minima richiesta
 		berlino_venues
 	))
-	
+
+	# 7. DUBLINO (Irlanda) - Rock, Indie, Pop (Internazionale Europea)
+	var dublino_venues: Array[VenueData] = [
+		VenueDataScript.new("dublin_pub", "The Temple Bar Pub", 50, 50.0, 10.0, 20.0, 8.0, "Pub storico nel quartiere artistico di Temple Bar.", "Rumoroso"),
+		VenueDataScript.new("dublin_whelans", "Whelan's Live Stage", 220, 320.0, 25.0, 50.0, 15.0, "Leggendario club per rock e cantautorato celtico.", "Underground"),
+		VenueDataScript.new("dublin_olympia", "Olympia Theatre Dublin", 600, 1100.0, 50.0, 80.0, 28.0, "Teatro storico vittoriano per concerti memorabili.", "Prestigioso")
+	]
+	list.append(CityData.new(
+		Enums.CityId.DUBLINO,
+		"Dublino",
+		"Irlanda",
+		"Culla del rock celtico, del folk e della passione musicale autentica.",
+		{ Enums.MusicalGenre.ROCK: 1.30, Enums.MusicalGenre.INDIE: 1.25, Enums.MusicalGenre.POP: 1.15 },
+		true,
+		25.0,
+		dublino_venues,
+		false
+	))
+
+	# 8. PARIGI (Francia) - Elettronica, Pop, Indie (Internazionale Europea)
+	var parigi_venues: Array[VenueData] = [
+		VenueDataScript.new("paris_caveau", "Caveau de la Huchette", 60, 80.0, 15.0, 30.0, 10.0, "Cantina sotterranea nel Quartiere Latino.", "Underground"),
+		VenueDataScript.new("paris_cigale", "La Cigale Rock Hall", 300, 500.0, 35.0, 60.0, 18.0, "Locale storico ai piedi di Montmartre.", "Underground"),
+		VenueDataScript.new("paris_olympia", "L'Olympia Paris", 750, 1400.0, 55.0, 88.0, 32.0, "Tempio sacro della musica europea e mondiale.", "Prestigioso")
+	]
+	list.append(CityData.new(
+		Enums.CityId.PARIGI,
+		"Parigi",
+		"Francia",
+		"Capitale dell'eleganza pop, della chanson e del French Touch elettronico.",
+		{ Enums.MusicalGenre.ELECTRONIC: 1.30, Enums.MusicalGenre.POP: 1.25, Enums.MusicalGenre.INDIE: 1.20 },
+		true,
+		35.0,
+		parigi_venues,
+		false
+	))
+
+	# 9. MADRID (Spagna) - Pop, Rock, Hip Hop (Internazionale Europea)
+	var madrid_venues: Array[VenueData] = [
+		VenueDataScript.new("madrid_malasana", "Malasaña Rock Bar", 55, 60.0, 10.0, 25.0, 8.0, "Bar underground nel cuore della movida madrilena.", "Rumoroso"),
+		VenueDataScript.new("madrid_sol", "Sala El Sol", 240, 360.0, 30.0, 55.0, 16.0, "Iconico club protagonista della scena rock spagnola.", "Underground"),
+		VenueDataScript.new("madrid_riviera", "La Riviera Concerts", 700, 1250.0, 50.0, 82.0, 28.0, "Grande sala da concerto sulle rive del Manzanares.", "Prestigioso")
+	]
+	list.append(CityData.new(
+		Enums.CityId.MADRID,
+		"Madrid",
+		"Spagna",
+		"Energia iberica travolgente, movida notturna, rock e ritmi latini urbani.",
+		{ Enums.MusicalGenre.POP: 1.25, Enums.MusicalGenre.ROCK: 1.25, Enums.MusicalGenre.HIPHOP: 1.20 },
+		true,
+		30.0,
+		madrid_venues,
+		false
+	))
+
+	# 10. NEW YORK (Stati Uniti) - Hip Hop, Rock, Pop (Oltreoceano Intercontinentale)
+	var new_york_venues: Array[VenueData] = [
+		VenueDataScript.new("ny_cbg", "CBGB Reborn Basement", 80, 150.0, 25.0, 50.0, 15.0, "Seminterrato leggendario culla del punk newyorkese.", "Grezzo"),
+		VenueDataScript.new("ny_bowery", "Bowery Ballroom", 350, 750.0, 45.0, 75.0, 25.0, "Sala d'autore con acustica perfetta nel Lower East Side.", "Underground"),
+		VenueDataScript.new("ny_madison", "Madison Music Arena", 1200, 2800.0, 75.0, 95.0, 45.0, "L'arena per eccellenza dove si consacrano le leggende.", "Prestigioso")
+	]
+	list.append(CityData.new(
+		Enums.CityId.NEW_YORK,
+		"New York",
+		"Stati Uniti",
+		"La capitale culturale del pianeta. Patria dell'hip-hop, del punk e delle hit mondiali.",
+		{ Enums.MusicalGenre.HIPHOP: 1.30, Enums.MusicalGenre.ROCK: 1.25, Enums.MusicalGenre.POP: 1.20 },
+		true,
+		60.0,
+		new_york_venues,
+		true
+	))
+
+	# 11. LOS ANGELES (Stati Uniti) - Pop, Rock, Elettronica (Oltreoceano Intercontinentale)
+	var la_venues: Array[VenueData] = [
+		VenueDataScript.new("la_sunset", "Sunset Strip Club", 90, 180.0, 30.0, 55.0, 18.0, "Club affacciato sul mitico viale del rock californiano.", "Rumoroso"),
+		VenueDataScript.new("la_troubadour", "The Troubadour", 400, 850.0, 50.0, 80.0, 28.0, "Palcoscenico storico dove sono nate le più grandi superstar.", "Underground"),
+		VenueDataScript.new("la_forum", "The Forum Live Pavilion", 1400, 3200.0, 80.0, 98.0, 50.0, "Colossale arena per concerti e spettacoli oceanici.", "Prestigioso")
+	]
+	list.append(CityData.new(
+		Enums.CityId.LOS_ANGELES,
+		"Los Angeles",
+		"Stati Uniti",
+		"La Città degli Angeli. Capitale del glamour, delle mega-produzioni pop e dell'hard rock.",
+		{ Enums.MusicalGenre.POP: 1.30, Enums.MusicalGenre.ROCK: 1.25, Enums.MusicalGenre.ELECTRONIC: 1.20 },
+		true,
+		65.0,
+		la_venues,
+		true
+	))
+
+	# 12. TOKYO (Giappone) - Elettronica, Rock, Pop (Oltreoceano Intercontinentale)
+	var tokyo_venues: Array[VenueData] = [
+		VenueDataScript.new("tokyo_shibuya", "Shibuya Underground Club", 100, 200.0, 35.0, 60.0, 20.0, "Club futuristico al neon nel cuore pulsante di Shibuya.", "Underground"),
+		VenueDataScript.new("tokyo_shinjuku", "Shinjuku Loft", 450, 950.0, 55.0, 85.0, 30.0, "Pietra miliare del rock e dell'elettronica asiatica.", "Underground"),
+		VenueDataScript.new("tokyo_budokan", "Budokan Music Dome", 1500, 3500.0, 85.0, 99.0, 55.0, "L'ottagono sacro consacrato agli immortali della musica mondiale.", "Prestigioso")
+	]
+	list.append(CityData.new(
+		Enums.CityId.TOKYO,
+		"Tokyo",
+		"Giappone",
+		"Metropoli futuristica. Tempio di suoni digitali, synth-pop, visual rock e avanguardia.",
+		{ Enums.MusicalGenre.ELECTRONIC: 1.35, Enums.MusicalGenre.ROCK: 1.30, Enums.MusicalGenre.POP: 1.25 },
+		true,
+		70.0,
+		tokyo_venues,
+		true
+	))
+
 	return list

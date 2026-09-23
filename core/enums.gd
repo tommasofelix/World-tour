@@ -202,7 +202,27 @@ enum CityId {
 	ROMA = 2,
 	NAPOLI = 3,
 	LONDRA = 4,
-	BERLINO = 5
+	BERLINO = 5,
+	DUBLINO = 6,
+	PARIGI = 7,
+	MADRID = 8,
+	NEW_YORK = 9,
+	LOS_ANGELES = 10,
+	TOKYO = 11
+}
+
+enum RoadDilemmaType {
+	FLAT_TIRE_RAIN = 0,    # Foratura in autostrada sotto la pioggia
+	REST_STOP_NIGHT = 1,   # Sosta in autogrill alle 03:00
+	BUDGET_MOTEL = 2,      # Motel economico lungo la statale
+	LOST_ROUTE = 3         # Smarrimento del percorso / deviazione
+}
+
+enum CityEventType {
+	NONE = 0,
+	WHITE_NIGHT = 1,         # Notte Bianca (+100% affluenza concerti, +50% fan)
+	MUSIC_EXPO = 2,          # Fiera Internazionale della Musica (-20% req etichette/manager, +5 rep)
+	STREET_CULTURE_FEST = 3  # Festival Culturale Urbano (+35% affluenza pub/club, +30% merch)
 }
 
 enum TourVehicleType {
@@ -255,8 +275,44 @@ static func get_city_name(city_id: int) -> String:
 			return "Londra"
 		CityId.BERLINO:
 			return "Berlino"
+		CityId.DUBLINO:
+			return "Dublino"
+		CityId.PARIGI:
+			return "Parigi"
+		CityId.MADRID:
+			return "Madrid"
+		CityId.NEW_YORK:
+			return "New York"
+		CityId.LOS_ANGELES:
+			return "Los Angeles"
+		CityId.TOKYO:
+			return "Tokyo"
 		_:
 			return "Sconosciuta"
+
+static func get_road_dilemma_name(dilemma: int) -> String:
+	match dilemma:
+		RoadDilemmaType.FLAT_TIRE_RAIN:
+			return "Foratura sotto la Pioggia"
+		RoadDilemmaType.REST_STOP_NIGHT:
+			return "Sosta in Autogrill alle 03:00"
+		RoadDilemmaType.BUDGET_MOTEL:
+			return "Motel Economico sulla Statale"
+		RoadDilemmaType.LOST_ROUTE:
+			return "Smarrimento del Percorso"
+		_:
+			return "Nessun Imprevisto"
+
+static func get_city_event_name(event_type: int) -> String:
+	match event_type:
+		CityEventType.WHITE_NIGHT:
+			return "Notte Bianca"
+		CityEventType.MUSIC_EXPO:
+			return "Fiera Internazionale della Musica"
+		CityEventType.STREET_CULTURE_FEST:
+			return "Festival Culturale Urbano"
+		_:
+			return "Nessun Evento"
 
 static func get_festival_slot_name(slot: int) -> String:
 	match slot:

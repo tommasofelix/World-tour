@@ -77,3 +77,21 @@ Questo registro contiene soltanto problemi tecnici confermati e soluzioni con ev
   3. In `get_venue_status()` e `can_play_concert()`: la disponibilità procedurale e i controlli di chiusura si applicano esclusivamente se `calendar_data` è istanziato e per le sole venue del circuito locale (aventi prefisso `"venue_"`).
 - Test automatici eseguiti: 23/23 suite del progetto passate con successo (0 errori), inclusi `test_concert_system.gd` (92/92 test), `test_band_system.gd` (58/58 test), `test_schedule_system.gd` (73/73 test) e `test_travel_system.gd` (64/64 test).
 - Misure di prevenzione delle regressioni: Separare sempre i flussi economici ancillari (merchandise) dai contratti percentuali dei compensi base (cachet/biglietti) ed applicare vincoli di simulazione temporale/spaziale unicamente alle entità di circuito censite.
+
+### BUG-006 — Ordinamento di Avanzamento Logistico e Riposo Day Off nei Tour Multi-Tappa & Metodi Accessori Fanbase Locale
+
+- Data e componente: `2026-09-24`, `systems/tour_system.gd`, `data/models/player_data.gd` e `tests/test_tour_system.gd`.
+- Sintomo osservato:
+  1. `SCRIPT ERROR: Invalid call. Nonexistent function 'get_city_fans' in base 'RefCounted (PlayerData)'` durante l'intervista radiofonica in `TourSystem.do_radio_interview()`.
+  2. Fallimento delle asserzioni di recupero fisiologico (energia, stress e tensione band) nel test del Day Off (`test_tour_day_off_mechanics()`).
+  3. Clamping dello stress a 0.0 nel test degli imprevisti procedurali a bivi (`test_road_dilemmas_engine()`), con conseguente fallimento della verifica di defaticamento della scelta della trattoria (Dilemma 4).
+- Causa radice verificata:
+  1. In `tour_system.gd` si richiamavano i metodi accessori `player_data.get_city_fans(city_id)` e `get_city_popularity(city_id)`, ma nel modello dati `PlayerData` tali dizionari erano accessibili solo come proprietà grezze (`city_fans.get(...)`), mancando i relativi wrapper sicuri e tipizzati.
+  2. In `TourSystem.advance_to_next_stop()`, il blocco del viaggio con il veicolo (incluso il calcolo dello stress del mezzo `stress_gain` e della fatica `energy_delta`) veniva eseguito *prima* del controllo `is_day_off`. Di conseguenza, anche per una giornata di riposo statico (Day Off), il protagonista subiva la fatica e lo stress del mezzo (+5 stress, -10 energia) prima di applicare il recupero (+25 energia, -20 stress), neutralizzando parzialmente il beneficio rigenerativo. Inoltre, se l'ultima data del tour era un Day Off e il tour si concludeva automaticamente senza raggiungere la soglia di successo trionfale (richiedente `new_fans > 50`), `finish_tour()` applicava un malus di tensione alla band (+15.0), cancellando il beneficio distensivo del Day Off (-15.0).
+  3. Nel test sequenziale dei 4 imprevisti stradali, la Scelta 1 del Dilemma 3 (Motel confortevole: -20 stress) aveva già azzerato lo stress del giocatore (da 20.0 a 0.0), rendendo impossibile verificare l'ulteriore riduzione di stress (-10) del Dilemma 4 (Trattoria distensiva) a causa del clamping inferiore a 0.0.
+- Soluzione applicata:
+  1. Aggiunti a `data/models/player_data.gd` i metodi sicuri e tipizzati `get_city_fans(city_id: int) -> int` e `get_city_popularity(city_id: int) -> float`.
+  2. In `systems/tour_system.gd`, riposizionato il blocco di gestione del `is_day_off` come prima guardia di `advance_to_next_stop()`: se la tappa è una giornata di riposo, la band esegue immediatamente il riposo rigenerativo senza subire controlli di guasto meccanico né usura/stress di viaggio da veicolo. Nel test `test_tour_day_off_mechanics()`, impostato `new_fans: 60` nel concerto precedente per garantire la corretta qualifica di tour trionfale e la coerenza del rilassamento delle tensioni.
+  3. In `tests/test_tour_system.gd`, reinizializzato `player.stress = 30.0` prima dell'esecuzione del Dilemma 4 per consentire la corretta misurazione del delta negativo dello stress.
+- Test automatici eseguiti: 98/98 test superati in `test_tour_system.gd` e 23/23 suite dell'intero progetto superate con 0 errori a 0 ms.
+- Misure di prevenzione delle regressioni: Separare concettualmente e temporalmente le tappe di sosta/riposo dalle tappe di spostamento attivo, e nei test con asserzioni su risorse limitate a zero (clamping) verificare e predisporre un margine dinamico adeguato.

@@ -40,6 +40,7 @@ var total_expenses: float = 0.0
 var total_net_profit: float = 0.0
 var total_fans_gained: int = 0
 var created_day: int = 1
+var radio_interviews_count: int = 0
 
 func _init(
 	p_id: String = "",
@@ -53,6 +54,7 @@ func _init(
 	created_day = p_day
 	status = TourStatus.PLANNED
 	current_stop_index = 0
+	radio_interviews_count = 0
 	
 	# Il Luxury Bus conferisce un bonus hype di partenza (+15%)
 	if vehicle_type == Enums.TourVehicleType.LUXURY_BUS:
@@ -61,7 +63,7 @@ func _init(
 		accumulated_hype = 1.0
 
 ## Aggiunge una tappa all'itinerario del tour
-func add_stop(city_id: int, city_name: String, venue_id: String, venue_name: String, day_number: int) -> void:
+func add_stop(city_id: int, city_name: String, venue_id: String, venue_name: String, day_number: int, is_day_off: bool = false) -> void:
 	var stop_dict := {
 		"stop_index": stops.size(),
 		"city_id": city_id,
@@ -69,10 +71,16 @@ func add_stop(city_id: int, city_name: String, venue_id: String, venue_name: Str
 		"venue_id": venue_id,
 		"venue_name": venue_name,
 		"day_number": day_number,
+		"is_day_off": is_day_off,
+		"radio_interview_done": false,
 		"completed": false,
 		"concert_result": {}
 	}
 	stops.append(stop_dict)
+
+## Aggiunge una giornata di riposo (Day Off) tra due date della tournée
+func add_day_off(city_id: int, city_name: String, day_number: int) -> void:
+	add_stop(city_id, city_name, "day_off", "Giorno di Riposo (Day Off)", day_number, true)
 
 ## Restituisce la tappa attualmente attiva
 func get_current_stop() -> Dictionary:
@@ -135,12 +143,20 @@ func get_summary_speech() -> String:
 	
 	var cur_stop := get_current_stop()
 	if not cur_stop.is_empty() and status == TourStatus.IN_PROGRESS:
-		speech += " Prossima esibizione: Tappa %d a %s presso %s (Giorno %d)." % [
-			int(cur_stop.get("stop_index", 0)) + 1,
-			cur_stop.get("city_name", ""),
-			cur_stop.get("venue_name", ""),
-			int(cur_stop.get("day_number", 0))
-		]
+		var is_do: bool = bool(cur_stop.get("is_day_off", false))
+		if is_do:
+			speech += " Prossimo impegno: Tappa %d a %s — Giorno di Riposo (Day Off per la Band, Giorno %d)." % [
+				int(cur_stop.get("stop_index", 0)) + 1,
+				cur_stop.get("city_name", ""),
+				int(cur_stop.get("day_number", 0))
+			]
+		else:
+			speech += " Prossima esibizione: Tappa %d a %s presso %s (Giorno %d)." % [
+				int(cur_stop.get("stop_index", 0)) + 1,
+				cur_stop.get("city_name", ""),
+				cur_stop.get("venue_name", ""),
+				int(cur_stop.get("day_number", 0))
+			]
 		
 	return speech
 
@@ -161,7 +177,8 @@ func to_dict() -> Dictionary:
 		"total_expenses": total_expenses,
 		"total_net_profit": total_net_profit,
 		"total_fans_gained": total_fans_gained,
-		"created_day": created_day
+		"created_day": created_day,
+		"radio_interviews_count": radio_interviews_count
 	}
 
 func from_dict(dict: Dictionary) -> void:
@@ -176,6 +193,7 @@ func from_dict(dict: Dictionary) -> void:
 	total_net_profit = float(dict.get("total_net_profit", total_net_profit))
 	total_fans_gained = int(dict.get("total_fans_gained", total_fans_gained))
 	created_day = int(dict.get("created_day", created_day))
+	radio_interviews_count = int(dict.get("radio_interviews_count", radio_interviews_count))
 	
 	stops.clear()
 	if dict.has("stops") and dict["stops"] is Array:

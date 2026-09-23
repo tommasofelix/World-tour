@@ -21,7 +21,7 @@ func _init(p_player_data: PlayerData, p_arg2: Variant = null, p_arg3: Variant = 
 		calendar_data = p_arg2
 	elif p_arg2 is SkillSystem:
 		skill_system = p_arg2
-		
+
 	if p_arg3 is CalendarData:
 		calendar_data = p_arg3
 	elif p_arg3 is SkillSystem:
@@ -36,7 +36,7 @@ func get_venue_status(venue_id: String, day_number: int) -> int:
 	var key := "%s_%d" % [venue_id, day_number]
 	if venue_status_overrides.has(key):
 		return int(venue_status_overrides[key])
-		
+
 	# Controlla se la band del giocatore ha già prenotato questo locale in agenda
 	if GameManager and GameManager.schedule_system:
 		var events := GameManager.schedule_system.get_events_for_day(day_number)
@@ -56,14 +56,14 @@ func get_venue_status(venue_id: String, day_number: int) -> int:
 	var weekday: int = (day_number - 1) % Constants.DAYS_PER_WEEK
 	var is_weekend: bool = (weekday == Enums.Weekday.FRIDAY or weekday == Enums.Weekday.SATURDAY)
 	var is_monday: bool = (weekday == Enums.Weekday.MONDAY)
-	
+
 	# Teatri e club underground chiusi di lunedì per manutenzione/riposo
 	if is_monday and (venue_id.contains("theatre") or venue_id.contains("small_club")):
 		return Enums.VenueBookingStatus.MAINTENANCE
-		
+
 	# Hash deterministico basato su venue_id e day_number
 	var hash_val: int = absi((venue_id.hash() + (day_number * 31))) % 100
-	
+
 	# Soglia di occupazione: i locali prestigiosi e i weekend sono più affollati
 	var occupancy_threshold: int = 30
 	if venue_id.contains("garage"):
@@ -76,10 +76,10 @@ func get_venue_status(venue_id: String, day_number: int) -> int:
 		occupancy_threshold = 70 if is_weekend else 35
 	else:
 		occupancy_threshold = 65 if is_weekend else 30
-		
+
 	if hash_val < occupancy_threshold:
 		return Enums.VenueBookingStatus.BOOKED_OTHER
-		
+
 	return Enums.VenueBookingStatus.FREE
 
 ## Imposta forzatamente o manualmente lo stato di una venue per un dato giorno
@@ -105,13 +105,13 @@ func get_venue_rent_cost(venue: VenueData, day_number: int) -> float:
 func can_play_concert(venue: VenueData, setlist: Array[SongData]) -> Dictionary:
 	if not player_data:
 		return {"allowed": false, "reason": "no_player_data", "message": "Dati giocatore non trovati."}
-		
+
 	if setlist.is_empty():
 		return {"allowed": false, "reason": "empty_setlist", "message": "La scaletta deve contenere almeno un brano pronto o pubblicato."}
-		
+
 	if player_data.energy < 25:
 		return {"allowed": false, "reason": "energy_insufficient", "message": "Energia insufficiente per suonare dal vivo (25 richieste)."}
-		
+
 	var cur_day: int = calendar_data.day_number if calendar_data else 1
 	if calendar_data:
 		var status: int = get_venue_status(venue.id, cur_day)
@@ -119,27 +119,27 @@ func can_play_concert(venue: VenueData, setlist: Array[SongData]) -> Dictionary:
 			return {"allowed": false, "reason": "venue_occupied", "message": tr("CONCERT_VENUE_OCCUPIED_MSG")}
 		if status == Enums.VenueBookingStatus.MAINTENANCE:
 			return {"allowed": false, "reason": "venue_closed", "message": tr("CONCERT_VENUE_CLOSED_MSG")}
-		
+
 	var actual_rent: float = get_venue_rent_cost(venue, cur_day)
 	if player_data.money < actual_rent:
 		return {"allowed": false, "reason": "money_insufficient", "message": "Fondi insufficienti per l'affitto del locale (%.2f € richiesti)." % actual_rent}
-		
+
 	if player_data.popularity < venue.min_popularity:
 		return {"allowed": false, "reason": "popularity_insufficient", "message": "Popolarità insufficiente per questo locale (%.1f%% richiesta)." % venue.min_popularity}
-		
+
 	if player_data.reputation < venue.min_reputation:
 		return {"allowed": false, "reason": "reputation_insufficient", "message": "Reputazione insufficiente per questo locale prestigioso (%.1f richiesta)." % venue.min_reputation}
-		
+
 	return {"allowed": true, "reason": "ok", "message": "Pronto a salire sul palco!"}
 
 ## Esegue il Soundcheck pomeridiano (consuma 15 energia, riduce a zero gli imprevisti tecnici)
 func perform_soundcheck() -> Dictionary:
 	if not player_data:
 		return {"success": false, "reason": "no_player_data"}
-		
+
 	if not player_data.consume_energy(15):
 		return {"success": false, "reason": "energy_insufficient"}
-		
+
 	player_data.add_stress(4)
 	return {"success": true, "acoustic_bonus": 5.0}
 
@@ -160,9 +160,9 @@ func generate_stage_event(is_soundcheck_done: bool = false) -> Dictionary:
 	if not is_soundcheck_done:
 		possible_types.append(Enums.StageEventType.AUDIO_FEEDBACK)
 		possible_types.append(Enums.StageEventType.BLACKOUT)
-		
+
 	var chosen_type: int = possible_types[randi() % possible_types.size()]
-	
+
 	match chosen_type:
 		Enums.StageEventType.BROKEN_STRING:
 			return {
@@ -249,17 +249,17 @@ func generate_stage_event(is_soundcheck_done: bool = false) -> Dictionary:
 func resolve_stage_event_choice(event_data: Dictionary, choice_index: int) -> Dictionary:
 	var skill_tested: String = event_data.get("choice_1_skill", "charisma") if choice_index == 1 else event_data.get("choice_2_skill", "performance")
 	var skill_level: int = player_data.get_skill_level(skill_tested) if player_data else 10
-	
+
 	# Test di abilità deterministico con clamping tra 40% e 95%
 	var success_chance: float = clampf(float(skill_level) / 25.0, 0.40, 0.95)
 	var is_success: bool = randf() <= success_chance
-	
+
 	var score_delta: float = 10.0 if is_success else -8.0
 	var xp_awarded: float = 20.0 if is_success else 8.0
-	
+
 	if skill_system:
 		skill_system.add_xp(skill_tested, xp_awarded)
-		
+
 	var outcome_msg: String = tr("EVENT_OUTCOME_SUCCESS") if is_success else tr("EVENT_OUTCOME_FAILURE")
 	return {
 		"is_success": is_success,
@@ -280,24 +280,24 @@ func calculate_merch_sales(venue: VenueData, audience: int, concert_score: float
 			"items_sold": 0, "gross_revenue": 0.0, "production_costs": 0.0, "net_revenue": 0.0,
 			"pins_sold": 0, "tshirts_sold": 0, "posters_sold": 0, "picks_sold": 0
 		}
-	
+
 	# Percentuale di acquirenti proporzionale a punteggio e carisma (8% - 45%)
 	var buyer_ratio: float = clampf((concert_score / 100.0) * (0.20 + (charisma / 250.0)), 0.08, 0.45)
 	if venue and venue.venue_type == VenueData.TYPE_SOCIAL_CENTER:
 		buyer_ratio = clampf(buyer_ratio * 1.30, 0.10, 0.55)
-		
+
 	var buyers: int = maxi(1, int(round(float(audience) * buyer_ratio)))
-	
+
 	var pins: int = int(round(float(buyers) * 0.60))
 	var tshirts: int = int(round(float(buyers) * 0.35))
 	var posters: int = int(round(float(buyers) * 0.25))
 	var picks: int = int(round(float(buyers) * 0.40))
-	
+
 	var gross: float = (pins * Constants.MERCH_PIN_PRICE) + (tshirts * Constants.MERCH_TSHIRT_PRICE) + (posters * Constants.MERCH_POSTER_PRICE) + (picks * Constants.MERCH_PICKS_PRICE)
 	var costs: float = (pins * Constants.MERCH_PIN_COST) + (tshirts * Constants.MERCH_TSHIRT_COST) + (posters * Constants.MERCH_POSTER_COST) + (picks * Constants.MERCH_PICKS_COST)
 	var net: float = gross - costs
 	var total_items: int = pins + tshirts + posters + picks
-	
+
 	return {
 		"items_sold": total_items,
 		"gross_revenue": gross,
@@ -313,21 +313,21 @@ func calculate_merch_sales(venue: VenueData, audience: int, concert_score: float
 func resolve_encore(granted: bool, current_score: float) -> Dictionary:
 	if not granted:
 		return {"granted": false, "message": "Hai salutato il pubblico tra gli applausi scroscianti."}
-		
+
 	if not player_data:
 		return {"granted": false, "message": "Dati giocatore assenti."}
-		
+
 	if player_data.energy < Constants.ENCORE_ENERGY_COST:
 		return {
 			"granted": false,
 			"energy_insufficient": true,
 			"message": "Troppo stanco per concedere il bis! Hai dovuto salutare il pubblico."
 		}
-		
+
 	player_data.consume_energy(Constants.ENCORE_ENERGY_COST)
 	player_data.modify_money(Constants.ENCORE_EXTRA_CASH)
 	EventBus.money_changed.emit(player_data.money, Constants.ENCORE_EXTRA_CASH, "encore_cash")
-	
+
 	if player_data:
 		player_data.modify_morale(Constants.ENCORE_BAND_MORALE_BONUS)
 		var active_members := player_data.get_active_band_members()
@@ -337,7 +337,7 @@ func resolve_encore(granted: bool, current_score: float) -> Dictionary:
 				m.modify_tension(-5.0)
 			if GameManager and GameManager.band_system:
 				GameManager.band_system._emit_chemistry_changed()
-		
+
 	return {
 		"granted": true,
 		"energy_spent": Constants.ENCORE_ENERGY_COST,
@@ -356,17 +356,17 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 	var check := can_play_concert(venue, setlist)
 	if not check.get("allowed", false):
 		return {"success": false, "reason": check.get("reason", "error"), "message": check.get("message", "")}
-		
+
 	var cur_day: int = calendar_data.day_number if calendar_data else 1
 	var actual_rent: float = get_venue_rent_cost(venue, cur_day)
-	
+
 	# 1. Costi di affitto ed energia
 	player_data.modify_money(-actual_rent)
 	EventBus.money_changed.emit(player_data.money, -actual_rent, "venue_rent")
-	
+
 	player_data.consume_energy(25)
 	player_data.add_stress(10)
-	
+
 	# 2. Calcolo spettatori (Audience)
 	var audience: int = Formulas.calculate_audience(
 		venue.capacity,
@@ -375,7 +375,7 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 		ticket_price,
 		venue.fair_ticket_price
 	)
-	
+
 	# Moltiplicatori del fine settimana (Venerdì +50%, Sabato +100%)
 	var weekend_mult: float = 1.0
 	if calendar_data:
@@ -386,27 +386,43 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 			weekend_mult = Constants.WEEKEND_SATURDAY_AUDIENCE_MULT
 	if weekend_mult > 1.0:
 		audience = mini(venue.capacity, int(round(float(audience) * weekend_mult)))
-		
+
 	# Moltiplicatore Hype del Tour (se c'è una tournée in corso)
 	var tour_hype_mult: float = 1.0
 	if GameManager and GameManager.tour_system:
 		tour_hype_mult = GameManager.tour_system.get_tour_hype_multiplier()
 	if tour_hype_mult > 1.0:
 		audience = mini(venue.capacity, int(round(float(audience) * tour_hype_mult)))
-		
+
 	# Moltiplicatore Social Buzz (Hype generato da post e viralità)
 	var social_buzz_mult: float = 1.0
 	if GameManager and GameManager.social_media_system:
 		social_buzz_mult = GameManager.social_media_system.get_live_buzz_multiplier()
 	if social_buzz_mult > 1.0:
 		audience = mini(venue.capacity, int(round(float(audience) * social_buzz_mult)))
-	
+
+	# Moltiplicatore Evento Cittadino (Notte Bianca, Fiera Musica, Festival Urbano - Sezione 6)
+	var city_event_audience_mult: float = 1.0
+	var city_event_fan_mult: float = 1.0
+	var city_event_rep_bonus: float = 0.0
+	var city_event_name: String = ""
+	if GameManager and GameManager.travel_system:
+		var cur_day_ev: int = calendar_data.day_number if calendar_data else 1
+		var c_ev: Dictionary = GameManager.travel_system.get_active_city_event(GameManager.travel_system.current_city_id, cur_day_ev)
+		if c_ev and c_ev.get("type", Enums.CityEventType.NONE) != Enums.CityEventType.NONE:
+			city_event_audience_mult = float(c_ev.get("audience_mult", 1.0))
+			city_event_fan_mult = float(c_ev.get("fan_mult", 1.0))
+			city_event_rep_bonus = float(c_ev.get("rep_bonus", 0.0))
+			city_event_name = str(c_ev.get("name", ""))
+	if city_event_audience_mult > 1.0:
+		audience = mini(venue.capacity, int(round(float(audience) * city_event_audience_mult)))
+
 	# 3. Drammaturgia della Scaletta e Valutazione Qualità Media
 	var total_qual: float = 0.0
 	for s in setlist:
 		total_qual += s.quality_score
 	var avg_quality: float = total_qual / float(maxi(1, setlist.size()))
-	
+
 	# Bonus Opener (Posizione 1)
 	var opening_hype_bonus: float = 0.0
 	var opening_score_mult: float = 1.0
@@ -415,7 +431,7 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 		if opener.genre in [Enums.MusicalGenre.ROCK, Enums.MusicalGenre.METAL, Enums.MusicalGenre.ELECTRONIC] or opener.special_trait == Enums.SongTrait.EPIC_RIFF or opener.quality_score >= 65.0:
 			opening_hype_bonus = Constants.OPENING_HYPE_BONUS
 			opening_score_mult = Constants.OPENING_SCORE_MULT
-			
+
 	# Bonus Mid-Set Ballad (Posizioni centrali)
 	var ballad_fan_mult: float = 1.0
 	if setlist.size() > 1:
@@ -425,7 +441,7 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 				player_data.stress = maxi(0, player_data.stress - Constants.BALLAD_STRESS_RELIEF)
 				ballad_fan_mult = Constants.BALLAD_FAN_MULT
 				break
-	
+
 	# Bonus Closer / Stage Beast sull'ultimo pezzo della scaletta
 	var closer_bonus_mult: float = 1.0
 	var anthem_rep_boost: float = 0.0
@@ -436,7 +452,7 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 	elif last_song.special_trait == Enums.SongTrait.GENERATIONAL_ANTHEM:
 		anthem_rep_boost = Constants.TRAIT_ANTHEM_REP_BOOST
 		anthem_fan_mult = 1.25
-		
+
 	# 4. Calcolo Concert Score
 	var perf_level: float = float(player_data.get_skill_level("performance"))
 	var charisma_level: float = float(player_data.get_skill_level("charisma"))
@@ -449,17 +465,17 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 		avg_quality,
 		float(player_data.energy)
 	)
-	
+
 	var soundcheck_bonus: float = 5.0 if is_soundcheck else 0.0
 	var band_synergy: float = 0.0
 	if GameManager and GameManager.band_system:
 		band_synergy = GameManager.band_system.get_band_synergy_bonus()
-	
+
 	# Sound Shaping Bonus (Pedalboard + Amplificatore)
 	var sound_shaping_bonus: float = 0.0
 	if player_data:
 		sound_shaping_bonus = player_data.get_sound_shaping_genre_bonus(last_song.genre)
-		
+
 	# Gestione usura strumento ed eventuali Stage Accidents
 	var stage_accident: bool = false
 	var accident_saved_by_backup: bool = false
@@ -472,7 +488,7 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 			trigger_accident = bool(force_stage_accident)
 		elif cond <= Constants.CONDITION_CRITICAL:
 			trigger_accident = randf() <= Constants.STAGE_ACCIDENT_CHANCE
-			
+
 		if trigger_accident:
 			stage_accident = true
 			if player_data.has_backup_instrument:
@@ -481,9 +497,9 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 			else:
 				accident_penalty = Constants.STAGE_ACCIDENT_SCORE_PENALTY
 				AccessibilityManager.announce("ATTENZIONE: Guasto tecnico allo strumento durante il concerto! Nessun muletto di riserva: penalità di -15 allo score!", true)
-				
+
 		player_data.apply_instrument_wear(p_cat, Constants.WEAR_PER_CONCERT)
-	
+
 	# Calcolo affinità media della scaletta con la scena musicale della città corrente
 	var city_affinity_mult: float = 1.0
 	if GameManager and GameManager.travel_system:
@@ -493,10 +509,10 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 			for s in setlist:
 				total_aff += cur_city.get_affinity_for_genre(s.genre)
 			city_affinity_mult = total_aff / float(maxi(1, setlist.size()))
-			
+
 	var raw_score: float = ((base_score * closer_bonus_mult) * opening_score_mult) + event_score_delta + soundcheck_bonus + band_synergy + sound_shaping_bonus - accident_penalty
 	var final_score: float = clampf(raw_score * city_affinity_mult, 1.0, 100.0)
-	
+
 	# Bonus specifici per tipologia di locale
 	var venue_rep_mult: float = 1.0
 	var venue_fan_mult: float = 1.0
@@ -506,7 +522,7 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 			venue_fan_mult = 1.25
 	elif venue.venue_type == VenueData.TYPE_OPERA_THEATRE:
 		venue_rep_mult = 1.30
-	
+
 	# 5. Conversione Fan
 	var new_fans: int = Formulas.calculate_fan_conversion(audience, final_score, charisma_level)
 	if last_song.special_trait == Enums.SongTrait.CULT_CLASSIC:
@@ -515,20 +531,22 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 		new_fans = int(round(float(new_fans) * Constants.WEEKEND_SATURDAY_FAN_MULT))
 	if city_affinity_mult != 1.0:
 		new_fans = int(round(float(new_fans) * city_affinity_mult))
+	if city_event_fan_mult > 1.0:
+		new_fans = int(round(float(new_fans) * city_event_fan_mult))
 	if ballad_fan_mult > 1.0 or anthem_fan_mult > 1.0 or venue_fan_mult > 1.0:
 		new_fans = int(round(float(new_fans) * ballad_fan_mult * anthem_fan_mult * venue_fan_mult))
-		
+
 	# Marcatura evento a calendario se programmato
 	if GameManager and GameManager.schedule_system and calendar_data:
 		var todays_events := GameManager.schedule_system.get_events_for_day(calendar_data.day_number)
 		for ev in todays_events:
 			if ev.event_type == Enums.CalendarEventType.CONCERT and (ev.location_id == venue.id or ev.location_id.is_empty()):
 				GameManager.schedule_system.mark_event_completed(ev.id)
-	
+
 	# 6. Banchetto Merchandising & Economia Serata
 	var merch_data: Dictionary = calculate_merch_sales(venue, audience, final_score, charisma_level)
 	var merch_net: float = float(merch_data.get("net_revenue", 0.0))
-	
+
 	var gross_revenue: float = float(audience) * ticket_price
 	var manager_cut: float = 0.0
 	var pool_revenue: float = gross_revenue
@@ -537,7 +555,7 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 		gross_revenue = rev_calc.gross_cachet
 		manager_cut = rev_calc.manager_cut
 		pool_revenue = rev_calc.net_band_revenue
-		
+
 	var net_revenue: float = (gross_revenue - actual_rent) + merch_net
 	var player_share: float = pool_revenue
 	var band_share: float = 0.0
@@ -552,12 +570,12 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 			Enums.RevenueSplit.LEADER_PREDATORY:
 				player_share = pool_revenue * 0.70
 		band_share = pool_revenue - player_share
-		
+
 	var total_payout: float = player_share + merch_net
 	if total_payout > 0.0:
 		player_data.modify_money(total_payout)
 		EventBus.money_changed.emit(player_data.money, total_payout, "concert_and_merch")
-		
+
 	# 7. Crescita notorietà & statistiche con territorialità
 	var pop_gain: float = (final_score / 100.0) * (float(audience) / float(venue.capacity)) * 3.0
 	if GameManager and GameManager.travel_system:
@@ -567,26 +585,26 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 	else:
 		player_data.fans += new_fans
 		player_data.popularity = clampf(player_data.popularity + pop_gain, 0.0, 100.0)
-		
-	player_data.reputation = maxf(1.0, player_data.reputation + ((final_score * 0.03) * venue_rep_mult) + anthem_rep_boost)
-	
+
+	player_data.reputation = maxf(1.0, player_data.reputation + ((final_score * 0.03) * venue_rep_mult) + anthem_rep_boost + city_event_rep_bonus)
+
 	# Aggiorna metriche per le canzoni eseguite (le cover non registrano plays originali né revenue)
 	for s in setlist:
 		if not s.is_cover:
 			s.plays += audience
 			s.revenue += (gross_revenue / float(maxi(1, setlist.size())))
-		
+
 	# 8. Assegnazione XP abilità dal vivo
 	if skill_system:
 		skill_system.add_xp("performance", 25.0)
 		skill_system.add_xp("charisma", 20.0)
-		
+
 	# 9. Dinamiche post-concerto della Band
 	if GameManager and GameManager.band_system:
 		GameManager.band_system.process_post_concert_dynamics(final_score)
-		
+
 	var eligible_for_encore: bool = final_score >= Constants.ENCORE_SCORE_THRESHOLD
-		
+
 	var result := {
 		"success": true,
 		"venue_id": venue.id,
@@ -612,14 +630,16 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 		"concert_score": final_score,
 		"city_affinity_mult": city_affinity_mult,
 		"tour_hype_mult": tour_hype_mult,
+		"city_event_name": city_event_name,
+		"city_event_audience_mult": city_event_audience_mult,
 		"new_fans": new_fans,
 		"popularity_gained": pop_gain,
 		"is_soundcheck": is_soundcheck
 	}
-	
+
 	if GameManager and GameManager.tour_system and GameManager.tour_system.active_tour:
 		GameManager.tour_system.record_stop_result(result)
-		
+
 	EventBus.concert_resolved.emit(result)
 	return result
 
