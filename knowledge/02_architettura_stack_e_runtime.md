@@ -32,9 +32,10 @@ Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal r
    - `test_player_system.gd`: attributi, energia, stress, morale, progressione;
    - `test_music_system.gd`: creazione brani, quality score, composizione e bozze;
    - `test_advanced_crafting_system.gd`: crafting avanzato, 10 temi lirici, sinergie, nuovi tratti e studio pro (Sez. 2);
-   - `test_concert_system.gd`: concerti live, affluenza, scaletta e incassi;
+   - `test_band_system.gd`: gestione band, 5 ruoli (incluso cantante VOCALS), 8 personalità, bacheca audizioni con rifiuto deterministico, prove e revenue split (58 test, Sez. 3);
+   - `test_concert_system.gd`: concerti live, affluenza, scaletta, sinergia palco e incassi;
    - `test_economy_system.gd`: flussi finanziari, spese, contratti e royalties;
-   - `test_localization.gd`: dizionari bilingue, fallback deterministico e pulizia setting;
+   - `test_localization.gd`: dizionari bilingue it/en (259 chiavi perfettamente allineate), fallback deterministico e pulizia setting;
    - `test_save_manager.gd`: serializzazione atomica JSON, integrità salvataggi;
    - `test_vertical_slice.gd`: catena completa gameplay e cicli fine giornata;
    - `test_character_creation.gd`: creazione guidata, background e tratti iniziali (Sez. 1.1);
@@ -42,7 +43,7 @@ Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal r
    - `test_vital_resources_system.gd`: triade risorse, burnout, panico e recupero attivo (Sez. 1.3);
    - `test_upgrades_system.gd`: lifestyle, insonorizzazione, strumenti e home studio;
    - `test_v5_ui_overhaul.gd`: architettura UI a 5 sezioni, navigazione macro-aree e modali;
-   - Ulteriori suite per i sottosistemi di band, etichette, tour interurbani, festival estivi, social media e classifiche.
+   - Ulteriori suite per i sottosistemi di etichette, tour interurbani, festival estivi, social media e classifiche.
 
 3. **Pattern Closure Container & Guardie Segnali nei Test Headless di Interfaccia**:
    - In GDScript 4, la cattura di variabili locali scalari o nulle all'interno di lambda passate a `connect()` avviene per valore; per verificare l'emissione dei segnali nei test runner occorre impiegare un contenitore reference (`var received: Array = []` e `func(arg): received.append(arg)`).
