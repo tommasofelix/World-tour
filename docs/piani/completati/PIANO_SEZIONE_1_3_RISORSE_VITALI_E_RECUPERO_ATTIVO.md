@@ -120,6 +120,7 @@ La Sezione 1.3 della Roadmap Modulare completa la gestione del protagonista e de
 
 ---
 
-## 4. STOP OBBLIGATORIO (REGOLA 0 - SOTTO-FASE 1A)
+## 4. CHIUSURA E CONVALIDA POST-TEST
 
-Questo piano tecnico formale attende la revisione e l'approvazione esplicita di Luca (*"procedi"*, *"applica"*, *"esegui"*) prima di iniziare la scrittura di codice sorgente (Sotto-Fase 1B).
+Attività convalidata empiricamente al 100% con esito positivo di tutti i 37 test headless dedicati e assenza totale di regressioni sulle altre 5 suite eseguite (266 asserzioni superate su 266).
+Piano archiviato formalmente in `docs/piani/completati/`.
