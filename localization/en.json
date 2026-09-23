@@ -2,6 +2,10 @@
 	"GAME_TITLE": "World Tour",
 	"GAME_SUBTITLE": "Music Career & Life Simulator",
 
+	"MENU_NEW_GAME": "New Game",
+	"MENU_NEW_GAME_DESC": "Start a new music career from scratch with Alex in the small bedroom.",
+	"MENU_TEST_MODE": "Test Mode (Debug)",
+	"MENU_TEST_MODE_DESC": "Launch a test game with pre-configured character, 10 songs, and resources ready to test every system.",
 	"MENU_QUICK_START": "Quick Start (Test)",
 	"MENU_QUICK_START_DESC": "Launch directly into the life cycle simulation and testing screen.",
 	"MENU_SETTINGS": "Settings",

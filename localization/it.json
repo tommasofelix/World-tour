@@ -2,6 +2,10 @@
 	"GAME_TITLE": "World Tour",
 	"GAME_SUBTITLE": "Music Career & Life Simulator",
 
+	"MENU_NEW_GAME": "Nuova Partita",
+	"MENU_NEW_GAME_DESC": "Inizia una nuova carriera musicale da zero con Alex nella stanzetta.",
+	"MENU_TEST_MODE": "Modalità Test (Collaudo)",
+	"MENU_TEST_MODE_DESC": "Avvia una partita di collaudo con personaggio pre-impostato, 10 canzoni e risorse pronte per testare ogni sistema.",
 	"MENU_QUICK_START": "Avvio Rapido (Test)",
 	"MENU_QUICK_START_DESC": "Avvia direttamente la schermata di simulazione e test del ciclo vitale.",
 	"MENU_SETTINGS": "Impostazioni",

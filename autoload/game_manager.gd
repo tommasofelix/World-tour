@@ -85,7 +85,7 @@ func close_menu() -> void:
 		if time_system:
 			time_system.set_paused(false)
 
-func start_new_game(p_name: String = "Alex", p_instrument: String = "Chitarra Elettrica", p_background: String = "self_taught") -> void:
+func start_new_game(p_name: String = "Alex", p_instrument: String = "Chitarra Elettrica", p_background: String = "self_taught", p_test_mode: bool = false) -> void:
 	var day_duration: float = Constants.DEFAULT_DAY_DURATION_SECONDS
 	if SaveManager:
 		day_duration = SaveManager.get_day_duration()
@@ -94,7 +94,12 @@ func start_new_game(p_name: String = "Alex", p_instrument: String = "Chitarra El
 	player_data.player_name = p_name
 	player_data.primary_instrument = p_instrument
 	player_data.background_id = p_background
-	player_data.populate_starter_test_songs()
+	if p_test_mode:
+		player_data.money = 500.0
+		player_data.populate_starter_test_songs()
+	else:
+		player_data.money = 50.0
+		player_data.songs.clear()
 	
 	calendar_data = CalendarData.new(day_duration)
 	time_system = TimeSystem.new(calendar_data)

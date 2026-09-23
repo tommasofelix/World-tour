@@ -47,13 +47,21 @@ layout_mode = 2
 layout_mode = 2
 theme_override_constants/separation = 18
 
-[node name="BtnQuickStart" type="Button" parent="CenterContainer/VBoxMain/VBoxMenu"]
+[node name="BtnNewGame" type="Button" parent="CenterContainer/VBoxMain/VBoxMenu"]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 focus_neighbor_top = NodePath("../BtnQuit")
+focus_neighbor_bottom = NodePath("../BtnQuickStart")
+theme_override_font_sizes/font_size = 18
+text = "Nuova Partita"
+
+[node name="BtnQuickStart" type="Button" parent="CenterContainer/VBoxMain/VBoxMenu"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+focus_neighbor_top = NodePath("../BtnNewGame")
 focus_neighbor_bottom = NodePath("../BtnSettings")
 theme_override_font_sizes/font_size = 18
-text = "Avvio Rapido (Test)"
+text = "Modalità Test (Collaudo)"
 
 [node name="BtnSettings" type="Button" parent="CenterContainer/VBoxMain/VBoxMenu"]
 custom_minimum_size = Vector2(0, 50)
@@ -67,7 +75,7 @@ text = "Impostazioni"
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 focus_neighbor_top = NodePath("../BtnSettings")
-focus_neighbor_bottom = NodePath("../BtnQuickStart")
+focus_neighbor_bottom = NodePath("../BtnNewGame")
 theme_override_font_sizes/font_size = 18
 text = "Esci"
 
