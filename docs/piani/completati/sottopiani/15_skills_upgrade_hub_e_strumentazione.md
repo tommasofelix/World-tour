@@ -3,8 +3,8 @@
 - Framework: ASTRALIS / World-tour V5.0
 - Autori: Luca & Holy Diver
 - Assistente: Antigravity
-- Percorso file: `docs/piani/attivi/sottopiani/15_skills_upgrade_hub_e_strumentazione.md`
-- Stato: In lavorazione (`[/]`)
+- Percorso file: `docs/piani/completati/sottopiani/15_skills_upgrade_hub_e_strumentazione.md`
+- Stato: `[x] COMPLETATO E CONVALIDATO` — Upgrades Hub Implementato con 19/19 Suite Superate
 
 ---
 

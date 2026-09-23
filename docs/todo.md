@@ -78,15 +78,17 @@ I nuovi sottopiani per la Fase 9 (V5.0 Endgame) risiedono in [`docs/piani/attivi
     *Competenze*: Competitive Systems, Chart Tracking, Industry Dynamics.  
     *Oggetto*: 10 band rivali continentali, Hit Parade settimanale Top 10 Singoli e Top 10 Album, movimenti, picchi e conquista del #1.
 
-### Sottopiani Attivi in Lavorazione (Fase 9 — V5.0)
-
-14. **[`SP-14`: Riorganizzazione UI, Menu di Sistema & Macro-Aree](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/attivi/sottopiani/14_riorganizzazione_ui_menu_sistema_e_macro_aree.md)** [x]  
+14. **[`SP-14`: Riorganizzazione UI, Menu di Sistema & Macro-Aree](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/completati/sottopiani/14_riorganizzazione_ui_menu_sistema_e_macro_aree.md)** [x]  
     *Competenze*: UI/UX Engineering, Screen Reader Accessibility (NVDA Zero Mouse), Simmetria Universale.  
     *Oggetto*: Architettura HUD a 5 sezioni, Top Bar fissa, Menu di Sistema su tasto `Esc` e selettore a 4 Macro-Aree tematiche.
 
-15. **[`SP-15`: Skills, Upgrade Hub & Strumentazione](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/attivi/sottopiani/15_skills_upgrade_hub_e_strumentazione.md)** [x]  
+15. **[`SP-15`: Skills, Upgrade Hub & Strumentazione](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/docs/piani/completati/sottopiani/15_skills_upgrade_hub_e_strumentazione.md)** [x]  
     *Competenze*: Music Economy, Lifestyle & Housing, Instrument Crafting, Rehearsal Dynamics & Studio Gear.  
     *Oggetto*: Modello dati UpgradeData, lifestyle abitativo, sala prove insonorizzata, negozio strumenti multicategoria con comparatore e hardware home studio.
+
+### Sottopiani Attivi in Lavorazione (Fase 9 — V5.0)
+
+*Nessun sottopiano attivo al momento. I sottopiani SP-01..SP-15 sono interamente convalidati ed archiviati. I nuovi sottopiani per la Sezione 2 della Roadmap (Creatività Musicale & Crafting Avanzato) verranno aperti al passaggio di fase.*
 
 ---
 
