@@ -39,6 +39,9 @@ La visione di game design è stata declinata e interamente convalidata con NVDA 
 
 - **Fasi 1–8**: Completate, convalidate e consolidate con 17 suite di test automatici headless a exit code 0.
 - **Fase 9 Attiva (Versione 5.0: Endgame, Grandi Stadi & Superstar Mondiale)**:
-  - Sottopiano 14 in lavorazione: Riorganizzazione della UI, menu di sistema e navigazione per macro-aree ([`docs/piani/attivi/sottopiani/14_riorganizzazione_ui_menu_sistema_e_macro_aree.md`](../docs/piani/attivi/sottopiani/14_riorganizzazione_ui_menu_sistema_e_macro_aree.md));
-  - Sottopiano 15 in lavorazione: Skills Upgrade Hub e gestione strumentazione da palco ([`docs/piani/attivi/sottopiani/15_skills_upgrade_hub_e_strumentazione.md`](../docs/piani/attivi/sottopiani/15_skills_upgrade_hub_e_strumentazione.md));
-  - Prossimi step: Tour mondiali negli stadi, gestione merchandising globale, contratti major superstar e status leggenda.
+  - `F9.0` (Completata [x]): Riorganizzazione della UI, menu di sistema Esc, Top Bar permanente e navigazione per 4 macro-aree (`test_v5_ui_overhaul.gd`).
+  - `F9.1` (Completata [x]): Skills Upgrade Hub e gestione strumentazione da palco, lifestyle e insonorizzazione (`test_upgrades_system.gd`).
+  - `F9.1B` (Completata [x] — Sez. 1.1): Creazione guidata del personaggio con 6 strumenti, 5 background, 5 tratti e modalità test rapida (`test_character_creation.gd`).
+  - `F9.1C` (Completata [x] — Sez. 1.2): Filosofia della Notte su 22 ore virtuali (06:00–04:00), overtime progressivo non forfettario, skip time e riposo anticipato ristoratore (`test_time_night_system.gd`).
+  - `F9.1D` (Completata [x] — Sez. 1.3): Triade risorse vitali (Energia, Stress, Morale), burnout (<15%), soglia di panico (>=80%), modale `RelaxModal` accessibile con tasto `R` e recupero attivo diurno (`test_vital_resources_system.gd`).
+  - Prossimi step: Sezione 2 della Roadmap Modulare (Sistema Musicale & Pipeline Creativa Avanzata), Grandi Stadi, premi alla carriera e status leggenda.

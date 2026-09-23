@@ -26,7 +26,7 @@
 Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal rendering grafico e progettati per essere testati senza albero di scena (`SceneTree`) tramite test seams deterministici.
 
 1. **Assenza Totale di Latenze Artificiali**: Divieto di impiegare `OS.delay()`, timer di sleep o yield fittizi nei runner di test. Ogni asserzione viene calcolata ed emessa istantaneamente (tempo medio di esecuzione: 0–15 ms per suite).
-2. **Le 17 Suite di Test Headless Validate (Exit Code 0)**:
+2. **Le 20 Suite di Test Headless Validate (Exit Code 0)**:
    - `test_formulas.gd`: formule matematiche, curve XP e bilanciamento;
    - `test_time_system.gd`: orologio, routine giornaliera, passaggio giorno;
    - `test_player_system.gd`: attributi, energia, stress, morale, progressione;
@@ -36,7 +36,16 @@ Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal r
    - `test_localization.gd`: dizionari bilingue, fallback deterministico e pulizia setting;
    - `test_save_manager.gd`: serializzazione atomica JSON, integrità salvataggi;
    - `test_vertical_slice.gd`: catena completa gameplay e cicli fine giornata;
+   - `test_character_creation.gd`: creazione guidata, background e tratti iniziali (Sez. 1.1);
+   - `test_time_night_system.gd`: filosofia della notte su 22h, overtime e skip time (Sez. 1.2);
+   - `test_vital_resources_system.gd`: triade risorse, burnout, panico e recupero attivo (Sez. 1.3);
+   - `test_upgrades_system.gd`: lifestyle, insonorizzazione, strumenti e home studio;
+   - `test_v5_ui_overhaul.gd`: architettura UI a 5 sezioni, navigazione macro-aree e modali;
    - Ulteriori suite per i sottosistemi di band, etichette, tour interurbani, festival estivi, social media e classifiche.
+
+3. **Pattern Closure Container & Guardie Segnali nei Test Headless di Interfaccia**:
+   - In GDScript 4, la cattura di variabili locali scalari o nulle all'interno di lambda passate a `connect()` avviene per valore; per verificare l'emissione dei segnali nei test runner occorre impiegare un contenitore reference (`var received: Array = []` e `func(arg): received.append(arg)`).
+   - Quando si istanziano controlli grafici con `add_child(inst)` all'interno del metodo `_ready()` del test runner, Godot 4 invoca `_ready()` sul figlio immediatamente e in modo sincrono; è fatto divieto di richiamare manualmente `inst._ready()` e tutti i collegamenti a segnali nei nodi UI devono essere protetti da `if not btn.pressed.is_connected(_handler)`.
 
 ---
 
