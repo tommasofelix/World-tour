@@ -59,4 +59,21 @@ Questo registro contiene soltanto problemi tecnici confermati e soluzioni con ev
   2. Ristrutturazione di `tools/test.ps1` impiegando `System.Diagnostics.Process` con watchdog timeout perentorio a 15 secondi (`$proc.WaitForExit(15000)`), abbattimento forzato con `$proc.Kill()` in caso di timeout, pulizia preventiva di processi orfani all'avvio e contatore lineare `[1/23]` per NVDA.
 - Test automatici eseguiti: Tutte le 23 suite di test del progetto eseguite e concluse con successo in circa 75 secondi, con 0 fallimenti e nessun freeze.
 - Misure di prevenzione delle regressioni: Mai invocare file `.gd` privi di scena come target di test se estendono `Node`; dotare sempre i runner di automazione di un meccanismo di watchdog timeout non bloccante.
+### BUG-005 — Retrocompatibilità Revenue Split vs Merch, Scoping Disponibilità Venue e API Morale Band
 
+- Data e componente: `2026-09-24`, `systems/concert_system.gd` (Sezione 5).
+- Sintomo osservato:
+  1. `SCRIPT ERROR: Invalid call. Nonexistent function 'modify_band_morale' in base 'RefCounted (BandSystem)'` durante la concessione del Bis / Encore in `ConcertSystem.resolve_encore()`.
+  2. Fallimento del test `test_band_system.gd` (`Quota incasso leader = 25% su divisione equa (4 membri) - Effettivo: 7.875, Atteso: 7.5`).
+  3. Fallimento nei test `test_schedule_system.gd` e `test_travel_system.gd` per rifiuto del concerto con errore `venue_occupied` su venue fittizie (`pub_test`) o internazionali (`berlin_basement`).
+- Evidenza riproducibile: Esecuzione di `tools/test.ps1` dopo l'estensione del sistema concerti.
+- Causa radice verificata:
+  1. `BandSystem` governa l'affinità e la tensione dei singoli membri e il morale è un attributo diretto del protagonista in `player_data.modify_morale()`. Non esisteva un metodo aggregato `modify_band_morale()` su `BandSystem`.
+  2. Includere `merch_net` in `pool_revenue` prima del calcolo della quota percentuale del leader (`player_share`) ha alterato il contratto storico con `test_band_system.gd`, che calcola la quota del leader sui biglietti lordi (`gross_revenue * 0.25`).
+  3. L'algoritmo di disponibilità procedurale delle venue applicava il calcolo di occupazione anche a venue non appartenenti al circuito locale (come città estere o locali fittizi di test) e anche in assenza di `calendar_data`.
+- Soluzione applicata:
+  1. In `resolve_encore()`: aggiornato per chiamare `player_data.modify_morale()`, iterare sui membri attivi incrementando l'affinità (+3) e riducendo la tensione (-5), emettendo `EventBus.band_chemistry_changed`.
+  2. In `resolve_concert()`: `pool_revenue` coincide con il cachet dei biglietti (`gross_revenue`), preservando l'esattezza matematica del `player_share` (es. 25% su divisione equa); il ricavo netto del merch (`merch_net`) viene accreditato al saldo del giocatore come leader (`total_payout = player_share + merch_net`).
+  3. In `get_venue_status()` e `can_play_concert()`: la disponibilità procedurale e i controlli di chiusura si applicano esclusivamente se `calendar_data` è istanziato e per le sole venue del circuito locale (aventi prefisso `"venue_"`).
+- Test automatici eseguiti: 23/23 suite del progetto passate con successo (0 errori), inclusi `test_concert_system.gd` (92/92 test), `test_band_system.gd` (58/58 test), `test_schedule_system.gd` (73/73 test) e `test_travel_system.gd` (64/64 test).
+- Misure di prevenzione delle regressioni: Separare sempre i flussi economici ancillari (merchandise) dai contratti percentuali dei compensi base (cachet/biglietti) ed applicare vincoli di simulazione temporale/spaziale unicamente alle entità di circuito censite.
