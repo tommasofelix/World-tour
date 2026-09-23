@@ -401,6 +401,13 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 	if social_buzz_mult > 1.0:
 		audience = mini(venue.capacity, int(round(float(audience) * social_buzz_mult)))
 
+	# Bonus Fan Club Ufficiale (Fedeltà e zoccolo duro garantito di spettatori - Sezione 8)
+	if player_data and player_data.fan_club and player_data.fan_club.is_founded:
+		var fan_club_boost: float = player_data.fan_club.get_concert_attendance_boost()
+		if fan_club_boost > 0.0:
+			var extra_attendance: int = int(round(float(audience) * fan_club_boost))
+			audience = mini(venue.capacity, audience + extra_attendance)
+
 	# Moltiplicatore Evento Cittadino (Notte Bianca, Fiera Musica, Festival Urbano - Sezione 6)
 	var city_event_audience_mult: float = 1.0
 	var city_event_fan_mult: float = 1.0

@@ -59,17 +59,17 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -480.0
-offset_top = -320.0
-offset_right = 480.0
-offset_bottom = 320.0
+offset_left = -540.0
+offset_top = -360.0
+offset_right = 540.0
+offset_bottom = 360.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_main")
 
 [node name="VBox" type="VBoxContainer" parent="PanelMain"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 10
 
 [node name="Header" type="HBoxContainer" parent="PanelMain/VBox"]
 layout_mode = 2
@@ -84,6 +84,11 @@ text = "Canale Social Media della Band (BandFeed)"
 layout_mode = 2
 theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
 text = "Follower: 150 | Hype: 1.00x | Post Oggi: 0/3"
+
+[node name="LabelTrend" type="Label" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+text = "Tendenza Settimana: Clip delle Prove (+40% reach)"
 
 [node name="PanelControversy" type="PanelContainer" parent="PanelMain/VBox"]
 visible = false
@@ -112,7 +117,7 @@ theme_override_constants/separation = 10
 [node name="BtnIgnore" type="Button" parent="PanelMain/VBox/PanelControversy/VBoxContro/HBoxControButtons"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "[A] Ignora (Silenzio Stampa)"
+text = "[A] Ignora"
 
 [node name="BtnApology" type="Button" parent="PanelMain/VBox/PanelControversy/VBoxContro/HBoxControButtons"]
 layout_mode = 2
@@ -122,35 +127,59 @@ text = "[B] Scuse Formali"
 [node name="BtnDoubleDown" type="Button" parent="PanelMain/VBox/PanelControversy/VBoxContro/HBoxControButtons"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "[C] Raddoppia la Posta (Double Down)"
+text = "[C] Double Down"
+
+[node name="BtnManager" type="Button" parent="PanelMain/VBox/PanelControversy/VBoxContro/HBoxControButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "[D] Delega al Manager"
 
 [node name="LabelActionsPrompt" type="Label" parent="PanelMain/VBox"]
 layout_mode = 2
-text = "Pubblica un nuovo contenuto sui canali della band (Tasti 1-4):"
+text = "Pubblica un nuovo contenuto sui canali della band (Tasti 1-5):"
 
 [node name="HBoxActions" type="HBoxContainer" parent="PanelMain/VBox"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
 [node name="BtnPractice" type="Button" parent="PanelMain/VBox/HBoxActions"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "[1] Clip Prove (-10 En)"
+text = "[1] Clip Prove (-10)"
 
 [node name="BtnTeaser" type="Button" parent="PanelMain/VBox/HBoxActions"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "[2] Teaser Brano (-15 En)"
+text = "[2] Teaser (-15)"
 
 [node name="BtnBTS" type="Button" parent="PanelMain/VBox/HBoxActions"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "[3] Backstage (-10 En)"
+text = "[3] Backstage (-10)"
 
 [node name="BtnProvocation" type="Button" parent="PanelMain/VBox/HBoxActions"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "[4] Post Provocatorio (-15 En)"
+text = "[4] Provocatorio (-15)"
+
+[node name="BtnLiveStream" type="Button" parent="PanelMain/VBox/HBoxActions"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "[5] Diretta Live (-25)"
+
+[node name="HBoxCommunity" type="HBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BtnSponsor" type="Button" parent="PanelMain/VBox/HBoxCommunity"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "[S] Sponsorizza Ultimo Post (100 €)"
+
+[node name="BtnFanClub" type="Button" parent="PanelMain/VBox/HBoxCommunity"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "[F] Fan Club Ufficiale"
 
 [node name="PanelFeed" type="PanelContainer" parent="PanelMain/VBox"]
 layout_mode = 2
@@ -178,7 +207,7 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
 [node name="LabelStatus" type="Label" parent="PanelMain/VBox"]
 layout_mode = 2

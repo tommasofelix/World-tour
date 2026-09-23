@@ -41,6 +41,12 @@ var is_controversial: bool = false
 ## Campione di commenti procedurali del pubblico
 var comments_sample: Array[String] = []
 
+## Budget investito per sponsorizzazione promozionale (€)
+var sponsor_budget: int = 0
+
+## Flag se il post è sponsorizzato
+var is_sponsored: bool = false
+
 func _init(
 	p_id: String = "",
 	p_type: int = Enums.SocialPostType.PRACTICE_CLIP,
@@ -62,6 +68,8 @@ func _init(
 	is_viral = false
 	is_controversial = false
 	comments_sample = []
+	sponsor_budget = 0
+	is_sponsored = false
 
 func to_dict() -> Dictionary:
 	return {
@@ -77,7 +85,9 @@ func to_dict() -> Dictionary:
 		"new_followers": new_followers,
 		"is_viral": is_viral,
 		"is_controversial": is_controversial,
-		"comments_sample": comments_sample.duplicate()
+		"comments_sample": comments_sample.duplicate(),
+		"sponsor_budget": sponsor_budget,
+		"is_sponsored": is_sponsored
 	}
 
 func from_dict(d: Dictionary) -> void:
@@ -93,6 +103,8 @@ func from_dict(d: Dictionary) -> void:
 	new_followers = int(d.get("new_followers", 0))
 	is_viral = bool(d.get("is_viral", false))
 	is_controversial = bool(d.get("is_controversial", false))
+	sponsor_budget = int(d.get("sponsor_budget", 0))
+	is_sponsored = bool(d.get("is_sponsored", false))
 	
 	comments_sample.clear()
 	var raw_comments: Array = d.get("comments_sample", [])

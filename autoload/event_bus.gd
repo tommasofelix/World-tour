@@ -101,12 +101,16 @@ signal festival_screen_requested()
 signal battle_of_bands_completed(result: Dictionary)
 signal festival_sponsor_signed(festival_id: String, sponsor_type: int)
 
-# --- Segnali Social Media & Fan Engagement (World-tour V4.0 / SP-12 / F8.4) ---
+# --- Segnali Social Media & Fan Engagement (World-tour V4.0 / SP-12 / F8.4 & Sezione 8) ---
 signal social_post_published(post: SocialPostData)
 signal social_controversy_triggered(controversy_data: Dictionary)
 signal social_controversy_resolved(choice: int, outcome: Dictionary)
 signal social_buzz_updated(new_buzz: float)
 signal social_screen_requested()
+signal social_post_sponsored(post_id: String, budget: int, views_added: int)
+signal live_stream_completed(stream_summary: Dictionary)
+signal fan_club_founded(fan_club_data: RefCounted)
+signal fan_mail_received(mail_data: Dictionary)
 
 # --- Segnali Classifiche Musicali & Artisti Rivali (World-tour V4.0 / SP-13 / F8.5) ---
 signal weekly_charts_updated(charts_data: Dictionary)

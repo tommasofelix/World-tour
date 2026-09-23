@@ -230,6 +230,21 @@ var vehicle_custom_name: String = ""
 var battle_of_bands_pass: bool = false
 var festival_trophies: Array[String] = []
 
+# Fan Club Ufficiale della Band & Fandom (Sezione 8)
+const FanClubDataScript = preload("res://data/models/fan_club_data.gd")
+var fan_club: RefCounted = FanClubDataScript.new()
+
+func get_territorial_fans_summary() -> Dictionary:
+	var it_fans: int = int(city_fans.get(Enums.CityId.MILANO, 0)) + int(city_fans.get(Enums.CityId.BOLOGNA, 0)) + int(city_fans.get(Enums.CityId.ROMA, 0)) + int(city_fans.get(Enums.CityId.NAPOLI, 0))
+	var eu_fans: int = it_fans + int(city_fans.get(Enums.CityId.LONDRA, 0)) + int(city_fans.get(Enums.CityId.BERLINO, 0)) + int(city_fans.get(Enums.CityId.DUBLINO, 0)) + int(city_fans.get(Enums.CityId.PARIGI, 0)) + int(city_fans.get(Enums.CityId.MADRID, 0))
+	var world_fans: int = eu_fans + int(city_fans.get(Enums.CityId.NEW_YORK, 0)) + int(city_fans.get(Enums.CityId.LOS_ANGELES, 0)) + int(city_fans.get(Enums.CityId.TOKYO, 0))
+	return {
+		"italian_fans": it_fans,
+		"european_fans": eu_fans,
+		"global_fans": world_fans,
+		"local_city_fans": int(city_fans.get(current_city_id, 0))
+	}
+
 func get_current_city_name() -> String:
 	return Enums.get_city_name(current_city_id)
 
@@ -572,7 +587,8 @@ func to_dict() -> Dictionary:
 		"visited_city_stickers": visited_city_stickers.duplicate(),
 		"vehicle_custom_name": vehicle_custom_name,
 		"battle_of_bands_pass": battle_of_bands_pass,
-		"festival_trophies": festival_trophies.duplicate()
+		"festival_trophies": festival_trophies.duplicate(),
+		"fan_club": fan_club.to_dict() if fan_club else {}
 	}
 
 func from_dict(dict: Dictionary) -> void:
@@ -599,6 +615,11 @@ func from_dict(dict: Dictionary) -> void:
 	if dict.has("festival_trophies") and dict["festival_trophies"] is Array:
 		for tr in dict["festival_trophies"]:
 			festival_trophies.append(str(tr))
+	if dict.has("fan_club") and dict["fan_club"] is Dictionary and not dict["fan_club"].is_empty():
+		fan_club = FanClubDataScript.new()
+		fan_club.from_dict(dict["fan_club"])
+	else:
+		fan_club = FanClubDataScript.new()
 	visited_city_stickers.clear()
 	if dict.has("visited_city_stickers") and dict["visited_city_stickers"] is Array:
 		for st_id in dict["visited_city_stickers"]:

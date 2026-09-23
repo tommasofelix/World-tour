@@ -266,7 +266,16 @@ enum SocialPostType {
 	PRACTICE_CLIP = 0,     # Video prove / backstage
 	TRACK_TEASER = 1,      # Teaser di un brano o singolo
 	BEHIND_THE_SCENES = 2, # Vita da band / tour
-	PROVOCATION = 3        # Post provocatorio / meme
+	PROVOCATION = 3,       # Post provocatorio / meme
+	LIVE_STREAM = 4,       # Diretta streaming con i fan
+	COUNTDOWN_TEASER = 5   # Countdown pre-uscita singolo/disco
+}
+
+enum SocialSponsorBudget {
+	NONE = 0,
+	LIGHT = 100,    # 100 € (+100% reach)
+	MEDIUM = 250,   # 250 € (+250% reach)
+	HEAVY = 500     # 500 € (+500% reach)
 }
 
 static func get_genre_name(genre: int) -> String:
@@ -360,6 +369,10 @@ static func get_social_post_type_name(post_type: int) -> String:
 			return "Dietro le Quinte / Backstage"
 		SocialPostType.PROVOCATION:
 			return "Post Provocatorio / Meme"
+		SocialPostType.LIVE_STREAM:
+			return "Diretta Live Streaming"
+		SocialPostType.COUNTDOWN_TEASER:
+			return "Countdown Pre-Uscita"
 		_:
 			return "Post Sconosciuto"
 
