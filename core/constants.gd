@@ -33,6 +33,17 @@ const SLEEP_STANDARD_STRESS_RELIEF: int = 15
 const OVERTIME_ENERGY_RESTORATION: int = 35
 const OVERTIME_STRESS_PENALTY: int = 20
 
+# --- Overtime Progressivo e Riposo Anticipato (Sezione 1.2) ---
+const VIRTUAL_HOURS_PER_DAY: float = 22.0
+const OVERTIME_STRESS_HOUR_1: int = 2
+const OVERTIME_STRESS_HOUR_2: int = 3
+const OVERTIME_STRESS_HOUR_3: int = 5
+const OVERTIME_STRESS_HOUR_4: int = 10
+const EARLY_SLEEP_ENERGY_BONUS_EVENING: int = 15
+const EARLY_SLEEP_STRESS_BONUS_EVENING: int = 10
+const EARLY_SLEEP_ENERGY_BONUS_NIGHT_EARLY: int = 10
+const EARLY_SLEEP_STRESS_BONUS_NIGHT_EARLY: int = 5
+
 # Soglie fisiologiche di emergenza
 const ENERGY_BURNOUT_THRESHOLD: int = 15
 const STRESS_PANIC_THRESHOLD: int = 80

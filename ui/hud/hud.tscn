@@ -87,13 +87,27 @@ text = "Velocità: 1x (T)"
 [node name="BtnPause" type="Button" parent="VBoxMain/PanelTop/HBoxTop" unique_id=1693903049]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnSpeed")
-focus_neighbor_right = NodePath("../BtnSave")
+focus_neighbor_right = NodePath("../BtnWait")
 focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnCharacter")
 text = "Pausa (Spazio)"
 
-[node name="BtnSave" type="Button" parent="VBoxMain/PanelTop/HBoxTop" unique_id=201408763]
+[node name="BtnWait" type="Button" parent="VBoxMain/PanelTop/HBoxTop"]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnPause")
+focus_neighbor_right = NodePath("../BtnSleep")
+focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnCharacter")
+text = "Aspetta (X)"
+
+[node name="BtnSleep" type="Button" parent="VBoxMain/PanelTop/HBoxTop"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnWait")
+focus_neighbor_right = NodePath("../BtnSave")
+focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnCharacter")
+text = "Dormi (Z)"
+
+[node name="BtnSave" type="Button" parent="VBoxMain/PanelTop/HBoxTop" unique_id=201408763]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnSleep")
 focus_neighbor_right = NodePath("../BtnMainMenu")
 focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnCharacter")
 text = "Salva Partita"

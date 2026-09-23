@@ -13,6 +13,8 @@ extends Control
 @onready var label_money: Label = $VBoxMain/PanelTop/HBoxTop/LabelMoney
 @onready var btn_speed: Button = $VBoxMain/PanelTop/HBoxTop/BtnSpeed
 @onready var btn_pause: Button = $VBoxMain/PanelTop/HBoxTop/BtnPause
+@onready var btn_wait: Button = $VBoxMain/PanelTop/HBoxTop/BtnWait
+@onready var btn_sleep: Button = $VBoxMain/PanelTop/HBoxTop/BtnSleep
 @onready var btn_save: Button = $VBoxMain/PanelTop/HBoxTop/BtnSave
 @onready var btn_main_menu: Button = $VBoxMain/PanelTop/HBoxTop/BtnMainMenu
 
@@ -101,6 +103,10 @@ func _ready() -> void:
 	btn_chart.pressed.connect(open_chart_modal)
 	btn_speed.pressed.connect(_on_btn_speed_pressed)
 	btn_pause.pressed.connect(_on_btn_pause_pressed)
+	if btn_wait:
+		btn_wait.pressed.connect(_on_btn_wait_pressed)
+	if btn_sleep:
+		btn_sleep.pressed.connect(_on_btn_sleep_pressed)
 	btn_save.pressed.connect(_on_btn_save_pressed)
 	btn_main_menu.pressed.connect(_on_btn_main_menu_pressed)
 	
@@ -351,6 +357,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		KEY_SPACE:
 			_on_btn_pause_pressed()
 			get_viewport().set_input_as_handled()
+		KEY_X:
+			_on_btn_wait_pressed()
+			get_viewport().set_input_as_handled()
+		KEY_Z:
+			_on_btn_sleep_pressed()
+			get_viewport().set_input_as_handled()
 
 func _get_localized_period(period: int) -> String:
 	match period:
@@ -391,6 +403,10 @@ func _refresh_ui_text() -> void:
 	
 	var is_paused: bool = GameManager.time_system.is_paused if GameManager.time_system else false
 	btn_pause.text = tr("HUD_BTN_RESUME") if is_paused else tr("HUD_BTN_PAUSE")
+	if btn_wait:
+		btn_wait.text = "Aspetta (X)"
+	if btn_sleep:
+		btn_sleep.text = "Dormi (Z)"
 	btn_save.text = tr("HUD_BTN_SAVE")
 	btn_main_menu.text = tr("HUD_BTN_MAIN_MENU")
 	
@@ -407,6 +423,10 @@ func _refresh_ui_text() -> void:
 	AccessibilityManager.hook_control_accessibility(btn_travel, "Mappa Geografica e Viaggi", "Esplora le scene musicali delle altre città e viaggia (Tasto rapido V).")
 	AccessibilityManager.hook_control_accessibility(btn_speed, tr("HUD_BTN_SPEED_ACC_NAME"), tr("HUD_BTN_SPEED_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_pause, tr("HUD_BTN_PAUSE_ACC_NAME"), tr("HUD_BTN_PAUSE_ACC_DESC"))
+	if btn_wait:
+		AccessibilityManager.hook_control_accessibility(btn_wait, "Aspetta fascia successiva (X)", "Avanza il tempo fino all'inizio della prossima fascia oraria.")
+	if btn_sleep:
+		AccessibilityManager.hook_control_accessibility(btn_sleep, "Vai a dormire (Z)", "Conclude in anticipo la giornata e va a dormire, ottenendo un bonus riposo se prima delle 04:00.")
 	AccessibilityManager.hook_control_accessibility(btn_save, tr("HUD_BTN_SAVE_ACC_NAME"), tr("HUD_BTN_SAVE_ACC_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_main_menu, tr("HUD_BTN_MAIN_MENU_ACC_NAME"), tr("HUD_BTN_MAIN_MENU_ACC_DESC"))
 	
@@ -846,6 +866,20 @@ func _on_btn_pause_pressed() -> void:
 	if GameManager.time_system:
 		var paused: bool = GameManager.time_system.toggle_pause()
 		btn_pause.text = tr("HUD_BTN_RESUME") if paused else tr("HUD_BTN_PAUSE")
+
+func _on_btn_wait_pressed() -> void:
+	if _is_any_modal_open():
+		return
+	if GameManager and GameManager.time_system:
+		var advanced: bool = GameManager.time_system.skip_to_next_period()
+		if not advanced:
+			AccessibilityManager.announce("Impossibile avanzare: giornata al termine o già a notte inoltrata.", true)
+
+func _on_btn_sleep_pressed() -> void:
+	if _is_any_modal_open():
+		return
+	if GameManager and GameManager.time_system:
+		GameManager.time_system.sleep_early()
 
 func _on_btn_save_pressed() -> void:
 	SaveManager.save_game()

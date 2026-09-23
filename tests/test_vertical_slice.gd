@@ -122,7 +122,7 @@ func test_calendar_data_model() -> void:
 	c.remaining_seconds = 150.0
 	c.update_period()
 	assert_equal(c.get_period_name(), "Pomeriggio", "A 150s -> Fascia Pomeriggio")
-	assert_equal(c.get_formatted_time_string(), "15:00", "A 150s -> Ore 15:00 virtuali")
+	assert_equal(c.get_formatted_time_string(), "17:00", "A 150s -> Ore 17:00 virtuali")
 
 func test_time_system_flow() -> void:
 	print("\n3. Verifica Motore Temporale (TimeSystem):")

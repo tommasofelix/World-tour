@@ -17,6 +17,9 @@ func _init(p_player: PlayerData = null, p_calendar: CalendarData = null) -> void
 	EventBus.day_ended.connect(_on_day_ended)
 
 func _on_day_ended(day_num: int) -> void:
+	process_day_end(day_num)
+
+func process_day_end(day_num: int = 1, p_early_sleep_override: bool = false) -> Dictionary:
 	GameManager.change_state(Enums.GameState.DAILY_SUMMARY)
 	
 	var food_exp: float = Constants.DAILY_FOOD_EXPENSE
@@ -30,6 +33,8 @@ func _on_day_ended(day_num: int) -> void:
 		actual_rent = snappedf(base_rent / float(roommates), 0.01)
 		
 	var total_expenses: float = food_exp + actual_rent
+	var sleep_quality_desc: String = "Sonno standard"
+	var has_early_sleep_bonus: bool = false
 	
 	if player_data:
 		player_data.modify_money(-total_expenses)
@@ -43,9 +48,36 @@ func _on_day_ended(day_num: int) -> void:
 			for m in player_data.band_members:
 				m.adjust_tension(housing.tension_daily_modifier)
 				
-		# Sonno ristoratore con eventuali bonus comfort alloggio
+		# Sonno ristoratore con eventuali bonus comfort alloggio e riposo anticipato
 		var energy_gain: int = Constants.SLEEP_STANDARD_ENERGY + int(housing.morale_daily_bonus * 0.5)
 		var stress_relief: int = Constants.SLEEP_STANDARD_STRESS_RELIEF + int(housing.morale_daily_bonus)
+		
+		var is_early: bool = p_early_sleep_override
+		if GameManager and GameManager.time_system and GameManager.time_system.early_sleep_taken:
+			is_early = true
+			
+		if is_early:
+			has_early_sleep_bonus = true
+			var sleep_period: int = Enums.TimePeriod.NIGHT
+			var sleep_offset: int = 18
+			if GameManager and GameManager.time_system:
+				sleep_period = GameManager.time_system.sleep_period
+				sleep_offset = GameManager.time_system.sleep_hour_offset
+				GameManager.time_system.reset_daily_overtime()
+				
+			if sleep_period == Enums.TimePeriod.EVENING or sleep_offset < 18:
+				energy_gain += Constants.EARLY_SLEEP_ENERGY_BONUS_EVENING
+				stress_relief += Constants.EARLY_SLEEP_STRESS_BONUS_EVENING
+				sleep_quality_desc = "Riposo Anticipato Ristoratore"
+			elif sleep_offset < 20:
+				energy_gain += Constants.EARLY_SLEEP_ENERGY_BONUS_NIGHT_EARLY
+				stress_relief += Constants.EARLY_SLEEP_STRESS_BONUS_NIGHT_EARLY
+				sleep_quality_desc = "Riposo Anticipato Ristoratore"
+			else:
+				sleep_quality_desc = "Riposo a notte inoltrata"
+		elif GameManager and GameManager.time_system:
+			GameManager.time_system.reset_daily_overtime()
+			
 		player_data.add_energy(energy_gain)
 		player_data.reduce_stress(stress_relief)
 		
@@ -93,6 +125,8 @@ func _on_day_ended(day_num: int) -> void:
 		"current_energy": player_data.energy if player_data else 100,
 		"current_stress": player_data.stress if player_data else 0,
 		"housing_name": HousingData.get_tier_name(tier),
+		"early_sleep_bonus": has_early_sleep_bonus,
+		"sleep_quality": sleep_quality_desc,
 		"band_crises": band_crises,
 		"pending_dilemma": pending_dilemma.to_dict() if pending_dilemma else {}
 	}
@@ -115,6 +149,7 @@ func _on_day_ended(day_num: int) -> void:
 		speech += " ATTENZIONE: Tensione critica per %s!" % ", ".join(band_crises)
 		
 	AccessibilityManager.announce(speech, true)
+	return summary
 
 func advance_to_next_day() -> void:
 	if calendar_data:

@@ -28,16 +28,24 @@ func get_period_name() -> String:
 			return "Mattina"
 
 func get_formatted_time_string() -> String:
-	# La durata del giorno corrisponde a 18 ore attive (dalle 06:00 alle 24:00)
+	# La giornata virtuale copre 22 ore (dalle 06:00 alle 04:00 del mattino successivo)
 	var elapsed_ratio: float = 1.0 - clampf(remaining_seconds / day_duration, 0.0, 1.0)
-	var total_virtual_minutes: float = elapsed_ratio * (18.0 * 60.0)
-	var virtual_hour: int = 6 + int(floor(total_virtual_minutes / 60.0))
+	var total_virtual_minutes: float = elapsed_ratio * (Constants.VIRTUAL_HOURS_PER_DAY * 60.0)
+	var hour_offset: int = int(floor(total_virtual_minutes / 60.0))
+	var virtual_hour: int = (6 + hour_offset) % 24
 	var virtual_minute: int = int(floor(fmod(total_virtual_minutes, 60.0)))
-	
-	if virtual_hour >= 24:
-		virtual_hour = 0
-		
 	return "%02d:%02d" % [virtual_hour, virtual_minute]
+
+func get_virtual_hour() -> int:
+	var elapsed_ratio: float = 1.0 - clampf(remaining_seconds / day_duration, 0.0, 1.0)
+	var total_virtual_minutes: float = elapsed_ratio * (Constants.VIRTUAL_HOURS_PER_DAY * 60.0)
+	var hour_offset: int = int(floor(total_virtual_minutes / 60.0))
+	return (6 + hour_offset) % 24
+
+func get_hour_offset() -> int:
+	var elapsed_ratio: float = 1.0 - clampf(remaining_seconds / day_duration, 0.0, 1.0)
+	var total_virtual_minutes: float = elapsed_ratio * (Constants.VIRTUAL_HOURS_PER_DAY * 60.0)
+	return int(floor(total_virtual_minutes / 60.0))
 
 func get_weekday() -> int:
 	return (day_number - 1) % Constants.DAYS_PER_WEEK
@@ -139,16 +147,16 @@ func is_end_of_month() -> bool:
 	return get_day_of_month() == Constants.DAYS_PER_MONTH
 
 func update_period() -> int:
-	# Fasce proporzionali alla durata della giornata:
-	# Mattina: > 75% del tempo rimanente (06:00 - 10:30)
-	# Pomeriggio: > 41.6% del tempo rimanente (10:30 - 16:30)
-	# Sera: > 8.3% del tempo rimanente (16:30 - 22:30)
-	# Notte: <= 8.3% del tempo rimanente (22:30 - 24:00)
-	if remaining_seconds > day_duration * 0.75:
+	# Fasce su 22 ore virtuali (dalle 06:00 alle 04:00):
+	# Mattina (06:00 - 12:00): 6 ore -> remaining_seconds > day_duration * (16.0 / 22.0)
+	# Pomeriggio (12:00 - 18:00): 6 ore -> remaining_seconds > day_duration * (10.0 / 22.0)
+	# Sera (18:00 - 00:00): 6 ore -> remaining_seconds > day_duration * (4.0 / 22.0)
+	# Notte / Overtime (00:00 - 04:00): 4 ore -> remaining_seconds <= day_duration * (4.0 / 22.0)
+	if remaining_seconds > day_duration * (16.0 / Constants.VIRTUAL_HOURS_PER_DAY):
 		current_period = Enums.TimePeriod.MORNING
-	elif remaining_seconds > day_duration * 0.416:
+	elif remaining_seconds > day_duration * (10.0 / Constants.VIRTUAL_HOURS_PER_DAY):
 		current_period = Enums.TimePeriod.AFTERNOON
-	elif remaining_seconds > day_duration * 0.083:
+	elif remaining_seconds > day_duration * (4.0 / Constants.VIRTUAL_HOURS_PER_DAY):
 		current_period = Enums.TimePeriod.EVENING
 	else:
 		current_period = Enums.TimePeriod.NIGHT
