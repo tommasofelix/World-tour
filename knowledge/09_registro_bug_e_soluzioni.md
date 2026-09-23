@@ -95,3 +95,20 @@ Questo registro contiene soltanto problemi tecnici confermati e soluzioni con ev
   3. In `tests/test_tour_system.gd`, reinizializzato `player.stress = 30.0` prima dell'esecuzione del Dilemma 4 per consentire la corretta misurazione del delta negativo dello stress.
 - Test automatici eseguiti: 98/98 test superati in `test_tour_system.gd` e 23/23 suite dell'intero progetto superate con 0 errori a 0 ms.
 - Misure di prevenzione delle regressioni: Separare concettualmente e temporalmente le tappe di sosta/riposo dalle tappe di spostamento attivo, e nei test con asserzioni su risorse limitate a zero (clamping) verificare e predisporre un margine dinamico adeguato.
+
+### BUG-007 — Data del Calendario nei Test Headless dei Festival e Cumulatività delle Dinamiche di Band
+
+- Data e componente: `2026-09-24`, `tests/test_festival_system.gd` e `systems/festival_system.gd` (Sezione 7).
+- Sintomo osservato:
+  1. `SCRIPT ERROR: Invalid access to property or key 'extreme_move' on a base object of type 'Dictionary'` in `test_extreme_moves_and_steal_the_show()`.
+  2. Fallimento asserzione tensione membro in `test_stage_types_and_underground_tent()` (`Tensione membro ridotta: Ottenuto 0.00, Atteso 15.00`).
+- Evidenza riproducibile: Esecuzione di `tools/test.ps1 -TestFile test_festival_system` dopo l'estensione della suite festival.
+- Causa radice verificata:
+  1. Il festival estivo di Londra si tiene al giorno 104 del calendario. Nel test di verifica delle mosse sceniche, il calendario era stato impostato al giorno 153 (`cur_day = 153 > 104`), innescando la guardia reattiva di validità temporale in `can_apply_for_slot()`, che ha respinto la prenotazione con `"festival_already_passed"`. La mancata prenotazione ha causato il fallimento di `perform_festival_concert()` (`"slot_not_booked"`), ritornando un dizionario di errore privo della chiave `"extreme_move"`.
+  2. Nella simulazione del concerto nella Tenda Underground (`UNDERGROUND_TENT`), la logica applica una distensione immediata per il set intimo (`-10` tensione) e, al termine del concerto, una seconda riduzione della tensione per il trionfo dello *Steal the Show* contro la band rivale (`-15` tensione). Partendo da una tensione iniziale di `25.0`, la combinazione additiva delle due riduzioni (25.0 - 10.0 - 15.0 = 0.0) ha azzerato la tensione con clamping al limite minimo `0.0`, mentre l'asserzione del test si aspettava erroneamente unicamente la riduzione di 10 punti (attendendosi 15.0).
+- Soluzione applicata:
+  1. In `test_extreme_moves_and_steal_the_show()`, sincronizzato il calendario prima della prenotazione con `calendar.day_number = 100` (precedente al giorno 104 del festival).
+  2. In `test_stage_types_and_underground_tent()`, inizializzato `member.tension = 40.0`: in questo modo il doppio beneficio cumulativo della tenda (-10) e della vittoria sul cartellone (-15) porta deterministamente la tensione finale esattamente a `15.0` (40.0 - 25.0 = 15.0), verificando contemporaneamente l'efficacia di entrambi i meccanismi.
+- Test automatici eseguiti: 16/16 test e 123 asserzioni superate in `test_festival_system.gd` a 0 errori e 0 ms, con validazione al 100% dell'intera suite di progetto (23/23 suite verdi).
+- Misure di prevenzione delle regressioni: Nei test headless su eventi del calendario, assicurarsi che la data virtuale sia sempre antecedente o coincidente con quella dell'evento programmato, e quando più meccaniche intervengono nella medesima transazione di gioco, tenere conto della cumulatività dei delta su parametri limitati da clamping.
+
