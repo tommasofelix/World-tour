@@ -110,11 +110,8 @@ func _refresh_ui_text() -> void:
 	AccessibilityManager.hook_control_accessibility(btn_back_settings, tr("SETTINGS_BACK"), tr("SETTINGS_BACK_DESC"))
 
 func _on_new_game_pressed() -> void:
-	# Inizializza nuova partita da zero (senza brani preimpostati, finanze base)
-	if GameManager:
-		GameManager.start_new_game("Alex", "Chitarra Elettrica", "self_taught", false)
-	# Avvia HUD di simulazione
-	get_tree().change_scene_to_file("res://ui/hud/hud.tscn")
+	# Apre la schermata di creazione e personalizzazione del personaggio
+	get_tree().change_scene_to_file("res://ui/character/character_creation.tscn")
 
 func _on_quick_start_pressed() -> void:
 	# Inizializza partita in modalità test (con 10 brani dello starter pack e 500 € di liquidità)

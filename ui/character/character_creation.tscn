@@ -1,0 +1,202 @@
+[gd_scene load_steps=3 format=3 uid="uid://charcreation01"]
+
+[ext_resource type="Script" path="res://ui/character/character_creation.gd" id="1_charcreation"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main"]
+content_margin_left = 30.0
+content_margin_top = 25.0
+content_margin_right = 30.0
+content_margin_bottom = 25.0
+bg_color = Color(0.09, 0.1, 0.14, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.6, 0.5, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="CharacterCreation" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_charcreation")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.04, 0.05, 0.07, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelMain" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(780, 620)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_main")
+
+[node name="VBoxMain" type="VBoxContainer" parent="CenterContainer/PanelMain"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Header" type="VBoxContainer" parent="CenterContainer/PanelMain/VBoxMain"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="LabelTitle" type="Label" parent="CenterContainer/PanelMain/VBoxMain/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Crea il Tuo Musicista"
+horizontal_alignment = 1
+
+[node name="LabelSubtitle" type="Label" parent="CenterContainer/PanelMain/VBoxMain/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "World-tour — Identità Iniziale, Strumenti & Background di Partenza"
+horizontal_alignment = 1
+
+[node name="HSeparator1" type="HSeparator" parent="CenterContainer/PanelMain/VBoxMain"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CenterContainer/PanelMain/VBoxMain"]
+custom_minimum_size = Vector2(720, 420)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContent" type="VBoxContainer" parent="CenterContainer/PanelMain/VBoxMain/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="HBoxName" type="HBoxContainer" parent="CenterContainer/PanelMain/VBoxMain/ScrollContainer/VBoxContent"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="LabelName" type="Label" parent="CenterContainer/PanelMain/VBoxMain/ScrollContainer/VBoxContent/HBoxName"]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+text = "Nome Personale:"
+
+[node name="EditName" type="LineEdit" parent="CenterContainer/PanelMain/VBoxMain/ScrollContainer/VBoxContent/HBoxName"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Alex"
+placeholder_text = "Inserisci il nome del personaggio..."
+
+[node name="HBoxStageName" type="HBoxContainer" parent="CenterContainer/PanelMain/VBoxMain/ScrollContainer/VBoxContent"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="LabelStageName" type="Label" parent="CenterContainer/PanelMain/VBoxMain/ScrollContainer/VBoxContent/HBoxStageName"]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+text = "Nome d'Arte (Facoltativo):"
+
+[node name="EditStageName" type="LineEdit" parent="CenterContainer/PanelMain/VBoxMain/ScrollContainer/VBoxContent/HBoxStageName"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Opzionale (es. The Rebel, Johnny Wild...)"
+
+[node name="HBoxAge" type="HBoxContainer" parent="CenterContainer/PanelMain/VBoxMain/ScrollContainer/VBoxContent"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="LabelAge" type="Label" parent="CenterContainer/PanelMain/VBoxMain/ScrollContainer/VBoxContent/HBoxAge"]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+text = "Età di Partenza:"
+
+[node name="SpinAge" type="SpinBox" parent="CenterContainer/PanelMain/VBoxMain/ScrollContainer/VBoxContent/HBoxAge"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+min_value = 18.0
+max_value = 35.0
+value = 20.0
+
+[node name="HBoxInstrument" type="HBoxContainer" parent="CenterContainer/PanelMain/VBoxMain/ScrollContainer/VBoxContent"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="LabelInstrument" type="Label" parent="CenterContainer/PanelMain/VBoxMain/ScrollContainer/VBoxContent/HBoxInstrument"]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+text = "Strumento Principale:"
+
+[node name="OptInstrument" type="OptionButton" parent="CenterContainer/PanelMain/VBoxMain/ScrollContainer/VBoxContent/HBoxInstrument"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxBackground" type="HBoxContainer" parent="CenterContainer/PanelMain/VBoxMain/ScrollContainer/VBoxContent"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="LabelBackground" type="Label" parent="CenterContainer/PanelMain/VBoxMain/ScrollContainer/VBoxContent/HBoxBackground"]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+text = "Background / Origini:"
+
+[node name="OptBackground" type="OptionButton" parent="CenterContainer/PanelMain/VBoxMain/ScrollContainer/VBoxContent/HBoxBackground"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxTrait" type="HBoxContainer" parent="CenterContainer/PanelMain/VBoxMain/ScrollContainer/VBoxContent"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="LabelTrait" type="Label" parent="CenterContainer/PanelMain/VBoxMain/ScrollContainer/VBoxContent/HBoxTrait"]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+text = "Tratto Caratteriale:"
+
+[node name="OptTrait" type="OptionButton" parent="CenterContainer/PanelMain/VBoxMain/ScrollContainer/VBoxContent/HBoxTrait"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PanelSummary" type="PanelContainer" parent="CenterContainer/PanelMain/VBoxMain/ScrollContainer/VBoxContent"]
+layout_mode = 2
+
+[node name="LabelSummary" type="Label" parent="CenterContainer/PanelMain/VBoxMain/ScrollContainer/VBoxContent/PanelSummary"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Riepilogo Musicista..."
+autowrap_mode = 2
+
+[node name="HSeparator2" type="HSeparator" parent="CenterContainer/PanelMain/VBoxMain"]
+layout_mode = 2
+
+[node name="HBoxButtons" type="HBoxContainer" parent="CenterContainer/PanelMain/VBoxMain"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="BtnStart" type="Button" parent="CenterContainer/PanelMain/VBoxMain/HBoxButtons"]
+custom_minimum_size = Vector2(180, 45)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Inizia Carriera"
+
+[node name="BtnQuickDefault" type="Button" parent="CenterContainer/PanelMain/VBoxMain/HBoxButtons"]
+custom_minimum_size = Vector2(190, 45)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Avvio Classico (Alex)"
+
+[node name="BtnBack" type="Button" parent="CenterContainer/PanelMain/VBoxMain/HBoxButtons"]
+custom_minimum_size = Vector2(160, 45)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Torna al Menu"

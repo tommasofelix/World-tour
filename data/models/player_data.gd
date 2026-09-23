@@ -6,10 +6,15 @@ extends RefCounted
 const UpgradeData = preload("res://data/models/upgrade_data.gd")
 
 var player_name: String = "Alex"
+var stage_name: String = ""
+var age: int = 20
 var primary_instrument: String = "Chitarra Elettrica"
 var background_id: String = "self_taught"
 var trait_id: String = "charismatic"
 var language: String = "it"
+
+func get_effective_name() -> String:
+	return stage_name if not stage_name.is_empty() else player_name
 
 func get_background_name() -> String:
 	match background_id:
@@ -17,8 +22,12 @@ func get_background_name() -> String:
 			return "Autodidatta (Equilibrato)"
 		"conservatory":
 			return "Conservatorio (Teoria & Composizione)"
-		"street_kid":
+		"busker", "street_kid":
 			return "Musicista di Strada (Carisma & Grinta)"
+		"punk_rebel":
+			return "Ribelle Punk (Grinta & Presenza Scenica)"
+		"bedroom_producer":
+			return "Producer da Cameretta (Produzione Sonora)"
 		"art_family":
 			return "Famiglia d'Arte (Notorietà & Contatti)"
 		_:
@@ -30,12 +39,37 @@ func get_trait_name() -> String:
 			return "Carismatico (+Presenza Scenica e Fan)"
 		"perfectionist":
 			return "Perfezionista (+Qualità Brani, +Stress)"
-		"night_owl":
-			return "Creativo Notturno (+Ispirazione Serale)"
+		"stage_animal":
+			return "Animale da Palco (+Concert Score nei Live)"
+		"creative_insomniac", "night_owl":
+			return "Insonne Creativo (+Idee di Notte, -Recupero Sonno)"
 		"resilient":
-			return "Resiliente (-Consumo Energia)"
+			return "Resiliente (-Consumo Energia e Stress)"
 		_:
 			return "Carismatico"
+
+func apply_starting_background_and_trait() -> void:
+	match background_id:
+		"self_taught":
+			money = 50.0
+			skills["instrument"]["level"] = 12
+		"conservatory":
+			money = 30.0
+			skills["composition"]["level"] = 14
+			skills["instrument"]["level"] = 12
+		"busker", "street_kid":
+			money = 25.0
+			skills["performance"]["level"] = 14
+			skills["charisma"]["level"] = 12
+		"punk_rebel":
+			money = 20.0
+			skills["performance"]["level"] = 15
+		"bedroom_producer":
+			money = 40.0
+			skills["production"]["level"] = 15
+			skills["composition"]["level"] = 12
+		_:
+			money = 50.0
 
 # Risorse fisiologiche e finanziarie
 var energy: int = Constants.MAX_ENERGY
@@ -426,6 +460,8 @@ func to_dict() -> Dictionary:
 		
 	return {
 		"player_name": player_name,
+		"stage_name": stage_name,
+		"age": age,
 		"primary_instrument": primary_instrument,
 		"background_id": background_id,
 		"trait_id": trait_id,
@@ -458,6 +494,8 @@ func to_dict() -> Dictionary:
 
 func from_dict(dict: Dictionary) -> void:
 	player_name = dict.get("player_name", player_name)
+	stage_name = dict.get("stage_name", stage_name)
+	age = int(dict.get("age", age))
 	primary_instrument = dict.get("primary_instrument", primary_instrument)
 	background_id = dict.get("background_id", background_id)
 	trait_id = dict.get("trait_id", trait_id)
