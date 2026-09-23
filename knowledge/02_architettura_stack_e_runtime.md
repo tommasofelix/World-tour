@@ -26,11 +26,12 @@
 Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal rendering grafico e progettati per essere testati senza albero di scena (`SceneTree`) tramite test seams deterministici.
 
 1. **Assenza Totale di Latenze Artificiali**: Divieto di impiegare `OS.delay()`, timer di sleep o yield fittizi nei runner di test. Ogni asserzione viene calcolata ed emessa istantaneamente (tempo medio di esecuzione: 0–15 ms per suite).
-2. **Le 20 Suite di Test Headless Validate (Exit Code 0)**:
+2. **Le 23 Suite di Test Headless Validate (Exit Code 0)**:
    - `test_formulas.gd`: formule matematiche, curve XP e bilanciamento;
    - `test_time_system.gd`: orologio, routine giornaliera, passaggio giorno;
    - `test_player_system.gd`: attributi, energia, stress, morale, progressione;
    - `test_music_system.gd`: creazione brani, quality score, composizione e bozze;
+   - `test_advanced_crafting_system.gd`: crafting avanzato, 10 temi lirici, sinergie, nuovi tratti e studio pro (Sez. 2);
    - `test_concert_system.gd`: concerti live, affluenza, scaletta e incassi;
    - `test_economy_system.gd`: flussi finanziari, spese, contratti e royalties;
    - `test_localization.gd`: dizionari bilingue, fallback deterministico e pulizia setting;
@@ -47,6 +48,11 @@ Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal r
    - In GDScript 4, la cattura di variabili locali scalari o nulle all'interno di lambda passate a `connect()` avviene per valore; per verificare l'emissione dei segnali nei test runner occorre impiegare un contenitore reference (`var received: Array = []` e `func(arg): received.append(arg)`).
    - Quando si istanziano controlli grafici con `add_child(inst)` all'interno del metodo `_ready()` del test runner, Godot 4 invoca `_ready()` sul figlio immediatamente e in modo sincrono; è fatto divieto di richiamare manualmente `inst._ready()` e tutti i collegamenti a segnali nei nodi UI devono essere protetti da `if not btn.pressed.is_connected(_handler)`.
 
+4. **Regola d'Oro di Esecuzione Test Headless (Invocazione da Scena `.tscn`)**:
+   - I test che estendono `Node` e dipendono dagli Autoload di sistema (`EventBus`, `GameManager`, `SaveManager`, `AccessibilityManager`) **devono essere eseguiti come scene `.tscn`** (es. `godot --path . --headless res://tests/test_nome.tscn`).
+   - L'invocazione diretta di file `.gd` (senza scena o con flag `-s`) su script che estendono `Node` provoca il freeze a tempo indefinito dell'engine, poiché `_ready()` non viene invocato e `quit()` non viene raggiunto.
+   - Tutti gli script di test runner automatizzati (`tools/test.ps1`) integrano un watchdog timeout (15 secondi) tramite `.NET Process` per prevenire qualsiasi freeze della console di sviluppo.
+
 ---
 
 ## Comandi Operativi di Riferimento
@@ -55,17 +61,21 @@ Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal r
   ```powershell
   & "$env:OneDrive\progetti dei frati\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64_console.exe" --version
   ```
-- **Controllo Sintattico Headless Senza Grafica (CLI-First)**:
+- **Controllo Sintattico Headless di Tutti i File GDScript**:
   ```powershell
-  & "$env:OneDrive\progetti dei frati\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64_console.exe" --headless --check-only -s <percorso_script.gd>
+  powershell -ExecutionPolicy Bypass -File tools/check.ps1
   ```
-- **Esecuzione Suite di Test Unitari Headless**:
+- **Esecuzione Suite di Test Headless (Singolo Test o Regressione Completa con Watchdog)**:
   ```powershell
-  & "$env:OneDrive\progetti dei frati\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64_console.exe" --headless -s tests/test_formulas.gd
+  # Esecuzione di tutti i 23 test con watchdog a 15s e contatore NVDA:
+  powershell -ExecutionPolicy Bypass -File tools/test.ps1
+
+  # Esecuzione di un singolo test specifico:
+  powershell -ExecutionPolicy Bypass -File tools/test.ps1 -TestFile test_advanced_crafting_system
   ```
 - **Avvio del Gioco con Accessibilità Forzata e Console Attiva**:
   ```powershell
-  & "$env:OneDrive\progetti dei frati\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64_console.exe" --path . --accessibility always --accessibility-driver accesskit
+  powershell -ExecutionPolicy Bypass -File tools/run.ps1
   ```
 
 ---
