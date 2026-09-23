@@ -90,14 +90,19 @@ enum BandRole {
 	BASS,             # Bassista (Groove & stabilità)
 	DRUMS,            # Batterista (Ritmo & potenza sonora)
 	KEYBOARDS,        # Tastierista (Atmosfera & armonie)
-	GUITAR_RHYTHM     # Chitarrista ritmico (Muro di suono)
+	GUITAR_RHYTHM,    # Chitarrista ritmico (Muro di suono)
+	VOCALS            # Cantante / Voce Principale (Interpretazione, carisma e presenza scenica)
 }
 
 enum BandPersonality {
 	RELIABLE,         # Affidabile e calmo: -Tensione, +Puntualità
 	PERFECTIONIST,    # Perfezionista: +Qualità live, genera Tensione con performance scarse
 	WILD_PARTY,       # Animale da festa: +Presenza scenica, rischio imprevisti
-	EGO_ARTIST        # Ego smisurato: grande talento, permaloso su scaletta e compensi
+	EGO_ARTIST,       # Ego smisurato: grande talento, permaloso su scaletta e compensi
+	MERCENARY,        # Mercenario: pragmatico, motivato dal denaro, intollerante a quote basse
+	STAGE_ANXIOUS,    # Ansioso da Palco: sensibile alla pressione dei grandi palchi
+	NATURAL_LEADER,   # Leader Naturale: trainante ma potenziale attrito di leadership
+	PEACEMAKER        # Pacificatore: mediatore empatico, mitiga la tensione e favorisce l'intesa
 }
 
 enum RevenueSplit {

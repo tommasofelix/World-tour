@@ -246,11 +246,16 @@
 	"ROLE_DRUMS": "Drums",
 	"ROLE_KEYBOARDS": "Keyboards",
 	"ROLE_GUITAR_RHYTHM": "Rhythm Guitar",
+	"ROLE_VOCALS": "Lead Vocals",
 
 	"PERSONALITY_RELIABLE": "Reliable & Steady",
 	"PERSONALITY_PERFECTIONIST": "Demanding Perfectionist",
 	"PERSONALITY_WILD_PARTY": "Stage Wild Animal",
 	"PERSONALITY_EGO_ARTIST": "Sensitive Artistic Ego",
+	"PERSONALITY_MERCENARY": "Pragmatic Mercenary",
+	"PERSONALITY_STAGE_ANXIOUS": "Stage Anxious",
+	"PERSONALITY_NATURAL_LEADER": "Natural Born Leader",
+	"PERSONALITY_PEACEMAKER": "Empathetic Peacemaker",
 
 	"SPLIT_EQUAL": "Equal Split (25% each)",
 	"SPLIT_LEADER_BALANCED": "Balanced Leader (40% Leader, 20% Members)",

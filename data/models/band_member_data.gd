@@ -46,6 +46,8 @@ func get_role_name() -> String:
 			return tr("ROLE_KEYBOARDS")
 		Enums.BandRole.GUITAR_RHYTHM:
 			return tr("ROLE_GUITAR_RHYTHM")
+		Enums.BandRole.VOCALS:
+			return tr("ROLE_VOCALS")
 		_:
 			return tr("ROLE_BASS")
 
@@ -59,6 +61,14 @@ func get_personality_name() -> String:
 			return tr("PERSONALITY_WILD_PARTY")
 		Enums.BandPersonality.EGO_ARTIST:
 			return tr("PERSONALITY_EGO_ARTIST")
+		Enums.BandPersonality.MERCENARY:
+			return tr("PERSONALITY_MERCENARY")
+		Enums.BandPersonality.STAGE_ANXIOUS:
+			return tr("PERSONALITY_STAGE_ANXIOUS")
+		Enums.BandPersonality.NATURAL_LEADER:
+			return tr("PERSONALITY_NATURAL_LEADER")
+		Enums.BandPersonality.PEACEMAKER:
+			return tr("PERSONALITY_PEACEMAKER")
 		_:
 			return tr("PERSONALITY_RELIABLE")
 

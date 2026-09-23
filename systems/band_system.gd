@@ -32,15 +32,16 @@ func refresh_candidates_pool() -> void:
 		Enums.BandRole.BASS,
 		Enums.BandRole.DRUMS,
 		Enums.BandRole.KEYBOARDS,
-		Enums.BandRole.GUITAR_RHYTHM
+		Enums.BandRole.GUITAR_RHYTHM,
+		Enums.BandRole.VOCALS
 	]
 	
-	# Genera almeno 4 candidati (uno per ciascun ruolo)
+	# Genera almeno 5 candidati garantendo la presenza di tutti i 5 ruoli
 	for i in range(roles.size()):
 		var role: int = roles[i]
 		var name_idx: int = (i + int(Time.get_ticks_msec() / 100)) % CANDIDATE_NAMES.size()
 		var m_name: String = "%s %s" % [CANDIDATE_NAMES[name_idx], _get_role_suffix(role)]
-		var personality: int = randi() % 4
+		var personality: int = randi() % 8
 		var genre: int = randi() % 6
 		var base_skill: int = 12 + (randi() % 15)
 		if player_data:
@@ -66,8 +67,32 @@ func _get_role_suffix(role: int) -> String:
 			return "Keys"
 		Enums.BandRole.GUITAR_RHYTHM:
 			return "Riff"
+		Enums.BandRole.VOCALS:
+			return "Voice"
 		_:
 			return "Sound"
+
+func calculate_compatibility(candidate: BandMemberData) -> float:
+	var compatibility: float = 50.0
+	match candidate.personality:
+		Enums.BandPersonality.RELIABLE:
+			compatibility += 20.0
+		Enums.BandPersonality.PEACEMAKER:
+			compatibility += 15.0
+		Enums.BandPersonality.PERFECTIONIST:
+			compatibility += 10.0
+		Enums.BandPersonality.WILD_PARTY:
+			compatibility += 5.0
+		Enums.BandPersonality.MERCENARY:
+			compatibility += 0.0
+		Enums.BandPersonality.STAGE_ANXIOUS:
+			compatibility -= 5.0
+		Enums.BandPersonality.NATURAL_LEADER:
+			compatibility -= 10.0
+		Enums.BandPersonality.EGO_ARTIST:
+			compatibility -= 10.0
+			
+	return clampf(compatibility, 10.0, 100.0)
 
 func audition_candidate(candidate: BandMemberData) -> Dictionary:
 	if not player_data:
@@ -83,20 +108,27 @@ func audition_candidate(candidate: BandMemberData) -> Dictionary:
 	player_data.modify_money(-Constants.BAND_AUDITION_FEE)
 	EventBus.money_changed.emit(player_data.money, -Constants.BAND_AUDITION_FEE, "band_audition")
 	
-	# Calcolo compatibilità
-	var compatibility: float = 50.0
-	if candidate.personality == Enums.BandPersonality.RELIABLE:
-		compatibility += 20.0
-	elif candidate.personality == Enums.BandPersonality.PERFECTIONIST:
-		compatibility += 10.0
-	elif candidate.personality == Enums.BandPersonality.EGO_ARTIST:
-		compatibility -= 10.0
+	# Verifica se il candidato accetta o rifiuta per divario di livello / reputazione
+	var rep_expected: float = player_data.reputation * 2.0 + 15.0
+	var delta_skill: float = float(candidate.skill_level) - rep_expected
+	if delta_skill > 25.0:
+		var rej_msg: String = "Il candidato %s ha svolto il provino ma ha rifiutato l'offerta: reputa la band ancora troppo acerba per le sue aspettative artistiche (richiesta reputazione più alta)." % candidate.member_name
+		AccessibilityManager.announce(rej_msg, true)
+		return {
+			"success": false,
+			"reason": "candidate_rejected",
+			"candidate": candidate,
+			"message": rej_msg
+		}
 		
+	var compatibility: float = calculate_compatibility(candidate)
+	var ok_msg: String = "Audizione completata con successo per %s (Compatibilità stimata: %.0f%%)." % [candidate.member_name, compatibility]
+	AccessibilityManager.announce(ok_msg, true)
 	return {
 		"success": true,
 		"candidate": candidate,
-		"compatibility": clampf(compatibility, 10.0, 100.0),
-		"message": "Audizione completata con successo per %s." % candidate.member_name
+		"compatibility": compatibility,
+		"message": ok_msg
 	}
 
 func hire_candidate(candidate: BandMemberData) -> Dictionary:
@@ -107,7 +139,7 @@ func hire_candidate(candidate: BandMemberData) -> Dictionary:
 		return {
 			"success": false,
 			"reason": "band_full",
-			"message": "La band ha già raggiunto il limite massimo di %d membri." % Constants.MAX_BAND_MEMBERS
+			"message": "La band ha già raggiunto il limite massimo di %d compagni." % Constants.MAX_BAND_MEMBERS
 		}
 		
 	# Controlla se il ruolo è già occupato
@@ -119,8 +151,27 @@ func hire_candidate(candidate: BandMemberData) -> Dictionary:
 			"message": "Il ruolo di %s è già occupato da %s." % [candidate.get_role_name(), existing.member_name]
 		}
 		
+	# Controllo divario di abilità se assunto direttamente
+	var rep_expected: float = player_data.reputation * 2.0 + 15.0
+	var delta_skill: float = float(candidate.skill_level) - rep_expected
+	if delta_skill > 25.0:
+		return {
+			"success": false,
+			"reason": "candidate_rejected",
+			"message": "Il candidato %s rifiuta l'ingaggio: reputa la band ancora troppo acerba per le sue aspettative artistiche." % candidate.member_name
+		}
+		
 	if calendar_data:
 		candidate.joined_day = calendar_data.day_number
+		
+	# Calibrazione affinità iniziale basata sulla compatibilità
+	candidate.affinity = calculate_compatibility(candidate)
+	if candidate.personality == Enums.BandPersonality.PEACEMAKER:
+		candidate.tension = 0.0
+	elif candidate.personality == Enums.BandPersonality.EGO_ARTIST:
+		candidate.tension = 15.0
+	elif candidate.personality == Enums.BandPersonality.STAGE_ANXIOUS:
+		candidate.tension = 10.0
 		
 	player_data.add_band_member(candidate)
 	candidates_pool.erase(candidate)
@@ -168,7 +219,7 @@ func set_revenue_split(mode: int) -> void:
 		
 	player_data.revenue_split_mode = mode
 	
-	# Impatto psicologico sui membri della band
+	# Impatto psicologico sui membri della band in base alla personalità
 	for m in player_data.band_members:
 		match mode:
 			Enums.RevenueSplit.EQUAL_SPLIT:
@@ -176,11 +227,21 @@ func set_revenue_split(mode: int) -> void:
 				m.modify_respect(5.0)
 				m.modify_affinity(5.0)
 			Enums.RevenueSplit.LEADER_BALANCED:
-				if m.personality == Enums.BandPersonality.EGO_ARTIST:
+				if m.personality == Enums.BandPersonality.EGO_ARTIST or m.personality == Enums.BandPersonality.MERCENARY:
 					m.modify_tension(8.0)
+				elif m.personality == Enums.BandPersonality.NATURAL_LEADER:
+					m.modify_tension(5.0)
 			Enums.RevenueSplit.LEADER_PREDATORY:
-				m.modify_tension(20.0)
-				m.modify_respect(-12.0)
+				var tens_penalty: float = 20.0
+				var resp_penalty: float = -12.0
+				if m.personality == Enums.BandPersonality.MERCENARY:
+					tens_penalty = 30.0 # Mercenario intollerante a quote predatorie
+					resp_penalty = -18.0
+				elif m.personality == Enums.BandPersonality.EGO_ARTIST:
+					tens_penalty = 25.0
+					resp_penalty = -15.0
+				m.modify_tension(tens_penalty)
+				m.modify_respect(resp_penalty)
 				m.modify_affinity(-10.0)
 				
 	EventBus.band_revenue_split_changed.emit(mode)
@@ -225,6 +286,14 @@ func get_band_synergy_bonus() -> float:
 	# Sinergia sonora: Affinità e rispetto arricchiscono il sound (+25 max), la tensione genera dissonanze (-15 max)
 	var raw_synergy: float = ((avg_aff * 0.40) + (avg_resp * 0.60)) - (avg_tens * 0.70)
 	var bonus: float = (raw_synergy / 100.0) * 25.0
+	
+	# Boost front-man: cantante dedicato carismatico o con personalità da palco
+	for m in members:
+		if m.role == Enums.BandRole.VOCALS:
+			bonus += 3.0 # Boost presenza scenica vocale
+			if m.personality == Enums.BandPersonality.WILD_PARTY:
+				bonus += 2.0
+				
 	if player_data:
 		bonus += player_data.get_total_gear_synergy_bonus()
 	return clampf(bonus, -15.0, 35.0)
@@ -256,11 +325,23 @@ func hold_rehearsal_session() -> Dictionary:
 	if stress_gain > 0:
 		player_data.add_stress(stress_gain)
 		
-	# Prove aumentano affinità e rispetto, e riducono tensione
+	# Prove aumentano affinità e rispetto, e riducono tensione, con bonus speciali da personalità
+	var has_peacemaker: bool = false
+	var has_perfectionist: bool = false
 	for m in player_data.band_members:
-		m.modify_affinity(4.0)
-		m.modify_respect(5.0)
-		m.modify_tension(-8.0)
+		if m.personality == Enums.BandPersonality.PEACEMAKER:
+			has_peacemaker = true
+		elif m.personality == Enums.BandPersonality.PERFECTIONIST:
+			has_perfectionist = true
+			
+	var aff_delta: float = 6.0 if has_peacemaker else 4.0
+	var resp_delta: float = 7.0 if has_perfectionist else 5.0
+	var tens_delta: float = -10.0 if has_peacemaker else -8.0
+	
+	for m in player_data.band_members:
+		m.modify_affinity(aff_delta)
+		m.modify_respect(resp_delta)
+		m.modify_tension(tens_delta)
 		
 	_emit_chemistry_changed()
 	

@@ -246,11 +246,16 @@
 	"ROLE_DRUMS": "Batteria",
 	"ROLE_KEYBOARDS": "Tastiere",
 	"ROLE_GUITAR_RHYTHM": "Chitarra Ritmica",
+	"ROLE_VOCALS": "Cantante",
 
 	"PERSONALITY_RELIABLE": "Affidabile e Preciso",
 	"PERSONALITY_PERFECTIONIST": "Perfezionista Esigente",
 	"PERSONALITY_WILD_PARTY": "Animale da Palco",
 	"PERSONALITY_EGO_ARTIST": "Ego Artistico Sensibile",
+	"PERSONALITY_MERCENARY": "Il Mercenario Pragmatico",
+	"PERSONALITY_STAGE_ANXIOUS": "L'Ansioso da Palco",
+	"PERSONALITY_NATURAL_LEADER": "Il Leader Naturale",
+	"PERSONALITY_PEACEMAKER": "Il Pacificatore Empatico",
 
 	"SPLIT_EQUAL": "Divisione Equa (25% a testa)",
 	"SPLIT_LEADER_BALANCED": "Leader Equilibrato (40% Leader, 20% Compagni)",
