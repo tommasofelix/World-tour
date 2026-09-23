@@ -112,3 +112,23 @@ Questo registro contiene soltanto problemi tecnici confermati e soluzioni con ev
 - Test automatici eseguiti: 16/16 test e 123 asserzioni superate in `test_festival_system.gd` a 0 errori e 0 ms, con validazione al 100% dell'intera suite di progetto (23/23 suite verdi).
 - Misure di prevenzione delle regressioni: Nei test headless su eventi del calendario, assicurarsi che la data virtuale sia sempre antecedente o coincidente con quella dell'evento programmato, e quando più meccaniche intervengono nella medesima transazione di gioco, tenere conto della cumulatività dei delta su parametri limitati da clamping.
 
+### BUG-008 — Global Script Class Cache & Pre-requisito di Fanbase nella Serializzazione del Fan Club
+
+- Data e componente: `2026-09-24`, `autoload/event_bus.gd`, `data/models/fan_club_data.gd` e `tests/test_advanced_social_system.gd` (Sezione 8).
+- Sintomo osservato:
+  1. `SCRIPT ERROR: Parse Error: Could not find type "FanClubData" in the current scope` al boot dell'engine durante il caricamento di `autoload/event_bus.gd`.
+  2. Mancata indicizzazione del nuovo script `data/models/fan_club_data.gd` nella cache globale di Godot Engine durante l'esecuzione da riga di comando dei test headless.
+  3. Fallimento asserzione nel test 9 di serializzazione atomica (`test_fan_club_persistence_and_fandom_summary`): `player.fan_club.is_founded` risultava `false` dopo la chiamata a `sys.found_fan_club()`.
+- Evidenza riproducibile: Creazione di una nuova classe pura con `class_name FanClubData` e richiamo della firma `signal fan_club_founded(fan_club: FanClubData)` nell'Autoload dell'EventBus prima che il file `.godot/global_script_class_cache.cfg` sia aggiornato.
+- Causa radice verificata:
+  1. Gli Autoload di Godot vengono caricati prima o contemporaneamente alla risoluzione dei tipi globali. Tipizzare strettamente un parametro di segnale con una classe di modello dati definita tramite `class_name` genera un accoppiamento circolare anticipato che fallisce se la classe non è ancora nel registro o se la cache è disallineata.
+  2. I test runner headless (`Godot_console.exe --headless res://tests/test.tscn`) non rigenerano automaticamente la cache delle classi globali dei file `.gd` appena creati su disco, a differenza dell'editor grafico.
+  3. Nel Test 9, `found_fan_club()` richiede per contratto di dominio che il giocatore possieda almeno 1.000 fan (`player.fans >= 1000`). L'istanza di test era stata creata con fan iniziali pari a zero, provocando il rifiuto con `fans_insufficient`: di conseguenza il fan club non veniva fondato (`is_founded = false`) e i relativi campi non venivano scritti nel dizionario del salvataggio.
+- Soluzione applicata:
+  1. In `autoload/event_bus.gd`, disaccoppiata la signature del segnale utilizzando la classe base nativa: `signal fan_club_founded(fan_club_data: RefCounted)`.
+  2. Rigenerata la class cache globale con una rapida invocazione headless dell'editor: `Godot_console.exe --headless --editor --quit`.
+  3. In `tests/test_advanced_social_system.gd`, impostato `player.fans = 1500` prima di invocare `sys.found_fan_club("Andrea Vinyl")`.
+- Test automatici eseguiti: 51/51 test superati in `test_advanced_social_system.gd` a 0 errori e 0 ms, con validazione al 100% dell'intera suite di progetto (24/24 suite verdi).
+- Misure di prevenzione delle regressioni: Negli Autoload globali di broadcast ad eventi (EventBus), tipizzare i parametri dei segnali con tipi base (`RefCounted`, `Resource`, `Dictionary`) per evitare dipendenze circolari; quando si aggiunge un nuovo file con `class_name`, lanciare `--editor --quit` per rigenerare la cache globale prima di eseguire i test runner; nei test di serializzazione di sottosistemi che richiedono prerequisiti di sblocco, impostare preventivamente lo stato necessario nel modello prima di verificare la persistenza.
+
+

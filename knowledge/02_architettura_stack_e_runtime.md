@@ -26,7 +26,7 @@
 Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal rendering grafico e progettati per essere testati senza albero di scena (`SceneTree`) tramite test seams deterministici.
 
 1. **Assenza Totale di Latenze Artificiali**: Divieto di impiegare `OS.delay()`, timer di sleep o yield fittizi nei runner di test. Ogni asserzione viene calcolata ed emessa istantaneamente (tempo medio di esecuzione: 0–15 ms per suite).
-2. **Le 23 Suite di Test Headless Validate (Exit Code 0)**:
+2. **Le 24 Suite di Test Headless Validate (Exit Code 0)**:
    - `test_formulas.gd`: formule matematiche, curve XP e bilanciamento;
    - `test_time_system.gd`: orologio, routine giornaliera, passaggio giorno;
    - `test_player_system.gd`: attributi, energia, stress, morale, progressione;
@@ -43,7 +43,8 @@ Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal r
    - `test_vital_resources_system.gd`: triade risorse, burnout, panico e recupero attivo (Sez. 1.3);
    - `test_upgrades_system.gd`: lifestyle, insonorizzazione, strumenti e home studio;
    - `test_v5_ui_overhaul.gd`: architettura UI a 5 sezioni, navigazione macro-aree e modali;
-   - Ulteriori suite per i sottosistemi di etichette, tour interurbani, festival estivi, social media e classifiche.
+   - `test_advanced_social_system.gd`: social media avanzati, trend algoritmici settimanali, campagne sponsorizzate, live streaming, fan club, raduno annuale e deleghe manager (51 test, Sez. 8);
+   - Ulteriori suite per i sottosistemi di etichette, tour interurbani, festival estivi e classifiche.
 
 3. **Pattern Closure Container & Guardie Segnali nei Test Headless di Interfaccia**:
    - In GDScript 4, la cattura di variabili locali scalari o nulle all'interno di lambda passate a `connect()` avviene per valore; per verificare l'emissione dei segnali nei test runner occorre impiegare un contenitore reference (`var received: Array = []` e `func(arg): received.append(arg)`).
@@ -61,6 +62,15 @@ Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal r
 6. **Pre-Flight Margining Pattern per Risorse Saturabili a Soglia Zero**:
    - Nelle suite di test deterministiche per scenari procedurali o catene di eventi che applicano decrementi su risorse limitate inferiormente da vincoli di clamping (es. `stress` limitato a `0.0` da `maxf/clampf`), ogni sotto-blocco di test che intende verificare un delta negativo deve predisporre un margine positivo sicuro prima dell'esecuzione (es. `player.stress = 30.0`).
    - Questo pattern garantisce il determinismo assoluto e previene falsi negativi dovuti all'azzeramento anticipato della risorsa da parte di asserzioni precedenti.
+
+7. **Pattern di Decoupling nei Segnali Autoload (Evitare Dipendenze Circolari con Classi Modello)**:
+   - Negli Autoload globali di broadcast ad eventi (`EventBus`), evitare di tipizzare strettamente i parametri dei segnali con nomi di classi personalizzate del modello (`class_name NomeClasse`), poiché gli Autoload vengono caricati in una fase precoce del runtime prima della risoluzione completa del registro dei tipi.
+   - Utilizzare tipi base polimorfici come `RefCounted`, `Resource` o `Dictionary` nella firma del segnale dell'EventBus (`signal evento_emesso(payload: RefCounted)`), mantenendo la tipizzazione rigorosa e forte all'interno dei metodi consumatori nei singoli sistemi e controller.
+
+8. **Rinfresco Deterministico della Class Cache Globale per Nuove Risorse in Headless (`--editor --quit`)**:
+   - Quando viene creato un nuovo script su disco che dichiara un `class_name` globale, l'esecuzione ordinaria dei test in modalità headless da riga di comando (`--headless res://...`) non rigenera automaticamente il file `.godot/global_script_class_cache.cfg`.
+   - Per forzare la scansione deterministica e l'aggiornamento immediato della class cache senza avviare l'interfaccia grafica o toccare il mouse, eseguire il comando headless rapido:
+     `Godot_console.exe --headless --path . --editor --quit`.
 
 ---
 
