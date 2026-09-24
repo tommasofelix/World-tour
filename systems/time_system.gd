@@ -172,6 +172,14 @@ func skip_to_next_period() -> bool:
 	
 	return true
 
+## Wrapper ufficiale per compatibilità HUD/Input: avanza alla fascia successiva
+func advance_to_next_period() -> bool:
+	return skip_to_next_period()
+
+## Wrapper ufficiale per compatibilità HUD/Input: conclude la giornata e va a dormire
+func trigger_sleep_now() -> void:
+	sleep_early()
+
 func reset_daily_overtime() -> void:
 	warned_hour_2 = false
 	warned_hour_3 = false

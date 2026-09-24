@@ -55,6 +55,7 @@ signal modal_closed(modal_name: String)
 
 var _all_modals: Array[Control] = []
 var action_system: ActionSystem = null
+var is_stereo_on: bool = false
 const DEFAULT_AMBIENT_TEXT: String = "New York - Loft Apartment.\nFrecce/WASD/Numpad: cammina.\nTab: sfoglia arredi. Spazio: interagisci. Esc: menu."
 
 func _ready() -> void:
@@ -251,16 +252,44 @@ func open_modal_by_prop_id(prop_id: String) -> void:
 		"guitar":
 			open_modal(song_creator_modal)
 		"kitchen":
-			open_modal(relax_modal)
+			if GameManager and GameManager.player_data:
+				GameManager.player_data.energy = mini(Constants.MAX_ENERGY, GameManager.player_data.energy + 15)
+				GameManager.player_data.stress = maxi(Constants.MIN_STRESS, GameManager.player_data.stress - 5)
+			AccessibilityManager.play_cue(Enums.AudioCueType.AREA_PERSONAL)
+			AccessibilityManager.announce("Espresso bollente preparato nella cucina del loft. Energia ripristinata!", true)
+			show_inspection("Un ottimo caffè espresso appena fatto. Pronto a rimetterti al lavoro!", "CUCINA", "[Spazio] Chiudi")
+			update_hud_display()
 		"couch":
-			open_modal(relax_modal)
+			if GameManager and GameManager.player_data:
+				GameManager.player_data.stress = maxi(Constants.MIN_STRESS, GameManager.player_data.stress - 12)
+				GameManager.player_data.morale = mini(Constants.MAX_MORALE, GameManager.player_data.morale + 5)
+				GameManager.player_data.energy = mini(Constants.MAX_ENERGY, GameManager.player_data.energy + 5)
+			AccessibilityManager.play_cue(Enums.AudioCueType.AREA_PERSONAL)
+			AccessibilityManager.announce("Ti sei disteso sul divano a riposare. Tensione e stress diminuiti.", true)
+			show_inspection("Ti rilassi sul divano vissuto del loft. Tensione allentata e mente rigenerata!", "DIVANO", "[Spazio] Chiudi")
+			update_hud_display()
 		"turntable":
-			open_modal(relax_modal)
+			if GameManager and GameManager.player_data:
+				GameManager.player_data.morale = mini(Constants.MAX_MORALE, GameManager.player_data.morale + 20)
+				GameManager.player_data.stress = maxi(Constants.MIN_STRESS, GameManager.player_data.stress - 10)
+				var got_spark: bool = randf() < 0.35
+				if got_spark:
+					GameManager.player_data.creative_sparks += 1
+					AccessibilityManager.announce("Sessione vinili d'epoca sul giradischi! +20 Morale, -10 Stress e una Scintilla Creativa guadagnata!", true)
+					show_inspection("L'ascolto dei vinili d'epoca ti ha ispirato: hai ottenuto una Scintilla Creativa (+1 Ispirazione)!", "GIRADISCHI", "[Spazio] Chiudi")
+				else:
+					AccessibilityManager.announce("Sessione vinili d'epoca sul giradischi! +20 Morale e -10 Stress.", true)
+					show_inspection("Il calore analogico del vinile risuona nel loft, sciogliendo la tensione.", "GIRADISCHI", "[Spazio] Chiudi")
+			AccessibilityManager.play_cue(Enums.AudioCueType.AREA_CREATION)
+			update_hud_display()
 		"bed":
-			# Avanzamento / riposo o sleep
-			if GameManager and GameManager.time_system:
-				AccessibilityManager.announce("Riposo a letto. Avanzamento della fascia oraria.", true)
-				GameManager.time_system.advance_to_next_period()
+			if GameManager and GameManager.time_system and GameManager.calendar_data:
+				if GameManager.calendar_data.current_period == Enums.TimePeriod.NIGHT:
+					AccessibilityManager.announce("È notte fonda. Buonanotte fino a domani mattina alle 06:00.", true)
+					GameManager.time_system.trigger_sleep_now()
+				else:
+					show_inspection("Letto del Loft.\n[Z] Dormi fino a domani   [X] Salta alla fascia successiva   [Esc] Annulla", "LETTO", "[Z] Dormi   [X] Salta orario   [Esc] Annulla")
+					AccessibilityManager.announce("Letto del Loft. Premi Z per dormire fino a domani mattina, X per riposare fino alla fascia successiva, oppure Esc per annullare.", true)
 				update_hud_display()
 		"arcade":
 			if GameManager and GameManager.player_data:
@@ -278,12 +307,18 @@ func open_modal_by_prop_id(prop_id: String) -> void:
 		"door":
 			open_modal(live_concert_modal)
 		"stereo":
-			if GameManager and GameManager.player_data:
-				GameManager.player_data.morale = mini(Constants.MAX_MORALE, GameManager.player_data.morale + 5)
-				GameManager.player_data.stress = maxi(Constants.MIN_STRESS, GameManager.player_data.stress - 5)
-			AccessibilityManager.play_cue(Enums.AudioCueType.AREA_PERSONAL)
-			AccessibilityManager.announce("Stereo da studio acceso! Riff rock diffusi nel loft.", true)
-			show_inspection("Impianto stereo monitor acceso! La musica rock riempie la stanza, riducendo lo stress.", "STEREO", "[Spazio] Chiudi")
+			if not is_stereo_on:
+				is_stereo_on = true
+				if GameManager and GameManager.player_data:
+					GameManager.player_data.morale = mini(Constants.MAX_MORALE, GameManager.player_data.morale + 5)
+					GameManager.player_data.stress = maxi(Constants.MIN_STRESS, GameManager.player_data.stress - 5)
+				AccessibilityManager.play_cue(Enums.AudioCueType.AREA_PERSONAL)
+				AccessibilityManager.announce("Stereo acceso! Riff rock in diffusione nello studio.", true)
+				show_inspection("Stereo acceso! I riff rock riempiono la stanza, allontanando lo stress. Premi di nuovo per spegnere.", "STEREO", "[Spazio] Spegni")
+			else:
+				is_stereo_on = false
+				AccessibilityManager.announce("Stereo spento. Silenzio ripristinato nello studio.", true)
+				show_inspection("Stereo spento. La stanza torna in silenzio. Premi di nuovo per accendere.", "STEREO", "[Spazio] Accendi")
 			update_hud_display()
 		_:
 			reset_inspection()

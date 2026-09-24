@@ -94,6 +94,15 @@ func test_player_alex_component() -> void:
 	assert_true(player.collision_shape != null, "CollisionShape2D presente")
 	assert_true(player.collision_shape.position.y < 0.0, "Hitbox posizionata alla base dei piedi")
 
+	# Test auto-walk con gestione stallo ostacoli (Contratto D2)
+	var callback_called: bool = false
+	player.walk_to_target(Vector2(500, 500), func(): callback_called = true)
+	assert_true(player.is_auto_walking, "Auto-walk avviato")
+	player._stuck_timer = 0.7
+	player._process_auto_walk(0.1)
+	assert_true(not player.is_auto_walking, "Auto-walk arrestato su stallo ostacoli")
+	assert_true(not callback_called, "Callback interazione NON invocata su stallo")
+
 	player.queue_free()
 
 func test_interactive_prop_component() -> void:
@@ -124,12 +133,16 @@ func test_interactive_prop_component() -> void:
 	assert_eq(signal_received.size(), 1, "Segnale interaction_triggered emesso")
 	assert_eq(signal_received[0], "test_guitar", "ID emesso corrisponde a 'test_guitar'")
 
-	# Verifica highlight visivo e segnale mouse click
+	# Verifica highlight visivo e assenza prompt fluttuante [SPAZIO] (Contratto D0)
 	assert_true(prop.has_signal("prop_clicked"), "Segnale prop_clicked presente su InteractiveProp")
+	assert_true(prop.get_node_or_null("Prompt") == null, "Nodo Prompt rimosso da InteractiveProp")
 	prop.set_highlight(true)
-	assert_true(prop._prompt_node.visible, "Prompt visibile con highlight attivo")
+	assert_eq(prop._sprite_node.modulate, Color(1.2, 1.2, 1.2, 1.0), "Highlight attivo modula colore dello sprite")
 	prop.set_highlight(false)
-	assert_true(not prop._prompt_node.visible, "Prompt nascosto con highlight disattivato")
+	assert_eq(prop._sprite_node.modulate, Color(1.0, 1.0, 1.0, 1.0), "Highlight disattivato ripristina colore normale")
+
+	# Verifica calcolo stand position
+	assert_eq(prop.get_stand_position(), prop.global_position + prop.stand_offset, "get_stand_position calcolato correttamente")
 
 	prop.queue_free()
 
@@ -160,6 +173,30 @@ func test_apartment_hud_component() -> void:
 	assert_eq(hud.label_speaker.text, "ALEX", "Nome speaker inspection box corretto")
 	assert_eq(hud.label_text.text, "Ispezione test su arredo", "Testo inspection box corretto")
 
+	# Test interazioni domestiche differenziate (Contratto D4)
+	hud.open_modal_by_prop_id("couch")
+	assert_eq(hud.label_speaker.text, "DIVANO", "Interazione divano aggiorna inspection box con DIVANO")
+	
+	hud.open_modal_by_prop_id("kitchen")
+	assert_eq(hud.label_speaker.text, "CUCINA", "Interazione cucina aggiorna inspection box con CUCINA")
+	
+	hud.open_modal_by_prop_id("turntable")
+	assert_eq(hud.label_speaker.text, "GIRADISCHI", "Interazione giradischi aggiorna inspection box con GIRADISCHI")
+
+	# Test interazione letto (Contratto D3)
+	hud.open_modal_by_prop_id("bed")
+	assert_eq(hud.label_speaker.text, "LETTO", "Interazione letto aggiorna inspection box con LETTO")
+
+	# Test stato bistabile stereo (Toggle On / Off) (Contratto D4)
+	assert_true(not hud.is_stereo_on, "Stereo inizialmente spento")
+	hud.open_modal_by_prop_id("stereo")
+	assert_true(hud.is_stereo_on, "Stereo acceso dopo primo trigger")
+	assert_true(hud.label_text.text.contains("Stereo acceso"), "Inspection box indica stereo acceso")
+
+	hud.open_modal_by_prop_id("stereo")
+	assert_true(not hud.is_stereo_on, "Stereo spento dopo secondo trigger (Toggle)")
+	assert_true(hud.label_text.text.contains("Stereo spento"), "Inspection box indica stereo spento")
+
 	hud.reset_inspection()
 	assert_true(hud.label_text.text.contains("Loft Apartment"), "reset_inspection ripristina ambient text")
 
@@ -180,6 +217,11 @@ func test_apartment_scene_integration() -> void:
 	assert_true(apt.player != null, "PlayerAlex presente nella stanza")
 	assert_true(apt.camera != null, "Camera2D presente")
 	assert_true(apt.hud != null, "ApartmentHud presente nel CanvasLayer")
+
+	# Verifica wrapper temporali advance_to_next_period e trigger_sleep_now (Contratto D3)
+	if GameManager and GameManager.time_system:
+		assert_true(GameManager.time_system.has_method("advance_to_next_period"), "TimeSystem espone advance_to_next_period()")
+		assert_true(GameManager.time_system.has_method("trigger_sleep_now"), "TimeSystem espone trigger_sleep_now()")
 
 	# Verifica raccolta dei 10 arredi interattivi (incluso Stereo)
 	assert_eq(apt.props.size(), 10, "Esattamente 10 arredi interattivi registrati nella stanza")

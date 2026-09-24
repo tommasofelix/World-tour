@@ -122,52 +122,49 @@ position = Vector2(0, 0)
 shape = SubResource("RectangleShape2D_guitar")
 
 [node name="PropKitchen" parent="YSortRoot" unique_id=310771382 instance=ExtResource("4_prop")]
-position = Vector2(50, 0)
+position = Vector2(45, -80)
 prop_id = "kitchen"
 prop_name = "Cucina & Macchina del Caffè"
 prop_description = "Prepara un espresso caldo per recuperare energia"
 hotkey_hint = "R"
 inspection_text = "Cucina con pensili e macchina del caffè espresso. Un espresso bollente è perfetto per recuperare energie! [Spazio]"
+stand_offset = Vector2(0, 35)
 
 [node name="TriggerShape" parent="YSortRoot/PropKitchen" index="0"]
-position = Vector2(-37, -77)
 shape = SubResource("RectangleShape2D_kitchen_trigger")
 
 [node name="Sprite2D" parent="YSortRoot/PropKitchen" index="1"]
-position = Vector2(-7, -116)
+position = Vector2(0, -35)
 scale = Vector2(1.2596154, 1)
 texture = ExtResource("7_kitchen")
 
 [node name="SolidShape" parent="YSortRoot/PropKitchen/StaticBody2D" index="0"]
-position = Vector2(-5, -108)
+position = Vector2(0, -25)
 shape = SubResource("RectangleShape2D_kitchen")
 
 [node name="PropCouch" parent="YSortRoot" unique_id=876694080 instance=ExtResource("4_prop")]
-position = Vector2(-145, 5)
+position = Vector2(-192, -75)
 prop_id = "couch"
 prop_name = "Divano Vissuto & Relax"
 prop_description = "Riposati e allenta la tensione accumulata"
 hotkey_hint = "R"
 inspection_text = "Divano vissuto con toppe punk e cuscini sfatti sotto la luce del sole. Ottimo per distendersi e smaltire lo stress. [Spazio]"
+stand_offset = Vector2(0, 45)
 
 [node name="TriggerShape" parent="YSortRoot/PropCouch" index="0"]
-position = Vector2(-47, -87)
 shape = SubResource("RectangleShape2D_couch_trigger")
 
 [node name="Sprite2D" parent="YSortRoot/PropCouch" index="1"]
-position = Vector2(-47.87499, -94.24999)
+position = Vector2(0, -15)
 scale = Vector2(1.2080151, 1.1911765)
 texture = ExtResource("8_couch")
 
-[node name="StaticBody2D" parent="YSortRoot/PropCouch" index="2"]
-position = Vector2(3, -6)
-
 [node name="SolidShape" parent="YSortRoot/PropCouch/StaticBody2D" index="0"]
-position = Vector2(-50, -79)
+position = Vector2(0, -5)
 shape = SubResource("RectangleShape2D_couch")
 
 [node name="PropTurntable" parent="YSortRoot" unique_id=330840141 instance=ExtResource("4_prop")]
-position = Vector2(-260, 50)
+position = Vector2(-310, -35)
 prop_id = "turntable"
 prop_name = "Giradischi & Vinili da Collezione"
 prop_description = "Ascolta capolavori musicali per trovare la Scintilla Creativa"
@@ -176,104 +173,101 @@ inspection_text = "Giradischi retrò e vinili d'epoca sotto l'insegna GIGS. Asco
 stand_offset = Vector2(25, 25)
 
 [node name="TriggerShape" parent="YSortRoot/PropTurntable" index="0"]
-position = Vector2(-59, -96)
+position = Vector2(0, -10)
 shape = SubResource("CircleShape2D_turntable_trigger")
 
 [node name="Sprite2D" parent="YSortRoot/PropTurntable" index="1"]
-position = Vector2(-51.000008, -107.00001)
+position = Vector2(0, -20)
 scale = Vector2(1.1229508, 1.2)
 texture = ExtResource("9_turntable")
 
 [node name="SolidShape" parent="YSortRoot/PropTurntable/StaticBody2D" index="0"]
-position = Vector2(-46, -79)
+position = Vector2(0, 0)
 shape = SubResource("RectangleShape2D_turntable")
 
 [node name="PropArcade" parent="YSortRoot" unique_id=861208336 instance=ExtResource("4_prop")]
-position = Vector2(255, 60)
+position = Vector2(540, -50)
 prop_id = "arcade"
 prop_name = "Cabinato Arcade Vintage"
 prop_description = "Fai una partita per svagarti e alzare il morale"
 inspection_text = "Cabinato arcade anni '80 con monitor a tubo catodico. Una partita veloce per svagarmi e alzare il morale! [Spazio]"
+stand_offset = Vector2(-25, 30)
 
 [node name="TriggerShape" parent="YSortRoot/PropArcade" index="0"]
-position = Vector2(279, -117)
 shape = SubResource("CircleShape2D_arcade_trigger")
 
 [node name="Sprite2D" parent="YSortRoot/PropArcade" index="1"]
-position = Vector2(284, -138)
+position = Vector2(0, -30)
 texture = ExtResource("10_arcade")
 
 [node name="SolidShape" parent="YSortRoot/PropArcade/StaticBody2D" index="0"]
-position = Vector2(285, -105)
+position = Vector2(0, 0)
 shape = SubResource("RectangleShape2D_arcade")
 
 [node name="PropBed" parent="YSortRoot" unique_id=2028769398 instance=ExtResource("4_prop")]
-position = Vector2(440, 60)
+position = Vector2(300, -10)
 prop_id = "bed"
 prop_name = "Letto Singolo & Riposo"
 prop_description = "Fai passare le ore o vai a dormire fino a domani"
 hotkey_hint = "Z / X"
 inspection_text = "Letto singolo con lenzuola stropicciate. Posso riposare per far avanzare l'orario o dormire fino a domani. [Spazio]"
-stand_offset = Vector2(-35, 45)
+stand_offset = Vector2(0, 45)
 
 [node name="TriggerShape" parent="YSortRoot/PropBed" index="0"]
-position = Vector2(-143, -53)
+position = Vector2(0, 15)
 shape = SubResource("RectangleShape2D_bed_trigger")
 
 [node name="Sprite2D" parent="YSortRoot/PropBed" index="1"]
-position = Vector2(-127.99999, -80)
+position = Vector2(10, -10)
 scale = Vector2(1.2549669, 1.25)
 texture = ExtResource("11_bed")
 
 [node name="SolidShape" parent="YSortRoot/PropBed/StaticBody2D" index="0"]
-position = Vector2(-139, -72)
+position = Vector2(0, 0)
 shape = SubResource("RectangleShape2D_bed")
 
 [node name="PropWardrobe" parent="YSortRoot" unique_id=537401073 instance=ExtResource("4_prop")]
-position = Vector2(590, 50)
+position = Vector2(440, -90)
 prop_id = "wardrobe"
 prop_name = "Libreria Guardaroba & Scheda Artista"
 prop_description = "Consulta la scheda anagrafica dell'artista, statistiche e stile"
 hotkey_hint = "C"
 inspection_text = "Libreria in legno d'epoca con dischi e toppe rock. Qui consulto la scheda artista, lo stile e le abilità! [Spazio]"
-stand_offset = Vector2(-35, 25)
+stand_offset = Vector2(-35, 45)
 
 [node name="TriggerShape" parent="YSortRoot/PropWardrobe" index="0"]
-position = Vector2(-149, -171)
+position = Vector2(0, -30)
 shape = SubResource("CircleShape2D_wardrobe_trigger")
 
 [node name="Sprite2D" parent="YSortRoot/PropWardrobe" index="1"]
-position = Vector2(-136.25, -181)
+position = Vector2(14, -40)
 scale = Vector2(1.6532257, 1.6630435)
 texture = ExtResource("12_wardrobe")
 
-[node name="StaticBody2D" parent="YSortRoot/PropWardrobe" index="2"]
-position = Vector2(-19, 15)
-
 [node name="SolidShape" parent="YSortRoot/PropWardrobe/StaticBody2D" index="0"]
-position = Vector2(-141, -140)
+position = Vector2(-10, 15)
 rotation = 0.5461642
 shape = SubResource("RectangleShape2D_wardrobe")
 
 [node name="PropToolbox" parent="YSortRoot" unique_id=1160535962 instance=ExtResource("4_prop")]
-position = Vector2(330, 65)
+position = Vector2(585, -10)
 prop_id = "toolbox"
 prop_name = "Cassa Attrezzi & Gear Studio"
 prop_description = "Gestisci equipaggiamento, pedali e upgrade home studio"
 hotkey_hint = "U"
 inspection_text = "Cassa degli attrezzi rossa e cavi jack. Gestisco gli upgrade degli strumenti, la pedaliera e la sala prove! [Spazio]"
-stand_offset = Vector2(-20, 30)
+stand_offset = Vector2(-25, 25)
 
 [node name="TriggerShape" parent="YSortRoot/PropToolbox" index="0"]
-position = Vector2(263, -82)
+position = Vector2(5, -5)
 shape = SubResource("CircleShape2D_toolbox_trigger")
 
 [node name="Sprite2D" parent="YSortRoot/PropToolbox" index="1"]
-position = Vector2(252, -81)
+position = Vector2(-3, -6)
 texture = ExtResource("13_toolbox")
 
 [node name="SolidShape" parent="YSortRoot/PropToolbox/StaticBody2D" index="0"]
-position = Vector2(250, -70)
+position = Vector2(-5, 5)
 shape = SubResource("RectangleShape2D_toolbox")
 
 [node name="PropDoor" parent="YSortRoot" unique_id=150824923 instance=ExtResource("4_prop")]
@@ -317,7 +311,6 @@ scale = Vector2(1.4186047, 1.2540984)
 texture = ExtResource("15_coffeetable")
 
 [node name="SolidShape" type="CollisionShape2D" parent="YSortRoot/CoffeeTable" unique_id=1070097066]
-position = Vector2(0, 0)
 shape = SubResource("RectangleShape2D_coffeetable")
 
 [node name="PropStereo" parent="YSortRoot" unique_id=115660521 instance=ExtResource("4_prop")]
@@ -362,4 +355,3 @@ limit_bottom = 350
 [editable path="YSortRoot/PropToolbox"]
 [editable path="YSortRoot/PropDoor"]
 [editable path="YSortRoot/PropStereo"]
-

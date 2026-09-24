@@ -25,6 +25,7 @@ const BUMP_DEBOUNCE_DELAY: float = 0.32
 # Movimento assistito (Auto-walk per selezione logica Tab/Numpad)
 var is_auto_walking: bool = false
 var _auto_walk_target: Vector2 = Vector2.ZERO
+var _auto_walk_prop: Area2D = null
 var _auto_walk_callback: Callable
 var _auto_walk_timer: float = 0.0
 var _last_auto_walk_pos: Vector2 = Vector2.ZERO
@@ -150,10 +151,11 @@ func get_nearest_active_prop() -> Area2D:
 		return null
 	return active_nearby_props[0]
 
-func walk_to_target(target_pos: Vector2, on_reached: Callable = Callable()) -> void:
+func walk_to_target(target_pos: Vector2, on_reached: Callable = Callable(), target_prop: Area2D = null) -> void:
 	is_auto_walking = true
 	_auto_walk_target = target_pos
 	_auto_walk_callback = on_reached
+	_auto_walk_prop = target_prop
 	_auto_walk_timer = 0.0
 	_stuck_timer = 0.0
 	_last_auto_walk_pos = global_position
@@ -165,6 +167,7 @@ func walk_to_target(target_pos: Vector2, on_reached: Callable = Callable()) -> v
 func cancel_auto_walk() -> void:
 	is_auto_walking = false
 	_auto_walk_callback = Callable()
+	_auto_walk_prop = null
 	_auto_walk_timer = 0.0
 	_stuck_timer = 0.0
 	velocity = Vector2.ZERO
@@ -172,7 +175,7 @@ func cancel_auto_walk() -> void:
 
 func _process_auto_walk(delta: float) -> void:
 	_auto_walk_timer += delta
-	if global_position.distance_to(_last_auto_walk_pos) < 1.0:
+	if global_position.distance_to(_last_auto_walk_pos) < 1.5:
 		_stuck_timer += delta
 	else:
 		_stuck_timer = 0.0
@@ -181,15 +184,29 @@ func _process_auto_walk(delta: float) -> void:
 	var diff: Vector2 = _auto_walk_target - global_position
 	var dist: float = diff.length()
 
-	# Condizione di completamento (arrivo a destinazione, oppure arresto per stallo o timeout di sicurezza)
-	if dist <= 12.0 or _stuck_timer > 0.35 or _auto_walk_timer >= AUTO_WALK_MAX_DURATION:
+	# Condizione di arrivo effettivo a destinazione
+	var has_arrived: bool = (dist <= 24.0) or (_auto_walk_prop != null and "is_player_in_range" in _auto_walk_prop and _auto_walk_prop.is_player_in_range)
+	
+	if has_arrived:
 		is_auto_walking = false
 		velocity = Vector2.ZERO
 		_update_animation("idle")
-		if _auto_walk_callback.is_valid():
-			var cb: Callable = _auto_walk_callback
-			_auto_walk_callback = Callable()
+		var cb: Callable = _auto_walk_callback
+		_auto_walk_callback = Callable()
+		_auto_walk_prop = null
+		if cb.is_valid():
 			cb.call()
+		return
+
+	# Condizione di stallo o timeout (ostacolo insormontabile o collisione)
+	if _stuck_timer > 0.6 or _auto_walk_timer >= AUTO_WALK_MAX_DURATION:
+		is_auto_walking = false
+		velocity = Vector2.ZERO
+		_update_animation("idle")
+		_auto_walk_callback = Callable()
+		_auto_walk_prop = null
+		if AccessibilityManager:
+			AccessibilityManager.announce("Percorso bloccato. Avvicinati manualmente con i tasti di movimento.", true)
 		return
 
 	var dir: Vector2 = diff.normalized()

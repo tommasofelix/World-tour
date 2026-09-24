@@ -56,7 +56,7 @@ func _on_prop_clicked(prop: Area2D) -> void:
 	if player and player.has_method("walk_to_target"):
 		player.walk_to_target(target_pos, func():
 			prop.trigger_interaction()
-		)
+		, prop)
 	else:
 		prop.trigger_interaction()
 
@@ -256,7 +256,7 @@ func _interact_with_selected_prop() -> void:
 		player.walk_to_target(target_pos, func():
 			p.trigger_interaction()
 			_clear_prop_selection()
-		)
+		, p)
 	else:
 		p.trigger_interaction()
 		_clear_prop_selection()
