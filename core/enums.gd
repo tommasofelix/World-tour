@@ -348,7 +348,9 @@ enum AudioCueType {
 	CHART_NUMBER_ONE = 6,    # Rintocco celebrativo vittoria #1
 	STADIUM_SOLD_OUT = 7,    # Boato folla e ovazione stadio
 	NIGHT_OVERTIME_BELL = 8, # Rintocco campana notturna
-	HIGH_SIGNAL_ALERT = 9    # Allarme metallico penetrativo
+	HIGH_SIGNAL_ALERT = 9,   # Allarme metallico penetrativo
+	COLLISION_BUMP = 10,     # Lieve urto acustico contro ostacoli
+	HOTSPOT_PROXIMITY = 11   # Chime discreto di avvicinamento arredo
 }
 
 enum CareerStatCategory {
@@ -653,6 +655,10 @@ static func get_audio_cue_name(cue_type: int) -> String:
 			return "Rintocco Notturno di Overtime"
 		AudioCueType.HIGH_SIGNAL_ALERT:
 			return "Avviso ad Alto Segnale"
+		AudioCueType.COLLISION_BUMP:
+			return "Urto contro Ostacolo"
+		AudioCueType.HOTSPOT_PROXIMITY:
+			return "Rilevamento Arredo Vicino"
 		_:
 			return "Nessun Feedback Sonoro"
 

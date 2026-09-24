@@ -2,10 +2,10 @@
 # Autori: Luca (Sviluppatore Senior Non Vedente con Screen Reader NVDA) & Antigravity
 # Framework: ASTRALIS v3.0.10 (Architettura Universale & Governance Polimorfica)
 # Data: 2026-09-24
-# Stato: [/] [IMPLEMENTATO — IN ATTESA DI CONVALIDA MANUALE] (Sotto-Fase 1B Convalidata al 100% con 28/28 Suite Headless a 0 ms)
-# File Piano: docs/piani/attivi/PIANO_ESPANSIONE_POST_V5_1_ENDLESS_HORIZON_E_POLISH.md
+# Stato: [x] [CONVALIDATO CON SUCCESSO] (Convalidato con 28/28 Suite Headless a 0 ms e Collaudo Positivo)
+# File Piano: docs/piani/completati/PIANO_ESPANSIONE_POST_V5_1_ENDLESS_HORIZON_E_POLISH.md
 # Coordinatore Master: docs/todo.md
-# Baseline AVF: V5.1.0 (Target Versione: V5.2.0 per Polish/Balancing o V6.0.0 per Espansione Completa)
+# Baseline AVF: V5.1.0 (Versione Rilasciata: V5.2.0)
 
 ---
 
@@ -142,10 +142,10 @@ Il presente piano definisce la successiva grande era evolutiva del progetto, str
 - [x] [CONVALIDATO CON SUCCESSO] `1B.6`: Suite di test globale a 0 ms su tutte le suite del progetto (28/28 suite verdi al 100% con 0 errori).
 
 ### FASE 2: Telemetria & Collaudo Congiunto
-- [/] [IMPLEMENTATO — IN ATTESA DI CONVALIDA] `2.1`: Deploy provvisorio locale per verifica in-game con NVDA e tastiera (Zero Mouse).
-- [ ] [DA AVVIARE] `2.2`: Collaudo manuale di Luca (Endless Mode, passaggio anno, nuove metropoli ed etichetta).
+- [x] [CONVALIDATO CON SUCCESSO] `2.1`: Deploy provvisorio locale per verifica in-game con NVDA e tastiera (Zero Mouse).
+- [x] [CONVALIDATO CON SUCCESSO] `2.2`: Collaudo manuale di Luca (Endless Mode, passaggio anno, nuove metropoli ed etichetta).
 
 ### FASE 3: Chiusura Tecnica, Git & AVF
-- [ ] [DA AVVIARE] `3.1`: Calcolo nuova versione AVF (`V5.2.0`).
-- [ ] [DA AVVIARE] `3.2`: Commit semantico e aggiornamento Living Documentation (`docs/todo.md`, schede `knowledge/`).
-- [ ] [DA AVVIARE] `3.3`: Formulazione della Domanda Ponte Obbligatoria per la Fase 4.
+- [x] [CONVALIDATO CON SUCCESSO] `3.1`: Calcolo nuova versione AVF (`V5.2.0`).
+- [x] [CONVALIDATO CON SUCCESSO] `3.2`: Commit semantico e aggiornamento Living Documentation (`docs/todo.md`, schede `knowledge/`).
+- [x] [CONVALIDATO CON SUCCESSO] `3.3`: Formulazione della Domanda Ponte Obbligatoria per la Fase 4.

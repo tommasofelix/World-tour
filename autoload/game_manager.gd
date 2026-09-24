@@ -83,6 +83,9 @@ func change_state(new_state: int) -> bool:
 func is_action_allowed() -> bool:
 	return current_state == Enums.GameState.GAMEPLAY_IDLE
 
+func is_paused() -> bool:
+	return current_state == Enums.GameState.GAMEPLAY_PAUSED or (time_system != null and time_system.is_paused)
+
 func open_menu() -> void:
 	if current_state != Enums.GameState.GAMEPLAY_PAUSED:
 		change_state(Enums.GameState.GAMEPLAY_PAUSED)

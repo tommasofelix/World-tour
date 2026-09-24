@@ -1,0 +1,125 @@
+[gd_scene load_steps=16 format=3 uid="uid://bplalexny001"]
+
+[ext_resource type="Script" path="res://scenes/apartment/player_alex.gd" id="1_alex_script"]
+[ext_resource type="Texture2D" uid="uid://b123fg_down" path="res://assets/img/gameplay/casa/camera/personaggio_prova/fermo_giu.png" id="2_fermo_giu"]
+[ext_resource type="Texture2D" uid="uid://b124fg_up" path="res://assets/img/gameplay/casa/camera/personaggio_prova/fermo_su.png" id="3_fermo_su"]
+[ext_resource type="Texture2D" uid="uid://b125fg_left" path="res://assets/img/gameplay/casa/camera/personaggio_prova/fermo_sinistra.png" id="4_fermo_sinistra"]
+[ext_resource type="Texture2D" uid="uid://b126fg_right" path="res://assets/img/gameplay/casa/camera/personaggio_prova/fermo_destra.png" id="5_fermo_destra"]
+[ext_resource type="Texture2D" uid="uid://b127w_d1" path="res://assets/img/gameplay/casa/camera/personaggio_prova/giu-1.png" id="6_giu_1"]
+[ext_resource type="Texture2D" uid="uid://b128w_d2" path="res://assets/img/gameplay/casa/camera/personaggio_prova/giu-2.png" id="7_giu_2"]
+[ext_resource type="Texture2D" uid="uid://b129w_u1" path="res://assets/img/gameplay/casa/camera/personaggio_prova/in_su-1.png" id="8_in_su_1"]
+[ext_resource type="Texture2D" uid="uid://b130w_u2" path="res://assets/img/gameplay/casa/camera/personaggio_prova/in_su-2.png" id="9_in_su_2"]
+[ext_resource type="Texture2D" uid="uid://b131w_l1" path="res://assets/img/gameplay/casa/camera/personaggio_prova/sisnistra-1.png" id="10_sinistra_1"]
+[ext_resource type="Texture2D" uid="uid://b132w_l2" path="res://assets/img/gameplay/casa/camera/personaggio_prova/sinistra-2.png" id="11_sinistra_2"]
+[ext_resource type="Texture2D" uid="uid://b133w_r1" path="res://assets/img/gameplay/casa/camera/personaggio_prova/destra-1.png" id="12_destra_1"]
+[ext_resource type="Texture2D" uid="uid://b134w_r2" path="res://assets/img/gameplay/casa/camera/personaggio_prova/destra-2.png" id="13_destra_2"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_alex"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_fermo_giu")
+}],
+"loop": true,
+"name": &"idle_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_fermo_sinistra")
+}],
+"loop": true,
+"name": &"idle_left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_fermo_destra")
+}],
+"loop": true,
+"name": &"idle_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_fermo_su")
+}],
+"loop": true,
+"name": &"idle_up",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_giu_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_fermo_giu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_giu_2")
+}],
+"loop": true,
+"name": &"walk_down",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("10_sinistra_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_fermo_sinistra")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_sinistra_2")
+}],
+"loop": true,
+"name": &"walk_left",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("12_destra_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_fermo_destra")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_destra_2")
+}],
+"loop": true,
+"name": &"walk_right",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("8_in_su_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_fermo_su")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_in_su_2")
+}],
+"loop": true,
+"name": &"walk_up",
+"speed": 6.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_feet"]
+radius = 16.0
+
+[node name="PlayerAlex" type="CharacterBody2D"]
+y_sort_enabled = true
+collision_mask = 3
+script = ExtResource("1_alex_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+y_sort_enabled = true
+scale = Vector2(0.26, 0.26)
+sprite_frames = SubResource("SpriteFrames_alex")
+animation = &"idle_down"
+offset = Vector2(0, -250)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -10)
+shape = SubResource("CircleShape2D_feet")

@@ -1,0 +1,353 @@
+[gd_scene format=3 uid="uid://daptnyloft001"]
+
+[ext_resource type="Script" uid="uid://p7net81cg37e" path="res://scenes/apartment/apartment.gd" id="1_apt_script"]
+[ext_resource type="PackedScene" uid="uid://bplalexny001" path="res://scenes/apartment/player_alex.tscn" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://cm0x0dmn5fs3y" path="res://ui/apartment_hud/apartment_hud.tscn" id="3_hud"]
+[ext_resource type="PackedScene" uid="uid://cpropny001" path="res://scenes/apartment/interactive_prop.tscn" id="4_prop"]
+[ext_resource type="Texture2D" uid="uid://bsaroadyrivbq" path="res://assets/img/gameplay/casa/camera/stanza_iniziale/camera_vuota_1024.png" id="5_bg_room"]
+[ext_resource type="Texture2D" uid="uid://ddouo26uu6ux3" path="res://assets/img/gameplay/casa/camera/stanza_iniziale/chitarra_bianca.png" id="6_guitar"]
+[ext_resource type="Texture2D" uid="uid://dm1iyr4pvlp2u" path="res://assets/img/gameplay/casa/camera/stanza_iniziale/cucina_semplice.png" id="7_kitchen"]
+[ext_resource type="Texture2D" uid="uid://bragcy73a816e" path="res://assets/img/gameplay/casa/camera/stanza_iniziale/divanno_vissuto.png" id="8_couch"]
+[ext_resource type="Texture2D" uid="uid://dfpp2a1wfumeu" path="res://assets/img/gameplay/casa/camera/stanza_iniziale/giradischi.png" id="9_turntable"]
+[ext_resource type="Texture2D" uid="uid://dqtnkwp0a57ds" path="res://assets/img/gameplay/casa/camera/stanza_iniziale/arcade.png" id="10_arcade"]
+[ext_resource type="Texture2D" uid="uid://7gtsajlse37" path="res://assets/img/gameplay/casa/camera/stanza_iniziale/letto.png" id="11_bed"]
+[ext_resource type="Texture2D" uid="uid://dbm4654ws7yh1" path="res://assets/img/gameplay/casa/camera/stanza_iniziale/armadio.png" id="12_wardrobe"]
+[ext_resource type="Texture2D" uid="uid://cxer5xt7gg47m" path="res://assets/img/gameplay/casa/camera/stanza_iniziale/cassa_attrezzi.png" id="13_toolbox"]
+[ext_resource type="Texture2D" uid="uid://cpt6lkns2p2ho" path="res://assets/img/gameplay/casa/camera/stanza_iniziale/porta_loft.png" id="14_door"]
+[ext_resource type="Texture2D" uid="uid://bxmtyn74roork" path="res://assets/img/gameplay/casa/camera/stanza_iniziale/tavolino.png" id="15_coffeetable"]
+[ext_resource type="Texture2D" uid="uid://cwljxtsnifdat" path="res://assets/img/gameplay/casa/camera/stanza_iniziale/cestino.png" id="16_bin"]
+[ext_resource type="Texture2D" uid="uid://dqd4urxwdupi" path="res://assets/img/gameplay/casa/camera/stanza_iniziale/cassa_suono.png" id="17_speaker"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_guitar_trigger"]
+radius = 50.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_guitar"]
+size = Vector2(46, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kitchen_trigger"]
+size = Vector2(120, 60)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kitchen"]
+size = Vector2(101, 73)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_couch_trigger"]
+size = Vector2(160, 76)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_couch"]
+size = Vector2(120, 36)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_turntable_trigger"]
+radius = 52.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_turntable"]
+size = Vector2(60, 24)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_arcade_trigger"]
+radius = 50.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_arcade"]
+size = Vector2(42, 26)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bed_trigger"]
+size = Vector2(192, 90)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bed"]
+size = Vector2(140, 50)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_wardrobe_trigger"]
+radius = 55.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wardrobe"]
+size = Vector2(70, 26)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_toolbox_trigger"]
+radius = 45.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_toolbox"]
+size = Vector2(36, 22)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_door_trigger"]
+radius = 55.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_door"]
+size = Vector2(111.5, 46.570335)
+
+[node name="Apartment" type="Node2D" unique_id=1416186043]
+script = ExtResource("1_apt_script")
+
+[node name="RoomBackground" type="Sprite2D" parent="." unique_id=483111014]
+position = Vector2(-17.499931, -1.5000267)
+scale = Vector2(1.2939456, 1.3100358)
+texture = ExtResource("5_bg_room")
+
+[node name="PerimeterCollisions" type="StaticBody2D" parent="." unique_id=246228843]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PerimeterCollisions" unique_id=1177928480]
+polygon = PackedVector2Array(-750, -450, 750, -450, 750, 550, -750, 550, -750, -450, -461, 79, 73, 354, 528, 123, 678, 31, 421, -121, 216, -6, -59, -153, -498, 53)
+
+[node name="YSortRoot" type="Node2D" parent="." unique_id=699384889]
+y_sort_enabled = true
+
+[node name="PlayerAlex" parent="YSortRoot" unique_id=1226792748 instance=ExtResource("2_player")]
+position = Vector2(200, 193)
+
+[node name="PropGuitar" parent="YSortRoot" unique_id=695919008 instance=ExtResource("4_prop")]
+position = Vector2(-160, 200)
+prop_id = "guitar"
+prop_name = "Chitarra Elettrica & Amplificatore"
+prop_description = "Esercitati, componi o accorda lo strumento"
+hotkey_hint = "P / N"
+inspection_text = "Chitarra su supporto e cassa amplificatore. Posso esercitarmi o comporre un nuovo brano! [Spazio per interagire]"
+stand_offset = Vector2(30, 20)
+
+[node name="TriggerShape" parent="YSortRoot/PropGuitar" index="0"]
+shape = SubResource("CircleShape2D_guitar_trigger")
+
+[node name="Sprite2D" parent="YSortRoot/PropGuitar" index="1"]
+position = Vector2(0, -25)
+scale = Vector2(1.1785715, 1)
+texture = ExtResource("6_guitar")
+
+[node name="SolidShape" parent="YSortRoot/PropGuitar/StaticBody2D" index="0"]
+position = Vector2(0, 0)
+shape = SubResource("RectangleShape2D_guitar")
+
+[node name="PropKitchen" parent="YSortRoot" unique_id=310771382 instance=ExtResource("4_prop")]
+position = Vector2(50, 0)
+prop_id = "kitchen"
+prop_name = "Cucina & Macchina del Caffè"
+prop_description = "Prepara un espresso caldo per recuperare energia"
+hotkey_hint = "R"
+inspection_text = "Cucina con pensili e macchina del caffè espresso. Un espresso bollente è perfetto per recuperare energie! [Spazio]"
+
+[node name="TriggerShape" parent="YSortRoot/PropKitchen" index="0"]
+position = Vector2(-37, -77)
+shape = SubResource("RectangleShape2D_kitchen_trigger")
+
+[node name="Sprite2D" parent="YSortRoot/PropKitchen" index="1"]
+position = Vector2(-7, -116)
+scale = Vector2(1.2596154, 1)
+texture = ExtResource("7_kitchen")
+
+[node name="SolidShape" parent="YSortRoot/PropKitchen/StaticBody2D" index="0"]
+position = Vector2(-5, -108)
+shape = SubResource("RectangleShape2D_kitchen")
+
+[node name="PropCouch" parent="YSortRoot" unique_id=876694080 instance=ExtResource("4_prop")]
+position = Vector2(-145, 5)
+prop_id = "couch"
+prop_name = "Divano Vissuto & Relax"
+prop_description = "Riposati e allenta la tensione accumulata"
+hotkey_hint = "R"
+inspection_text = "Divano vissuto con toppe punk e cuscini sfatti sotto la luce del sole. Ottimo per distendersi e smaltire lo stress. [Spazio]"
+
+[node name="TriggerShape" parent="YSortRoot/PropCouch" index="0"]
+position = Vector2(-47, -87)
+shape = SubResource("RectangleShape2D_couch_trigger")
+
+[node name="Sprite2D" parent="YSortRoot/PropCouch" index="1"]
+position = Vector2(-47.87499, -94.24999)
+scale = Vector2(1.2080151, 1.1911765)
+texture = ExtResource("8_couch")
+
+[node name="StaticBody2D" parent="YSortRoot/PropCouch" index="2"]
+position = Vector2(3, -6)
+
+[node name="SolidShape" parent="YSortRoot/PropCouch/StaticBody2D" index="0"]
+position = Vector2(-50, -79)
+shape = SubResource("RectangleShape2D_couch")
+
+[node name="PropTurntable" parent="YSortRoot" unique_id=330840141 instance=ExtResource("4_prop")]
+position = Vector2(-260, 50)
+prop_id = "turntable"
+prop_name = "Giradischi & Vinili da Collezione"
+prop_description = "Ascolta capolavori musicali per trovare la Scintilla Creativa"
+hotkey_hint = "R"
+inspection_text = "Giradischi retrò e vinili d'epoca sotto l'insegna GIGS. Ascoltare un capolavoro può donarmi la Scintilla Creativa! [Spazio]"
+stand_offset = Vector2(25, 25)
+
+[node name="TriggerShape" parent="YSortRoot/PropTurntable" index="0"]
+position = Vector2(-59, -96)
+shape = SubResource("CircleShape2D_turntable_trigger")
+
+[node name="Sprite2D" parent="YSortRoot/PropTurntable" index="1"]
+position = Vector2(-51.000008, -107.00001)
+scale = Vector2(1.1229508, 1.2)
+texture = ExtResource("9_turntable")
+
+[node name="SolidShape" parent="YSortRoot/PropTurntable/StaticBody2D" index="0"]
+position = Vector2(-46, -79)
+shape = SubResource("RectangleShape2D_turntable")
+
+[node name="PropArcade" parent="YSortRoot" unique_id=861208336 instance=ExtResource("4_prop")]
+position = Vector2(255, 60)
+prop_id = "arcade"
+prop_name = "Cabinato Arcade Vintage"
+prop_description = "Fai una partita per svagarti e alzare il morale"
+inspection_text = "Cabinato arcade anni '80 con monitor a tubo catodico. Una partita veloce per svagarmi e alzare il morale! [Spazio]"
+
+[node name="TriggerShape" parent="YSortRoot/PropArcade" index="0"]
+position = Vector2(279, -117)
+shape = SubResource("CircleShape2D_arcade_trigger")
+
+[node name="Sprite2D" parent="YSortRoot/PropArcade" index="1"]
+position = Vector2(284, -138)
+texture = ExtResource("10_arcade")
+
+[node name="SolidShape" parent="YSortRoot/PropArcade/StaticBody2D" index="0"]
+position = Vector2(285, -105)
+shape = SubResource("RectangleShape2D_arcade")
+
+[node name="PropBed" parent="YSortRoot" unique_id=2028769398 instance=ExtResource("4_prop")]
+position = Vector2(440, 60)
+prop_id = "bed"
+prop_name = "Letto Singolo & Riposo"
+prop_description = "Fai passare le ore o vai a dormire fino a domani"
+hotkey_hint = "Z / X"
+inspection_text = "Letto singolo con lenzuola stropicciate. Posso riposare per far avanzare l'orario o dormire fino a domani. [Spazio]"
+stand_offset = Vector2(-35, 45)
+
+[node name="TriggerShape" parent="YSortRoot/PropBed" index="0"]
+position = Vector2(-143, -53)
+shape = SubResource("RectangleShape2D_bed_trigger")
+
+[node name="Sprite2D" parent="YSortRoot/PropBed" index="1"]
+position = Vector2(-127.99999, -80)
+scale = Vector2(1.2549669, 1.25)
+texture = ExtResource("11_bed")
+
+[node name="SolidShape" parent="YSortRoot/PropBed/StaticBody2D" index="0"]
+position = Vector2(-139, -72)
+shape = SubResource("RectangleShape2D_bed")
+
+[node name="PropWardrobe" parent="YSortRoot" unique_id=537401073 instance=ExtResource("4_prop")]
+position = Vector2(590, 50)
+prop_id = "wardrobe"
+prop_name = "Libreria Guardaroba & Scheda Artista"
+prop_description = "Consulta la scheda anagrafica dell'artista, statistiche e stile"
+hotkey_hint = "C"
+inspection_text = "Libreria in legno d'epoca con dischi e toppe rock. Qui consulto la scheda artista, lo stile e le abilità! [Spazio]"
+stand_offset = Vector2(-35, 25)
+
+[node name="TriggerShape" parent="YSortRoot/PropWardrobe" index="0"]
+position = Vector2(-149, -171)
+shape = SubResource("CircleShape2D_wardrobe_trigger")
+
+[node name="Sprite2D" parent="YSortRoot/PropWardrobe" index="1"]
+position = Vector2(-136.25, -181)
+scale = Vector2(1.6532257, 1.6630435)
+texture = ExtResource("12_wardrobe")
+
+[node name="StaticBody2D" parent="YSortRoot/PropWardrobe" index="2"]
+position = Vector2(-19, 15)
+
+[node name="SolidShape" parent="YSortRoot/PropWardrobe/StaticBody2D" index="0"]
+position = Vector2(-141, -140)
+rotation = 0.5461642
+shape = SubResource("RectangleShape2D_wardrobe")
+
+[node name="PropToolbox" parent="YSortRoot" unique_id=1160535962 instance=ExtResource("4_prop")]
+position = Vector2(330, 65)
+prop_id = "toolbox"
+prop_name = "Cassa Attrezzi & Gear Studio"
+prop_description = "Gestisci equipaggiamento, pedali e upgrade home studio"
+hotkey_hint = "U"
+inspection_text = "Cassa degli attrezzi rossa e cavi jack. Gestisco gli upgrade degli strumenti, la pedaliera e la sala prove! [Spazio]"
+stand_offset = Vector2(-20, 30)
+
+[node name="TriggerShape" parent="YSortRoot/PropToolbox" index="0"]
+position = Vector2(263, -82)
+shape = SubResource("CircleShape2D_toolbox_trigger")
+
+[node name="Sprite2D" parent="YSortRoot/PropToolbox" index="1"]
+position = Vector2(252, -81)
+texture = ExtResource("13_toolbox")
+
+[node name="SolidShape" parent="YSortRoot/PropToolbox/StaticBody2D" index="0"]
+position = Vector2(250, -70)
+shape = SubResource("RectangleShape2D_toolbox")
+
+[node name="PropDoor" parent="YSortRoot" unique_id=150824923 instance=ExtResource("4_prop")]
+position = Vector2(-410, 90)
+prop_id = "door"
+prop_name = "Porta d'Uscita per New York"
+prop_description = "Esci sulla mappa per concerti live nei locali o tour"
+hotkey_hint = "L / O / V"
+inspection_text = "La porta d'ingresso del loft che si affaccia sulla metropoli di New York. Esci per raggiungere i locali live o partire in tour! [Spazio]"
+stand_offset = Vector2(35, 15)
+
+[node name="TriggerShape" parent="YSortRoot/PropDoor" index="0"]
+position = Vector2(10, 10)
+shape = SubResource("CircleShape2D_door_trigger")
+
+[node name="Sprite2D" parent="YSortRoot/PropDoor" index="1"]
+position = Vector2(0, -32)
+texture = ExtResource("14_door")
+
+[node name="SolidShape" parent="YSortRoot/PropDoor/StaticBody2D" index="0"]
+position = Vector2(0, 0)
+shape = SubResource("RectangleShape2D_door")
+
+[node name="Bin" type="StaticBody2D" parent="YSortRoot" unique_id=1997347528]
+position = Vector2(-45, -50)
+
+[node name="Sprite2D" type="Sprite2D" parent="YSortRoot/Bin" unique_id=1988687113]
+position = Vector2(-19, -101)
+texture = ExtResource("16_bin")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="YSortRoot/Bin" unique_id=157953557]
+position = Vector2(-16, -84)
+polygon = PackedVector2Array(-27, -4, -2, -38, 12, -4, 0, 4)
+
+[node name="CoffeeTable" type="StaticBody2D" parent="YSortRoot" unique_id=1308771964]
+position = Vector2(-60, 105)
+
+[node name="Sprite2D" type="Sprite2D" parent="YSortRoot/CoffeeTable" unique_id=1403840762]
+position = Vector2(54.000004, -55)
+scale = Vector2(1.4186047, 1.2540984)
+texture = ExtResource("15_coffeetable")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="YSortRoot/CoffeeTable" unique_id=1070097066]
+position = Vector2(49, -51)
+polygon = PackedVector2Array(-54, 17, -54, -12, 1.4941254, -34.766815, 24, -44, 39, -43, 53.635483, -35.934597, 61, -33, 68, -29, 66.42499, -13.2499275, 65, 1, 11.75972, 25.319633, -16, 38)
+
+[node name="SolidShape" type="CollisionShape2D" parent="YSortRoot/CoffeeTable" unique_id=1358994875]
+position = Vector2(60, -54)
+shape = SubResource("RectangleShape2D_door")
+
+[node name="SpeakerStudio" type="StaticBody2D" parent="YSortRoot" unique_id=115660521]
+position = Vector2(165, 60)
+
+[node name="Sprite2D" type="Sprite2D" parent="YSortRoot/SpeakerStudio" unique_id=1911003052]
+position = Vector2(-15, -118)
+texture = ExtResource("17_speaker")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="YSortRoot/SpeakerStudio" unique_id=549839129]
+position = Vector2(-36, -108)
+polygon = PackedVector2Array(-25, 0, 0, -12, 79, 25, 43, 40)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=131046530]
+position = Vector2(0, 30)
+zoom = Vector2(1.5, 1.5)
+limit_left = -600
+limit_top = -350
+limit_right = 600
+limit_bottom = 350
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1026098481]
+
+[node name="ApartmentHud" parent="CanvasLayer" unique_id=2010071486 instance=ExtResource("3_hud")]
+offset_left = -2161.0
+offset_top = -305.0
+offset_right = -2843.0
+offset_bottom = -780.0
+
+[editable path="YSortRoot/PropGuitar"]
+[editable path="YSortRoot/PropKitchen"]
+[editable path="YSortRoot/PropCouch"]
+[editable path="YSortRoot/PropTurntable"]
+[editable path="YSortRoot/PropArcade"]
+[editable path="YSortRoot/PropBed"]
+[editable path="YSortRoot/PropWardrobe"]
+[editable path="YSortRoot/PropToolbox"]
+[editable path="YSortRoot/PropDoor"]

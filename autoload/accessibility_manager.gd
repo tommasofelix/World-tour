@@ -12,6 +12,12 @@ var is_ducking: bool = false
 var default_tts_voice_id: String = ""
 var audio_cue_system: Node = null
 
+# Debounce e protezione anti-deadlock per TTS Windows OneCore / SAPI
+var _last_announced_text: String = ""
+var _last_announced_time: float = 0.0
+var _ducking_restore_time: float = 0.0
+const ANNOUNCE_DUPLICATE_DEBOUNCE_MS: float = 350.0
+
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_setup_audio_system()
@@ -31,7 +37,7 @@ func play_cue(cue_type: int) -> bool:
 	return false
 
 func silence() -> void:
-	if DisplayServer.tts_is_speaking() != null:
+	if DisplayServer.has_feature(DisplayServer.FEATURE_TEXT_TO_SPEECH):
 		DisplayServer.tts_stop()
 	if audio_cue_system:
 		audio_cue_system.stop()
@@ -39,14 +45,16 @@ func silence() -> void:
 	is_ducking = false
 
 func _process(_delta: float) -> void:
-	if audio_cue_system and audio_cue_system.is_ducked:
-		if DisplayServer.tts_is_speaking() != null and not DisplayServer.tts_is_speaking():
+	# Ripristino del ducking basato su stima temporale senza polling continuo del thread COM Windows
+	if is_ducking and audio_cue_system:
+		var now_sec: float = Time.get_ticks_msec() / 1000.0
+		if now_sec >= _ducking_restore_time:
 			audio_cue_system.set_ducking(false)
 			is_ducking = false
 
 func _setup_tts(target_lang: String = "it") -> void:
 	# Verifica e selezione voce TTS se disponibile a livello di DisplayServer
-	if DisplayServer.tts_is_speaking() != null:
+	if DisplayServer.has_feature(DisplayServer.FEATURE_TEXT_TO_SPEECH):
 		var voices: Array = DisplayServer.tts_get_voices()
 		if voices.size() > 0:
 			default_tts_voice_id = voices[0].id
@@ -63,15 +71,26 @@ func announce(text: String, is_interrupt: bool = true) -> void:
 	if text.strip_edges().is_empty():
 		return
 
+	# Guardia anti-spam per frasi duplicate a frequenza ravvicinata
+	var now_ms: float = Time.get_ticks_msec()
+	if text == _last_announced_text and (now_ms - _last_announced_time) < ANNOUNCE_DUPLICATE_DEBOUNCE_MS:
+		return
+	_last_announced_text = text
+	_last_announced_time = now_ms
+
 	EventBus.accessibility_announced.emit(text, is_interrupt)
 	announcement_spoken.emit(text)
+
+	# Stima durata vocale per ripristinare il ducking senza stressare il thread audio nativo
+	var est_sec: float = clampf(float(text.length()) * 0.065, 0.6, 4.0)
+	_ducking_restore_time = (now_ms / 1000.0) + est_sec
 
 	if audio_cue_system:
 		audio_cue_system.set_ducking(true)
 		is_ducking = true
 
 	if is_tts_enabled and not default_tts_voice_id.is_empty():
-		if is_interrupt:
+		if is_interrupt and DisplayServer.has_feature(DisplayServer.FEATURE_TEXT_TO_SPEECH):
 			DisplayServer.tts_stop()
 		DisplayServer.tts_speak(text, default_tts_voice_id, int(Constants.AUDIO_SAFE_VOLUME_LINEAR * 100.0))
 

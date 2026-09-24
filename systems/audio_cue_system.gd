@@ -114,6 +114,10 @@ func get_or_generate_cue_stream(cue_type: int) -> AudioStreamWAV:
 			stream = _generate_night_bell_cue()
 		Enums.AudioCueType.HIGH_SIGNAL_ALERT:
 			stream = _generate_high_alert_cue()
+		Enums.AudioCueType.COLLISION_BUMP:
+			stream = _generate_collision_bump_cue()
+		Enums.AudioCueType.HOTSPOT_PROXIMITY:
+			stream = _generate_hotspot_proximity_cue()
 		_:
 			stream = _generate_simple_tone(440.0, 0.2)
 			
@@ -350,6 +354,45 @@ func _generate_high_alert_cue() -> AudioStreamWAV:
 		var env: float = exp(-3.0 * t / duration)
 		var s: float = sin(TAU * freq * t) * env * 0.7
 		var s_int: int = clampi(int(round(s * 32767.0)), -32768, 32767)
+		byte_data.encode_s16(i * 2, s_int)
+		
+	wav.data = byte_data
+	return wav
+
+## Evento: Urto contro Ostacolo — Breve thud smorzato a bassa frequenza
+func _generate_collision_bump_cue() -> AudioStreamWAV:
+	var sample_rate: int = Constants.AUDIO_SAFE_SAMPLE_RATE
+	var duration: float = 0.08
+	var total_samples: int = int(round(duration * float(sample_rate)))
+	var wav: AudioStreamWAV = _create_wav(total_samples)
+	var byte_data := PackedByteArray()
+	byte_data.resize(total_samples * 2)
+	
+	for i in range(total_samples):
+		var t: float = float(i) / float(sample_rate)
+		var freq: float = 75.0 - (35.0 * (t / duration))
+		var env: float = exp(-12.0 * t / duration)
+		var s: float = sin(TAU * freq * t) * env * 0.55
+		var s_int: int = clampi(int(round(s * 32767.0)), -32768, 32767)
+		byte_data.encode_s16(i * 2, s_int)
+		
+	wav.data = byte_data
+	return wav
+
+## Evento: Rilevamento Arredo Vicino — Delicato chime acuto a due toni armonici
+func _generate_hotspot_proximity_cue() -> AudioStreamWAV:
+	var sample_rate: int = Constants.AUDIO_SAFE_SAMPLE_RATE
+	var duration: float = 0.12
+	var total_samples: int = int(round(duration * float(sample_rate)))
+	var wav: AudioStreamWAV = _create_wav(total_samples)
+	var byte_data := PackedByteArray()
+	byte_data.resize(total_samples * 2)
+	
+	for i in range(total_samples):
+		var t: float = float(i) / float(sample_rate)
+		var env: float = exp(-9.0 * t / duration)
+		var chime: float = (sin(TAU * 880.0 * t) + sin(TAU * 1320.0 * t) * 0.5) / 1.5
+		var s_int: int = clampi(int(round(chime * env * 0.45 * 32767.0)), -32768, 32767)
 		byte_data.encode_s16(i * 2, s_int)
 		
 	wav.data = byte_data

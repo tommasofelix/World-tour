@@ -1,0 +1,353 @@
+[gd_scene load_steps=28 format=3 uid="uid://c8aparthudny001"]
+
+[ext_resource type="Script" path="res://ui/apartment_hud/apartment_hud.gd" id="1_aphud"]
+[ext_resource type="FontFile" uid="uid://cih81t234uip5" path="res://assets/img/font_text/press_start_2p/PressStart2P.ttf" id="2_font"]
+[ext_resource type="Texture2D" uid="uid://b126fg_right" path="res://assets/img/gameplay/casa/camera/personaggio_prova/fermo_destra.png" id="3_portrait"]
+[ext_resource type="PackedScene" uid="uid://dmsongcat01" path="res://ui/music/song_catalog.tscn" id="4_catalog"]
+[ext_resource type="PackedScene" uid="uid://dmsongcreat01" path="res://ui/music/song_creator.tscn" id="5_creator"]
+[ext_resource type="PackedScene" uid="uid://c8liveconct01" path="res://ui/concert/live_concert.tscn" id="6_concert"]
+[ext_resource type="PackedScene" uid="uid://dmeconbank01" path="res://ui/economy/economy_bank.tscn" id="7_bank"]
+[ext_resource type="PackedScene" uid="uid://dmsummarywt01" path="res://ui/summary/daily_summary.tscn" id="8_summary"]
+[ext_resource type="PackedScene" uid="uid://bw3u4ugqd3yx1" path="res://ui/character/character_sheet.tscn" id="9_charsheet"]
+[ext_resource type="PackedScene" uid="uid://dmbandhubwt01" path="res://ui/band/band_hub.tscn" id="10_bandhub"]
+[ext_resource type="PackedScene" uid="uid://dmalbumcrwt01" path="res://ui/album/album_creator.tscn" id="11_albumcr"]
+[ext_resource type="PackedScene" uid="uid://dmindhubwt01" path="res://ui/industry/industry_hub.tscn" id="12_indhub"]
+[ext_resource type="PackedScene" uid="uid://di3xf1tfkfnlg" path="res://ui/industry/dilemma_modal.tscn" id="13_dilemma"]
+[ext_resource type="PackedScene" uid="uid://drhidq00mm8wy" path="res://ui/travel/travel_modal.tscn" id="14_travel"]
+[ext_resource type="PackedScene" uid="uid://dmtourmodal01" path="res://ui/tour/tour_modal.tscn" id="15_tour"]
+[ext_resource type="PackedScene" uid="uid://cmwl8cbhw552k" path="res://ui/festival/festival_modal.tscn" id="16_fest"]
+[ext_resource type="PackedScene" uid="uid://coi38q00mm8wy" path="res://ui/social/social_modal.tscn" id="17_social"]
+[ext_resource type="PackedScene" uid="uid://b8m1n6ydye71u" path="res://ui/charts/chart_modal.tscn" id="18_chart"]
+[ext_resource type="PackedScene" uid="uid://dm2systemmenu01" path="res://ui/system_menu/system_menu_modal.tscn" id="19_sysmenu"]
+[ext_resource type="PackedScene" uid="uid://dm4upgradesmod01" path="res://ui/upgrades/upgrades_modal.tscn" id="20_upgrades"]
+[ext_resource type="PackedScene" uid="uid://dmrelaxmodal01" path="res://ui/relax/relax_modal.tscn" id="21_relax"]
+[ext_resource type="PackedScene" uid="uid://dmlegacymodal01" path="res://ui/legacy/legacy_modal.tscn" id="22_legacy"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud_panel"]
+bg_color = Color(0.08, 0.08, 0.12, 0.88)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.85, 0.95, 0.9)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+expand_margin_left = 4.0
+expand_margin_top = 4.0
+expand_margin_right = 4.0
+expand_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_energy"]
+bg_color = Color(0.15, 0.85, 0.35, 1.0)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stress"]
+bg_color = Color(0.95, 0.3, 0.25, 1.0)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_morale"]
+bg_color = Color(0.2, 0.6, 1.0, 1.0)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_bg"]
+bg_color = Color(0.12, 0.12, 0.16, 0.8)
+
+[node name="ApartmentHud" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_aphud")
+
+[node name="TopLeftProfile" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 20.0
+offset_right = 420.0
+offset_bottom = 110.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud_panel")
+
+[node name="HBox" type="HBoxContainer" parent="TopLeftProfile"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="PortraitFrame" type="Control" parent="TopLeftProfile/HBox"]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 2
+
+[node name="TexturePortraitTop" type="TextureRect" parent="TopLeftProfile/HBox/PortraitFrame"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_portrait")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="VBox" type="VBoxContainer" parent="TopLeftProfile/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="LabelLevel" type="Label" parent="TopLeftProfile/HBox/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.25, 0.9, 1.0, 1.0)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 10
+text = "Lv. 1 - Chitarrista Esordiente"
+
+[node name="BarEnergy" type="ProgressBar" parent="TopLeftProfile/HBox/VBox"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_energy")
+value = 100.0
+show_percentage = false
+
+[node name="BarStress" type="ProgressBar" parent="TopLeftProfile/HBox/VBox"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_stress")
+value = 15.0
+show_percentage = false
+
+[node name="BarMorale" type="ProgressBar" parent="TopLeftProfile/HBox/VBox"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_morale")
+value = 80.0
+show_percentage = false
+
+[node name="TopRightTime" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -380.0
+offset_top = 20.0
+offset_right = -24.0
+offset_bottom = 90.0
+grow_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud_panel")
+
+[node name="VBoxTime" type="VBoxContainer" parent="TopRightTime"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="LabelDateTime" type="Label" parent="TopRightTime/VBoxTime"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 10
+text = "Anno 1, Mese 1, Giorno 1"
+
+[node name="LabelPeriod" type="Label" parent="TopRightTime/VBoxTime"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.9, 1, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 9
+text = "Ore 06:00 (Mattina)"
+
+[node name="BottomLeftDialogue" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -180.0
+offset_right = 720.0
+offset_bottom = -24.0
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud_panel")
+
+[node name="Margin" type="MarginContainer" parent="BottomLeftDialogue"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="HBox" type="HBoxContainer" parent="BottomLeftDialogue/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="TexturePortraitDialogue" type="TextureRect" parent="BottomLeftDialogue/Margin/HBox"]
+custom_minimum_size = Vector2(96, 120)
+layout_mode = 2
+texture = ExtResource("3_portrait")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="VBox" type="VBoxContainer" parent="BottomLeftDialogue/Margin/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="LabelSpeaker" type="Label" parent="BottomLeftDialogue/Margin/HBox/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 11
+text = "ALEX"
+
+[node name="LabelText" type="Label" parent="BottomLeftDialogue/Margin/HBox/VBox"]
+custom_minimum_size = Vector2(400, 50)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 9
+text = "New York - Loft Apartment.
+Frecce/WASD/Numpad: cammina.
+Tab: sfoglia arredi. Spazio: interagisci. Esc: menu."
+autowrap_mode = 3
+
+[node name="LabelHint" type="Label" parent="BottomLeftDialogue/Margin/HBox/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.7, 0.8, 0.85)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 8
+text = "[Spazio] Azione   [Tab] Sfoglia arredi   [Esc] Menu"
+
+[node name="BottomRightInfo" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -380.0
+offset_top = -120.0
+offset_right = -24.0
+offset_bottom = -24.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud_panel")
+
+[node name="VBox" type="VBoxContainer" parent="BottomRightInfo"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="LabelLocation" type="Label" parent="BottomRightInfo/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.9, 1, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 10
+text = "NYC - LOFT APARTMENT"
+
+[node name="LabelMoney" type="Label" parent="BottomRightInfo/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 13
+text = "€ 500.00"
+
+[node name="LabelArcadeWatermark" type="Label" parent="BottomRightInfo/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.45, 0.6, 0.7)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 8
+text = "WORLD TOUR"
+
+[node name="Modals" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="SongCatalog" parent="Modals" instance=ExtResource("4_catalog")]
+visible = false
+layout_mode = 1
+
+[node name="SongCreator" parent="Modals" instance=ExtResource("5_creator")]
+visible = false
+layout_mode = 1
+
+[node name="LiveConcert" parent="Modals" instance=ExtResource("6_concert")]
+visible = false
+layout_mode = 1
+
+[node name="EconomyBank" parent="Modals" instance=ExtResource("7_bank")]
+visible = false
+layout_mode = 1
+
+[node name="DailySummary" parent="Modals" instance=ExtResource("8_summary")]
+visible = false
+layout_mode = 1
+
+[node name="CharacterSheet" parent="Modals" instance=ExtResource("9_charsheet")]
+visible = false
+layout_mode = 1
+
+[node name="BandHub" parent="Modals" instance=ExtResource("10_bandhub")]
+visible = false
+layout_mode = 1
+
+[node name="AlbumCreator" parent="Modals" instance=ExtResource("11_albumcr")]
+visible = false
+layout_mode = 1
+
+[node name="IndustryHub" parent="Modals" instance=ExtResource("12_indhub")]
+visible = false
+layout_mode = 1
+
+[node name="DilemmaModal" parent="Modals" instance=ExtResource("13_dilemma")]
+visible = false
+layout_mode = 1
+
+[node name="TravelModal" parent="Modals" instance=ExtResource("14_travel")]
+visible = false
+layout_mode = 1
+
+[node name="TourModal" parent="Modals" instance=ExtResource("15_tour")]
+visible = false
+layout_mode = 1
+
+[node name="FestivalModal" parent="Modals" instance=ExtResource("16_fest")]
+visible = false
+layout_mode = 1
+
+[node name="SocialModal" parent="Modals" instance=ExtResource("17_social")]
+visible = false
+layout_mode = 1
+
+[node name="ChartModal" parent="Modals" instance=ExtResource("18_chart")]
+visible = false
+layout_mode = 1
+
+[node name="SystemMenuModal" parent="Modals" instance=ExtResource("19_sysmenu")]
+visible = false
+layout_mode = 1
+
+[node name="UpgradesModal" parent="Modals" instance=ExtResource("20_upgrades")]
+visible = false
+layout_mode = 1
+
+[node name="RelaxModal" parent="Modals" instance=ExtResource("21_relax")]
+visible = false
+layout_mode = 1
+
+[node name="LegacyModal" parent="Modals" instance=ExtResource("22_legacy")]
+visible = false
+layout_mode = 1
