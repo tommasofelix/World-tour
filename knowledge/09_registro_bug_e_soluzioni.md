@@ -184,3 +184,17 @@ Questo registro contiene soltanto problemi tecnici confermati e soluzioni con ev
   2. Correzione in `tests/test_ui_audio_and_numpad_system.gd` dell'invocazione su `concert_sys.resolve_encore(true, 90.0)`.
 - Test automatici eseguiti: 128/128 asserzioni superate in `test_ui_audio_and_numpad_system.tscn` e 27/27 suite headless complessive dell'intero progetto superate con 0 errori a 0 ms.
 - Misure di prevenzione delle regressioni: Negli script autoload non utilizzare mai annotazioni statiche di tipo `class_name` definite altrove nel progetto senza `preload()`; utilizzare sempre `const ScriptRef = preload(...)` e tipizzazione generica `Node` per disaccoppiare l'ordine di bootstrap dell'engine.
+
+### BUG-012 — Conservazione della Linearità del Grafo di Riverbero Territoriale & Parametrizzazione nei Test Headless di Espansione (Post-V5.1 Expansion)
+
+- Data e componente: `2026-09-24`, `systems/travel_system.gd`, `tests/test_travel_system.gd` (Espansione Post-V5.1 V5.2.0).
+- Sintomo osservato: Durante l'espansione del grafo città da 12 a 16 metropoli, il test headless di riverbero geografico della fanbase fallisce con: `[FAIL] Incremento complessivo fan a seguito del concerto: Ottenuto 200, Atteso 196`.
+- Evidenza riproducibile: Esecuzione di `tests/test_travel_system.gd` con la nuova enumerazione `CityId` estesa a 16 elementi ed esecuzione del metodo di riverbero su 100 fan base.
+- Causa radice verificata:
+  1. L'algoritmo di propagazione geografica della popolarità distribuisce l'85% dei fan alla città del concerto e +1 fan per ciascuna delle altre città del network: $85 + (N - 1) \times 1$.
+  2. Con la topologia storica a $N = 12$ città, le altre città erano 11, per cui l'incremento totale generato da 100 fan era $85 + 11 = 96$ fan distribuiti (saldo complessivo $100 + 96 = 196$).
+  3. Con l'espansione a $N = 16$ metropoli, le altre città salgono a 15, portando la propagazione a $85 + 15 = 100$ fan (saldo complessivo $100 + 100 = 200$). L'asserzione rigida `assert_eq(total, 196)` conteneva una costante scalare hardcoded non parametrizzata sulla cardinalità del grafo.
+- Soluzione applicata:
+  1. Ricalibrazione dell'asserzione del test a 200 fan e formalizzazione del pattern di parametrizzazione $(N - 1)$ per qualsiasi espansione di topologie geografiche o grafi di rete.
+- Test automatici eseguiti: 93/93 asserzioni superate in `tests/test_travel_system.gd` e 28/28 suite headless complessive dell'intero progetto superate con 0 errori e 0 ms.
+- Misure di prevenzione delle regressioni: Nei test di algoritmi che iterano o distribuiscono risorse su grafi di nodi o enumerazioni, evitare costanti scalari assolute figlie di una specifica dimensione storica; parametrizzare le formule attese sulla cardinalità dinamica del set di nodi o ancorarle a costanti derivate (`CityId.size() - 1`).
