@@ -244,13 +244,6 @@ func load_game() -> bool:
 	if save_dict.has("media") and save_dict["media"] is Dictionary:
 		GameManager.media_system.from_dict(save_dict["media"] as Dictionary)
 
-	if not GameManager.concert_system:
-		GameManager.concert_system = ConcertSystem.new(GameManager.player_data, GameManager.calendar_data, GameManager.skill_system)
-	else:
-		GameManager.concert_system.player_data = GameManager.player_data
-		GameManager.concert_system.calendar_data = GameManager.calendar_data
-		GameManager.concert_system.skill_system = GameManager.skill_system
-
 	if not GameManager.career_system:
 		GameManager.career_system = CareerSystem.new(GameManager.player_data)
 	else:

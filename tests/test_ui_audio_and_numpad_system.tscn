@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dmv5audnumpad01"]
 
-[ext_resource type="Script" uid="uid://bv5audnumpad01" path="res://tests/test_ui_audio_and_numpad_system.gd" id="1_test"]
+[ext_resource type="Script" uid="uid://50xejq1dviqs" path="res://tests/test_ui_audio_and_numpad_system.gd" id="1_test"]
 
 [node name="TestUIAudioAndNumpadSystem" type="Node"]
 script = ExtResource("1_test")

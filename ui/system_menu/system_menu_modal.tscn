@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dm2systemmenu01"]
 
-[ext_resource type="Script" uid="uid://c5q3menu89xyz" path="res://ui/system_menu/system_menu_modal.gd" id="1_sysmenu"]
+[ext_resource type="Script" uid="uid://d3rjqtlnu71rk" path="res://ui/system_menu/system_menu_modal.gd" id="1_sysmenu"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main"]
 bg_color = Color(0.08, 0.08, 0.12, 0.98)
