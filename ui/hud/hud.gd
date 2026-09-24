@@ -64,8 +64,10 @@ extends Control
 @onready var relax_modal: Control = $RelaxModal
 @onready var legacy_modal: Control = $LegacyModal
 
+const ModalRouter = preload("res://ui/hud/modal_router.gd")
+
 var current_category_tab: int = 1
-var _pending_dilemma_at_day_end: Dictionary = {}
+var modal_router: ModalRouter = null
 
 var action_system: ActionSystem
 var quick_practice_action: ActionData
@@ -86,6 +88,10 @@ func _ready() -> void:
 	if GameManager.current_state == Enums.GameState.BOOT or GameManager.current_state == Enums.GameState.MAIN_MENU:
 		GameManager.change_state(Enums.GameState.GAMEPLAY_IDLE)
 	
+	# Inizializzazione del coordinatore modale specializzato
+	modal_router = ModalRouter.new()
+	modal_router.setup(self)
+
 	# Impostazione Live Region per l'orologio (annuncio dinamico senza spostare il focus)
 	label_time.set_accessibility_live(Constants.ACCESSIBILITY_LIVE_POLITE)
 	label_status.set_accessibility_live(Constants.ACCESSIBILITY_LIVE_ASSERTIVE)
@@ -114,12 +120,17 @@ func _ready() -> void:
 	btn_save.pressed.connect(_on_btn_save_pressed)
 	btn_main_menu.pressed.connect(_on_btn_main_menu_pressed)
 	
-	# Connessione Tab Categorie e Upgrades
+	# Connessione Tab Categorie, Upgrades, Relax e Legacy
 	btn_tab_personal.pressed.connect(func(): select_category_tab(1))
 	btn_tab_creation.pressed.connect(func(): select_category_tab(2))
 	btn_tab_career.pressed.connect(func(): select_category_tab(3))
 	btn_tab_upgrades.pressed.connect(func(): select_category_tab(4))
 	btn_upgrades.pressed.connect(open_upgrades_modal)
+	if btn_relax:
+		btn_relax.pressed.connect(open_relax_modal)
+	if btn_legacy:
+		btn_legacy.pressed.connect(open_legacy_modal)
+		AccessibilityManager.hook_control_accessibility(btn_legacy, "Albo d'Oro e Legacy (W)", "Apre le certificazioni, premi ufficiali, Hall of Fame e concerto d'addio.")
 	
 	AccessibilityManager.hook_control_accessibility(btn_tab_personal, "Area 1: Hub Personale", "Mostra le azioni di identità, agenda, bilancio e viaggi.")
 	AccessibilityManager.hook_control_accessibility(btn_tab_creation, "Area 2: Creazione e Produzione", "Mostra catalogo brani, nuovo brano e creazione album.")
@@ -131,54 +142,6 @@ func _ready() -> void:
 	AccessibilityManager.hook_control_accessibility(btn_festival, "Grandi Festival Estivi (F)", "Apre la schermata dei festival estivi e la selezione degli slot.")
 	AccessibilityManager.hook_control_accessibility(btn_social, "Social Media (Y)", "Apre il canale social della band per pubblicare contenuti e gestire il feed dei fan.")
 	AccessibilityManager.hook_control_accessibility(btn_chart, "Classifiche Musicali (H)", "Apre la Hit Parade settimanale dei singoli e degli album e la lista dei rivali.")
-	
-	# Connessione modali musicali, concerti, economia, scheda personaggio, band e industria
-	song_catalog_modal.closed.connect(close_catalog)
-	song_catalog_modal.new_song_requested.connect(_on_catalog_new_song_requested)
-	song_catalog_modal.edit_song_requested.connect(open_song_editor)
-	song_creator_modal.creation_finished.connect(_on_song_created_or_finished)
-	song_creator_modal.creation_canceled.connect(close_song_creator)
-	live_concert_modal.closed.connect(close_live_concert)
-	live_concert_modal.concert_completed.connect(_on_concert_completed)
-	economy_bank_modal.closed.connect(close_economy_bank)
-	if daily_summary_modal:
-		daily_summary_modal.day_advanced.connect(_on_day_advanced)
-	if character_sheet_modal:
-		character_sheet_modal.closed.connect(close_character_sheet)
-	if band_hub_modal:
-		band_hub_modal.closed.connect(close_band_hub)
-	if album_creator_modal:
-		album_creator_modal.closed.connect(close_album_creator)
-		album_creator_modal.album_published.connect(_on_album_published)
-	if industry_hub_modal:
-		industry_hub_modal.closed.connect(close_industry_hub)
-	if dilemma_modal:
-		dilemma_modal.closed.connect(close_dilemma_modal)
-	if travel_modal:
-		travel_modal.closed.connect(close_travel_modal)
-	if tour_modal:
-		tour_modal.closed.connect(close_tour_modal)
-	if festival_modal:
-		festival_modal.closed.connect(close_festival_modal)
-	if social_modal:
-		social_modal.closed.connect(close_social_modal)
-	if chart_modal:
-		chart_modal.closed.connect(close_chart_modal)
-	if system_menu_modal:
-		system_menu_modal.resume_requested.connect(close_system_menu)
-	if upgrades_modal:
-		upgrades_modal.closed.connect(close_upgrades_modal)
-	if btn_relax:
-		btn_relax.pressed.connect(open_relax_modal)
-	if relax_modal:
-		relax_modal.closed.connect(close_relax_modal)
-		relax_modal.activity_selected.connect(_on_relax_activity_selected)
-	if btn_legacy:
-		btn_legacy.pressed.connect(open_legacy_modal)
-		AccessibilityManager.hook_control_accessibility(btn_legacy, "Albo d'Oro e Legacy (W)", "Apre le certificazioni, premi ufficiali, Hall of Fame e concerto d'addio.")
-	if legacy_modal:
-		legacy_modal.closed.connect(close_legacy_modal)
-	song_catalog_modal.new_album_requested.connect(open_album_creator)
 	
 	# Inizializza la visualizzazione sulla prima categoria (Hub Personale)
 	select_category_tab(1)
@@ -192,7 +155,7 @@ func _ready() -> void:
 		if GameManager.player_data and GameManager.player_data.songs.is_empty():
 			GameManager.player_data.populate_starter_test_songs()
 	
-	# Connessione EventBus
+	# Connessione EventBus di gioco
 	EventBus.time_ticked.connect(_on_time_ticked)
 	EventBus.speed_changed.connect(_on_speed_changed)
 	EventBus.action_started.connect(_on_action_started)
@@ -200,19 +163,7 @@ func _ready() -> void:
 	EventBus.action_completed.connect(_on_action_completed)
 	EventBus.money_changed.connect(_on_money_changed)
 	EventBus.language_changed.connect(_on_language_changed)
-	EventBus.song_catalog_requested.connect(open_catalog)
-	EventBus.song_creator_requested.connect(open_song_creator)
-	EventBus.live_concert_requested.connect(open_live_concert)
-	EventBus.economy_screen_requested.connect(open_economy_bank)
-	EventBus.band_hub_requested.connect(open_band_hub)
-	EventBus.album_creator_requested.connect(open_album_creator)
-	EventBus.industry_hub_requested.connect(open_industry_hub)
-	EventBus.travel_screen_requested.connect(open_travel_modal)
-	EventBus.social_screen_requested.connect(open_social_modal)
-	EventBus.chart_screen_requested.connect(open_chart_modal)
-	EventBus.legacy_screen_requested.connect(open_legacy_modal)
 	EventBus.city_changed.connect(func(_o, _n): _update_hud_display())
-	EventBus.dilemma_triggered.connect(_on_dilemma_triggered)
 	EventBus.contract_signed.connect(func(_d): _update_hud_display())
 	EventBus.contract_canceled.connect(func(_d): _update_hud_display())
 	EventBus.contract_completed.connect(func(_d): _update_hud_display())
@@ -240,68 +191,12 @@ func _process(delta: float) -> void:
 
 ## Verifica se almeno una finestra modale è attualmente aperta e visibile
 func _is_any_modal_open() -> bool:
-	return (song_catalog_modal and song_catalog_modal.visible) or \
-	   (song_creator_modal and song_creator_modal.visible) or \
-	   (live_concert_modal and live_concert_modal.visible) or \
-	   (economy_bank_modal and economy_bank_modal.visible) or \
-	   (daily_summary_modal and daily_summary_modal.visible) or \
-	   (character_sheet_modal and character_sheet_modal.visible) or \
-	   (band_hub_modal and band_hub_modal.visible) or \
-	   (album_creator_modal and album_creator_modal.visible) or \
-	   (industry_hub_modal and industry_hub_modal.visible) or \
-	   (dilemma_modal and dilemma_modal.visible) or \
-	   (travel_modal and travel_modal.visible) or \
-	   (tour_modal and tour_modal.visible) or \
-	   (festival_modal and festival_modal.visible) or \
-	   (social_modal and social_modal.visible) or \
-	   (chart_modal and chart_modal.visible) or \
-	   (system_menu_modal and system_menu_modal.visible) or \
-	   (upgrades_modal and upgrades_modal.visible) or \
-	   (relax_modal and relax_modal.visible) or \
-	   (legacy_modal and legacy_modal.visible)
+	return modal_router.is_any_modal_open() if modal_router else false
 
 ## Chiude e occulta sistematicamente tutte le finestre modali del gioco
 func _hide_all_modals() -> void:
-	if song_catalog_modal:
-		song_catalog_modal.visible = false
-	if song_creator_modal:
-		song_creator_modal.visible = false
-	if live_concert_modal:
-		live_concert_modal.visible = false
-	if economy_bank_modal:
-		economy_bank_modal.visible = false
-	if daily_summary_modal:
-		daily_summary_modal.visible = false
-	if character_sheet_modal:
-		character_sheet_modal.visible = false
-	if band_hub_modal:
-		band_hub_modal.visible = false
-	if album_creator_modal:
-		album_creator_modal.visible = false
-	if industry_hub_modal:
-		industry_hub_modal.visible = false
-	if dilemma_modal:
-		dilemma_modal.visible = false
-	if travel_modal:
-		travel_modal.visible = false
-	if tour_modal:
-		tour_modal.visible = false
-	if festival_modal:
-		festival_modal.visible = false
-	if social_modal:
-		social_modal.visible = false
-	if chart_modal:
-		chart_modal.visible = false
-	if system_menu_modal:
-		system_menu_modal.visible = false
-	if upgrades_modal:
-		upgrades_modal.visible = false
-	if relax_modal:
-		relax_modal.visible = false
-	if legacy_modal:
-		legacy_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = false
+	if modal_router:
+		modal_router.hide_all_modals()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not (event is InputEventKey) or not event.is_pressed() or event.is_echo():
@@ -490,292 +385,121 @@ func _on_btn_speed_pressed() -> void:
 func _on_speed_changed(new_speed: float) -> void:
 	btn_speed.text = tr("HUD_BTN_SPEED") % new_speed
 
+# --- Instradamento Modali (Delegato a ModalRouter) ---
+
 func open_catalog(show_albums: bool = false) -> void:
-	_hide_all_modals()
-	song_catalog_modal.visible = true
-	if show_albums:
-		song_catalog_modal.show_albums_section()
-	else:
-		song_catalog_modal.refresh_catalog()
-	GameManager.open_menu()
+	if modal_router: modal_router.open_catalog(show_albums)
 
 func close_catalog() -> void:
-	song_catalog_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = true
-	GameManager.close_menu()
-	select_category_tab(2)
-	btn_catalog.grab_focus()
-	_update_hud_display()
+	if modal_router: modal_router.close_catalog()
 
 func open_song_creator() -> void:
-	_hide_all_modals()
-	song_creator_modal.visible = true
-	song_creator_modal.start_new_song()
-	GameManager.open_menu()
+	if modal_router: modal_router.open_song_creator()
 
 func close_song_creator() -> void:
-	song_creator_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = true
-	GameManager.close_menu()
-	select_category_tab(2)
-	btn_new_song.grab_focus()
-	_update_hud_display()
+	if modal_router: modal_router.close_song_creator()
 
 func open_song_editor(song: SongData) -> void:
-	_hide_all_modals()
-	song_creator_modal.visible = true
-	song_creator_modal.edit_existing_song(song)
-	GameManager.open_menu()
+	if modal_router: modal_router.open_song_editor(song)
 
 func open_live_concert() -> void:
-	_hide_all_modals()
-	live_concert_modal.visible = true
-	live_concert_modal.open_preparation()
-	GameManager.open_menu()
+	if modal_router: modal_router.open_live_concert()
 
 func close_live_concert() -> void:
-	live_concert_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = true
-	GameManager.close_menu()
-	select_category_tab(3)
-	btn_concert.grab_focus()
-	_update_hud_display()
+	if modal_router: modal_router.close_live_concert()
 
 func open_economy_bank() -> void:
-	_hide_all_modals()
-	economy_bank_modal.open()
-	GameManager.open_menu()
+	if modal_router: modal_router.open_economy_bank()
 
 func close_economy_bank() -> void:
-	economy_bank_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = true
-	GameManager.close_menu()
-	select_category_tab(1)
-	btn_economy.grab_focus()
-	_update_hud_display()
+	if modal_router: modal_router.close_economy_bank()
 
 func open_character_sheet() -> void:
-	_hide_all_modals()
-	if character_sheet_modal:
-		character_sheet_modal.open()
-	GameManager.open_menu()
+	if modal_router: modal_router.open_character_sheet()
 
 func close_character_sheet() -> void:
-	if character_sheet_modal:
-		character_sheet_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = true
-	GameManager.close_menu()
-	select_category_tab(1)
-	btn_character.grab_focus()
-	_update_hud_display()
+	if modal_router: modal_router.close_character_sheet()
 
 func open_band_hub() -> void:
-	_hide_all_modals()
-	if band_hub_modal:
-		band_hub_modal.open()
-	GameManager.open_menu()
+	if modal_router: modal_router.open_band_hub()
 
 func close_band_hub() -> void:
-	if band_hub_modal:
-		band_hub_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = true
-	GameManager.close_menu()
-	select_category_tab(3)
-	btn_band.grab_focus()
-	_update_hud_display()
+	if modal_router: modal_router.close_band_hub()
 
 func open_album_creator() -> void:
-	_hide_all_modals()
-	if album_creator_modal:
-		album_creator_modal.open()
-	GameManager.open_menu()
+	if modal_router: modal_router.open_album_creator()
 
 func close_album_creator() -> void:
-	if album_creator_modal:
-		album_creator_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = true
-	GameManager.close_menu()
-	select_category_tab(2)
-	btn_catalog.grab_focus()
-	_update_hud_display()
-
-func _on_album_published(_album_data: Dictionary) -> void:
-	if album_creator_modal:
-		album_creator_modal.visible = false
-	open_catalog(true)
-	_update_hud_display()
+	if modal_router: modal_router.close_album_creator()
 
 func open_industry_hub() -> void:
-	_hide_all_modals()
-	if industry_hub_modal:
-		industry_hub_modal.open()
-	GameManager.open_menu()
+	if modal_router: modal_router.open_industry_hub()
 
 func close_industry_hub() -> void:
-	if industry_hub_modal:
-		industry_hub_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = true
-	GameManager.close_menu()
-	select_category_tab(3)
-	btn_industry.grab_focus()
-	_update_hud_display()
+	if modal_router: modal_router.close_industry_hub()
 
 func open_travel_modal() -> void:
-	_hide_all_modals()
-	if travel_modal:
-		travel_modal.open()
-	GameManager.open_menu()
+	if modal_router: modal_router.open_travel_modal()
 
 func close_travel_modal() -> void:
-	if travel_modal:
-		travel_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = true
-	GameManager.close_menu()
-	select_category_tab(1)
-	btn_travel.grab_focus()
-	_update_hud_display()
+	if modal_router: modal_router.close_travel_modal()
 
 func open_tour_modal() -> void:
-	_hide_all_modals()
-	if tour_modal:
-		tour_modal.open()
-	GameManager.open_menu()
+	if modal_router: modal_router.open_tour_modal()
 
 func close_tour_modal() -> void:
-	if tour_modal:
-		tour_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = true
-	GameManager.close_menu()
-	select_category_tab(3)
-	btn_tour.grab_focus()
-	_update_hud_display()
+	if modal_router: modal_router.close_tour_modal()
 
 func open_festival_modal() -> void:
-	_hide_all_modals()
-	if festival_modal:
-		festival_modal.open()
-	GameManager.open_menu()
+	if modal_router: modal_router.open_festival_modal()
 
 func close_festival_modal() -> void:
-	if festival_modal:
-		festival_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = true
-	GameManager.close_menu()
-	select_category_tab(3)
-	btn_festival.grab_focus()
-	_update_hud_display()
+	if modal_router: modal_router.close_festival_modal()
 
 func open_social_modal() -> void:
-	_hide_all_modals()
-	if social_modal:
-		social_modal.open()
-	GameManager.open_menu()
+	if modal_router: modal_router.open_social_modal()
 
 func close_social_modal() -> void:
-	if social_modal:
-		social_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = true
-	GameManager.close_menu()
-	select_category_tab(3)
-	btn_social.grab_focus()
-	_update_hud_display()
+	if modal_router: modal_router.close_social_modal()
 
 func open_chart_modal() -> void:
-	_hide_all_modals()
-	if chart_modal:
-		chart_modal.open()
-	GameManager.open_menu()
+	if modal_router: modal_router.open_chart_modal()
 
 func close_chart_modal() -> void:
-	if chart_modal:
-		chart_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = true
-	GameManager.close_menu()
-	select_category_tab(3)
-	btn_chart.grab_focus()
-	_update_hud_display()
+	if modal_router: modal_router.close_chart_modal()
 
 func open_system_menu() -> void:
-	_hide_all_modals()
-	if system_menu_modal:
-		system_menu_modal.open()
-	GameManager.open_menu()
+	if modal_router: modal_router.open_system_menu()
 
 func close_system_menu() -> void:
-	if system_menu_modal:
-		system_menu_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = true
-	GameManager.close_menu()
-	select_category_tab(current_category_tab)
-	_update_hud_display()
+	if modal_router: modal_router.close_system_menu()
 
 func open_upgrades_modal() -> void:
-	_hide_all_modals()
-	if upgrades_modal:
-		upgrades_modal.open()
-	GameManager.open_menu()
+	if modal_router: modal_router.open_upgrades_modal()
 
 func close_upgrades_modal() -> void:
-	if upgrades_modal:
-		upgrades_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = true
-	GameManager.close_menu()
-	select_category_tab(4)
-	btn_upgrades.grab_focus()
-	_update_hud_display()
+	if modal_router: modal_router.close_upgrades_modal()
 
 func open_relax_modal() -> void:
-	_hide_all_modals()
-	if relax_modal:
-		relax_modal.open()
-	GameManager.open_menu()
+	if modal_router: modal_router.open_relax_modal()
 
 func close_relax_modal() -> void:
-	if relax_modal:
-		relax_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = true
-	GameManager.close_menu()
-	select_category_tab(1)
-	if btn_relax:
-		btn_relax.grab_focus()
-	_update_hud_display()
+	if modal_router: modal_router.close_relax_modal()
 
 func open_legacy_modal() -> void:
-	_hide_all_modals()
-	if legacy_modal:
-		legacy_modal.open()
-	GameManager.open_menu()
+	if modal_router: modal_router.open_legacy_modal()
 
 func close_legacy_modal() -> void:
-	if legacy_modal:
-		legacy_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = true
-	GameManager.close_menu()
-	select_category_tab(3)
-	if btn_legacy:
-		btn_legacy.grab_focus()
-	_update_hud_display()
+	if modal_router: modal_router.close_legacy_modal()
 
-func _on_relax_activity_selected(action: ActionData) -> void:
-	if action_system:
-		action_system.start_action(action)
+func open_daily_summary(summary_data: Dictionary) -> void:
+	if modal_router: modal_router.open_daily_summary(summary_data)
+
+func _on_dilemma_triggered(dilemma_dict: Dictionary) -> void:
+	if modal_router: modal_router.on_dilemma_triggered(dilemma_dict)
+
+func close_dilemma_modal() -> void:
+	if modal_router: modal_router.close_dilemma_modal()
 
 func select_category_tab(tab_idx: int) -> void:
 	current_category_tab = tab_idx
@@ -888,53 +612,7 @@ func speak_hud_info() -> void:
 		info_text += "Simulazione %s a velocità %s." % [paused_str, speed_str]
 	AccessibilityManager.speak(info_text)
 
-func _on_dilemma_triggered(dilemma_dict: Dictionary) -> void:
-	_hide_all_modals()
-	if dilemma_modal:
-		dilemma_modal.open(dilemma_dict)
-	GameManager.open_menu()
 
-func close_dilemma_modal() -> void:
-	if dilemma_modal:
-		dilemma_modal.visible = false
-	if vbox_main:
-		vbox_main.visible = true
-	GameManager.close_menu()
-	btn_character.grab_focus()
-	_update_hud_display()
-
-func open_daily_summary(summary_data: Dictionary) -> void:
-	_hide_all_modals()
-	if summary_data.has("pending_dilemma") and not summary_data["pending_dilemma"].is_empty():
-		_pending_dilemma_at_day_end = summary_data["pending_dilemma"]
-	if daily_summary_modal:
-		daily_summary_modal.show_summary(summary_data)
-
-func _on_day_advanced() -> void:
-	if daily_summary_modal:
-		daily_summary_modal.visible = false
-	if not _pending_dilemma_at_day_end.is_empty():
-		var d: Dictionary = _pending_dilemma_at_day_end
-		_pending_dilemma_at_day_end = {}
-		_on_dilemma_triggered(d)
-		return
-	if vbox_main:
-		vbox_main.visible = true
-	_update_hud_display()
-	btn_practice.grab_focus()
-
-func _on_concert_completed(result: Dictionary) -> void:
-	if result.get("is_sold_out", false):
-		AccessibilityManager.play_cue(Enums.AudioCueType.STADIUM_SOLD_OUT)
-	_update_hud_display()
-
-func _on_catalog_new_song_requested() -> void:
-	song_catalog_modal.visible = false
-	open_song_creator()
-
-func _on_song_created_or_finished(_song: SongData) -> void:
-	song_creator_modal.visible = false
-	open_catalog()
 
 func _update_hud_display() -> void:
 	if GameManager.calendar_data:
