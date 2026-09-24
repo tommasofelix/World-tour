@@ -257,20 +257,31 @@ func get_city_popularity(city_id: int) -> float:
 # Raccolte Discografiche (EP / Album)
 var albums: Array[AlbumData] = []
 
-# Industria Discografica, Contratti & Manager (World-tour V3.0)
+# Industria Discografica, Contratti & Manager (World-tour V3.0 & Sezione 9)
 const ContractDataScript = preload("res://data/models/contract_data.gd")
 const ManagerDataScript = preload("res://data/models/manager_data.gd")
+const OwnLabelDataScript = preload("res://data/models/own_label_data.gd")
 
 var active_contract: RefCounted = null
 var active_manager: RefCounted = null
 var available_contracts: Array = []
 var resolved_dilemmas: Array[String] = []
+var own_label: RefCounted = null
 
 func has_active_contract() -> bool:
 	return active_contract != null and active_contract.is_active
 
 func has_manager() -> bool:
 	return active_manager != null and active_manager.is_hired
+
+func has_own_label() -> bool:
+	return own_label != null and own_label.is_founded
+
+func has_any_gold_record() -> bool:
+	for a in albums:
+		if a.is_released and a.total_sales >= 25000.0:
+			return true
+	return false
 
 var skills: Dictionary = {
 	"instrument": {"level": 10, "xp": 0.0},
@@ -588,7 +599,8 @@ func to_dict() -> Dictionary:
 		"vehicle_custom_name": vehicle_custom_name,
 		"battle_of_bands_pass": battle_of_bands_pass,
 		"festival_trophies": festival_trophies.duplicate(),
-		"fan_club": fan_club.to_dict() if fan_club else {}
+		"fan_club": fan_club.to_dict() if fan_club else {},
+		"own_label": own_label.to_dict() if own_label else {}
 	}
 
 func from_dict(dict: Dictionary) -> void:
@@ -699,4 +711,10 @@ func from_dict(dict: Dictionary) -> void:
 	if dict.has("resolved_dilemmas") and dict["resolved_dilemmas"] is Array:
 		for d_id in dict["resolved_dilemmas"]:
 			resolved_dilemmas.append(str(d_id))
+
+	if dict.has("own_label") and dict["own_label"] is Dictionary and not dict["own_label"].is_empty():
+		own_label = OwnLabelDataScript.new()
+		own_label.from_dict(dict["own_label"])
+	else:
+		own_label = null
 

@@ -167,6 +167,13 @@ enum DilemmaCategory {
 	ARTISTIC_INTEGRITY # Richieste di compromesso sui testi/musica
 }
 
+enum LabelPhilosophy {
+	UNDERGROUND_INDIE = 0, # Massima integrità e fedeltà della scena
+	MAINSTREAM_POP = 1,    # Orientata alle classifiche e vendite
+	ROCK_HERITAGE = 2,     # Produzioni analogiche e virtuosismo
+	EXPERIMENTAL = 3       # Suoni d'avanguardia ed esplorazione
+}
+
 # --- Calendario Sistemico & Cicli Temporali (SP-09 / V4.0) ---
 enum Weekday {
 	MONDAY = 0,
@@ -453,3 +460,16 @@ static func get_festival_weather_name(weather: int) -> String:
 			return "Temporale Estivo & Fango"
 		_:
 			return "Clima Variabile"
+
+static func get_label_philosophy_name(phil: int) -> String:
+	match phil:
+		LabelPhilosophy.UNDERGROUND_INDIE:
+			return "Underground & Indie Autentico"
+		LabelPhilosophy.MAINSTREAM_POP:
+			return "Mainstream Pop & Classifiche"
+		LabelPhilosophy.ROCK_HERITAGE:
+			return "Rock Heritage & Purezza Strumentale"
+		LabelPhilosophy.EXPERIMENTAL:
+			return "Avanguardia & Sperimentale"
+		_:
+			return "Indipendente Generica"

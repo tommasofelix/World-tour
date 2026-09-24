@@ -357,12 +357,24 @@ func process_daily_royalties() -> Dictionary:
 		var decay: float = pow(0.97, clampf(float(days_old), 0.0, 60.0))
 		var daily_units: float = maxf(1.0, (album.overall_quality * 0.35 + float(player_data.fans) * 0.03) * decay)
 		var royalty_rate: float = Constants.ALBUM_EP_ROYALTY_RATE if album.album_type == Enums.AlbumType.EP else Constants.ALBUM_LP_ROYALTY_RATE
+		
+		# Applicazione clausola distribuzione fisica esclusiva (Sezione 9)
+		if player_data.has_active_contract() and player_data.active_contract.has_physical_distribution:
+			var p_dist_mult: float = float(player_data.active_contract.physical_sales_multiplier)
+			var p_dist_cut: float = float(player_data.active_contract.physical_dist_cut)
+			daily_units *= p_dist_mult
+			royalty_rate *= (1.0 - p_dist_cut)
+			
 		var gross_album_royalty: float = daily_units * royalty_rate
 		var player_album_royalty: float = snappedf(gross_album_royalty * leader_ratio, 0.01)
 		
 		if GameManager and GameManager.industry_system and player_data and player_data.has_active_contract():
-			var recoup_res: Dictionary = GameManager.industry_system.process_royalties_recoupment(player_album_royalty)
-			player_album_royalty = recoup_res.artist_received
+			# Se il master dell'album è stato riscattato (Master Buyback), incassa 100% senza recoupment
+			if player_data.active_contract.is_master_bought_back(album.id):
+				pass
+			else:
+				var recoup_res: Dictionary = GameManager.industry_system.process_royalties_recoupment(player_album_royalty)
+				player_album_royalty = recoup_res.artist_received
 		
 		album.total_sales += daily_units
 		total_player_royalties += player_album_royalty

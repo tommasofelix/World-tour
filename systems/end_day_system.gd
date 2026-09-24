@@ -109,9 +109,12 @@ func process_day_end(day_num: int = 1, p_early_sleep_override: bool = false) -> 
 			if m.tension >= Constants.BAND_TENSION_CRITICAL:
 				band_crises.append(m.member_name)
 				
-	# Sgravio stress organizzativo dal Manager
+	# Sgravio stress organizzativo o stress notturno dal Manager
 	if GameManager and GameManager.industry_system:
 		GameManager.industry_system.apply_daily_manager_stress_relief()
+		# Incasso royalties catalogo propria etichetta discografica (Endgame Sezione 9)
+		if player_data and player_data.has_own_label():
+			GameManager.industry_system.process_own_label_daily_royalties()
 		
 	# Decadimento notturno hype social e reset limite post giornalieri
 	if GameManager and GameManager.social_media_system:

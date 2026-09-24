@@ -19,6 +19,17 @@ var min_quality_target: float = 0.0
 var is_active: bool = false
 var signing_day: int = 1
 
+# Distribuzione Fisica Esclusiva & Accordi Speciali (Sezione 9)
+var has_physical_distribution: bool = false
+var physical_dist_cut: float = 0.20
+var physical_sales_multiplier: float = 1.40
+
+# Rinegoziazione & Riscatto Master
+var is_renegotiated: bool = false
+var original_royalty_rate: float = 0.15
+var master_bought_back: bool = false
+var bought_back_album_ids: Array[String] = []
+
 func _init(
 	p_id: String = "",
 	p_label: String = "Indie Sound Records",
@@ -91,6 +102,22 @@ func apply_recoupment(gross_artist_royalty: float) -> Dictionary:
 func is_completed() -> bool:
 	return delivered_albums >= required_albums
 
+func can_renegotiate(player_rep: float, has_gold_record: bool) -> bool:
+	return is_active and not is_renegotiated and (player_rep >= 70.0 or has_gold_record)
+
+func apply_renegotiation(new_royalty: float) -> void:
+	original_royalty_rate = royalty_rate
+	royalty_rate = new_royalty
+	is_renegotiated = true
+
+func is_master_bought_back(album_id: String) -> bool:
+	return bought_back_album_ids.has(album_id)
+
+func buyback_master(album_id: String) -> void:
+	if not bought_back_album_ids.has(album_id):
+		bought_back_album_ids.append(album_id)
+	master_bought_back = true
+
 func to_dict() -> Dictionary:
 	return {
 		"id": id,
@@ -103,7 +130,14 @@ func to_dict() -> Dictionary:
 		"delivered_albums": delivered_albums,
 		"min_quality_target": min_quality_target,
 		"is_active": is_active,
-		"signing_day": signing_day
+		"signing_day": signing_day,
+		"has_physical_distribution": has_physical_distribution,
+		"physical_dist_cut": physical_dist_cut,
+		"physical_sales_multiplier": physical_sales_multiplier,
+		"is_renegotiated": is_renegotiated,
+		"original_royalty_rate": original_royalty_rate,
+		"master_bought_back": master_bought_back,
+		"bought_back_album_ids": bought_back_album_ids.duplicate()
 	}
 
 func from_dict(dict: Dictionary) -> void:
@@ -118,3 +152,13 @@ func from_dict(dict: Dictionary) -> void:
 	min_quality_target = float(dict.get("min_quality_target", min_quality_target))
 	is_active = bool(dict.get("is_active", is_active))
 	signing_day = int(dict.get("signing_day", signing_day))
+	has_physical_distribution = bool(dict.get("has_physical_distribution", has_physical_distribution))
+	physical_dist_cut = float(dict.get("physical_dist_cut", physical_dist_cut))
+	physical_sales_multiplier = float(dict.get("physical_sales_multiplier", physical_sales_multiplier))
+	is_renegotiated = bool(dict.get("is_renegotiated", is_renegotiated))
+	original_royalty_rate = float(dict.get("original_royalty_rate", original_royalty_rate))
+	master_bought_back = bool(dict.get("master_bought_back", master_bought_back))
+	bought_back_album_ids.clear()
+	if dict.has("bought_back_album_ids") and dict["bought_back_album_ids"] is Array:
+		for b_id in dict["bought_back_album_ids"]:
+			bought_back_album_ids.append(str(b_id))

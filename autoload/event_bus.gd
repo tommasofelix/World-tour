@@ -58,14 +58,21 @@ signal album_sales_updated(total_royalties: float, album_count: int)
 signal album_creator_requested()
 signal housing_changed(new_tier: int, rent: float)
 
-# --- Segnali Industria, Contratti & Manager (World-tour V3.0) ---
+# --- Segnali Industria, Contratti & Manager (World-tour V3.0 & Sezione 9) ---
 signal contract_offered(contract_data: Dictionary)
 signal contract_signed(contract_data: Dictionary)
 signal contract_completed(contract_data: Dictionary)
 signal contract_canceled(contract_data: Dictionary)
+signal contract_renegotiated(contract_data: Dictionary)
+signal master_bought_back(album_id: String, cost: float)
 signal recoupment_updated(recouped_amount: float, remaining_debt: float)
 signal manager_hired(manager_data: Dictionary)
 signal manager_fired(manager_data: Dictionary)
+signal manager_trust_changed(new_trust: float, delta: float)
+signal manager_promise_updated(promise_data: Dictionary)
+signal own_label_founded(label_data: Dictionary)
+signal own_label_band_signed(band_data: Dictionary)
+signal own_label_royalties_received(amount: float)
 signal industry_hub_requested()
 
 # --- Segnali Bivi Etico-Narrativi ---

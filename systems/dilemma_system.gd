@@ -174,6 +174,78 @@ func _build_catalog() -> void:
 		{"money": 0.0, "morale": 20.0, "respect": 10.0}
 	)
 	dilemmas_catalog.append(d8)
+	
+	# 9. La Rete di Distribuzione Continentale (Sezione 9)
+	var d9 = DilemmaDataScript.new(
+		"dilemma_exclusive_distribution_deal",
+		"La Rete di Distribuzione Continentale",
+		"Un consorzio di grossisti propone un'esclusiva per piazzare i vostri vinili nei negozi di tutte le 12 metropoli, pretendendo però il 25% sui diritti di distribuzione fisica.",
+		Enums.DilemmaCategory.COMMERCIAL_ETHICS
+	)
+	d9.setup_options(
+		"Firma l'accordo di distribuzione esclusiva",
+		"Monetizzazione garantita e vasta penetrazione nei negozi, ma vincoli distributivi.",
+		{"money": 2000.0, "fans": 300, "reputation": 5.0, "tension": 5.0},
+		"Rifiuta e prediligi la distribuzione autonoma",
+		"Zero vincoli commerciali, rafforzando l'orgoglio indipendente della band.",
+		{"money": 0.0, "morale": 15.0, "respect": 10.0}
+	)
+	d9.req_min_fans = 300
+	dilemmas_catalog.append(d9)
+	
+	# 10. Rendiconto Sospetto del Manager
+	var d10 = DilemmaDataScript.new(
+		"dilemma_shark_hidden_accounting",
+		"Rendiconto Sospetto del Manager",
+		"Dopo un festival estivo, noti delle strane decurtazioni per 'spese di rappresentanza' non concordate nel cachet del live.",
+		Enums.DilemmaCategory.BAND_INTERNAL
+	)
+	d10.setup_options(
+		"Assumi un avvocato per un audit contabile",
+		"Investi del denaro per chiarire i conti e farti rispettare dall'ambiente.",
+		{"money": -800.0, "reputation": 4.0, "respect": 10.0, "morale": 10.0},
+		"Lascia correre per non compromettere il booking",
+		"Eviti lo scontro diretto con il manager, ma la band si sente poco tutelata.",
+		{"money": 0.0, "morale": -15.0, "stress": 12.0}
+	)
+	d10.req_min_reputation = 35.0
+	dilemmas_catalog.append(d10)
+	
+	# 11. Riscatto Anticipato dei Master
+	var d11 = DilemmaDataScript.new(
+		"dilemma_master_buyback_ultimatum",
+		"Offerta di Riscatto Anticipato dei Master",
+		"L'etichetta ti propone di riscattare i nastri master del vostro album di debutto con uno sconto del 30%, a patto di concedere loro l'opzione prioritaria sul prossimo tour.",
+		Enums.DilemmaCategory.ARTISTIC_INTEGRITY
+	)
+	d11.setup_options(
+		"Accetta il patto e riscatta i tuoi master",
+		"Riacquisti la sovranità sulla tua musica, con grande sollievo per la band.",
+		{"money": -5000.0, "morale": 25.0, "reputation": 8.0, "respect": 15.0},
+		"Rifiuta e mantieni piena libertà sul tour",
+		"Nessun vincolo sui concerti, rimandando il riscatto dei master.",
+		{"money": 0.0, "morale": 10.0, "stress": -5.0}
+	)
+	d11.req_has_contract = true
+	dilemmas_catalog.append(d11)
+	
+	# 12. Giovane Band Emergente della Scena
+	var d12 = DilemmaDataScript.new(
+		"dilemma_young_band_talent_scouting",
+		"La Giovane Band Emergente della Scena",
+		"Un gruppo di ragazzi giovanissimi e talentuosi ti consegna un nastro demo fuori dal locale, implorandoti di produrre il loro primo singolo.",
+		Enums.DilemmaCategory.ARTISTIC_INTEGRITY
+	)
+	d12.setup_options(
+		"Finanzia la registrazione del loro singolo",
+		"Agisci da mecenate della scena musicale, conquistando la devozione dei nuovi talenti.",
+		{"money": -1000.0, "morale": 20.0, "reputation": 6.0, "fans": 150},
+		"Dai loro solo qualche consiglio fraterno",
+		"Incoraggi i giovani musicisti a farsi le ossa da soli senza impegnare risorse.",
+		{"money": 0.0, "morale": 5.0, "respect": 5.0}
+	)
+	d12.req_min_fans = 500
+	dilemmas_catalog.append(d12)
 
 ## Trova tutti i dilemmi che soddisfano i requisiti e non sono stati ancora affrontati
 func get_eligible_dilemmas() -> Array:

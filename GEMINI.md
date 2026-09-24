@@ -85,5 +85,5 @@ Consultare in quest'ordine e soltanto nella misura strettamente necessaria:
 - **Scopo & Dominio**: Music Career Simulator & Life Simulation (gestione tempo, abilità, produzione brani, concerti live, economia, etichette e fanbase).
 - **Responsabili**: Luca & Holy Diver.
 - **Coordinatore Operativo**: [`docs/todo.md`](./docs/todo.md).
-- **Stato Attuale**: Sezioni 1..8 completate al 100% con NVDA; 24 suite headless convalidate con 0 errori a 0 ms; Versione AVF consolidata V4.8.0.
+- **Stato Attuale**: Sezioni 1..9 completate al 100% con NVDA; 24 suite headless convalidate con 0 errori a 0 ms; Versione AVF consolidata V4.9.0.
 - **Stack Ufficiale Confermato**: Godot Engine 4.7.2.stable.official.ed1daf0bf win64, GDScript 2.0, Clean Architecture DDD, EventBus a segnali e AccessKit nativo.
