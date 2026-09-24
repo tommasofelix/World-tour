@@ -54,6 +54,7 @@ __pycache__/
 *.swp
 *.swo
 *~
+~$*
 Thumbs.db
 Desktop.ini
 .DS_Store

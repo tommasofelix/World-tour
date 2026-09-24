@@ -89,3 +89,32 @@ Per consentire l'utilizzo ergonomico e rapido del gioco con la sola mano destra 
    - Gli stream generati sono indicizzati in una cache dizionario interna per azzerare il carico CPU dopo il primo ascolto.
 3. **Ducking Dinamico al 40%**:
    - All'emissione di qualsiasi sintesi vocale da parte di `AccessibilityManager.announce()` o `speak()`, `AudioCueSystem.set_ducking(true)` attenua il volume al 40% (`AUDIO_DUCKING_RATIO = 0.40`), ripristinandolo a fine parlato o su silenziamento.
+4. **Protezione Dummy Audio Driver nei Runner Headless**:
+   - Nei test eseguiti con `--headless`, il driver audio fittizio di Godot 4 non consuma i frame di riproduzione. L'invocazione di `play()` su `AudioStreamPlayer` viene protetta da `if DisplayServer.get_name() != "headless":`, mentre la generazione e caching dello stream, il calcolo dei volumi e il ducking rimangono convalidati al 100% prevenendo memory leak nel registro ObjectDB dell'engine.
+
+---
+
+## 7. Disaccoppiamento Gerarchico dell'Input: Autoload vs Controller di Scena
+
+1. **Segregazione dei Ruoli di Input**:
+   - Gli Autoload globali (come `AccessibilityManager`) sono riservati esclusivamente all'accessibilità di sistema e all'orientamento universale: gestione del tastierino numerico Numpad e tasto di emergenza per silenziamento immediato (`silence()`).
+   - È fatto divieto di mappare tasti alfanumerici della tastiera principale (`1`..`4`, `T`, `R`, `C`, `Space`, ecc.) all'interno degli Autoload.
+2. **Prevenzione del Mascheramento (Input Shadowing)**:
+   - In Godot, un Autoload che consuma eventi tramite `_unhandled_input` può intercettare o mascherare prematuramente comandi destinati all'interfaccia attiva (`HUD` o finestre modali).
+   - Mantenendo i tasti contestuali unicamente nei controller di scena e proteggendoli con guardie `if _is_any_modal_open(): return`, si garantisce che la digitazione e i comandi di navigazione fluiscano linearmente senza interferenze o conflitti di priorità.
+
+---
+
+## 8. Pattern "Zero Focus Drop" per Controlli Inattivi & Focus Chaining Ciclico (Validato in V5.3.0)
+
+1. **Il Principio di Zero Focus Drop**:
+   - In Godot Engine, impostare la proprietà nativa `disabled = true` su un `Button` provoca la perdita di focusabilità da tastiera (il controllo viene saltato durante la navigazione con frecce e Tab).
+   - Per un utente non vedente che esplora una schermata sequenzialmente con screen reader NVDA, la scomparsa invisibile di un pulsante (come "Carica Partita" in assenza di salvataggi) crea disorientamento cognitivo e fa credere che la funzionalità manchi del tutto dal gioco.
+   - **Canone Operativo**: Il controllo deve rimanere focalizzabile (`focus_mode = FOCUS_ALL`). La sua descrizione semantica via `AccessibilityManager.hook_control_accessibility()` viene arricchita dinamicamente per informare esplicitamente lo screen reader (es. *"Carica Partita, Pulsante. Nessun salvataggio trovato su disco"*). Se azionato, il pulsante non crasha e vocalizza un feedback informativo chiaro senza alterare la FSM di gioco.
+
+2. **Focus Chaining Ciclico Bidirezionale (Anello Continuo Zero Mouse)**:
+   - Nei menu e pannelli, i controlli devono formare una catena chiusa tramite `focus_neighbor_top` e `focus_neighbor_bottom`:
+     - Dal primo elemento ("Nuova Partita"), premendo freccia Su si salta all'ultimo elemento ("Esci al Desktop");
+     - Dall'ultimo elemento, premendo freccia Giù si torna al primo.
+   - Questo meccanismo azzera i vicoli ciechi e consente una navigazione rapida e circolare adatta a sessioni prolungate senza mouse.
+
