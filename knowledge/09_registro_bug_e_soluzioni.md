@@ -131,4 +131,22 @@ Questo registro contiene soltanto problemi tecnici confermati e soluzioni con ev
 - Test automatici eseguiti: 51/51 test superati in `test_advanced_social_system.gd` a 0 errori e 0 ms, con validazione al 100% dell'intera suite di progetto (24/24 suite verdi).
 - Misure di prevenzione delle regressioni: Negli Autoload globali di broadcast ad eventi (EventBus), tipizzare i parametri dei segnali con tipi base (`RefCounted`, `Resource`, `Dictionary`) per evitare dipendenze circolari; quando si aggiunge un nuovo file con `class_name`, lanciare `--editor --quit` per rigenerare la cache globale prima di eseguire i test runner; nei test di serializzazione di sottosistemi che richiedono prerequisiti di sblocco, impostare preventivamente lo stato necessario nel modello prima di verificare la persistenza.
 
+### BUG-009 — Type Pinning nei Controller UI su Modelli Recenti & Guardie Finanziarie sui Costi di Licenziamento
+
+- Data e componente: `2026-09-24`, `ui/industry/industry_hub.gd` e `systems/industry_system.gd` (Sezione 9).
+- Sintomo osservato:
+  1. Nei controller UI che consumano modelli creati nella stessa sessione di sviluppo (es. `own_label_data.gd`), l'annotazione di tipo esplicita (`: OwnLabelData`) genera un potenziale `Parse Error: Could not find type "OwnLabelData"` nei caricamenti headless se la cache globale delle classi `.godot/global_script_class_cache.cfg` non è stata ancora aggiornata.
+  2. Rischio di exploit o saldi negativi nel licenziamento del manager se il costo della penale di rescissione contrattuale non viene verificato con guardia preventiva sulla liquidità del giocatore prima della transazione.
+- Evidenza riproducibile:
+  1. Uso di annotazioni di tipo statico `_label: OwnLabelData` in `industry_hub.gd` in assenza di preload esplicito prima del refresh dell'editor.
+  2. Tentativo di licenziare un manager con penale (es. 1.500 € per lo Squalo) con saldo inferiore alla penale.
+- Causa radice verificata:
+  1. In GDScript, i tipi globali dichiarati con `class_name` dipendono dalla class cache generata dall'editor; i controller UI istanziati dinamicamente o nei test headless possono fallire il parsing se fanno riferimento a `class_name` non ancora registrati globalmente senza un `preload()`.
+  2. Nei contratti con clausola di rescissione onerosa, l'esecuzione incondizionata del distacco contrattuale senza validazione del saldo genera inconsistenza economica o debiti negativi non tracciati.
+- Soluzione applicata:
+  1. Adozione del pattern **Preload Script Decoupling**: utilizzo di `const OwnLabelDataScript = preload("res://data/models/own_label_data.gd")` e tipizzazione dei parametri nei metodi UI con `RefCounted` o duck typing, garantendo immediata resilienza e zero dipendenze dai tempi di scansione della cache.
+  2. Inserimento in `industry_system.gd` della guardia economica preventiva `if player.money < severance_fee: return { "success": false, "reason": "Fondi insufficienti per pagare la penale..." }`, vincolando la rimozione del manager e l'emissione del segnale all'effettivo saldo della penale.
+- Test automatici eseguiti: 106/106 asserzioni superate in `test_industry_system.gd` a 0 errori e 0 ms, con validazione al 100% dell'intera suite di progetto (24/24 suite verdi).
+- Misure di prevenzione delle regressioni: Nei controller UI e nei consumer di modelli runtime, preferire il pattern Preload Script Decoupling con annotazione `RefCounted` sui parametri ricevuti; ogni azione di gameplay soggetta a penali o costi di liquidazione deve implementare una guardia di solvibilità reattiva prima di modificare lo stato del gioco.
+
 

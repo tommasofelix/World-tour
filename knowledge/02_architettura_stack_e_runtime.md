@@ -72,6 +72,11 @@ Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal r
    - Per forzare la scansione deterministica e l'aggiornamento immediato della class cache senza avviare l'interfaccia grafica o toccare il mouse, eseguire il comando headless rapido:
      `Godot_console.exe --headless --path . --editor --quit`.
 
+9. **Pattern di Preload Script Decoupling nei Controller UI e nei Consumer Runtime**:
+   - Nei controller di interfaccia (`ui/`) o nei consumer di modelli runtime, evitare l'uso diretto di annotazioni di tipo statico verso classi introdotte di recente (`var x: NuovaClasse`) prima che l'editor abbia sincronizzato la cache.
+   - Impiegare sempre il pattern `const NuovaClasseScript = preload("res://data/models/nuova_classe.gd")` e annotare i parametri di ricezione con la classe base nativa `: RefCounted` o sfruttare il duck typing strutturato.
+   - Questo previene qualsiasi errore di compilazione/parsing prematuro e garantisce la massima indipendenza e resilienza dell'interfaccia anche nelle sessioni di sviluppo headless continuative.
+
 ---
 
 ## Comandi Operativi di Riferimento
