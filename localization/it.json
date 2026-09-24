@@ -178,6 +178,10 @@
 	"VENUE_TRENDY_CLUB_DESC": "Critici e addetti ai lavori: trampolino per la scena nazionale.",
 	"VENUE_OPERA_THEATRE_NAME": "Teatro d'Opera Storico",
 	"VENUE_OPERA_THEATRE_DESC": "Tempio dorato dell'acustica: richiede canzoni raffinate e regala immenso prestigio artistico e ricavi da superstar.",
+	"VENUE_ARENA_NAME": "Palasport / Grande Arena",
+	"VENUE_ARENA_DESC": "Arena oceanica coperta: 15.000 spettatori paganti, acustica monumentale e consacrazione a star nazionale.",
+	"VENUE_STADIUM_NAME": "Mega Stadio Mondiale",
+	"VENUE_STADIUM_DESC": "Il tempio supremo della musica mondiale: 65.000 anime che cantano all'unisono sotto i riflettori della storia.",
 
 	"EVENT_STRING_TITLE": "Corda della chitarra spezzata!",
 	"EVENT_STRING_DESC": "Nel bel mezzo del brano, una corda si spezza con uno schiocco secco!",

@@ -125,3 +125,13 @@ signal chart_debut_achieved(category: String, title: String, rank: int)
 signal chart_number_one_achieved(category: String, title: String)
 signal chart_screen_requested()
 
+# --- Segnali Endgame, Certificazioni, Music Awards & Legacy (World-tour V5.0 / Sezione 11) ---
+signal certification_awarded(cert_data: Dictionary)
+signal music_awards_ceremony_held(awards_summary: Dictionary)
+signal award_won(award_data: Dictionary)
+signal hall_of_fame_inducted(artist_name: String)
+signal last_waltz_performed(concert_summary: Dictionary)
+signal legacy_ending_triggered(ending_type: int, ending_data: Dictionary)
+signal legacy_screen_requested()
+
+

@@ -27,8 +27,13 @@ var tour_system: TourSystem
 var festival_system: FestivalSystem
 var social_media_system: SocialMediaSystem
 var rival_system: RivalSystem
+const AwardSystemScript = preload("res://systems/award_system.gd")
+const LegacySystemScript = preload("res://systems/legacy_system.gd")
+
 var chart_system: ChartSystem
 var media_system: MediaSystem
+var award_system: RefCounted
+var legacy_system: RefCounted
 
 func _ready() -> void:
 	# Inizializzazione dati di default
@@ -60,6 +65,9 @@ func _ready() -> void:
 	rival_system = RivalSystem.new()
 	chart_system = ChartSystem.new(player_data, calendar_data, rival_system, social_media_system, album_system)
 	media_system = MediaSystem.new(player_data, calendar_data)
+	award_system = AwardSystemScript.new(player_data, calendar_data)
+	legacy_system = LegacySystemScript.new(player_data, calendar_data)
+
 
 func change_state(new_state: int) -> bool:
 	if current_state == new_state:
@@ -128,5 +136,8 @@ func start_new_game(p_name: String = "Alex", p_instrument: String = "Chitarra El
 	rival_system = RivalSystem.new()
 	chart_system = ChartSystem.new(player_data, calendar_data, rival_system, social_media_system, album_system)
 	media_system = MediaSystem.new(player_data, calendar_data)
+	award_system = AwardSystemScript.new(player_data, calendar_data)
+	legacy_system = LegacySystemScript.new(player_data, calendar_data)
 	
 	change_state(Enums.GameState.GAMEPLAY_IDLE)
+

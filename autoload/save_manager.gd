@@ -7,6 +7,9 @@ const SAVE_PATH: String = "user://savegame.json"
 const TEMP_PATH: String = "user://savegame.tmp"
 const CURRENT_SCHEMA_VERSION: int = 1
 
+const AwardSystemScript = preload("res://systems/award_system.gd")
+const LegacySystemScript = preload("res://systems/legacy_system.gd")
+
 signal save_completed(success: bool)
 signal load_completed(success: bool)
 
@@ -265,7 +268,20 @@ func load_game() -> bool:
 		GameManager.end_day_system.player_data = GameManager.player_data
 		GameManager.end_day_system.calendar_data = GameManager.calendar_data
 
+	if not GameManager.award_system:
+		GameManager.award_system = AwardSystemScript.new(GameManager.player_data, GameManager.calendar_data)
+	else:
+		GameManager.award_system.player_data = GameManager.player_data
+		GameManager.award_system.calendar_data = GameManager.calendar_data
+
+	if not GameManager.legacy_system:
+		GameManager.legacy_system = LegacySystemScript.new(GameManager.player_data, GameManager.calendar_data)
+	else:
+		GameManager.legacy_system.player_data = GameManager.player_data
+		GameManager.legacy_system.calendar_data = GameManager.calendar_data
+
 	GameManager.change_state(Enums.GameState.GAMEPLAY_IDLE)
+
 	
 	# Allineamento della lingua salvata nella scheda giocatore se presente
 	if GameManager.player_data and not GameManager.player_data.language.is_empty():

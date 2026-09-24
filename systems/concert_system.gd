@@ -15,6 +15,38 @@ var skill_system: SkillSystem
 ## Override manuali o di prenotazione per la disponibilità dei locali ("venue_id_dayNumber" -> status)
 var venue_status_overrides: Dictionary = {}
 
+## Livello allestimento scenico per grandi arene e stadi (Enums.StageProductionTier)
+var active_stage_production: int = Enums.StageProductionTier.BASIC_STADIUM
+
+func select_stage_production(tier: int) -> Dictionary:
+	var cost: float = 0.0
+	match tier:
+		Enums.StageProductionTier.RUNWAY_CATWALK:
+			cost = Constants.STAGE_RUNWAY_COST
+		Enums.StageProductionTier.CENTER_360_STAGE:
+			cost = Constants.STAGE_360_COST
+		Enums.StageProductionTier.MEGA_PYRO_LASER:
+			cost = Constants.STAGE_PYRO_COST
+		_:
+			cost = 0.0
+
+	if player_data and cost > 0.0 and player_data.money < cost:
+		return {
+			"success": false,
+			"reason": "money_insufficient",
+			"cost": cost,
+			"message": "Fondi insufficienti per l'allestimento scenico (%.2f € richiesti)." % cost
+		}
+
+	active_stage_production = tier
+	return {
+		"success": true,
+		"tier": tier,
+		"tier_name": Enums.get_stage_production_name(tier),
+		"cost": cost
+	}
+
+
 func _init(p_player_data: PlayerData, p_arg2: Variant = null, p_arg3: Variant = null) -> void:
 	player_data = p_player_data
 	if p_arg2 is CalendarData:
@@ -394,6 +426,27 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 	if tour_hype_mult > 1.0:
 		audience = mini(venue.capacity, int(round(float(audience) * tour_hype_mult)))
 
+	# Mega Allestimento Scenico Palco (Arene e Stadi - Sezione 11)
+	var stage_prod_cost: float = 0.0
+	var stage_fan_mult: float = 1.0
+	var stage_pyro_bonus: float = 0.0
+	if venue.venue_type in [VenueData.TYPE_ARENA, VenueData.TYPE_STADIUM]:
+		match active_stage_production:
+			Enums.StageProductionTier.RUNWAY_CATWALK:
+				stage_prod_cost = Constants.STAGE_RUNWAY_COST
+				stage_fan_mult = Constants.STAGE_RUNWAY_BONUS_FAN
+			Enums.StageProductionTier.CENTER_360_STAGE:
+				stage_prod_cost = Constants.STAGE_360_COST
+				var bonus_cap: int = int(round(float(venue.capacity) * (Constants.STAGE_360_CAPACITY_BONUS - 1.0)))
+				audience = mini(venue.capacity + bonus_cap, int(round(float(audience) * Constants.STAGE_360_CAPACITY_BONUS)))
+			Enums.StageProductionTier.MEGA_PYRO_LASER:
+				stage_prod_cost = Constants.STAGE_PYRO_COST
+				stage_pyro_bonus = Constants.STAGE_PYRO_SCORE_BONUS
+
+		if stage_prod_cost > 0.0:
+			player_data.modify_money(-stage_prod_cost)
+			EventBus.money_changed.emit(player_data.money, -stage_prod_cost, "stage_production_service")
+
 	# Moltiplicatore Social Buzz (Hype generato da post e viralità)
 	var social_buzz_mult: float = 1.0
 	if GameManager and GameManager.social_media_system:
@@ -517,7 +570,7 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 				total_aff += cur_city.get_affinity_for_genre(s.genre)
 			city_affinity_mult = total_aff / float(maxi(1, setlist.size()))
 
-	var raw_score: float = ((base_score * closer_bonus_mult) * opening_score_mult) + event_score_delta + soundcheck_bonus + band_synergy + sound_shaping_bonus - accident_penalty
+	var raw_score: float = ((base_score * closer_bonus_mult) * opening_score_mult) + event_score_delta + soundcheck_bonus + band_synergy + sound_shaping_bonus + stage_pyro_bonus - accident_penalty
 	var final_score: float = clampf(raw_score * city_affinity_mult, 1.0, 100.0)
 
 	# Bonus specifici per tipologia di locale
@@ -529,6 +582,10 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 			venue_fan_mult = 1.25
 	elif venue.venue_type == VenueData.TYPE_OPERA_THEATRE:
 		venue_rep_mult = 1.30
+	elif venue.venue_type == VenueData.TYPE_ARENA:
+		venue_rep_mult = 1.60
+	elif venue.venue_type == VenueData.TYPE_STADIUM:
+		venue_rep_mult = 2.00
 
 	# 5. Conversione Fan
 	var new_fans: int = Formulas.calculate_fan_conversion(audience, final_score, charisma_level)
@@ -540,6 +597,8 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 		new_fans = int(round(float(new_fans) * city_affinity_mult))
 	if city_event_fan_mult > 1.0:
 		new_fans = int(round(float(new_fans) * city_event_fan_mult))
+	if stage_fan_mult > 1.0:
+		new_fans = int(round(float(new_fans) * stage_fan_mult))
 	if ballad_fan_mult > 1.0 or anthem_fan_mult > 1.0 or venue_fan_mult > 1.0:
 		new_fans = int(round(float(new_fans) * ballad_fan_mult * anthem_fan_mult * venue_fan_mult))
 
@@ -641,8 +700,11 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 		"city_event_audience_mult": city_event_audience_mult,
 		"new_fans": new_fans,
 		"popularity_gained": pop_gain,
-		"is_soundcheck": is_soundcheck
+		"is_soundcheck": is_soundcheck,
+		"stage_production": active_stage_production,
+		"stage_prod_cost": stage_prod_cost
 	}
+
 
 	if GameManager and GameManager.tour_system and GameManager.tour_system.active_tour:
 		GameManager.tour_system.record_stop_result(result)
@@ -656,9 +718,12 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 
 func to_dict() -> Dictionary:
 	return {
-		"venue_status_overrides": venue_status_overrides.duplicate(true)
+		"venue_status_overrides": venue_status_overrides.duplicate(true),
+		"active_stage_production": active_stage_production
 	}
 
 func from_dict(dict: Dictionary) -> void:
 	if dict.has("venue_status_overrides") and dict["venue_status_overrides"] is Dictionary:
 		venue_status_overrides = dict["venue_status_overrides"].duplicate(true)
+	active_stage_production = int(dict.get("active_stage_production", active_stage_production))
+

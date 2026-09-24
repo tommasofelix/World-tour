@@ -8,6 +8,8 @@ extends RefCounted
 const TYPE_STANDARD: int = 0
 const TYPE_SOCIAL_CENTER: int = 1
 const TYPE_OPERA_THEATRE: int = 2
+const TYPE_ARENA: int = 3
+const TYPE_STADIUM: int = 4
 
 var id: String = ""
 var name: String = ""
@@ -88,6 +90,10 @@ func get_localized_name() -> String:
 			return tr("VENUE_TRENDY_CLUB_NAME")
 		"venue_opera_theatre":
 			return tr("VENUE_OPERA_THEATRE_NAME")
+		"venue_arena_national":
+			return tr("VENUE_ARENA_NAME")
+		"venue_mega_stadium":
+			return tr("VENUE_STADIUM_NAME")
 		_:
 			return name
 
@@ -105,6 +111,10 @@ func get_localized_description() -> String:
 			return tr("VENUE_TRENDY_CLUB_DESC")
 		"venue_opera_theatre":
 			return tr("VENUE_OPERA_THEATRE_DESC")
+		"venue_arena_national":
+			return tr("VENUE_ARENA_DESC")
+		"venue_mega_stadium":
+			return tr("VENUE_STADIUM_DESC")
 		_:
 			return description
 
@@ -188,5 +198,32 @@ static func get_default_venues() -> Array[VenueData]:
 		TYPE_OPERA_THEATRE,
 		35.0
 	))
+	list.append(VenueData.new(
+		"venue_arena_national",
+		"Palasport / Grande Arena",
+		15000,
+		35000.0,
+		70.0,
+		95.0,
+		45.0,
+		"Arena oceanica coperta: 15.000 spettatori paganti, acustica monumentale e consacrazione a star nazionale.",
+		"Elettrizzante",
+		TYPE_ARENA,
+		55.0
+	))
+	list.append(VenueData.new(
+		"venue_mega_stadium",
+		"Mega Stadio Mondiale",
+		65000,
+		120000.0,
+		85.0,
+		100.0,
+		70.0,
+		"Il tempio supremo della musica mondiale: 65.000 anime che cantano all'unisono sotto i riflettori della storia.",
+		"Leggendario",
+		TYPE_STADIUM,
+		75.0
+	))
 	return list
+
 

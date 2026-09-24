@@ -42,6 +42,7 @@ extends Control
 @onready var btn_chart: Button = $VBoxMain/PanelCenter/HBoxActions/BtnChart
 @onready var btn_upgrades: Button = $VBoxMain/PanelCenter/HBoxActions/BtnUpgrades
 @onready var btn_relax: Button = $VBoxMain/PanelCenter/HBoxActions/BtnRelax
+@onready var btn_legacy: Button = $VBoxMain/PanelCenter/HBoxActions/BtnLegacy
 
 @onready var song_catalog_modal: Control = $SongCatalog
 @onready var song_creator_modal: Control = $SongCreator
@@ -61,6 +62,7 @@ extends Control
 @onready var system_menu_modal: Control = $SystemMenuModal
 @onready var upgrades_modal: Control = $UpgradesModal
 @onready var relax_modal: Control = $RelaxModal
+@onready var legacy_modal: Control = $LegacyModal
 
 var current_category_tab: int = 1
 var _pending_dilemma_at_day_end: Dictionary = {}
@@ -171,6 +173,11 @@ func _ready() -> void:
 	if relax_modal:
 		relax_modal.closed.connect(close_relax_modal)
 		relax_modal.activity_selected.connect(_on_relax_activity_selected)
+	if btn_legacy:
+		btn_legacy.pressed.connect(open_legacy_modal)
+		AccessibilityManager.hook_control_accessibility(btn_legacy, "Albo d'Oro e Legacy (W)", "Apre le certificazioni, premi ufficiali, Hall of Fame e concerto d'addio.")
+	if legacy_modal:
+		legacy_modal.closed.connect(close_legacy_modal)
 	song_catalog_modal.new_album_requested.connect(open_album_creator)
 	
 	# Inizializza la visualizzazione sulla prima categoria (Hub Personale)
@@ -203,6 +210,7 @@ func _ready() -> void:
 	EventBus.travel_screen_requested.connect(open_travel_modal)
 	EventBus.social_screen_requested.connect(open_social_modal)
 	EventBus.chart_screen_requested.connect(open_chart_modal)
+	EventBus.legacy_screen_requested.connect(open_legacy_modal)
 	EventBus.city_changed.connect(func(_o, _n): _update_hud_display())
 	EventBus.dilemma_triggered.connect(_on_dilemma_triggered)
 	EventBus.contract_signed.connect(func(_d): _update_hud_display())
@@ -246,7 +254,8 @@ func _is_any_modal_open() -> bool:
 	   (chart_modal and chart_modal.visible) or \
 	   (system_menu_modal and system_menu_modal.visible) or \
 	   (upgrades_modal and upgrades_modal.visible) or \
-	   (relax_modal and relax_modal.visible)
+	   (relax_modal and relax_modal.visible) or \
+	   (legacy_modal and legacy_modal.visible)
 
 ## Chiude e occulta sistematicamente tutte le finestre modali del gioco
 func _hide_all_modals() -> void:
@@ -286,6 +295,8 @@ func _hide_all_modals() -> void:
 		upgrades_modal.visible = false
 	if relax_modal:
 		relax_modal.visible = false
+	if legacy_modal:
+		legacy_modal.visible = false
 	if vbox_main:
 		vbox_main.visible = false
 
@@ -376,6 +387,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		KEY_R:
 			open_relax_modal()
 			get_viewport().set_input_as_handled()
+		KEY_W:
+			open_legacy_modal()
+			get_viewport().set_input_as_handled()
 
 func _get_localized_period(period: int) -> String:
 	match period:
@@ -410,6 +424,8 @@ func _refresh_ui_text() -> void:
 		btn_social.text = "Social (Y)"
 	if btn_chart:
 		btn_chart.text = "Classifiche (H)"
+	if btn_legacy:
+		btn_legacy.text = "Legacy (W)"
 	
 	var current_spd: float = GameManager.time_system.time_scale if GameManager and GameManager.time_system else 1.0
 	btn_speed.text = tr("HUD_BTN_SPEED") % current_spd
@@ -731,6 +747,23 @@ func close_relax_modal() -> void:
 		btn_relax.grab_focus()
 	_update_hud_display()
 
+func open_legacy_modal() -> void:
+	_hide_all_modals()
+	if legacy_modal:
+		legacy_modal.open()
+	GameManager.open_menu()
+
+func close_legacy_modal() -> void:
+	if legacy_modal:
+		legacy_modal.visible = false
+	if vbox_main:
+		vbox_main.visible = true
+	GameManager.close_menu()
+	select_category_tab(3)
+	if btn_legacy:
+		btn_legacy.grab_focus()
+	_update_hud_display()
+
 func _on_relax_activity_selected(action: ActionData) -> void:
 	if action_system:
 		action_system.start_action(action)
@@ -752,7 +785,7 @@ func select_category_tab(tab_idx: int) -> void:
 	if btn_catalog: btn_catalog.visible = is_creation
 	if btn_new_song: btn_new_song.visible = is_creation
 	
-	# Categoria 3: Carriera & Band (Concerti, Band, Tour, Festival, Social, Classifiche, Industria)
+	# Categoria 3: Carriera & Band (Concerti, Band, Tour, Festival, Social, Classifiche, Industria, Legacy)
 	var is_career: bool = (tab_idx == 3)
 	if btn_concert: btn_concert.visible = is_career
 	if btn_band: btn_band.visible = is_career
@@ -761,6 +794,7 @@ func select_category_tab(tab_idx: int) -> void:
 	if btn_social: btn_social.visible = is_career
 	if btn_chart: btn_chart.visible = is_career
 	if btn_industry: btn_industry.visible = is_career
+	if btn_legacy: btn_legacy.visible = is_career
 	
 	# Categoria 4: Skills & Upgrade (Miglioramenti Alloggio/Sala/Strumenti)
 	var is_upgrades: bool = (tab_idx == 4)
@@ -776,7 +810,7 @@ func select_category_tab(tab_idx: int) -> void:
 			AccessibilityManager.speak("Area 2: Creazione e Produzione. Opzioni: Catalogo M, Nuovo Brano N, Album P.")
 		3:
 			if btn_tab_career: btn_tab_career.grab_focus()
-			AccessibilityManager.speak("Area 3: Carriera e Band. Opzioni: Concerti L, Band G, Tour O, Festival F, Social Y, Classifiche H, Industria K.")
+			AccessibilityManager.speak("Area 3: Carriera e Band. Opzioni: Concerti L, Band G, Tour O, Festival F, Social Y, Classifiche H, Industria K, Legacy W.")
 		4:
 			if btn_tab_upgrades: btn_tab_upgrades.grab_focus()
 			AccessibilityManager.speak("Area 4: Skills e Upgrade. Opzioni: Miglioramenti e Strumentazione U.")

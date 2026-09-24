@@ -304,6 +304,35 @@ enum BroadcastMediaType {
 	SPECIALIZED_PRESS = 3# Rassegna stampa / Rivista musicale di settore (Critica e rispetto)
 }
 
+enum CertificationTier {
+	NONE = 0,
+	GOLD = 1,           # 25.000 copie / 10M stream
+	PLATINUM = 2,       # 50.000 copie / 25M stream
+	MULTI_PLATINUM = 3, # 100.000 copie / 50M stream
+	DIAMOND = 4         # 500.000 copie / 100M stream
+}
+
+enum StageProductionTier {
+	BASIC_STADIUM = 0,    # Service standard da stadio
+	RUNWAY_CATWALK = 1,   # Passerella a T nel prato (+conversione fan)
+	CENTER_360_STAGE = 2, # Palco centrale a 360° (+10% capienza pagante)
+	MEGA_PYRO_LASER = 3   # Mega pirotecnica, lanciafiamme e laser a 360°
+}
+
+enum MusicAwardCategory {
+	SONG_OF_THE_YEAR = 0,
+	ALBUM_OF_THE_YEAR = 1,
+	BEST_LIVE_BAND = 2,
+	BEST_PRODUCER = 3
+}
+
+enum LegacyEndingType {
+	IMMORTAL_ICON = 0,    # Icona Immortale (Grande successo commerciale + integrità impeccabile)
+	ROCK_MARTYR = 1,      # Martire del Rock (Fedele alla musica underground fino all'ultimo)
+	MONEY_MACHINE = 2,    # Macchina da Soldi (Ricchissimo ma ricordato per compromessi pop)
+	BLAZING_COMET = 3     # Cometa Fiammeggiante (Pochi capolavori leggendari e ritiro dorato)
+}
+
 static func get_genre_name(genre: int) -> String:
 	match genre:
 		MusicalGenre.ROCK:
@@ -518,3 +547,56 @@ static func get_broadcast_media_type_name(media: int) -> String:
 			return "Stampa Musicale Specializzata"
 		_:
 			return "Media Broadcaster"
+
+static func get_certification_name(cert: int) -> String:
+	match cert:
+		CertificationTier.GOLD:
+			return "Disco d'Oro"
+		CertificationTier.PLATINUM:
+			return "Disco di Platino"
+		CertificationTier.MULTI_PLATINUM:
+			return "Multi-Platino"
+		CertificationTier.DIAMOND:
+			return "Disco di Diamante"
+		_:
+			return "Nessuna Certificazione"
+
+static func get_stage_production_name(tier: int) -> String:
+	match tier:
+		StageProductionTier.BASIC_STADIUM:
+			return "Palco Base Stadio"
+		StageProductionTier.RUNWAY_CATWALK:
+			return "Passerella a T nel Prato"
+		StageProductionTier.CENTER_360_STAGE:
+			return "Palco Centrale a 360°"
+		StageProductionTier.MEGA_PYRO_LASER:
+			return "Mega Pirotecnica & Laser 360°"
+		_:
+			return "Palco Standard"
+
+static func get_award_category_name(cat: int) -> String:
+	match cat:
+		MusicAwardCategory.SONG_OF_THE_YEAR:
+			return "Canzone dell'Anno"
+		MusicAwardCategory.ALBUM_OF_THE_YEAR:
+			return "Album dell'Anno"
+		MusicAwardCategory.BEST_LIVE_BAND:
+			return "Miglior Band dal Vivo"
+		MusicAwardCategory.BEST_PRODUCER:
+			return "Miglior Produttore Musicale"
+		_:
+			return "Premio alla Carriera"
+
+static func get_legacy_ending_name(ending: int) -> String:
+	match ending:
+		LegacyEndingType.IMMORTAL_ICON:
+			return "L'Icona Immortale"
+		LegacyEndingType.ROCK_MARTYR:
+			return "Il Martire del Rock"
+		LegacyEndingType.MONEY_MACHINE:
+			return "La Macchina da Soldi"
+		LegacyEndingType.BLAZING_COMET:
+			return "La Cometa Fiammeggiante"
+		_:
+			return "Eredità Artistica"
+

@@ -283,6 +283,46 @@ func has_any_gold_record() -> bool:
 			return true
 	return false
 
+# Endgame, Certificazioni, Music Awards & Legacy (World-tour V5.0 / Sezione 11)
+var certifications: Array[Dictionary] = []
+var music_awards: Array[Dictionary] = []
+var hall_of_fame_inducted: bool = false
+var last_waltz_completed: bool = false
+var legacy_ending: int = -1
+
+func add_certification(item_id: String, item_title: String, item_type: String, tier: int, day: int) -> bool:
+	for c in certifications:
+		if c.get("item_id", "") == item_id and int(c.get("tier", 0)) == tier:
+			return false
+	certifications.append({
+		"item_id": item_id,
+		"title": item_title,
+		"type": item_type,
+		"tier": tier,
+		"tier_name": Enums.get_certification_name(tier),
+		"day": day
+	})
+	return true
+
+func get_certifications_count(tier: int = -1) -> int:
+	if tier == -1:
+		return certifications.size()
+	var count: int = 0
+	for c in certifications:
+		if int(c.get("tier", 0)) == tier:
+			count += 1
+	return count
+
+func add_music_award(award_data: Dictionary) -> void:
+	music_awards.append(award_data)
+
+func has_won_award(category: int) -> bool:
+	for a in music_awards:
+		if int(a.get("category", -1)) == category:
+			return true
+	return false
+
+
 var skills: Dictionary = {
 	"instrument": {"level": 10, "xp": 0.0},
 	"composition": {"level": 10, "xp": 0.0},
@@ -600,7 +640,12 @@ func to_dict() -> Dictionary:
 		"battle_of_bands_pass": battle_of_bands_pass,
 		"festival_trophies": festival_trophies.duplicate(),
 		"fan_club": fan_club.to_dict() if fan_club else {},
-		"own_label": own_label.to_dict() if own_label else {}
+		"own_label": own_label.to_dict() if own_label else {},
+		"certifications": certifications.duplicate(true),
+		"music_awards": music_awards.duplicate(true),
+		"hall_of_fame_inducted": hall_of_fame_inducted,
+		"last_waltz_completed": last_waltz_completed,
+		"legacy_ending": legacy_ending
 	}
 
 func from_dict(dict: Dictionary) -> void:
@@ -717,4 +762,21 @@ func from_dict(dict: Dictionary) -> void:
 		own_label.from_dict(dict["own_label"])
 	else:
 		own_label = null
+
+	certifications.clear()
+	if dict.has("certifications") and dict["certifications"] is Array:
+		for c_dict in dict["certifications"]:
+			if c_dict is Dictionary:
+				certifications.append(c_dict.duplicate(true))
+
+	music_awards.clear()
+	if dict.has("music_awards") and dict["music_awards"] is Array:
+		for a_dict in dict["music_awards"]:
+			if a_dict is Dictionary:
+				music_awards.append(a_dict.duplicate(true))
+
+	hall_of_fame_inducted = bool(dict.get("hall_of_fame_inducted", hall_of_fame_inducted))
+	last_waltz_completed = bool(dict.get("last_waltz_completed", last_waltz_completed))
+	legacy_ending = int(dict.get("legacy_ending", legacy_ending))
+
 

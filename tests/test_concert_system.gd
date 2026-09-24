@@ -60,7 +60,7 @@ func assert_eq(val1: Variant, val2: Variant, test_name: String) -> void:
 func test_venue_data_model_and_catalog() -> void:
 	print("1. Verifica VenueData Model e Catalogo Default:")
 	var venues: Array[VenueData] = VenueData.get_default_venues()
-	assert_eq(venues.size(), 6, "Catalogo contiene esattamente 6 locali espansi")
+	assert_eq(venues.size(), 8, "Catalogo contiene 8 locali espansi (inclusi arene e stadi)")
 	
 	var garage: VenueData = venues[0]
 	assert_eq(garage.id, "venue_garage", "Primo locale è il garage")

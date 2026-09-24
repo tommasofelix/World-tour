@@ -19,6 +19,7 @@
 [ext_resource type="PackedScene" uid="uid://dm2systemmenu01" path="res://ui/system_menu/system_menu_modal.tscn" id="17_sysmenu"]
 [ext_resource type="PackedScene" uid="uid://dm4upgradesmod01" path="res://ui/upgrades/upgrades_modal.tscn" id="18_upgrades"]
 [ext_resource type="PackedScene" uid="uid://dmrelaxmodal01" path="res://ui/relax/relax_modal.tscn" id="19_relax"]
+[ext_resource type="PackedScene" uid="uid://dmlegacymodal01" path="res://ui/legacy/legacy_modal.tscn" id="20_legacy"]
 
 [node name="HUD" type="Control" unique_id=580846484]
 layout_mode = 3
@@ -288,8 +289,15 @@ text = "Classifiche (H)"
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnChart")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
-focus_neighbor_right = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
+focus_neighbor_right = NodePath("../BtnLegacy")
 text = "Miglioramenti (U)"
+
+[node name="BtnLegacy" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnUpgrades")
+focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
+focus_neighbor_right = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
+text = "Legacy (W)"
 
 [node name="SongCatalog" parent="." unique_id=757915434 instance=ExtResource("2_catalog")]
 visible = false
@@ -362,3 +370,8 @@ layout_mode = 1
 [node name="RelaxModal" parent="." instance=ExtResource("19_relax")]
 visible = false
 layout_mode = 1
+
+[node name="LegacyModal" parent="." instance=ExtResource("20_legacy")]
+visible = false
+layout_mode = 1
+

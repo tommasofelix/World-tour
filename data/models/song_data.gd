@@ -41,6 +41,9 @@ var plays_count: int:
 	get: return plays
 	set(val): plays = val
 
+var is_released: bool:
+	get: return status == Enums.SongStatus.RELEASED
+
 var revenue: float = 0.0
 var revenue_generated: float:
 	get: return revenue

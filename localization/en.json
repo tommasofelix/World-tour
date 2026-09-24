@@ -178,6 +178,10 @@
 	"VENUE_TRENDY_CLUB_DESC": "Critics and industry insiders: springboard to the national scene.",
 	"VENUE_OPERA_THEATRE_NAME": "Historic Opera House",
 	"VENUE_OPERA_THEATRE_DESC": "Gilded temple of acoustics: demands refined songs and awards massive prestige and superstar revenues.",
+	"VENUE_ARENA_NAME": "National Sports Arena",
+	"VENUE_ARENA_DESC": "Massive indoor arena: 15,000 paying fans, monumental acoustics and coronation as a national music star.",
+	"VENUE_STADIUM_NAME": "Mega World Stadium",
+	"VENUE_STADIUM_DESC": "The supreme cathedral of global music: 65,000 souls singing as one under the spotlights of history.",
 
 	"EVENT_STRING_TITLE": "Broken guitar string!",
 	"EVENT_STRING_DESC": "Right in the middle of the song, a string snaps with a loud crack!",
