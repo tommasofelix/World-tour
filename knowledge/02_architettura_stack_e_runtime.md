@@ -26,7 +26,7 @@
 Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal rendering grafico e progettati per essere testati senza albero di scena (`SceneTree`) tramite test seams deterministici.
 
 1. **Assenza Totale di Latenze Artificiali**: Divieto di impiegare `OS.delay()`, timer di sleep o yield fittizi nei runner di test. Ogni asserzione viene calcolata ed emessa istantaneamente (tempo medio di esecuzione: 0–15 ms per suite).
-2. **Le 24 Suite di Test Headless Validate (Exit Code 0)**:
+2. **Le 25 Suite di Test Headless Validate (Exit Code 0)**:
    - `test_formulas.gd`: formule matematiche, curve XP e bilanciamento;
    - `test_time_system.gd`: orologio, routine giornaliera, passaggio giorno;
    - `test_player_system.gd`: attributi, energia, stress, morale, progressione;
@@ -44,7 +44,10 @@ Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal r
    - `test_upgrades_system.gd`: lifestyle, insonorizzazione, strumenti e home studio;
    - `test_v5_ui_overhaul.gd`: architettura UI a 5 sezioni, navigazione macro-aree e modali;
    - `test_advanced_social_system.gd`: social media avanzati, trend algoritmici settimanali, campagne sponsorizzate, live streaming, fan club, raduno annuale e deleghe manager (51 test, Sez. 8);
+   - `test_industry_system.gd`: contratti discografici, manager, recoupment, riscatto master e propria etichetta discografica (106 test, Sez. 9);
+   - `test_media_and_rivals_system.gd`: relazioni rivali approfondite (affinità, co-headlining tour, dissing buzz x1.6), Hit Parade territoriali, tormentone stagionale (x1.35 vendite/stream) e sistema Media Broadcaster con interviste radio/podcast/TV del mattino e di riparazione (50 test, Sez. 10);
    - Ulteriori suite per i sottosistemi di etichette, tour interurbani, festival estivi e classifiche.
+   - *Integrazione Sistemi nel Ciclo di Vita*: Registrazione di `MediaSystem` e dei modelli `MediaOutletData` nel ciclo di vita globale di `GameManager` e nel salvataggio atomico di `SaveManager`.
 
 3. **Pattern Closure Container & Guardie Segnali nei Test Headless di Interfaccia**:
    - In GDScript 4, la cattura di variabili locali scalari o nulle all'interno di lambda passate a `connect()` avviene per valore; per verificare l'emissione dei segnali nei test runner occorre impiegare un contenitore reference (`var received: Array = []` e `func(arg): received.append(arg)`).
