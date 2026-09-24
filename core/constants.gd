@@ -230,6 +230,15 @@ const OPENING_SCORE_MULT: float = 1.05
 const BALLAD_STRESS_RELIEF: int = 5
 const BALLAD_FAN_MULT: float = 1.15
 
-
-
-
+# --- Media Broadcaster, Stampa & Rivali (Sezione 10) ---
+const MEDIA_INTERVIEW_RADIO_ENERGY: int = 15
+const MEDIA_INTERVIEW_RADIO_HYPE: float = 12.0
+const MEDIA_INTERVIEW_TV_ENERGY: int = 25
+const MEDIA_INTERVIEW_TV_HYPE: float = 25.0
+const MEDIA_INTERVIEW_TV_MIN_TIER: int = 4
+const MEDIA_INTERVIEW_PODCAST_ENERGY: int = 20
+const MEDIA_INTERVIEW_PODCAST_REP: float = 2.0
+const MEDIA_CO_HEADLINING_FAN_BONUS: float = 1.35
+const MEDIA_CO_HEADLINING_EXPENSE_DISCOUNT: float = 0.30
+const MEDIA_DISSING_BUZZ_MULT: float = 1.60
+const MEDIA_SEASONAL_HIT_MULT: float = 1.35

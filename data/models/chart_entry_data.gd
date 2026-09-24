@@ -32,6 +32,12 @@ var weeks_on_chart: int = 1
 ## Migliore posizione storica mai raggiunta (Peak Rank)
 var peak_rank: int = 1
 
+## Ambito della classifica (Enums.ChartScope.CONTINENTAL o NATIONAL)
+var chart_scope: int = Enums.ChartScope.CONTINENTAL
+
+## Città o nazione di riferimento territoriale (se scope == NATIONAL, altrimenti Enums.CityId.MILANO)
+var target_city_id: int = Enums.CityId.MILANO
+
 func _init(
 	p_rank: int = 1,
 	p_prev: int = 0,
@@ -42,7 +48,9 @@ func _init(
 	p_genre: int = Enums.MusicalGenre.ROCK,
 	p_metric: int = 0,
 	p_weeks: int = 1,
-	p_peak: int = 1
+	p_peak: int = 1,
+	p_scope: int = Enums.ChartScope.CONTINENTAL,
+	p_city: int = Enums.CityId.MILANO
 ) -> void:
 	rank = p_rank
 	previous_rank = p_prev
@@ -54,6 +62,8 @@ func _init(
 	metric_value = p_metric
 	weeks_on_chart = p_weeks
 	peak_rank = p_peak if p_peak > 0 else p_rank
+	chart_scope = p_scope
+	target_city_id = p_city
 
 ## Verifica se l'opera è una nuova entrata nella classifica settimanale
 func is_new_entry() -> bool:
@@ -114,7 +124,9 @@ func to_dict() -> Dictionary:
 		"genre": int(genre),
 		"metric_value": metric_value,
 		"weeks_on_chart": weeks_on_chart,
-		"peak_rank": peak_rank
+		"peak_rank": peak_rank,
+		"chart_scope": int(chart_scope),
+		"target_city_id": int(target_city_id)
 	}
 
 func from_dict(d: Dictionary) -> void:
@@ -128,3 +140,5 @@ func from_dict(d: Dictionary) -> void:
 	metric_value = int(d.get("metric_value", 0))
 	weeks_on_chart = int(d.get("weeks_on_chart", 1))
 	peak_rank = int(d.get("peak_rank", rank))
+	chart_scope = int(d.get("chart_scope", Enums.ChartScope.CONTINENTAL))
+	target_city_id = int(d.get("target_city_id", Enums.CityId.MILANO))

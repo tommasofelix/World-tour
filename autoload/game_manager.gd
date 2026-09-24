@@ -28,6 +28,7 @@ var festival_system: FestivalSystem
 var social_media_system: SocialMediaSystem
 var rival_system: RivalSystem
 var chart_system: ChartSystem
+var media_system: MediaSystem
 
 func _ready() -> void:
 	# Inizializzazione dati di default
@@ -58,6 +59,7 @@ func _ready() -> void:
 	social_media_system = SocialMediaSystem.new(player_data, calendar_data, band_system, music_system)
 	rival_system = RivalSystem.new()
 	chart_system = ChartSystem.new(player_data, calendar_data, rival_system, social_media_system, album_system)
+	media_system = MediaSystem.new(player_data, calendar_data)
 
 func change_state(new_state: int) -> bool:
 	if current_state == new_state:
@@ -125,5 +127,6 @@ func start_new_game(p_name: String = "Alex", p_instrument: String = "Chitarra El
 	social_media_system = SocialMediaSystem.new(player_data, calendar_data, band_system, music_system)
 	rival_system = RivalSystem.new()
 	chart_system = ChartSystem.new(player_data, calendar_data, rival_system, social_media_system, album_system)
+	media_system = MediaSystem.new(player_data, calendar_data)
 	
 	change_state(Enums.GameState.GAMEPLAY_IDLE)

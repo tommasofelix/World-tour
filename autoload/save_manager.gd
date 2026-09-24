@@ -32,6 +32,7 @@ func save_game() -> bool:
 		"social": GameManager.social_media_system.to_dict() if GameManager.social_media_system else {},
 		"rivals": GameManager.rival_system.to_dict() if GameManager.rival_system else {},
 		"charts": GameManager.chart_system.to_dict() if GameManager.chart_system else {},
+		"media": GameManager.media_system.to_dict() if GameManager.media_system else {},
 		"concerts": GameManager.concert_system.to_dict() if GameManager.concert_system else {}
 	}
 	
@@ -230,6 +231,15 @@ func load_game() -> bool:
 
 	if save_dict.has("charts") and save_dict["charts"] is Dictionary:
 		GameManager.chart_system.from_dict(save_dict["charts"] as Dictionary)
+
+	if not GameManager.media_system:
+		GameManager.media_system = MediaSystem.new(GameManager.player_data, GameManager.calendar_data)
+	else:
+		GameManager.media_system.player_data = GameManager.player_data
+		GameManager.media_system.calendar_data = GameManager.calendar_data
+
+	if save_dict.has("media") and save_dict["media"] is Dictionary:
+		GameManager.media_system.from_dict(save_dict["media"] as Dictionary)
 
 	if not GameManager.concert_system:
 		GameManager.concert_system = ConcertSystem.new(GameManager.player_data, GameManager.calendar_data, GameManager.skill_system)

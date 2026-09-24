@@ -285,6 +285,25 @@ enum SocialSponsorBudget {
 	HEAVY = 500     # 500 € (+500% reach)
 }
 
+enum RivalRelationship {
+	RESPECTFUL = 0,     # Rispetto reciproco e stima professionale
+	NEUTRAL = 1,        # Distacco formale / Concorrenza ordinaria
+	HEATED_RIVAL = 2,   # Competizione accesa e punzecchiature
+	OPEN_FEUD = 3       # Faida aperta, dissing e scontro mediatico
+}
+
+enum ChartScope {
+	CONTINENTAL = 0,    # Hit Parade Europea / Continentale
+	NATIONAL = 1        # Hit Parade specifica per Nazione/Territorio
+}
+
+enum BroadcastMediaType {
+	LOCAL_RADIO = 0,     # Radio locale della metropoli (Hype moderato, basso costo energia)
+	MUSIC_TELEVISION = 1,# Emittente musicale TV (Grande impatto visivo/fama, req. Tier >= 4)
+	CULTURE_PODCAST = 2, # Podcast tematico e intervista lunga (Reputazione e fedeltà fan)
+	SPECIALIZED_PRESS = 3# Rassegna stampa / Rivista musicale di settore (Critica e rispetto)
+}
+
 static func get_genre_name(genre: int) -> String:
 	match genre:
 		MusicalGenre.ROCK:
@@ -473,3 +492,29 @@ static func get_label_philosophy_name(phil: int) -> String:
 			return "Avanguardia & Sperimentale"
 		_:
 			return "Indipendente Generica"
+
+static func get_rival_relationship_name(rel: int) -> String:
+	match rel:
+		RivalRelationship.RESPECTFUL:
+			return "Rispetto & Collaborazione"
+		RivalRelationship.NEUTRAL:
+			return "Neutro / Distacco Professionale"
+		RivalRelationship.HEATED_RIVAL:
+			return "Competizione Accesa"
+		RivalRelationship.OPEN_FEUD:
+			return "Faida Aperta & Dissing"
+		_:
+			return "Neutro"
+
+static func get_broadcast_media_type_name(media: int) -> String:
+	match media:
+		BroadcastMediaType.LOCAL_RADIO:
+			return "Radio Locale"
+		BroadcastMediaType.MUSIC_TELEVISION:
+			return "Emittente Televisiva Musicale"
+		BroadcastMediaType.CULTURE_PODCAST:
+			return "Podcast Musicale & Intervista"
+		BroadcastMediaType.SPECIALIZED_PRESS:
+			return "Stampa Musicale Specializzata"
+		_:
+			return "Media Broadcaster"

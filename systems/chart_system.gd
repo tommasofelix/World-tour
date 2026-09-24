@@ -23,6 +23,12 @@ var top_singles: Array[ChartEntryData] = []
 ## Classifica Top 10 degli Album / EP (Hit Parade Albums)
 var top_albums: Array[ChartEntryData] = []
 
+## Classifiche Territoriali Singoli (city_id -> Array[ChartEntryData])
+var territorial_singles: Dictionary = {}
+
+## Classifiche Territoriali Album (city_id -> Array[ChartEntryData])
+var territorial_albums: Dictionary = {}
+
 ## Ultima settimana di calendario in cui è avvenuto l'aggiornamento
 var last_updated_week: int = 0
 
@@ -127,6 +133,15 @@ func update_weekly_charts(current_day: int = 1) -> Dictionary:
 					base_stream *= 1.25
 				elif s.special_trait == Enums.SongTrait.STAGE_BEAST:
 					base_stream *= 1.15
+				elif s.special_trait == Enums.SongTrait.GENERATIONAL_ANTHEM:
+					base_stream *= 1.30
+
+				# Meccanica Tormentone Stagionale (Mesi 4-6 Estivi o Mese 12 Invernale)
+				if calendar_data:
+					var current_month: int = calendar_data.current_month if "current_month" in calendar_data else int((current_day - 1) / 28) + 1
+					if (current_month >= 4 and current_month <= 6) or current_month == 12:
+						if s.special_trait == Enums.SongTrait.EARWORM or s.special_trait == Enums.SongTrait.GENERATIONAL_ANTHEM:
+							base_stream *= Constants.MEDIA_SEASONAL_HIT_MULT
 					
 				var player_stream: int = int(round(base_stream * buzz_mult))
 				candidate_singles.append({
@@ -284,11 +299,18 @@ func update_weekly_charts(current_day: int = 1) -> Dictionary:
 					
 	last_updated_week = maxi(1, int((current_day - 1) / 7) + 1)
 	
+	# -------------------------------------------------------------
+	# 3. COMPILAZIONE CLASSIFICHE TERRITORIALI (Per metropoli/città)
+	# -------------------------------------------------------------
+	_update_territorial_charts(candidate_singles, candidate_albums)
+	
 	if EventBus:
 		EventBus.weekly_charts_updated.emit({
 			"week": last_updated_week,
 			"singles": top_singles,
-			"albums": top_albums
+			"albums": top_albums,
+			"territorial_singles": territorial_singles,
+			"territorial_albums": territorial_albums
 		})
 		
 	return {
@@ -297,6 +319,102 @@ func update_weekly_charts(current_day: int = 1) -> Dictionary:
 		"singles_count": top_singles.size(),
 		"albums_count": top_albums.size()
 	}
+
+## Compila le classifiche territoriali locali per le principali nazioni/città
+func _update_territorial_charts(all_singles: Array[Dictionary], all_albums: Array[Dictionary]) -> void:
+	territorial_singles.clear()
+	territorial_albums.clear()
+	
+	var supported_cities: Array[int] = [
+		Enums.CityId.MILANO,
+		Enums.CityId.BOLOGNA,
+		Enums.CityId.ROMA,
+		Enums.CityId.NAPOLI,
+		Enums.CityId.LONDRA,
+		Enums.CityId.BERLINO
+	]
+	
+	for city_id in supported_cities:
+		var city_singles: Array[ChartEntryData] = []
+		var city_albums: Array[ChartEntryData] = []
+		
+		# Singoli filtrati e ponderati per città
+		var city_cands: Array[Dictionary] = []
+		for cand in all_singles:
+			var metric_mod: float = float(cand.metric)
+			if cand.is_player and player_data:
+				var local_fans: int = player_data.get_city_fans(city_id)
+				metric_mod += float(local_fans) * 1.5
+			city_cands.append({
+				"cand": cand,
+				"local_metric": int(metric_mod)
+			})
+			
+		city_cands.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+			return int(a.local_metric) > int(b.local_metric)
+		)
+		
+		var limit_s: int = mini(5, city_cands.size())
+		for idx in range(limit_s):
+			var item: Dictionary = city_cands[idx]
+			var c: Dictionary = item.cand
+			city_singles.append(ChartEntryData.new(
+				idx + 1,
+				0,
+				str(c.id),
+				str(c.title),
+				str(c.artist),
+				bool(c.is_player),
+				int(c.genre),
+				int(item.local_metric),
+				1,
+				idx + 1,
+				Enums.ChartScope.NATIONAL,
+				city_id
+			))
+		territorial_singles[city_id] = city_singles
+		
+		# Album filtrati e ponderati per città
+		var alb_cands: Array[Dictionary] = []
+		for acand in all_albums:
+			var alb_metric_mod: float = float(acand.metric)
+			if acand.is_player and player_data:
+				var local_fans: int = player_data.get_city_fans(city_id)
+				alb_metric_mod += float(local_fans) * 0.5
+			alb_cands.append({
+				"cand": acand,
+				"local_metric": int(alb_metric_mod)
+			})
+			
+		alb_cands.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+			return int(a.local_metric) > int(b.local_metric)
+		)
+		
+		var limit_a: int = mini(5, alb_cands.size())
+		for idx in range(limit_a):
+			var aitem: Dictionary = alb_cands[idx]
+			var ac: Dictionary = aitem.cand
+			city_albums.append(ChartEntryData.new(
+				idx + 1,
+				0,
+				str(ac.id),
+				str(ac.title),
+				str(ac.artist),
+				bool(ac.is_player),
+				int(ac.genre),
+				int(aitem.local_metric),
+				1,
+				idx + 1,
+				Enums.ChartScope.NATIONAL,
+				city_id
+			))
+		territorial_albums[city_id] = city_albums
+
+## Restituisce la classifica territoriale per una determinata città
+func get_territorial_chart(city_id: int, is_album: bool = false) -> Array[ChartEntryData]:
+	if is_album:
+		return territorial_albums.get(city_id, [])
+	return territorial_singles.get(city_id, [])
 
 ## Restituisce le canzoni del giocatore attualmente presenti nella Top 10 Singoli
 func get_player_single_entries() -> Array[ChartEntryData]:
@@ -336,6 +454,21 @@ func get_charts_speech(chart_type: int = 0) -> String:
 		
 	return "\n".join(lines)
 
+## Descrizione vocale per classifica territoriale
+func get_territorial_charts_speech(city_id: int, chart_type: int = 0) -> String:
+	var city_name: String = Enums.get_city_name(city_id)
+	var entries: Array[ChartEntryData] = get_territorial_chart(city_id, chart_type == 1)
+	var type_str: String = "Singoli" if chart_type == 0 else "Album"
+	var lines: Array[String] = []
+	lines.append("Hit Parade Territoriale di %s — Top 5 %s:" % [city_name, type_str])
+	if entries.is_empty():
+		lines.append("Nessun dato territoriale disponibile per questa città.")
+	else:
+		for e in entries:
+			var ptag: String = " (Tua Band)" if e.is_player else ""
+			lines.append("#%d: '%s' di %s%s - Punteggio: %d" % [e.rank, e.title, e.artist_name, ptag, e.metric_value])
+	return "\n".join(lines)
+
 ## Serializzazione per savegame
 func to_dict() -> Dictionary:
 	var singles_arr: Array[Dictionary] = []
@@ -346,13 +479,29 @@ func to_dict() -> Dictionary:
 	for a in top_albums:
 		albums_arr.append(a.to_dict())
 		
+	var terr_singles_dict: Dictionary = {}
+	for c_id in territorial_singles.keys():
+		var arr: Array[Dictionary] = []
+		for e in territorial_singles[c_id]:
+			arr.append(e.to_dict())
+		terr_singles_dict[str(c_id)] = arr
+		
+	var terr_albums_dict: Dictionary = {}
+	for c_id in territorial_albums.keys():
+		var arr: Array[Dictionary] = []
+		for e in territorial_albums[c_id]:
+			arr.append(e.to_dict())
+		terr_albums_dict[str(c_id)] = arr
+		
 	return {
 		"last_updated_week": last_updated_week,
 		"player_highest_single_rank": player_highest_single_rank,
 		"player_highest_album_rank": player_highest_album_rank,
 		"weeks_at_number_one": weeks_at_number_one,
 		"top_singles": singles_arr,
-		"top_albums": albums_arr
+		"top_albums": albums_arr,
+		"territorial_singles": terr_singles_dict,
+		"territorial_albums": terr_albums_dict
 	}
 
 ## Deserializzazione da savegame
@@ -377,3 +526,27 @@ func from_dict(d: Dictionary) -> void:
 			var ae := ChartEntryData.new()
 			ae.from_dict(a_dict)
 			top_albums.append(ae)
+
+	territorial_singles.clear()
+	var raw_ts: Dictionary = d.get("territorial_singles", {})
+	for k in raw_ts.keys():
+		var c_id: int = int(k)
+		var arr: Array[ChartEntryData] = []
+		for item in raw_ts[k]:
+			if item is Dictionary:
+				var e := ChartEntryData.new()
+				e.from_dict(item)
+				arr.append(e)
+		territorial_singles[c_id] = arr
+
+	territorial_albums.clear()
+	var raw_ta: Dictionary = d.get("territorial_albums", {})
+	for k in raw_ta.keys():
+		var c_id: int = int(k)
+		var arr: Array[ChartEntryData] = []
+		for item in raw_ta[k]:
+			if item is Dictionary:
+				var e := ChartEntryData.new()
+				e.from_dict(item)
+				arr.append(e)
+		territorial_albums[c_id] = arr
