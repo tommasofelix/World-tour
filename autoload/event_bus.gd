@@ -134,4 +134,8 @@ signal last_waltz_performed(concert_summary: Dictionary)
 signal legacy_ending_triggered(ending_type: int, ending_data: Dictionary)
 signal legacy_screen_requested()
 
+# --- Segnali Sound Design, Audio Cues & Statistiche (World-tour V5.1.0 / Sezione 12) ---
+signal audio_cue_requested(cue_type: int)
+signal career_stats_updated(stats: Dictionary)
+
 

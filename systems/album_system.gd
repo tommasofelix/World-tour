@@ -274,6 +274,7 @@ func create_and_release_album(
 	album.is_released = true
 	
 	player_data.albums.append(album)
+	player_data.increment_career_stat("total_albums_released", 1)
 	
 	# Aggiorna lo stato dei singoli inclusi a RELEASED se non lo erano già
 	for s_id in song_ids:

@@ -212,6 +212,7 @@ func update_weekly_charts(current_day: int = 1) -> Dictionary:
 					player_data.popularity = clampf(player_data.popularity + 6.0, 0.0, 100.0)
 					player_data.modify_morale(20)
 					player_data.add_fans(350)
+					player_data.increment_career_stat("weeks_at_number_one", 1)
 
 	# -------------------------------------------------------------
 	# 2. COMPILAZIONE TOP 10 ALBUM
@@ -296,6 +297,7 @@ func update_weekly_charts(current_day: int = 1) -> Dictionary:
 					player_data.popularity = clampf(player_data.popularity + 8.0, 0.0, 100.0)
 					player_data.modify_morale(25)
 					player_data.add_fans(600)
+					player_data.increment_career_stat("weeks_at_number_one", 1)
 					
 	last_updated_week = maxi(1, int((current_day - 1) / 7) + 1)
 	

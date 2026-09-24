@@ -264,3 +264,8 @@ const STAGE_PYRO_SCORE_BONUS: float = 15.0
 const STAGE_PYRO_COST: float = 20000.0
 const STAGE_ROADIE_CREW_COUNT: int = 50
 const STAGE_ROADIE_CREW_DAILY_COST: float = 2500.0
+
+# --- Sound Design, Audio Cues & Numpad (Sezione 12) ---
+const AUDIO_CUE_DEFAULT_DURATION: float = 0.35
+const AUDIO_CUE_CELEBRATION_DURATION: float = 0.85
+const AUDIO_SAFE_SAMPLE_RATE: int = 22050

@@ -358,6 +358,7 @@ func resolve_encore(granted: bool, current_score: float) -> Dictionary:
 
 	player_data.consume_energy(Constants.ENCORE_ENERGY_COST)
 	player_data.modify_money(Constants.ENCORE_EXTRA_CASH)
+	player_data.increment_career_stat("total_encores_granted", 1)
 	EventBus.money_changed.emit(player_data.money, Constants.ENCORE_EXTRA_CASH, "encore_cash")
 
 	if player_data:
@@ -669,6 +670,18 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 	if GameManager and GameManager.band_system:
 		GameManager.band_system.process_post_concert_dynamics(final_score)
 
+	# 10. Tracciamento Statistiche di Carriera (Sezione 12)
+	var is_sold_out: bool = (audience >= venue.capacity)
+	if player_data:
+		player_data.increment_career_stat("total_concerts_performed", 1)
+		player_data.increment_career_stat("total_audience_attended", audience)
+		player_data.increment_career_stat("total_live_earnings", player_share)
+		player_data.increment_career_stat("total_merch_earnings", merch_net)
+		if venue.venue_type in [VenueData.TYPE_ARENA, VenueData.TYPE_STADIUM]:
+			player_data.increment_career_stat("total_stadium_concerts", 1)
+			if is_sold_out:
+				player_data.increment_career_stat("stadium_sold_outs", 1)
+
 	var eligible_for_encore: bool = final_score >= Constants.ENCORE_SCORE_THRESHOLD
 
 	var result := {
@@ -677,6 +690,7 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 		"venue_name": venue.get_localized_name(),
 		"audience": audience,
 		"capacity": venue.capacity,
+		"is_sold_out": is_sold_out,
 		"ticket_price": ticket_price,
 		"gross_revenue": gross_revenue,
 		"rent_cost": actual_rent,

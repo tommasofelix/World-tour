@@ -167,5 +167,20 @@ Questo registro contiene soltanto problemi tecnici confermati e soluzioni con ev
 - Test automatici eseguiti: 87/87 asserzioni superate in `test_endgame_and_legacy_system.gd` e 26/26 suite headless complessive dell'intero progetto superate con 0 errori e 0 ms.
 - Misure di prevenzione delle regressioni: Nei test di catalogo verificare sempre la presenza degli elementi chiave o garantire che le asserzioni di conteggio siano centralizzate su costanti di dominio; esporre sempre metodi deterministici di test seam override per ogni meccanica procedurale sensibile al calendario.
 
+### BUG-011 — Ordine di Compilazione Autoload vs class_name Non Registrati & Allineamento Firme Test Seams (Sezione 12)
 
-
+- Data e componente: `2026-09-24`, `autoload/accessibility_manager.gd`, `tests/test_ui_audio_and_numpad_system.gd` (Sezione 12).
+- Sintomo osservato:
+  1. All'avvio dell'engine in modalità headless, errore critico: `SCRIPT ERROR: Parse Error: Could not find type "AudioCueSystem" in the current scope` a riga 11 di `accessibility_manager.gd`, con conseguente `ERROR: Failed to instantiate an autoload, script does not inherit from 'Node'` e `AccessibilityManager` valutato a `Nil` in tutte le scene e test runner.
+  2. Fallimento del test headless per `SCRIPT ERROR: Invalid call. Nonexistent function 'grant_encore' in base 'RefCounted (ConcertSystem)'`.
+- Evidenza riproducibile:
+  1. Dichiarazione di variabile tipizzata `var audio_cue_system: AudioCueSystem = null` e `AudioCueSystem.new()` all'interno di un autoload (`AccessibilityManager`) prima che la cache globale dell'engine abbia indicizzato la `class_name AudioCueSystem` in `systems/audio_cue_system.gd`.
+  2. Invocazione in una suite di test di un metodo con nome ipotizzato anziché conforme alla firma reale `resolve_encore(granted: bool, current_score: float) -> Dictionary`.
+- Causa radice verificata:
+  1. In Godot 4 gli script registrati in `project.godot` sotto la sezione `[autoload]` vengono compilati ed istanziati all'avvio dell'engine *prima* della registrazione dinamica delle `class_name` definite nei normali script del progetto. Qualsiasi riferimento diretto al tipo `class_name` all'interno del corpo di un autoload causa fallimento immediato di compilazione dell'autoload stesso, facendolo collassare a `Nil` per l'intero ciclo di vita dell'applicazione.
+  2. Nel test seam era stato utilizzato `grant_encore()` per assonanza con l'azione UI anziché il metodo canonico di dominio `resolve_encore()`.
+- Soluzione applicata:
+  1. Adozione del pattern **Autoload Preload Decoupling**: all'interno di `autoload/accessibility_manager.gd`, precaricamento esplicito tramite `const AudioCueSystemScript = preload("res://systems/audio_cue_system.gd")`, tipizzazione generica `var audio_cue_system: Node = null` e istanziazione tramite `AudioCueSystemScript.new()`.
+  2. Correzione in `tests/test_ui_audio_and_numpad_system.gd` dell'invocazione su `concert_sys.resolve_encore(true, 90.0)`.
+- Test automatici eseguiti: 128/128 asserzioni superate in `test_ui_audio_and_numpad_system.tscn` e 27/27 suite headless complessive dell'intero progetto superate con 0 errori a 0 ms.
+- Misure di prevenzione delle regressioni: Negli script autoload non utilizzare mai annotazioni statiche di tipo `class_name` definite altrove nel progetto senza `preload()`; utilizzare sempre `const ScriptRef = preload(...)` e tipizzazione generica `Node` per disaccoppiare l'ordine di bootstrap dell'engine.

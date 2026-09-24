@@ -221,6 +221,9 @@ func _ready() -> void:
 	EventBus.skill_leveled_up.connect(func(_s, _l): _update_hud_display())
 	EventBus.career_tier_promoted.connect(func(_t, _n): _update_hud_display())
 	EventBus.housing_changed.connect(func(_t, _r): _update_hud_display())
+	EventBus.certification_awarded.connect(func(_d): AccessibilityManager.play_cue(Enums.AudioCueType.CERTIFICATION_AWARD))
+	EventBus.chart_number_one_achieved.connect(func(_c, _t): AccessibilityManager.play_cue(Enums.AudioCueType.CHART_NUMBER_ONE))
+	EventBus.award_won.connect(func(_a): AccessibilityManager.play_cue(Enums.AudioCueType.CERTIFICATION_AWARD))
 	
 	# Configurazione semantica AccessKit e testi iniziali
 	_refresh_ui_text()
@@ -312,17 +315,23 @@ func _unhandled_input(event: InputEvent) -> void:
 		KEY_ESCAPE:
 			open_system_menu()
 			get_viewport().set_input_as_handled()
-		KEY_1:
+		KEY_1, KEY_KP_1:
 			select_category_tab(1)
 			get_viewport().set_input_as_handled()
-		KEY_2:
+		KEY_2, KEY_KP_2:
 			select_category_tab(2)
 			get_viewport().set_input_as_handled()
-		KEY_3:
+		KEY_3, KEY_KP_3:
 			select_category_tab(3)
 			get_viewport().set_input_as_handled()
-		KEY_4:
+		KEY_4, KEY_KP_4:
 			select_category_tab(4)
+			get_viewport().set_input_as_handled()
+		KEY_KP_7:
+			_navigate_prev_hud_block()
+			get_viewport().set_input_as_handled()
+		KEY_KP_9:
+			_navigate_next_hud_block()
 			get_viewport().set_input_as_handled()
 		KEY_I:
 			speak_hud_info()
@@ -800,20 +809,62 @@ func select_category_tab(tab_idx: int) -> void:
 	var is_upgrades: bool = (tab_idx == 4)
 	if btn_upgrades: btn_upgrades.visible = is_upgrades
 	
-	# Focus e annuncio vocale per NVDA
+	# Focus, cue sonoro e annuncio vocale per NVDA
 	match tab_idx:
 		1:
+			AccessibilityManager.play_cue(Enums.AudioCueType.AREA_PERSONAL)
 			if btn_tab_personal: btn_tab_personal.grab_focus()
 			AccessibilityManager.speak("Area 1: Hub Personale. Opzioni: Personaggio C, Agenda A, Bilancio B, Viaggi V, Allenamento Rapido 1, Relax R.")
 		2:
+			AccessibilityManager.play_cue(Enums.AudioCueType.AREA_CREATION)
 			if btn_tab_creation: btn_tab_creation.grab_focus()
 			AccessibilityManager.speak("Area 2: Creazione e Produzione. Opzioni: Catalogo M, Nuovo Brano N, Album P.")
 		3:
+			AccessibilityManager.play_cue(Enums.AudioCueType.AREA_CAREER)
 			if btn_tab_career: btn_tab_career.grab_focus()
 			AccessibilityManager.speak("Area 3: Carriera e Band. Opzioni: Concerti L, Band G, Tour O, Festival F, Social Y, Classifiche H, Industria K, Legacy W.")
 		4:
+			AccessibilityManager.play_cue(Enums.AudioCueType.AREA_UPGRADES)
 			if btn_tab_upgrades: btn_tab_upgrades.grab_focus()
 			AccessibilityManager.speak("Area 4: Skills e Upgrade. Opzioni: Miglioramenti e Strumentazione U.")
+
+var _current_hud_block_index: int = 1
+
+func _navigate_next_hud_block() -> void:
+	_current_hud_block_index = (_current_hud_block_index + 1) % 3
+	_focus_hud_block(_current_hud_block_index)
+
+func _navigate_prev_hud_block() -> void:
+	_current_hud_block_index = (_current_hud_block_index - 1 + 3) % 3
+	_focus_hud_block(_current_hud_block_index)
+
+func _focus_hud_block(block_idx: int) -> void:
+	match block_idx:
+		0:
+			if btn_pause: btn_pause.grab_focus()
+			AccessibilityManager.speak("Blocco Top Bar selezionato: controlli orologio, velocità e pausa.")
+		1:
+			match current_category_tab:
+				1: if btn_tab_personal: btn_tab_personal.grab_focus()
+				2: if btn_tab_creation: btn_tab_creation.grab_focus()
+				3: if btn_tab_career: btn_tab_career.grab_focus()
+				4: if btn_tab_upgrades: btn_tab_upgrades.grab_focus()
+				_: if btn_tab_personal: btn_tab_personal.grab_focus()
+			AccessibilityManager.speak("Blocco Macro-Aree tematiche selezionato: Area %d attiva." % current_category_tab)
+		2:
+			_focus_first_visible_action()
+			AccessibilityManager.speak("Blocco Azioni rapide selezionato per l'Area %d." % current_category_tab)
+
+func _focus_first_visible_action() -> void:
+	match current_category_tab:
+		1:
+			if btn_character and btn_character.visible: btn_character.grab_focus()
+		2:
+			if btn_catalog and btn_catalog.visible: btn_catalog.grab_focus()
+		3:
+			if btn_concert and btn_concert.visible: btn_concert.grab_focus()
+		4:
+			if btn_upgrades and btn_upgrades.visible: btn_upgrades.grab_focus()
 
 func speak_hud_info() -> void:
 	var info_text: String = ""
@@ -872,7 +923,9 @@ func _on_day_advanced() -> void:
 	_update_hud_display()
 	btn_practice.grab_focus()
 
-func _on_concert_completed(_result: Dictionary) -> void:
+func _on_concert_completed(result: Dictionary) -> void:
+	if result.get("is_sold_out", false):
+		AccessibilityManager.play_cue(Enums.AudioCueType.STADIUM_SOLD_OUT)
 	_update_hud_display()
 
 func _on_catalog_new_song_requested() -> void:

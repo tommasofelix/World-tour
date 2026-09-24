@@ -333,6 +333,27 @@ enum LegacyEndingType {
 	BLAZING_COMET = 3     # Cometa Fiammeggiante (Pochi capolavori leggendari e ritiro dorato)
 }
 
+# --- Sound Design, Audio Cues & Statistiche di Carriera (V5.1.0 / Sezione 12) ---
+enum AudioCueType {
+	NONE = 0,
+	AREA_PERSONAL = 1,       # Chitarra acustica / tono organico
+	AREA_CREATION = 2,       # Synth percussivo / produzione
+	AREA_CAREER = 3,         # Power chord distorto / rock band
+	AREA_UPGRADES = 4,       # Tocco metallico / liuteria / gear
+	CERTIFICATION_AWARD = 5, # Fanfara trionfale Oro/Platino/Diamante
+	CHART_NUMBER_ONE = 6,    # Rintocco celebrativo vittoria #1
+	STADIUM_SOLD_OUT = 7,    # Boato folla e ovazione stadio
+	NIGHT_OVERTIME_BELL = 8, # Rintocco campana notturna
+	HIGH_SIGNAL_ALERT = 9    # Allarme metallico penetrativo
+}
+
+enum CareerStatCategory {
+	LIFE_AND_TIME = 0,
+	MUSIC_AND_DISCOGRAPHY = 1,
+	STAGE_AND_TOURS = 2,
+	FANDOM_AND_GLORY = 3
+}
+
 static func get_genre_name(genre: int) -> String:
 	match genre:
 		MusicalGenre.ROCK:
@@ -599,4 +620,40 @@ static func get_legacy_ending_name(ending: int) -> String:
 			return "La Cometa Fiammeggiante"
 		_:
 			return "Eredità Artistica"
+
+static func get_audio_cue_name(cue_type: int) -> String:
+	match cue_type:
+		AudioCueType.AREA_PERSONAL:
+			return "Feedback Hub Personale"
+		AudioCueType.AREA_CREATION:
+			return "Feedback Creazione e Produzione"
+		AudioCueType.AREA_CAREER:
+			return "Feedback Carriera e Band"
+		AudioCueType.AREA_UPGRADES:
+			return "Feedback Skills e Upgrade"
+		AudioCueType.CERTIFICATION_AWARD:
+			return "Certificazione Discografica Ufficiale"
+		AudioCueType.CHART_NUMBER_ONE:
+			return "Vittoria #1 in Classifica"
+		AudioCueType.STADIUM_SOLD_OUT:
+			return "Sold Out nello Stadio"
+		AudioCueType.NIGHT_OVERTIME_BELL:
+			return "Rintocco Notturno di Overtime"
+		AudioCueType.HIGH_SIGNAL_ALERT:
+			return "Avviso ad Alto Segnale"
+		_:
+			return "Nessun Feedback Sonoro"
+
+static func get_career_stat_category_name(cat: int) -> String:
+	match cat:
+		CareerStatCategory.LIFE_AND_TIME:
+			return "Vita e Routine"
+		CareerStatCategory.MUSIC_AND_DISCOGRAPHY:
+			return "Musica e Discografia"
+		CareerStatCategory.STAGE_AND_TOURS:
+			return "Palco e Tournée"
+		CareerStatCategory.FANDOM_AND_GLORY:
+			return "Fandom e Riconoscimenti"
+		_:
+			return "Statistiche di Carriera"
 

@@ -89,6 +89,8 @@ func process_day_end(day_num: int = 1, p_early_sleep_override: bool = false) -> 
 		var roy_res: Dictionary = GameManager.album_system.process_daily_royalties()
 		royalties_earned = roy_res.get("total_royalties", 0.0)
 		album_count = roy_res.get("album_count", 0)
+		if player_data and royalties_earned > 0.0:
+			player_data.increment_career_stat("total_royalties_earned", royalties_earned)
 		
 	# Incasso automatico sub-affitto passivo della sala prove (Tier 2 e 3)
 	var sublet_earned: float = 0.0
@@ -176,6 +178,8 @@ func advance_to_next_day() -> void:
 		calendar_data.reset_daily_saturation()
 		
 	var new_day: int = calendar_data.day_number if calendar_data else 1
+	if player_data:
+		player_data.increment_career_stat("total_days_active", 1)
 	
 	# Controllo impegni a calendario e avanzamento dell'agenda
 	var schedule_report: Dictionary = {}

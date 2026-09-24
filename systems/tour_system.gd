@@ -413,6 +413,8 @@ func finish_tour() -> Dictionary:
 		return {"success": false, "reason": "no_active_tour"}
 
 	active_tour.status = TourData.TourStatus.COMPLETED
+	if player_data:
+		player_data.increment_career_stat("total_tours_completed", 1)
 
 	var net_profit: float = active_tour.total_net_profit
 	var is_triumphant: bool = net_profit > 0 and active_tour.total_fans_gained > 50

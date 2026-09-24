@@ -322,6 +322,111 @@ func has_won_award(category: int) -> bool:
 			return true
 	return false
 
+# --- Statistiche Globali di Carriera (World-tour V5.1.0 / Sezione 12) ---
+var career_stats: Dictionary = {
+	"total_days_active": 1,
+	"total_overtime_nights": 0,
+	"total_songs_written": 0,
+	"total_singles_released": 0,
+	"total_albums_released": 0,
+	"total_concerts_performed": 0,
+	"total_audience_attended": 0,
+	"total_live_earnings": 0.0,
+	"total_merch_earnings": 0.0,
+	"total_encores_granted": 0,
+	"total_stadium_concerts": 0,
+	"total_festivals_performed": 0,
+	"total_tours_completed": 0,
+	"total_royalties_earned": 0.0,
+	"total_rehearsals_held": 0,
+	"weeks_at_number_one": 0,
+	"stadium_sold_outs": 0
+}
+
+func get_career_stat(stat_key: String, default_val: Variant = 0) -> Variant:
+	if not career_stats.has(stat_key):
+		career_stats[stat_key] = default_val
+
+	var val = career_stats.get(stat_key, default_val)
+	match stat_key:
+		"total_songs_written":
+			return maxi(int(val), songs.size())
+		"total_singles_released":
+			var rel_count: int = get_released_singles().size()
+			return maxi(int(val), rel_count)
+		"total_albums_released":
+			var alb_count: int = get_released_albums().size()
+			return maxi(int(val), alb_count)
+		_:
+			return val
+
+func increment_career_stat(stat_key: String, amount: Variant = 1) -> void:
+	if not career_stats.has(stat_key):
+		career_stats[stat_key] = amount
+	else:
+		if career_stats[stat_key] is float or amount is float:
+			career_stats[stat_key] = float(career_stats[stat_key]) + float(amount)
+		else:
+			career_stats[stat_key] = int(career_stats[stat_key]) + int(amount)
+	if EventBus:
+		EventBus.career_stats_updated.emit(career_stats)
+
+func set_career_stat(stat_key: String, value: Variant) -> void:
+	career_stats[stat_key] = value
+	if EventBus:
+		EventBus.career_stats_updated.emit(career_stats)
+
+func get_total_career_earnings() -> float:
+	var total: float = float(get_career_stat("total_live_earnings", 0.0)) + \
+					   float(get_career_stat("total_merch_earnings", 0.0)) + \
+					   float(get_career_stat("total_royalties_earned", 0.0))
+	for s in songs:
+		total += s.revenue
+	for a in albums:
+		total += a.total_revenue
+	return total
+
+func get_total_records_sold() -> float:
+	var sold: float = 0.0
+	for a in albums:
+		if a.is_released:
+			sold += a.total_sales
+	for s in songs:
+		if s.status == Enums.SongStatus.RELEASED:
+			sold += float(s.plays) * 0.1
+	return sold
+
+func get_total_streams() -> int:
+	var streams: int = 0
+	for s in songs:
+		streams += s.plays
+	for a in albums:
+		for tr_id in a.track_ids:
+			var song: SongData = get_song_by_id(tr_id)
+			if song:
+				streams += song.plays
+	return streams
+
+func get_linear_career_summary_speech() -> String:
+	var name_disp: String = get_effective_name()
+	var days: int = int(get_career_stat("total_days_active", 1))
+	var songs_count: int = int(get_career_stat("total_songs_written", 0))
+	var albums_count: int = int(get_career_stat("total_albums_released", 0))
+	var concerts_count: int = int(get_career_stat("total_concerts_performed", 0))
+	var audience_count: int = int(get_career_stat("total_audience_attended", 0))
+	var live_earn: float = float(get_career_stat("total_live_earnings", 0.0))
+	var gold_count: int = get_certifications_count(Enums.CertificationTier.GOLD)
+	var plat_count: int = get_certifications_count(Enums.CertificationTier.PLATINUM)
+	var diam_count: int = get_certifications_count(Enums.CertificationTier.DIAMOND)
+	var total_earn: float = get_total_career_earnings()
+
+	var summary: String = "Statistiche Globali di Carriera per %s. " % name_disp
+	summary += "Giorni trascorsi: %d. Brani scritti: %d. Album pubblicati: %d. " % [days, songs_count, albums_count]
+	summary += "Concerti dal vivo eseguiti: %d, con un pubblico complessivo di %d spettatori e %.2f euro incassati dal palco. " % [concerts_count, audience_count, live_earn]
+	summary += "Certificazioni ufficiali: %d Dischi d'Oro, %d Platino, %d Diamante. " % [gold_count, plat_count, diam_count]
+	summary += "Guadagni totali di carriera stimati: %.2f euro. Fan totali: %d." % [total_earn, fans]
+	return summary
+
 
 var skills: Dictionary = {
 	"instrument": {"level": 10, "xp": 0.0},
@@ -385,20 +490,20 @@ func get_playable_songs() -> Array[SongData]:
 
 func populate_starter_test_songs() -> void:
 	songs.clear()
-	
+
 	# 2 Bozze (DRAFT)
 	var d1 := SongData.new("song_draft_01", "Riff della Notte", Enums.MusicalGenre.ROCK, "night")
 	d1.status = Enums.SongStatus.DRAFT
 	d1.stage = Enums.SongStage.CONCEPT
 	songs.append(d1)
-	
+
 	var d2 := SongData.new("song_draft_02", "Pensieri Sparsi", Enums.MusicalGenre.INDIE, "melancholy")
 	d2.status = Enums.SongStatus.DRAFT
 	d2.stage = Enums.SongStage.SONGWRITING
 	d2.comp_skill_used = 35.0
 	d2.quality_score = 30.0
 	songs.append(d2)
-	
+
 	# 5 Brani Pronti per il Palco (PRODUCED)
 	var p1 := SongData.new("song_prod_01", "Fuoco nel Garage", Enums.MusicalGenre.ROCK, "rebellion")
 	p1.status = Enums.SongStatus.PRODUCED
@@ -406,34 +511,34 @@ func populate_starter_test_songs() -> void:
 	p1.quality_score = 74.0
 	p1.special_trait = Enums.SongTrait.STAGE_BEAST
 	songs.append(p1)
-	
+
 	var p2 := SongData.new("song_prod_02", "Ballata Metropolitana", Enums.MusicalGenre.POP, "love")
 	p2.status = Enums.SongStatus.PRODUCED
 	p2.stage = Enums.SongStage.COMPLETED
 	p2.quality_score = 68.0
 	p2.special_trait = Enums.SongTrait.EARWORM
 	songs.append(p2)
-	
+
 	var p3 := SongData.new("song_prod_03", "Insonnia Elettrica", Enums.MusicalGenre.ELECTRONIC, "night")
 	p3.status = Enums.SongStatus.PRODUCED
 	p3.stage = Enums.SongStage.COMPLETED
 	p3.quality_score = 65.0
 	songs.append(p3)
-	
+
 	var p4 := SongData.new("song_prod_04", "Rabbia e Cemento", Enums.MusicalGenre.METAL, "rebellion")
 	p4.status = Enums.SongStatus.PRODUCED
 	p4.stage = Enums.SongStage.COMPLETED
 	p4.quality_score = 78.0
 	p4.special_trait = Enums.SongTrait.STAGE_BEAST
 	songs.append(p4)
-	
+
 	var p5 := SongData.new("song_prod_05", "Aria Sottile", Enums.MusicalGenre.INDIE, "success")
 	p5.status = Enums.SongStatus.PRODUCED
 	p5.stage = Enums.SongStage.COMPLETED
 	p5.quality_score = 62.0
 	p5.special_trait = Enums.SongTrait.CULT_CLASSIC
 	songs.append(p5)
-	
+
 	# 3 Singoli Già Pubblicati (RELEASED)
 	var r1 := SongData.new("song_rel_01", "Prima Scintilla", Enums.MusicalGenre.ROCK, "rebellion")
 	r1.status = Enums.SongStatus.RELEASED
@@ -444,7 +549,7 @@ func populate_starter_test_songs() -> void:
 	r1.plays = 450
 	r1.revenue = 135.0
 	songs.append(r1)
-	
+
 	var r2 := SongData.new("song_rel_02", "Strade Deserte", Enums.MusicalGenre.POP, "melancholy")
 	r2.status = Enums.SongStatus.RELEASED
 	r2.stage = Enums.SongStage.COMPLETED
@@ -453,7 +558,7 @@ func populate_starter_test_songs() -> void:
 	r2.plays = 280
 	r2.revenue = 84.0
 	songs.append(r2)
-	
+
 	var r3 := SongData.new("song_rel_03", "Urlo dal Sottosuolo", Enums.MusicalGenre.METAL, "night")
 	r3.status = Enums.SongStatus.RELEASED
 	r3.stage = Enums.SongStage.COMPLETED
@@ -476,20 +581,20 @@ func get_skill_level(skill_key: String) -> int:
 func add_xp_to_skill(skill_key: String, xp_amount: float) -> bool:
 	if not skills.has(skill_key):
 		return false
-	
+
 	var data: Dictionary = skills[skill_key]
 	data["xp"] += xp_amount
 	var current_level: int = data["level"]
 	var required_xp: int = Formulas.calculate_xp_for_level(current_level)
 	var leveled_up: bool = false
-	
+
 	while data["xp"] >= float(required_xp) and current_level < 99:
 		data["xp"] -= float(required_xp)
 		data["level"] += 1
 		current_level = data["level"]
 		required_xp = Formulas.calculate_xp_for_level(current_level)
 		leveled_up = true
-	
+
 	return leveled_up
 
 func consume_energy(amount: int) -> bool:
@@ -586,15 +691,15 @@ func to_dict() -> Dictionary:
 	var serialized_songs: Array = []
 	for s in songs:
 		serialized_songs.append(s.to_dict())
-		
+
 	var serialized_members: Array = []
 	for m in band_members:
 		serialized_members.append(m.to_dict())
-		
+
 	var serialized_albums: Array = []
 	for a in albums:
 		serialized_albums.append(a.to_dict())
-		
+
 	return {
 		"player_name": player_name,
 		"stage_name": stage_name,
@@ -645,7 +750,8 @@ func to_dict() -> Dictionary:
 		"music_awards": music_awards.duplicate(true),
 		"hall_of_fame_inducted": hall_of_fame_inducted,
 		"last_waltz_completed": last_waltz_completed,
-		"legacy_ending": legacy_ending
+		"legacy_ending": legacy_ending,
+		"career_stats": career_stats.duplicate(true)
 	}
 
 func from_dict(dict: Dictionary) -> void:
@@ -691,7 +797,7 @@ func from_dict(dict: Dictionary) -> void:
 			city_popularity[int(k)] = float(dict["city_popularity"][k])
 	if dict.has("skills") and dict["skills"] is Dictionary:
 		skills = dict["skills"].duplicate(true)
-		
+
 	songs.clear()
 	if dict.has("songs") and dict["songs"] is Array:
 		for s_dict in dict["songs"]:
@@ -699,7 +805,7 @@ func from_dict(dict: Dictionary) -> void:
 				var s := SongData.new()
 				s.from_dict(s_dict)
 				songs.append(s)
-				
+
 	band_name = dict.get("band_name", band_name)
 	revenue_split_mode = int(dict.get("revenue_split_mode", revenue_split_mode))
 	current_housing_tier = int(dict.get("current_housing_tier", current_housing_tier))
@@ -723,7 +829,7 @@ func from_dict(dict: Dictionary) -> void:
 	current_amp_tier = int(dict.get("current_amp_tier", current_amp_tier))
 	rehearsal_sublet_active = bool(dict.get("rehearsal_sublet_active", rehearsal_sublet_active))
 	recording_philosophy = int(dict.get("recording_philosophy", recording_philosophy))
-	
+
 	band_members.clear()
 	if dict.has("band_members") and dict["band_members"] is Array:
 		for m_dict in dict["band_members"]:
@@ -731,7 +837,7 @@ func from_dict(dict: Dictionary) -> void:
 				var m := BandMemberData.new()
 				m.from_dict(m_dict)
 				band_members.append(m)
-				
+
 	albums.clear()
 	if dict.has("albums") and dict["albums"] is Array:
 		for a_dict in dict["albums"]:
@@ -739,19 +845,19 @@ func from_dict(dict: Dictionary) -> void:
 				var a := AlbumData.new()
 				a.from_dict(a_dict)
 				albums.append(a)
-				
+
 	if dict.has("active_contract") and dict["active_contract"] is Dictionary and not dict["active_contract"].is_empty():
 		active_contract = ContractDataScript.new()
 		active_contract.from_dict(dict["active_contract"])
 	else:
 		active_contract = null
-		
+
 	if dict.has("active_manager") and dict["active_manager"] is Dictionary and not dict["active_manager"].is_empty():
 		active_manager = ManagerDataScript.new()
 		active_manager.from_dict(dict["active_manager"])
 	else:
 		active_manager = null
-		
+
 	resolved_dilemmas.clear()
 	if dict.has("resolved_dilemmas") and dict["resolved_dilemmas"] is Array:
 		for d_id in dict["resolved_dilemmas"]:
@@ -779,4 +885,6 @@ func from_dict(dict: Dictionary) -> void:
 	last_waltz_completed = bool(dict.get("last_waltz_completed", last_waltz_completed))
 	legacy_ending = int(dict.get("legacy_ending", legacy_ending))
 
-
+	if dict.has("career_stats") and dict["career_stats"] is Dictionary:
+		for k in dict["career_stats"]:
+			career_stats[str(k)] = dict["career_stats"][k]

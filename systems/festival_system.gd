@@ -773,6 +773,8 @@ func perform_festival_concert(
 		
 	# Chiusura e salvataggio esito
 	fest.is_completed = true
+	if player_data:
+		player_data.increment_career_stat("total_festivals_performed", 1)
 	var result_data := {
 		"success": true,
 		"festival_id": fest.id,

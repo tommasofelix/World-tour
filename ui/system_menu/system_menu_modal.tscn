@@ -87,15 +87,114 @@ custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
 text = "2. Salva Partita"
 
+[node name="BtnCareerStats" type="Button" parent="PanelMain/Margin/VBox/VBoxMenu"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "3. Statistiche di Carriera"
+
 [node name="BtnSettings" type="Button" parent="PanelMain/Margin/VBox/VBoxMenu"]
 custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
-text = "3. Impostazioni & Accessibilità"
+text = "4. Impostazioni & Accessibilità"
 
 [node name="BtnMainMenu" type="Button" parent="PanelMain/Margin/VBox/VBoxMenu"]
 custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
-text = "4. Torna al Menu Principale"
+text = "5. Torna al Menu Principale"
+
+[node name="PanelCareerStats" type="PanelContainer" parent="PanelMain/Margin/VBox"]
+visible = false
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="PanelMain/Margin/VBox/PanelCareerStats"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxCareerStats" type="VBoxContainer" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="LabelStatsTitle" type="Label" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Statistiche Globali di Carriera"
+horizontal_alignment = 1
+
+[node name="ScrollStats" type="ScrollContainer" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats"]
+custom_minimum_size = Vector2(0, 240)
+layout_mode = 2
+
+[node name="VBoxContent" type="VBoxContainer" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats/ScrollStats"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="LabelLifeTitle" type="Label" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats/ScrollStats/VBoxContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.75, 0.3, 1)
+theme_override_font_sizes/font_size = 14
+text = "[ 1. Vita & Routine ]"
+
+[node name="LabelLifeStats" type="Label" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats/ScrollStats/VBoxContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Caricamento statistiche..."
+autowrap_mode = 2
+
+[node name="LabelMusicTitle" type="Label" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats/ScrollStats/VBoxContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.75, 0.3, 1)
+theme_override_font_sizes/font_size = 14
+text = "[ 2. Musica & Discografia ]"
+
+[node name="LabelMusicStats" type="Label" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats/ScrollStats/VBoxContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Caricamento statistiche..."
+autowrap_mode = 2
+
+[node name="LabelLiveTitle" type="Label" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats/ScrollStats/VBoxContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.75, 0.3, 1)
+theme_override_font_sizes/font_size = 14
+text = "[ 3. Palco & Tournée ]"
+
+[node name="LabelLiveStats" type="Label" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats/ScrollStats/VBoxContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Caricamento statistiche..."
+autowrap_mode = 2
+
+[node name="LabelGloryTitle" type="Label" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats/ScrollStats/VBoxContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.75, 0.3, 1)
+theme_override_font_sizes/font_size = 14
+text = "[ 4. Fandom & Riconoscimenti ]"
+
+[node name="LabelGloryStats" type="Label" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats/ScrollStats/VBoxContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Caricamento statistiche..."
+autowrap_mode = 2
+
+[node name="HBoxStatsButtons" type="HBoxContainer" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BtnReadSpeech" type="Button" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats/HBoxStatsButtons"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Ascolta Riepilogo (R)"
+
+[node name="BtnBackStats" type="Button" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats/HBoxStatsButtons"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Torna al Menu (Esc)"
 
 [node name="PanelSettings" type="PanelContainer" parent="PanelMain/Margin/VBox"]
 visible = false

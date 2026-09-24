@@ -50,3 +50,42 @@ Nessuna nuova schermata o componente UI può essere dichiarato conforme sulla so
 1. **Verifica Tecnica del Grafo di Focus**: Controllo delle proprietà `focus_neighbor_*`, `focus_mode = FOCUS_ALL` e assenza di nodi fantasma;
 2. **Ispezione UIA / AccessKit**: Verifica dell'annuncio corretto del nome accessibile (`accessible_name`) e del ruolo (`accessible_role`);
 3. **Collaudo Manuale Reale di Luca con NVDA**: Prova pratica in-game con screen reader attivo e zero interazione mouse, con verifica della totale fluidità del percorso cognitivo.
+
+---
+
+## 5. Sistema di Navigazione da Tastierino Numerico (Numpad Navigation System)
+
+Per consentire l'utilizzo ergonomico e rapido del gioco con la sola mano destra sul tastierino numerico della tastiera estesa (Zero Mouse), `AccessibilityManager` e i controller dell'interfaccia implementano uno schema canonico di mapping universale:
+1. **Navigazione a Croce Ortogonale**:
+   - `KP_8`: Navigazione in alto (`ui_up`);
+   - `KP_2`: Navigazione in basso (`ui_down`);
+   - `KP_4`: Navigazione a sinistra (`ui_left`);
+   - `KP_6`: Navigazione a destra (`ui_right`).
+2. **Azionamento & Selezione**:
+   - `KP_ENTER` / `KP_0`: Attivazione del controllo corrente (`ui_accept`).
+3. **Interrogazione dello Stato**:
+   - `KP_5`: Annuncio vocale immediato dello stato, del testo e della descrizione accessibile del controllo correntemente focalizzato.
+4. **Salto a Blocchi Logici**:
+   - `KP_7`: Salto al blocco logico precedente dell'interfaccia (es. da Azioni a Macro-Aree o da Macro-Aree a Top Bar);
+   - `KP_9`: Salto al blocco logico successivo.
+5. **Macro-Aree Tematiche**:
+   - `KP_1`..`KP_4`: Selezione diretta delle 4 Macro-Aree di gioco (Area 1: Hub Personale, Area 2: Creazione, Area 3: Carriera, Area 4: Upgrades).
+6. **Controlli Runtime & Sicurezza**:
+   - `KP_ADD` (+): Aumento velocità virtuale (1x, 2x);
+   - `KP_SUBTRACT` (-): Pausa / Riprendi simulazione temporale;
+   - `KP_DECIMAL` (Punto / Canc del Numpad): Silenziamento istantaneo dell'annuncio vocale corrente e arresto dei cue sonori (`silence()`).
+7. **Guardia Campi di Digitazione**:
+   - Se il controllo focalizzato è un campo di inserimento testo (`LineEdit`, `TextEdit`), i tasti del tastierino inseriscono le rispettive cifre numeriche senza intercettazione da parte dei comandi di navigazione.
+
+---
+
+## 6. Sintesi Procedurale di Earcons in Memoria (`AudioCueSystem`)
+
+1. **Zero File Binari Esterni**:
+   - I segnali audio di interfaccia (Earcons / Audio Cues) vengono sintetizzati proceduralmente in memoria a runtime in formato standard PCM 16-bit mono a 22.050 Hz (`AudioStreamWAV`).
+   - Questo approccio elimina il rischio di file binari `.wav` mancanti o corrotti, evita il rigonfiamento del repository Git e garantisce la perfetta esecuzione a 0 ms nei test headless.
+2. **Volumi di Sicurezza & Caching**:
+   - Il volume base è congelato deterministicamente a `0.75f` (-2.5 dB `AUDIO_MAX_VOLUME_DB`).
+   - Gli stream generati sono indicizzati in una cache dizionario interna per azzerare il carico CPU dopo il primo ascolto.
+3. **Ducking Dinamico al 40%**:
+   - All'emissione di qualsiasi sintesi vocale da parte di `AccessibilityManager.announce()` o `speak()`, `AudioCueSystem.set_ducking(true)` attenua il volume al 40% (`AUDIO_DUCKING_RATIO = 0.40`), ripristinandolo a fine parlato o su silenziamento.
