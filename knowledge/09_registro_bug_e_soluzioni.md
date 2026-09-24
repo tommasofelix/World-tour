@@ -149,4 +149,23 @@ Questo registro contiene soltanto problemi tecnici confermati e soluzioni con ev
 - Test automatici eseguiti: 106/106 asserzioni superate in `test_industry_system.gd` a 0 errori e 0 ms, con validazione al 100% dell'intera suite di progetto (24/24 suite verdi).
 - Misure di prevenzione delle regressioni: Nei controller UI e nei consumer di modelli runtime, preferire il pattern Preload Script Decoupling con annotazione `RefCounted` sui parametri ricevuti; ogni azione di gameplay soggetta a penali o costi di liquidazione deve implementare una guardia di solvibilità reattiva prima di modificare lo stato del gioco.
 
+### BUG-010 — Invariante di Espansione dei Cataloghi di Dominio & Override di Stato nei Test Seams Procedurali (Sezione 11)
+
+- Data e componente: `2026-09-24`, `data/models/venue_data.gd`, `tests/test_concert_system.gd`, `tests/test_endgame_and_legacy_system.gd` (Sezione 11).
+- Sintomo osservato:
+  1. Fallimento asserzione in `test_concert_system.gd`: `[FAIL] Catalogo venue di default popolato: Ottenuto 8, Atteso 6` dopo l'espansione del catalogo venue con Palasport (15.000 posti) e Mega Stadio Mondiale (65.000 posti).
+  2. Rischio di fallimento intermittente nei test dei concerti complessi dovuto a rifiuto per `venue_occupied` scaturito dall'algoritmo procedurale di disponibilità basato sull'hash del giorno di calendario.
+- Evidenza riproducibile:
+  1. Aggiunta di venue di default in `VenueData.get_default_venues()` ed esecuzione di suite di test preesistenti con asserzione scalare rigida `assert_eq(venues.size(), 6)`.
+  2. Esecuzione di `resolve_concert()` su stadi e arene con date del calendario non controllate in test seams headless.
+- Causa radice verificata:
+  1. I test che verificano collezioni di dominio espandibili mediante uguaglianza numerica rigida (hardcoded scalar check) creano fragilità non funzionale: l'espansione fisiologica e backward-compatible del dominio rompe i test storici senza che vi sia una reale regressione di business logic.
+  2. Quando un sottosistema simula disponibilità procedurali basate su funzioni hash del calendario (`CalendarData.day_number`), test deterministici a 0 ms non possono fare affidamento su date casuali senza incorrere in conflitti di occupazione procedurale.
+- Soluzione applicata:
+  1. In `tests/test_concert_system.gd`: aggiornato il conteggio atteso a 8 venue e codificato il principio di verifica tramite invarianti di soglia minima (`>= 8`) o controllo di presenza puntuale degli ID chiave.
+  2. In `tests/test_endgame_and_legacy_system.gd`: utilizzo sistematico della test seam di override esplicito `concert_sys.set_venue_status_override(venue.id, cal.day_number, Enums.VenueBookingStatus.FREE)` prima di invocare `resolve_concert()`.
+- Test automatici eseguiti: 87/87 asserzioni superate in `test_endgame_and_legacy_system.gd` e 26/26 suite headless complessive dell'intero progetto superate con 0 errori e 0 ms.
+- Misure di prevenzione delle regressioni: Nei test di catalogo verificare sempre la presenza degli elementi chiave o garantire che le asserzioni di conteggio siano centralizzate su costanti di dominio; esporre sempre metodi deterministici di test seam override per ogni meccanica procedurale sensibile al calendario.
+
+
 

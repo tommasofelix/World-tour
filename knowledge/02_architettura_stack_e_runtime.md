@@ -26,14 +26,14 @@
 Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal rendering grafico e progettati per essere testati senza albero di scena (`SceneTree`) tramite test seams deterministici.
 
 1. **Assenza Totale di Latenze Artificiali**: Divieto di impiegare `OS.delay()`, timer di sleep o yield fittizi nei runner di test. Ogni asserzione viene calcolata ed emessa istantaneamente (tempo medio di esecuzione: 0–15 ms per suite).
-2. **Le 25 Suite di Test Headless Validate (Exit Code 0)**:
+2. **Le 26 Suite di Test Headless Validate (Exit Code 0)**:
    - `test_formulas.gd`: formule matematiche, curve XP e bilanciamento;
    - `test_time_system.gd`: orologio, routine giornaliera, passaggio giorno;
    - `test_player_system.gd`: attributi, energia, stress, morale, progressione;
    - `test_music_system.gd`: creazione brani, quality score, composizione e bozze;
    - `test_advanced_crafting_system.gd`: crafting avanzato, 10 temi lirici, sinergie, nuovi tratti e studio pro (Sez. 2);
    - `test_band_system.gd`: gestione band, 5 ruoli (incluso cantante VOCALS), 8 personalità, bacheca audizioni con rifiuto deterministico, prove e revenue split (58 test, Sez. 3);
-   - `test_concert_system.gd`: concerti live, affluenza, scaletta, sinergia palco e incassi;
+   - `test_concert_system.gd`: concerti live, affluenza, scaletta, sinergia palco, incassi e catalogo 8 venue;
    - `test_economy_system.gd`: flussi finanziari, spese, contratti e royalties;
    - `test_localization.gd`: dizionari bilingue it/en (259 chiavi perfettamente allineate), fallback deterministico e pulizia setting;
    - `test_save_manager.gd`: serializzazione atomica JSON, integrità salvataggi;
@@ -46,8 +46,9 @@ Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal r
    - `test_advanced_social_system.gd`: social media avanzati, trend algoritmici settimanali, campagne sponsorizzate, live streaming, fan club, raduno annuale e deleghe manager (51 test, Sez. 8);
    - `test_industry_system.gd`: contratti discografici, manager, recoupment, riscatto master e propria etichetta discografica (106 test, Sez. 9);
    - `test_media_and_rivals_system.gd`: relazioni rivali approfondite (affinità, co-headlining tour, dissing buzz x1.6), Hit Parade territoriali, tormentone stagionale (x1.35 vendite/stream) e sistema Media Broadcaster con interviste radio/podcast/TV del mattino e di riparazione (50 test, Sez. 10);
+   - `test_endgame_and_legacy_system.gd`: Endgame, Grandi Arene & Mega Stadi Mondiali (15k e 65k posti), allestimenti scenici a 4 tier (`StageProductionTier`), certificazioni ufficiali FIMI/RIAA (Oro, Platino, Diamante), cerimonia annuale World Music Awards al Mese 12, Rock and Roll Hall of Fame, concerto celebrativo d'addio "The Last Waltz" ed epiloghi narrativi multipli di fine carriera (87 test, Sez. 11, Versione AVF `V5.0.0`);
    - Ulteriori suite per i sottosistemi di etichette, tour interurbani, festival estivi e classifiche.
-   - *Integrazione Sistemi nel Ciclo di Vita*: Registrazione di `MediaSystem` e dei modelli `MediaOutletData` nel ciclo di vita globale di `GameManager` e nel salvataggio atomico di `SaveManager`.
+   - *Integrazione Sistemi nel Ciclo di Vita*: Registrazione di `MediaSystem`, `AwardSystem`, `LegacySystem` e dei modelli `MediaOutletData` nel ciclo di vita globale di `GameManager` e nel salvataggio atomico di `SaveManager`.
 
 3. **Pattern Closure Container & Guardie Segnali nei Test Headless di Interfaccia**:
    - In GDScript 4, la cattura di variabili locali scalari o nulle all'interno di lambda passate a `connect()` avviene per valore; per verificare l'emissione dei segnali nei test runner occorre impiegare un contenitore reference (`var received: Array = []` e `func(arg): received.append(arg)`).
