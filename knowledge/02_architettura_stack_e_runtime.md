@@ -26,7 +26,7 @@
 Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal rendering grafico e progettati per essere testati senza albero di scena (`SceneTree`) tramite test seams deterministici.
 
 1. **Assenza Totale di Latenze Artificiali**: Divieto di impiegare `OS.delay()`, timer di sleep o yield fittizi nei runner di test. Ogni asserzione viene calcolata ed emessa istantaneamente (tempo medio di esecuzione: 0–15 ms per suite).
-2. **Le 29 Suite di Test Headless Validate (Exit Code 0)**:
+2. **Le 30 Suite di Test Headless Validate (Exit Code 0)**:
    - `test_formulas.gd`: formule matematiche, curve XP e bilanciamento;
    - `test_time_system.gd`: orologio, routine giornaliera, passaggio giorno;
    - `test_player_system.gd`: attributi, energia, stress, morale, progressione;
@@ -46,6 +46,7 @@ Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal r
    - `test_ui_audio_and_numpad_system.gd`: earcons procedurali, volumi sicuri <=0.75f, ducking 40%, numpad navigation e dashboard statistiche (128 test, Sez. 12);
    - `test_endless_and_ngplus_system.gd`: espansione Endless Horizon, New Game+, 16 metropoli e roster discografico magnate (AVF V5.2.0);
    - `test_main_menu.gd`: nuovo Menu Principale pixel art retrò arcade, 4 pulsanti neon, logica atomica Carica Partita, focus chaining continuo e accessibilità NVDA (33 test, Sez. F9.7, Versione AVF `V5.3.0`);
+   - `test_apartment_gameplay.gd`: gameplay grafico 2.5D Loft NYC, mouse picking con cursore a manina, interazioni oggetti (letto, chitarra, pc, stereo, snack), auto-walk deterministico con stand_offset, clearance hitbox collisioni e offset HUD Full Rect (68 test, Sez. F9.8, Versione AVF `V5.4.0`);
    - `test_advanced_social_system.gd`: social media avanzati, trend algoritmici settimanali, campagne sponsorizzate, live streaming, fan club, raduno annuale e deleghe manager (51 test, Sez. 8);
    - `test_industry_system.gd`: contratti discografici, manager, recoupment, riscatto master e propria etichetta discografica (106 test, Sez. 9);
    - `test_media_and_rivals_system.gd`: relazioni rivali approfondite (affinità, co-headlining tour, dissing buzz x1.6), Hit Parade territoriali, tormentone stagionale (x1.35 vendite/stream) e sistema Media Broadcaster con interviste radio/podcast/TV del mattino e di riparazione (50 test, Sez. 10);
@@ -98,6 +99,12 @@ Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal r
     - In modalità headless, il driver audio dummy di Godot 4 non consuma campioni audio né avanza il mixer temporale; di conseguenza, la chiamata `AudioStreamPlayer.play()` instanzia un `AudioStreamPlaybackWAV` nel registro C++ dell'engine che non viene mai completato né deallocato, generando avvisi di memory leak (`ObjectDB instances leaked at exit`).
     - I sottosistemi di sonificazione devono proteggere l'invocazione di `play()` con la guardia `if DisplayServer.get_name() != "headless":`, consentendo la completa validazione headless di generazione stream in memoria, volumi sicuri e ducking a 0 ms senza sporcare il registro ObjectDB.
     - All'arresto dei suoni (`stop()`) e in `_exit_tree()`, reimpostare sempre `audio_player.stream = null` e invocare `AccessibilityManager.silence()` all'uscita delle suite di test.
+
+12. **Pattern Gameplay Grafico 2.5D, Concentric Instances & Hitbox Clearance**:
+    - **Concentric Instance Normalization (`[editable path="..."]` Discipline)**: Nelle scene istanziate modificate nell'editor visivo, tutti i nodi figli (`Sprite2D`, `TriggerShape`, `SolidShape`) devono mantenere offset locali concentrici o allineati alla base visiva rispetto alla radice del prop. Se la radice o i collider si disallineano, le collisioni fisiche e le aree di trigger si disaccoppiano dalla grafica.
+    - **Hitbox Clearance Anti-Deadlock**: L'area di interazione (`TriggerShape` su `Area2D`) DEVE estendersi oltre la sagoma solida (`SolidShape` su `StaticBody2D`) di almeno 25–35 px su tutti i lati percorribili. Se `SolidShape` è pari o maggiore di `TriggerShape`, i piedi del personaggio collidono fisicamente con l'ostacolo prima di intersecare l'area di trigger, impedendo l'emissione di `body_entered` e bloccando l'interazione.
+    - **Stand-Point Pattern per Auto-Walk**: La destinazione di movimento automatico (`walk_to_target`) non deve coincidere con la posizione globale del prop (spesso situata al centro dell'ostacolo solido). Ogni prop deve esporre un punto di stazionamento calcolato (`get_stand_position()` con `stand_offset`) situato nello spazio calpestabile antistante l'oggetto.
+    - **Mouse Picking & Simmetria Universale (The Sims Foundation)**: Sfruttando `mouse_entered`, `mouse_exited` e `_input_event` sull'`Area2D`, gli utenti con mouse (Holy Diver) ottengono il cursore a manina (`CURSOR_POINTING_HAND`) e il click per auto-walk/interazione o menu contestuali futuri, mentre gli utenti con tastiera e screen reader (Luca) mantengono il 100% dell'operatività tramite navigazione diretta a tasti (Tab, Numpad, shortcut).
 
 ---
 
