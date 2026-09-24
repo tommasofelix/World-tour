@@ -30,8 +30,10 @@ func _ready() -> void:
 	print("  Test Falliti:  %d" % tests_failed)
 	print("--------------------------------------------------------\n")
 	
+	if AccessibilityManager:
+		AccessibilityManager.silence()
 	if hud_instance:
-		hud_instance.queue_free()
+		hud_instance.free()
 		
 	if tests_failed == 0:
 		print("[SUCCESSO] Architettura UI a 5 sezioni convalidata al 100%!")

@@ -102,60 +102,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 
 	match key_event.keycode:
-		KEY_SPACE, KEY_P:
-			if GameManager.time_system:
-				var paused: bool = GameManager.time_system.toggle_pause()
-				announce("Pausa attiva" if paused else "Simulazione ripresa", true)
-				get_viewport().set_input_as_handled()
-
-		KEY_1:
-			if key_event.alt_pressed or key_event.ctrl_pressed:
-				return
-			if GameManager.time_system:
-				GameManager.time_system.set_time_scale(Constants.SPEED_NORMAL)
-				announce("Velocità normale 1x", true)
-				get_viewport().set_input_as_handled()
-
-		KEY_2:
-			if GameManager.time_system:
-				GameManager.time_system.set_time_scale(Constants.SPEED_FAST)
-				announce("Velocità rapida 2x", true)
-				get_viewport().set_input_as_handled()
-
-		KEY_3:
-			if GameManager.time_system:
-				GameManager.time_system.set_time_scale(Constants.SPEED_ULTRA)
-				announce("Velocità ultra 5x", true)
-				get_viewport().set_input_as_handled()
-
-		KEY_T:
-			if GameManager.calendar_data:
-				var time_str: String = GameManager.calendar_data.get_formatted_time_string()
-				var period_str: String = GameManager.calendar_data.get_period_name()
-				var sec_left: int = int(round(GameManager.calendar_data.remaining_seconds))
-				announce("Ore %s, %s. Rimangono %d secondi alla fine della giornata." % [time_str, period_str, sec_left], true)
-				get_viewport().set_input_as_handled()
-
-		KEY_R:
-			if GameManager.player_data:
-				var p: PlayerData = GameManager.player_data
-				announce("Risorse: Energia %d%%, Stress %d%%, Morale %d%%, Saldo %.2f euro." % [p.energy, p.stress, p.morale, p.money], true)
-				get_viewport().set_input_as_handled()
-
-		KEY_K:
-			if GameManager.player_data:
-				var p: PlayerData = GameManager.player_data
-				announce("Status: Livello carriera %d, Fan stabili %d, Reputazione %.1f." % [p.career_tier, p.fans, p.reputation], true)
-				get_viewport().set_input_as_handled()
-
-		KEY_M:
-			EventBus.song_catalog_requested.emit()
-			get_viewport().set_input_as_handled()
-
-		KEY_N:
-			EventBus.song_creator_requested.emit()
-			get_viewport().set_input_as_handled()
-
 		# --- Controlli Tastierino Numerico (Numpad Navigation - Sezione 12) ---
 		KEY_KP_PERIOD:
 			silence()

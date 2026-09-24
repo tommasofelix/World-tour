@@ -73,15 +73,21 @@ func play_cue(cue_type: int) -> bool:
 		audio_player.stop()
 		audio_player.stream = stream
 		_update_player_volume()
-		audio_player.play()
+		if DisplayServer.get_name() != "headless":
+			audio_player.play()
 		
 	cue_played.emit(cue_type, Enums.get_audio_cue_name(cue_type))
 	return true
 
-## Interrompe la riproduzione in corso
+## Interrompe la riproduzione in corso e rilascia esplicitamente lo stream per prevenire memory leak
 func stop() -> void:
 	if audio_player:
 		audio_player.stop()
+		audio_player.stream = null
+
+func _exit_tree() -> void:
+	stop()
+	_stream_cache.clear()
 
 ## Restituisce o genera proceduralmente lo stream sintetizzato in memoria
 func get_or_generate_cue_stream(cue_type: int) -> AudioStreamWAV:
