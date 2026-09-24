@@ -26,7 +26,7 @@
 Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal rendering grafico e progettati per essere testati senza albero di scena (`SceneTree`) tramite test seams deterministici.
 
 1. **Assenza Totale di Latenze Artificiali**: Divieto di impiegare `OS.delay()`, timer di sleep o yield fittizi nei runner di test. Ogni asserzione viene calcolata ed emessa istantaneamente (tempo medio di esecuzione: 0–15 ms per suite).
-2. **Le 28 Suite di Test Headless Validate (Exit Code 0)**:
+2. **Le 29 Suite di Test Headless Validate (Exit Code 0)**:
    - `test_formulas.gd`: formule matematiche, curve XP e bilanciamento;
    - `test_time_system.gd`: orologio, routine giornaliera, passaggio giorno;
    - `test_player_system.gd`: attributi, energia, stress, morale, progressione;
@@ -35,7 +35,7 @@ Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal r
    - `test_band_system.gd`: gestione band, 5 ruoli (incluso cantante VOCALS), 8 personalità, bacheca audizioni con rifiuto deterministico, prove e revenue split (58 test, Sez. 3);
    - `test_concert_system.gd`: concerti live, affluenza, scaletta, sinergia palco, incassi e catalogo 8 venue;
    - `test_economy_system.gd`: flussi finanziari, spese, contratti e royalties;
-   - `test_localization.gd`: dizionari bilingue it/en (259 chiavi perfettamente allineate), fallback deterministico e pulizia setting;
+   - `test_localization.gd`: dizionari bilingue it/en (296 chiavi perfettamente allineate), fallback deterministico e pulizia setting;
    - `test_save_manager.gd`: serializzazione atomica JSON, integrità salvataggi;
    - `test_vertical_slice.gd`: catena completa gameplay e cicli fine giornata;
    - `test_character_creation.gd`: creazione guidata, background e tratti iniziali (Sez. 1.1);
@@ -45,6 +45,7 @@ Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal r
    - `test_v5_ui_overhaul.gd`: architettura UI a 5 sezioni, navigazione macro-aree e modali;
    - `test_ui_audio_and_numpad_system.gd`: earcons procedurali, volumi sicuri <=0.75f, ducking 40%, numpad navigation e dashboard statistiche (128 test, Sez. 12);
    - `test_endless_and_ngplus_system.gd`: espansione Endless Horizon, New Game+, 16 metropoli e roster discografico magnate (AVF V5.2.0);
+   - `test_main_menu.gd`: nuovo Menu Principale pixel art retrò arcade, 4 pulsanti neon, logica atomica Carica Partita, focus chaining continuo e accessibilità NVDA (33 test, Sez. F9.7, Versione AVF `V5.3.0`);
    - `test_advanced_social_system.gd`: social media avanzati, trend algoritmici settimanali, campagne sponsorizzate, live streaming, fan club, raduno annuale e deleghe manager (51 test, Sez. 8);
    - `test_industry_system.gd`: contratti discografici, manager, recoupment, riscatto master e propria etichetta discografica (106 test, Sez. 9);
    - `test_media_and_rivals_system.gd`: relazioni rivali approfondite (affinità, co-headlining tour, dissing buzz x1.6), Hit Parade territoriali, tormentone stagionale (x1.35 vendite/stream) e sistema Media Broadcaster con interviste radio/podcast/TV del mattino e di riparazione (50 test, Sez. 10);
@@ -58,6 +59,12 @@ Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal r
 
 4. **Regola d'Oro di Esecuzione Test Headless (Invocazione da Scena `.tscn`)**:
    - I test che estendono `Node` e dipendono dagli Autoload di sistema (`EventBus`, `GameManager`, `SaveManager`, `AccessibilityManager`) **devono essere eseguiti come scene `.tscn`** (es. `godot --path . --headless res://tests/test_nome.tscn`).
+
+5. **Importazione Deterministica delle Risorse Grafiche in Godot 4 Headless**:
+   - Quando nuovi file grafici (PNG, JPEG, font TTF) vengono generati o posizionati esternamente nel repository, Godot richiede la generazione del rispettivo descrittore `.import` e della texture compilata in `.godot/imported/`.
+   - Per garantire la corretta esecuzione headless ed evitare errori `No loader found for resource`, il comando CLI da eseguire prima del lancio delle suite è:
+     `Godot_v4.7.2-stable_win64_console.exe --headless --editor --quit --path .`
+   - Questo comando scansiona il filesystem, genera i metadati `.import` e chiude il processo con exit code 0.
    - L'invocazione diretta di file `.gd` (senza scena o con flag `-s`) su script che estendono `Node` provoca il freeze a tempo indefinito dell'engine, poiché `_ready()` non viene invocato e `quit()` non viene raggiunto.
    - Tutti gli script di test runner automatizzati (`tools/test.ps1`) integrano un watchdog timeout (15 secondi) tramite `.NET Process` per prevenire qualsiasi freeze della console di sviluppo.
 

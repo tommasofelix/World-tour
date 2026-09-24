@@ -8,9 +8,10 @@ extends Control
 @onready var label_subtitle: Label = $CenterContainer/VBoxMain/Header/LabelSubtitle
 @onready var vbox_menu: VBoxContainer = $CenterContainer/VBoxMain/VBoxMenu
 @onready var btn_new_game: Button = $CenterContainer/VBoxMain/VBoxMenu/BtnNewGame
-@onready var btn_quick_start: Button = $CenterContainer/VBoxMain/VBoxMenu/BtnQuickStart
+@onready var btn_load_game: Button = $CenterContainer/VBoxMain/VBoxMenu/BtnLoadGame
 @onready var btn_settings: Button = $CenterContainer/VBoxMain/VBoxMenu/BtnSettings
 @onready var btn_quit: Button = $CenterContainer/VBoxMain/VBoxMenu/BtnQuit
+@onready var btn_quick_start: Button = $CenterContainer/VBoxMain/VBoxMenu/BtnQuickStart
 
 # Pannello Impostazioni
 @onready var panel_settings: PanelContainer = $CenterContainer/VBoxMain/PanelSettings
@@ -31,16 +32,26 @@ func _ready() -> void:
 	_populate_day_duration_options()
 	
 	# Connessione segnali bottoni
-	btn_new_game.pressed.connect(_on_new_game_pressed)
-	btn_quick_start.pressed.connect(_on_quick_start_pressed)
-	btn_settings.pressed.connect(_on_settings_pressed)
-	btn_quit.pressed.connect(_on_quit_pressed)
-	btn_back_settings.pressed.connect(_on_back_settings_pressed)
-	opt_lang.item_selected.connect(_on_language_selected)
-	opt_day_duration.item_selected.connect(_on_day_duration_selected)
+	if not btn_new_game.pressed.is_connected(_on_new_game_pressed):
+		btn_new_game.pressed.connect(_on_new_game_pressed)
+	if not btn_load_game.pressed.is_connected(_on_load_game_pressed):
+		btn_load_game.pressed.connect(_on_load_game_pressed)
+	if not btn_settings.pressed.is_connected(_on_settings_pressed):
+		btn_settings.pressed.connect(_on_settings_pressed)
+	if not btn_quit.pressed.is_connected(_on_quit_pressed):
+		btn_quit.pressed.connect(_on_quit_pressed)
+	if not btn_quick_start.pressed.is_connected(_on_quick_start_pressed):
+		btn_quick_start.pressed.connect(_on_quick_start_pressed)
+	if not btn_back_settings.pressed.is_connected(_on_back_settings_pressed):
+		btn_back_settings.pressed.connect(_on_back_settings_pressed)
+	if not opt_lang.item_selected.is_connected(_on_language_selected):
+		opt_lang.item_selected.connect(_on_language_selected)
+	if not opt_day_duration.item_selected.is_connected(_on_day_duration_selected):
+		opt_day_duration.item_selected.connect(_on_day_duration_selected)
 	
 	# Connessione al bus per cambio lingua
-	EventBus.language_changed.connect(_on_language_changed)
+	if not EventBus.language_changed.is_connected(_on_language_changed):
+		EventBus.language_changed.connect(_on_language_changed)
 	
 	# Assicura che il pannello impostazioni sia nascosto all'inizio
 	panel_settings.visible = false
@@ -90,35 +101,55 @@ func _refresh_ui_text() -> void:
 	# Aggiorna testi a video (Holy Diver)
 	label_title.text = tr("GAME_TITLE")
 	label_subtitle.text = tr("GAME_SUBTITLE")
-	btn_new_game.text = tr("MENU_NEW_GAME")
+	btn_new_game.text = tr("MENU_NEW_GAME").to_upper()
+	btn_load_game.text = tr("MENU_LOAD_GAME").to_upper()
+	btn_settings.text = tr("MENU_SETTINGS").to_upper()
+	btn_quit.text = tr("MENU_QUIT_DESKTOP").to_upper()
 	btn_quick_start.text = tr("MENU_TEST_MODE")
-	btn_settings.text = tr("MENU_SETTINGS")
-	btn_quit.text = tr("MENU_QUIT")
 	
-	label_settings_title.text = tr("SETTINGS_TITLE")
+	label_settings_title.text = tr("SETTINGS_TITLE").to_upper()
 	label_lang.text = tr("SETTINGS_LANGUAGE_LABEL")
 	label_day_duration.text = "Durata Giornata:"
-	btn_back_settings.text = tr("SETTINGS_BACK")
+	btn_back_settings.text = tr("SETTINGS_BACK").to_upper()
 	
 	# Configurazione semantica per Screen Reader NVDA (Luca)
 	AccessibilityManager.hook_control_accessibility(btn_new_game, tr("MENU_NEW_GAME"), tr("MENU_NEW_GAME_DESC"))
-	AccessibilityManager.hook_control_accessibility(btn_quick_start, tr("MENU_TEST_MODE"), tr("MENU_TEST_MODE_DESC"))
+	
+	var load_desc: String = tr("MENU_LOAD_GAME_DESC")
+	var has_save: bool = SaveManager.has_savegame() if SaveManager else false
+	if not has_save:
+		load_desc += " (" + tr("MENU_LOAD_GAME_NO_SAVE") + ")"
+	AccessibilityManager.hook_control_accessibility(btn_load_game, tr("MENU_LOAD_GAME"), load_desc)
+	
 	AccessibilityManager.hook_control_accessibility(btn_settings, tr("MENU_SETTINGS"), tr("MENU_SETTINGS_DESC"))
-	AccessibilityManager.hook_control_accessibility(btn_quit, tr("MENU_QUIT"), tr("MENU_QUIT_DESC"))
+	AccessibilityManager.hook_control_accessibility(btn_quit, tr("MENU_QUIT_DESKTOP"), tr("MENU_QUIT_DESKTOP_DESC"))
+	AccessibilityManager.hook_control_accessibility(btn_quick_start, tr("MENU_TEST_MODE"), tr("MENU_TEST_MODE_DESC"))
 	AccessibilityManager.hook_control_accessibility(opt_lang, tr("SETTINGS_LANGUAGE_LABEL"), tr("SETTINGS_LANGUAGE_DESC"))
 	AccessibilityManager.hook_control_accessibility(opt_day_duration, "Durata Giornata", "Seleziona la durata reale di ogni giornata di gioco: 5, 10, 15 o 20 minuti.")
 	AccessibilityManager.hook_control_accessibility(btn_back_settings, tr("SETTINGS_BACK"), tr("SETTINGS_BACK_DESC"))
 
 func _on_new_game_pressed() -> void:
 	# Apre la schermata di creazione e personalizzazione del personaggio
-	get_tree().change_scene_to_file("res://ui/character/character_creation.tscn")
+	get_tree().change_scene_to_file.call_deferred("res://ui/character/character_creation.tscn")
+
+func _on_load_game_pressed() -> void:
+	if not SaveManager or not SaveManager.has_savegame():
+		AccessibilityManager.announce(tr("MENU_LOAD_GAME_NO_SAVE"), true)
+		return
+	
+	var success: bool = SaveManager.load_game()
+	if success:
+		AccessibilityManager.announce("Partita caricata con successo. Accesso alla simulazione.", true)
+		get_tree().change_scene_to_file.call_deferred("res://ui/hud/hud.tscn")
+	else:
+		AccessibilityManager.announce("Impossibile caricare la partita salvata.", true)
 
 func _on_quick_start_pressed() -> void:
 	# Inizializza partita in modalità test (con 10 brani dello starter pack e 500 € di liquidità)
 	if GameManager:
 		GameManager.start_new_game("Alex", "Chitarra Elettrica", "self_taught", true)
 	# Avvia HUD di simulazione
-	get_tree().change_scene_to_file("res://ui/hud/hud.tscn")
+	get_tree().change_scene_to_file.call_deferred("res://ui/hud/hud.tscn")
 
 func _on_settings_pressed() -> void:
 	vbox_menu.visible = false
@@ -163,4 +194,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	if key_event.keycode == KEY_ESCAPE:
 		if panel_settings.visible:
 			_on_back_settings_pressed()
+			get_viewport().set_input_as_handled()
+	elif key_event.keycode == KEY_T:
+		# Scorciatoia rapida sviluppatore per modalità collaudo
+		if vbox_menu.visible and not panel_settings.visible:
+			AccessibilityManager.announce("Avvio rapido modalità test.", true)
+			_on_quick_start_pressed()
 			get_viewport().set_input_as_handled()

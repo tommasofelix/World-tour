@@ -4,6 +4,23 @@ Le modifiche rilevanti sono registrate in ordine cronologico inverso. Una voce d
 
 ## Non rilasciato
 
+### 2026-09-24 — Restyle Grafico & Accessibilità del Menu Principale: Versione 5.3.0 — Pixel Art Retrò Arcade, 4 Pulsanti Neon, Carica Partita Atomico & Zero Mouse
+- **Interfaccia Pixel Art Retrò Arcade ad Alta Fedeltà**: Implementata la nuova schermata del Menu Principale (`res://ui/main_menu/main_menu.tscn`) fedele al concept visuale a 16/32-bit:
+  - Sfondo panoramico a tutto schermo (`background_menu_clean.png`) con crepuscolo cittadino, comitiva punk con creste colorate e borchie a sinistra, musicisti jazz con sassofoni e contrabbasso a destra, folla vivace, insegne neon ("MUSIC SHOP", "STAGE", "GIGS") e strada prospettica trasformata in un pentagramma musicale;
+  - Pentagramma circolare scintillante in primo piano sul selciato con chiave di violino e note musicali, completamente sgombro e valorizzato;
+  - Logo superiore del titolo (`game_title.png`) con lettering oro arcade lucido "WORLD TOUR", globo terrestre e note neon.
+- **I 4 Pulsanti Neon Centrali & Tema Dedicato**: Creato il tema [`ui/main_menu/menu_theme.tres`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/main_menu/menu_theme.tres) con font retrò arcade [`PressStart2P.ttf`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/assets/img/font_text/press_start_2p/PressStart2P.ttf):
+  - 1. "NUOVA PARTITA": apertura schermata creazione personaggio;
+  - 2. "CARICA PARTITA": integrazione atomica con `SaveManager.has_savegame()` e `SaveManager.load_game()` con transizione asincrona;
+  - 3. "IMPOSTAZIONI": pannello modale cyberpunk in sovrimpressione per lingua (it/en) e durata giornata, con chiusura rapida tramite tasto `Escape`;
+  - 4. "ESCI AL DESKTOP": chiusura pulita dell'applicazione con `get_tree().quit()`.
+- **Accessibilità Assoluta NVDA & Zero Mouse**:
+  - Aggancio semantico completo di ogni controllo tramite `AccessibilityManager.hook_control_accessibility()`, con lettura vocale immediata di nomi e descrizioni estese;
+  - Pattern Zero Focus Drop per "Carica Partita": quando nessun salvataggio è presente su disco, il pulsante non viene disabilitato brutalmente (evitando di farlo saltare dallo screen reader), ma fornisce annuncio vocale esplicito: *"Nessun salvataggio trovato su disco."*;
+  - Navigazione da tastiera ciclica continua bidirezionale (`focus_neighbor_top` e `focus_neighbor_bottom`) compatibile con Frecce, Tab/Shift-Tab e tastierino numerico (Numpad 8/2);
+  - Scorciatoia sviluppatore: tasto `T` nel menu per avvio rapido in modalità test/collaudo.
+- **Suite Headless & Non-Regressione**: Creata la suite [`tests/test_main_menu.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/tests/test_main_menu.gd) e `.tscn` (33 asserzioni a 0 ms) e portate a **29 suite di test su 29 dell'intero progetto superate con 0 errori a 0 ms**. Allineate 296 chiavi perfettamente simmetriche in `localization/it.json` e `en.json`.
+
 ### 2026-09-24 — Espansione Post-V5.1: Versione 5.2.0 — Endless Horizon, New Game+ Heirs, Circuito a 16 Metropoli & Magnate Discografico Attivo
 - **Modalità Carriera Infinita (Endless Sandbox)**: Implementata la prosecuzione a tempo indeterminato della carriera post-concerto d'addio "The Last Waltz" in `PlayerData` e `EndDaySystem`, con avanzamento deterministico anno per anno (`current_year`), preservando contratti, etichetta discografica, festival e classifiche dinamiche.
 - **Meccanica New Game+ (Legacy Heirs / Il Discepolo)**: Creata la modalità Nuova Partita+ guidata da una giovane promessa sponsorizzata dalla leggenda precedente, con eredità dello strumento iconico (`LEGACY_DISCIPLE`), rendita passiva del mentore (15 €/giorno) e tratti speciali.

@@ -10,8 +10,13 @@
 	"MENU_QUICK_START_DESC": "Launch directly into the life cycle simulation and testing screen.",
 	"MENU_SETTINGS": "Settings",
 	"MENU_SETTINGS_DESC": "Open the general settings and language panel.",
+	"MENU_LOAD_GAME": "Load Game",
+	"MENU_LOAD_GAME_DESC": "Load the latest saved game from disk.",
+	"MENU_LOAD_GAME_NO_SAVE": "No save file found on disk.",
 	"MENU_QUIT": "Quit",
 	"MENU_QUIT_DESC": "Exit the application.",
+	"MENU_QUIT_DESKTOP": "Quit to Desktop",
+	"MENU_QUIT_DESKTOP_DESC": "Close the application and return to Windows desktop.",
 
 	"SETTINGS_TITLE": "General Settings",
 	"SETTINGS_LANGUAGE_LABEL": "Application Language:",

@@ -10,8 +10,13 @@
 	"MENU_QUICK_START_DESC": "Avvia direttamente la schermata di simulazione e test del ciclo vitale.",
 	"MENU_SETTINGS": "Impostazioni",
 	"MENU_SETTINGS_DESC": "Apre il pannello delle impostazioni generali e della lingua.",
+	"MENU_LOAD_GAME": "Carica Partita",
+	"MENU_LOAD_GAME_DESC": "Carica l'ultima partita salvata su disco.",
+	"MENU_LOAD_GAME_NO_SAVE": "Nessun salvataggio trovato su disco.",
 	"MENU_QUIT": "Esci",
 	"MENU_QUIT_DESC": "Chiude l'applicazione.",
+	"MENU_QUIT_DESKTOP": "Esci al Desktop",
+	"MENU_QUIT_DESKTOP_DESC": "Chiude l'applicazione e torna al desktop di Windows.",
 
 	"SETTINGS_TITLE": "Impostazioni Generali",
 	"SETTINGS_LANGUAGE_LABEL": "Lingua dell'applicazione:",

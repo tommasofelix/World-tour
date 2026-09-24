@@ -234,3 +234,19 @@ Questo registro contiene soltanto problemi tecnici confermati e soluzioni con ev
   3. Aggiunta in `hud.gd` della direttiva `const ModalRouter = preload("res://ui/hud/modal_router.gd")` per garantire indipendenza totale dall'ordine di scansione o dal bootstrap dell'editor.
 - Test automatici eseguiti: 105/105 file GDScript compilati con successo in `tools/check.ps1` (0 errori, 0 warning) e 28/28 suite headless superate al 100% a 0 ms.
 - Misure di prevenzione delle regressioni: Scomporre sempre i monoliti UI complessi delegando a router dedicati con forwarder retrocompatibili; per script e classi strettamente accoppiati nei controller, utilizzare `preload` deterministico per azzerare dipendenze dall'ordine di indicizzazione dell'engine.
+
+### BUG-015 — Cambio Scena Sincrono Durante Notifiche dell'Albero (Parent Node Busy) & Risoluzione Asincrona Call-Deferred (V5.3.0)
+
+- Data e componente: `2026-09-24`, `ui/main_menu/main_menu.gd`, `tests/test_main_menu.gd` (Versione AVF `V5.3.0`).
+- Sintomo osservato: Durante l'esecuzione di suite headless o all'attivazione rapida di pulsanti di transizione di scena, l'engine registrava:
+  `ERROR: Parent node is busy adding/removing children, remove_child() can't be called at this time. Consider using remove_child.call_deferred(child) instead.`
+- Evidenza riproducibile: Invocazione diretta sincrona di `get_tree().change_scene_to_file("res://...")` all'interno di `_on_load_game_pressed()` o callback di segnali emessi durante l'elaborazione interna dei figli dello `SceneTree`.
+- Causa radice verificata:
+  1. In Godot 4, `change_scene_to_file` esegue internamente `remove_child()` sulla radice della scena corrente prima di istanziare e agganciare la nuova scena.
+  2. Se questa chiamata viene innescata mentre l'engine sta iterando sui nodi figli (ad esempio durante la propagazione di segnali di focus, eventi GUI o setup in `_ready`), l'albero dei nodi è bloccato in stato "busy", provocando l'errore o il potenziale stallo del frame.
+- Soluzione applicata:
+  1. Adozione sistematica del pattern **Deferred Scene Transition**: sostituzione di tutte le chiamate sincrone nei pulsanti del menu principale con `get_tree().change_scene_to_file.call_deferred("res://...")`.
+  2. La transizione viene così posticipata alla fine del frame corrente, quando l'albero ha completato tutte le notifiche in sospeso.
+- Test automatici eseguiti: 33/33 test superati in `test_main_menu.gd` e 29/29 suite headless complessive dell'intero progetto superate con 0 errori, 0 warning e 0 ms.
+- Misure di prevenzione delle regressioni: Nei controller UI, qualsiasi cambio globale di scena (`change_scene_to_file` o `change_scene_to_packed`) scatenato da pulsanti, dialoghi modali o segnali di gioco deve essere obbligatoriamente invocato tramite `.call_deferred(...)`.
+
