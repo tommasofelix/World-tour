@@ -1,11 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://dmmainmenu01"]
+[gd_scene format=3 uid="uid://dmmainmenu01"]
 
-[ext_resource type="Script" path="res://ui/main_menu/main_menu.gd" id="1_menu"]
+[ext_resource type="Script" uid="uid://c1lmx8lk5qfjg" path="res://ui/main_menu/main_menu.gd" id="1_menu"]
 [ext_resource type="Texture2D" uid="uid://cenfqb66qrxg1" path="res://assets/img/menu/menu_img/background_menu_clean.png" id="2_bg"]
 [ext_resource type="Texture2D" uid="uid://blo5maublok3l" path="res://assets/img/menu/menu_img/game_title.png" id="3_title"]
-[ext_resource type="Theme" path="res://ui/main_menu/menu_theme.tres" id="4_theme"]
+[ext_resource type="Theme" uid="uid://c7bed85unpl3q" path="res://ui/main_menu/menu_theme.tres" id="4_theme"]
 
-[node name="MainMenu" type="Control"]
+[node name="MainMenu" type="Control" unique_id=604079101]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -15,7 +15,7 @@ grow_vertical = 2
 theme = ExtResource("4_theme")
 script = ExtResource("1_menu")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=218622096]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -26,7 +26,7 @@ texture = ExtResource("2_bg")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=961642069]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -34,18 +34,18 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxMain" type="VBoxContainer" parent="CenterContainer"]
+[node name="VBoxMain" type="VBoxContainer" parent="CenterContainer" unique_id=68865035]
 custom_minimum_size = Vector2(480, 0)
 layout_mode = 2
 theme_override_constants/separation = 16
 alignment = 1
 
-[node name="Header" type="VBoxContainer" parent="CenterContainer/VBoxMain"]
+[node name="Header" type="VBoxContainer" parent="CenterContainer/VBoxMain" unique_id=549983804]
 layout_mode = 2
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="TitleTexture" type="TextureRect" parent="CenterContainer/VBoxMain/Header"]
+[node name="TitleTexture" type="TextureRect" parent="CenterContainer/VBoxMain/Header" unique_id=2113373573]
 custom_minimum_size = Vector2(460, 180)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -53,101 +53,103 @@ texture = ExtResource("3_title")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="LabelTitle" type="Label" parent="CenterContainer/VBoxMain/Header"]
+[node name="LabelTitle" type="Label" parent="CenterContainer/VBoxMain/Header" unique_id=1275473867]
 visible = false
 layout_mode = 2
 text = "World Tour"
 horizontal_alignment = 1
 
-[node name="LabelSubtitle" type="Label" parent="CenterContainer/VBoxMain/Header"]
+[node name="LabelSubtitle" type="Label" parent="CenterContainer/VBoxMain/Header" unique_id=127623707]
 visible = false
 layout_mode = 2
 text = "Music Career & Life Simulator"
 horizontal_alignment = 1
 
-[node name="VBoxMenu" type="VBoxContainer" parent="CenterContainer/VBoxMain"]
+[node name="VBoxMenu" type="VBoxContainer" parent="CenterContainer/VBoxMain" unique_id=909809516]
 custom_minimum_size = Vector2(360, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 12
 
-[node name="BtnNewGame" type="Button" parent="CenterContainer/VBoxMain/VBoxMenu"]
+[node name="BtnNewGame" type="Button" parent="CenterContainer/VBoxMain/VBoxMenu" unique_id=1699546701]
 custom_minimum_size = Vector2(360, 46)
 layout_mode = 2
 focus_neighbor_top = NodePath("../BtnQuit")
 focus_neighbor_bottom = NodePath("../BtnLoadGame")
 text = "NUOVA PARTITA"
 
-[node name="BtnLoadGame" type="Button" parent="CenterContainer/VBoxMain/VBoxMenu"]
+[node name="BtnLoadGame" type="Button" parent="CenterContainer/VBoxMain/VBoxMenu" unique_id=809053292]
 custom_minimum_size = Vector2(360, 46)
 layout_mode = 2
 focus_neighbor_top = NodePath("../BtnNewGame")
 focus_neighbor_bottom = NodePath("../BtnSettings")
 text = "CARICA PARTITA"
 
-[node name="BtnSettings" type="Button" parent="CenterContainer/VBoxMain/VBoxMenu"]
+[node name="BtnSettings" type="Button" parent="CenterContainer/VBoxMain/VBoxMenu" unique_id=1497425682]
 custom_minimum_size = Vector2(360, 46)
 layout_mode = 2
 focus_neighbor_top = NodePath("../BtnLoadGame")
 focus_neighbor_bottom = NodePath("../BtnQuit")
 text = "IMPOSTAZIONI"
 
-[node name="BtnQuit" type="Button" parent="CenterContainer/VBoxMain/VBoxMenu"]
+[node name="BtnQuit" type="Button" parent="CenterContainer/VBoxMain/VBoxMenu" unique_id=755110321]
 custom_minimum_size = Vector2(360, 46)
 layout_mode = 2
 focus_neighbor_top = NodePath("../BtnSettings")
 focus_neighbor_bottom = NodePath("../BtnNewGame")
 text = "ESCI AL DESKTOP"
 
-[node name="BtnQuickStart" type="Button" parent="CenterContainer/VBoxMain/VBoxMenu"]
+[node name="BtnQuickStart" type="Button" parent="CenterContainer/VBoxMain/VBoxMenu" unique_id=472612732]
 visible = false
 layout_mode = 2
 text = "MODALITÀ TEST"
 
-[node name="PanelSettings" type="PanelContainer" parent="CenterContainer/VBoxMain"]
+[node name="PanelSettings" type="PanelContainer" parent="CenterContainer/VBoxMain" unique_id=682750018]
 visible = false
 custom_minimum_size = Vector2(480, 0)
 layout_mode = 2
 
-[node name="VBoxSettings" type="VBoxContainer" parent="CenterContainer/VBoxMain/PanelSettings"]
+[node name="VBoxSettings" type="VBoxContainer" parent="CenterContainer/VBoxMain/PanelSettings" unique_id=272601794]
 layout_mode = 2
 theme_override_constants/separation = 18
 
-[node name="LabelSettingsTitle" type="Label" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings"]
+[node name="LabelSettingsTitle" type="Label" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings" unique_id=2005916061]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.22, 0.74, 0.97, 1)
 text = "IMPOSTAZIONI"
 horizontal_alignment = 1
 
-[node name="HBoxLang" type="HBoxContainer" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings"]
+[node name="HBoxLang" type="HBoxContainer" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings" unique_id=585518802]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="LabelLang" type="Label" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxLang"]
+[node name="LabelLang" type="Label" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxLang" unique_id=151928156]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Lingua:"
 
-[node name="OptLang" type="OptionButton" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxLang"]
+[node name="OptLang" type="OptionButton" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxLang" unique_id=996614328]
 custom_minimum_size = Vector2(180, 40)
 layout_mode = 2
 
-[node name="HBoxDayDuration" type="HBoxContainer" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings"]
+[node name="HBoxDayDuration" type="HBoxContainer" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings" unique_id=1100872202]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="LabelDayDuration" type="Label" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxDayDuration"]
+[node name="LabelDayDuration" type="Label" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxDayDuration" unique_id=121547756]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Durata Giorno:"
 
-[node name="OptDayDuration" type="OptionButton" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxDayDuration"]
+[node name="OptDayDuration" type="OptionButton" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxDayDuration" unique_id=1685527646]
 custom_minimum_size = Vector2(180, 40)
 layout_mode = 2
 
-[node name="BtnBackSettings" type="Button" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings"]
+[node name="BtnBackSettings" type="Button" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings" unique_id=2142196503]
 custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
 focus_neighbor_top = NodePath("../HBoxDayDuration/OptDayDuration")
 focus_neighbor_bottom = NodePath("../HBoxLang/OptLang")
 text = "INDIETRO"
+
+[node name="Node2D" type="Node2D" parent="." unique_id=412711934]
