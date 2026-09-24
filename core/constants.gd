@@ -33,9 +33,38 @@ const SLEEP_STANDARD_STRESS_RELIEF: int = 15
 const OVERTIME_ENERGY_RESTORATION: int = 35
 const OVERTIME_STRESS_PENALTY: int = 20
 
+# --- Overtime Progressivo e Riposo Anticipato (Sezione 1.2) ---
+const VIRTUAL_HOURS_PER_DAY: float = 22.0
+const OVERTIME_STRESS_HOUR_1: int = 2
+const OVERTIME_STRESS_HOUR_2: int = 3
+const OVERTIME_STRESS_HOUR_3: int = 5
+const OVERTIME_STRESS_HOUR_4: int = 10
+const EARLY_SLEEP_ENERGY_BONUS_EVENING: int = 15
+const EARLY_SLEEP_STRESS_BONUS_EVENING: int = 10
+const EARLY_SLEEP_ENERGY_BONUS_NIGHT_EARLY: int = 10
+const EARLY_SLEEP_STRESS_BONUS_NIGHT_EARLY: int = 5
+
 # Soglie fisiologiche di emergenza
 const ENERGY_BURNOUT_THRESHOLD: int = 15
 const STRESS_PANIC_THRESHOLD: int = 80
+const MORALE_CREATIVE_BLOCK_THRESHOLD: int = 20
+
+# --- Recupero Attivo Diurno (Sezione 1.3) ---
+const RECOVERY_COFFEE_ENERGY: int = 15
+const RECOVERY_COFFEE_STRESS: int = 5
+const RECOVERY_COFFEE_COST: float = 2.0
+const RECOVERY_COFFEE_DURATION: float = 5.0
+
+const RECOVERY_WALK_STRESS_RELIEF: int = 15
+const RECOVERY_WALK_MORALE: int = 5
+const RECOVERY_WALK_ENERGY_COST: int = 5
+const RECOVERY_WALK_DURATION: float = 10.0
+
+const RECOVERY_MUSIC_MORALE: int = 20
+const RECOVERY_MUSIC_STRESS_RELIEF: int = 10
+const RECOVERY_MUSIC_DURATION: float = 12.0
+const RECOVERY_MUSIC_SPARK_CHANCE: float = 0.35
+const RECOVERY_MUSIC_SPARK_XP: float = 15.0
 
 # --- Finanze e Spese Quotidiane ---
 const DAILY_FOOD_EXPENSE: float = 10.0
@@ -63,6 +92,14 @@ const SONG_SKILL_WEIGHT_LYRICS: float = 0.20
 const SONG_SKILL_WEIGHT_EXECUTION: float = 0.25
 const SONG_SKILL_WEIGHT_PRODUCTION: float = 0.20
 const SONG_RANDOM_VARIATION_RANGE: float = 4.0
+
+# Sinergia Tematica e Nuovi Tratti Canzone (Sezione 2)
+const SONG_THEME_SYNERGY_HIGH: float = 3.5
+const SONG_THEME_SYNERGY_NEUTRAL: float = 0.0
+const SONG_THEME_SYNERGY_LOW: float = -1.5
+const TRAIT_ANTHEM_REP_BOOST: float = 2.0
+const TRAIT_BALLAD_MORALE_BOOST: float = 15.0
+const TRAIT_RIFF_LIVE_BONUS: float = 12.0
 
 # --- Concerti, Pubblico e Fanbase ---
 const MIN_AUDIENCE_DEFAULT: int = 3
@@ -149,4 +186,86 @@ const WEEKEND_SATURDAY_FAN_MULT: float = 1.50
 const TUESDAY_STUDIO_DISCOUNT: float = 0.20
 const WEDNESDAY_BAND_XP_MULT: float = 1.20
 
+# --- Strumenti, Usura e Manutenzione Liuteria (Sezione 4) ---
+const CONDITION_MAX: float = 100.0
+const CONDITION_WARNING: float = 40.0
+const CONDITION_CRITICAL: float = 20.0
+const WEAR_PER_CONCERT: float = 8.0
+const WEAR_PER_REHEARSAL: float = 3.0
+const COST_LUTHIER_BASIC: float = 30.0
+const COST_LUTHIER_FULL: float = 80.0
+const COST_BACKUP_INSTRUMENT: float = 150.0
+const STAGE_ACCIDENT_CHANCE: float = 0.35
+const STAGE_ACCIDENT_SCORE_PENALTY: float = 15.0
 
+# --- Registrazione Analogica e Sub-Affitto Sala Prove (Sezione 4) ---
+const ANALOG_TAPE_COST: float = 25.0
+const REHEARSAL_SUBLET_DAILY_TIER_2: float = 20.0
+const REHEARSAL_SUBLET_DAILY_TIER_3: float = 50.0
+const REHEARSAL_NEIGHBOR_FINE_TIER_0: float = 150.0
+
+# --- Concerti, Locali, Scaletta, Merchandising & Encore (Sezione 5) ---
+const WEEKEND_RENT_SURCHARGE: float = 1.20 # +20% affitto per Venerdì e Sabato
+
+# Merchandising al Foyer
+const MERCH_PIN_COST: float = 0.50
+const MERCH_PIN_PRICE: float = 2.00
+const MERCH_TSHIRT_COST: float = 6.00
+const MERCH_TSHIRT_PRICE: float = 20.00
+const MERCH_POSTER_COST: float = 2.00
+const MERCH_POSTER_PRICE: float = 8.00
+const MERCH_PICKS_COST: float = 1.00
+const MERCH_PICKS_PRICE: float = 5.00
+
+# Momento Bis / Encore
+const ENCORE_SCORE_THRESHOLD: float = 85.0
+const ENCORE_ENERGY_COST: int = 10
+const ENCORE_FAN_BONUS_MULT: float = 1.10
+const ENCORE_BAND_MORALE_BONUS: int = 5
+const ENCORE_EXTRA_CASH: float = 50.0
+
+# Drammaturgia della Scaletta
+const OPENING_HYPE_BONUS: float = 15.0
+const OPENING_SCORE_MULT: float = 1.05
+const BALLAD_STRESS_RELIEF: int = 5
+const BALLAD_FAN_MULT: float = 1.15
+
+# --- Media Broadcaster, Stampa & Rivali (Sezione 10) ---
+const MEDIA_INTERVIEW_RADIO_ENERGY: int = 15
+const MEDIA_INTERVIEW_RADIO_HYPE: float = 12.0
+const MEDIA_INTERVIEW_TV_ENERGY: int = 25
+const MEDIA_INTERVIEW_TV_HYPE: float = 25.0
+const MEDIA_INTERVIEW_TV_MIN_TIER: int = 4
+const MEDIA_INTERVIEW_PODCAST_ENERGY: int = 20
+const MEDIA_INTERVIEW_PODCAST_REP: float = 2.0
+const MEDIA_CO_HEADLINING_FAN_BONUS: float = 1.35
+const MEDIA_CO_HEADLINING_EXPENSE_DISCOUNT: float = 0.30
+const MEDIA_DISSING_BUZZ_MULT: float = 1.60
+const MEDIA_SEASONAL_HIT_MULT: float = 1.35
+
+# --- Endgame, Grandi Stadi & Mega-Produzioni (Sezione 11) ---
+const VENUE_TYPE_ARENA: int = 3
+const VENUE_TYPE_STADIUM: int = 4
+
+const CERT_GOLD_SALES: float = 25000.0
+const CERT_GOLD_STREAMS: int = 10000000
+const CERT_PLATINUM_SALES: float = 50000.0
+const CERT_PLATINUM_STREAMS: int = 25000000
+const CERT_MULTI_PLATINUM_SALES: float = 100000.0
+const CERT_MULTI_PLATINUM_STREAMS: int = 50000000
+const CERT_DIAMOND_SALES: float = 500000.0
+const CERT_DIAMOND_STREAMS: int = 100000000
+
+const STAGE_RUNWAY_BONUS_FAN: float = 1.15
+const STAGE_RUNWAY_COST: float = 5000.0
+const STAGE_360_CAPACITY_BONUS: float = 1.10
+const STAGE_360_COST: float = 12000.0
+const STAGE_PYRO_SCORE_BONUS: float = 15.0
+const STAGE_PYRO_COST: float = 20000.0
+const STAGE_ROADIE_CREW_COUNT: int = 50
+const STAGE_ROADIE_CREW_DAILY_COST: float = 2500.0
+
+# --- Sound Design, Audio Cues & Numpad (Sezione 12) ---
+const AUDIO_CUE_DEFAULT_DURATION: float = 0.35
+const AUDIO_CUE_CELEBRATION_DURATION: float = 0.85
+const AUDIO_SAFE_SAMPLE_RATE: int = 22050

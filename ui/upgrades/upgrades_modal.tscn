@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dm4upgradesmod01"]
 
-[ext_resource type="Script" uid="uid://df67upgradewt01" path="res://ui/upgrades/upgrades_modal.gd" id="1_upgrades"]
+[ext_resource type="Script" uid="uid://b72cn1ikjbwsm" path="res://ui/upgrades/upgrades_modal.gd" id="1_upgrades"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main"]
 bg_color = Color(0.06, 0.07, 0.1, 0.98)

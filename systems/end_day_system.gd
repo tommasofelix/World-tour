@@ -17,6 +17,9 @@ func _init(p_player: PlayerData = null, p_calendar: CalendarData = null) -> void
 	EventBus.day_ended.connect(_on_day_ended)
 
 func _on_day_ended(day_num: int) -> void:
+	process_day_end(day_num)
+
+func process_day_end(day_num: int = 1, p_early_sleep_override: bool = false) -> Dictionary:
 	GameManager.change_state(Enums.GameState.DAILY_SUMMARY)
 	
 	var food_exp: float = Constants.DAILY_FOOD_EXPENSE
@@ -30,6 +33,8 @@ func _on_day_ended(day_num: int) -> void:
 		actual_rent = snappedf(base_rent / float(roommates), 0.01)
 		
 	var total_expenses: float = food_exp + actual_rent
+	var sleep_quality_desc: String = "Sonno standard"
+	var has_early_sleep_bonus: bool = false
 	
 	if player_data:
 		player_data.modify_money(-total_expenses)
@@ -43,12 +48,40 @@ func _on_day_ended(day_num: int) -> void:
 			for m in player_data.band_members:
 				m.adjust_tension(housing.tension_daily_modifier)
 				
-		# Sonno ristoratore con eventuali bonus comfort alloggio
+		# Sonno ristoratore con eventuali bonus comfort alloggio e riposo anticipato
 		var energy_gain: int = Constants.SLEEP_STANDARD_ENERGY + int(housing.morale_daily_bonus * 0.5)
 		var stress_relief: int = Constants.SLEEP_STANDARD_STRESS_RELIEF + int(housing.morale_daily_bonus)
+		
+		var is_early: bool = p_early_sleep_override
+		if GameManager and GameManager.time_system and GameManager.time_system.early_sleep_taken:
+			is_early = true
+			
+		if is_early:
+			has_early_sleep_bonus = true
+			var sleep_period: int = Enums.TimePeriod.NIGHT
+			var sleep_offset: int = 18
+			if GameManager and GameManager.time_system:
+				sleep_period = GameManager.time_system.sleep_period
+				sleep_offset = GameManager.time_system.sleep_hour_offset
+				GameManager.time_system.reset_daily_overtime()
+				
+			if sleep_period == Enums.TimePeriod.EVENING or sleep_offset < 18:
+				energy_gain += Constants.EARLY_SLEEP_ENERGY_BONUS_EVENING
+				stress_relief += Constants.EARLY_SLEEP_STRESS_BONUS_EVENING
+				sleep_quality_desc = "Riposo Anticipato Ristoratore"
+			elif sleep_offset < 20:
+				energy_gain += Constants.EARLY_SLEEP_ENERGY_BONUS_NIGHT_EARLY
+				stress_relief += Constants.EARLY_SLEEP_STRESS_BONUS_NIGHT_EARLY
+				sleep_quality_desc = "Riposo Anticipato Ristoratore"
+			else:
+				sleep_quality_desc = "Riposo a notte inoltrata"
+		elif GameManager and GameManager.time_system:
+			GameManager.time_system.reset_daily_overtime()
+			
 		player_data.add_energy(energy_gain)
 		player_data.reduce_stress(stress_relief)
 		
+	# Incasso automatico royalties passive dagli album a catalogo
 	# Incasso automatico royalties passive dagli album a catalogo
 	var royalties_earned: float = 0.0
 	var album_count: int = 0
@@ -56,17 +89,41 @@ func _on_day_ended(day_num: int) -> void:
 		var roy_res: Dictionary = GameManager.album_system.process_daily_royalties()
 		royalties_earned = roy_res.get("total_royalties", 0.0)
 		album_count = roy_res.get("album_count", 0)
+		if player_data and royalties_earned > 0.0:
+			player_data.increment_career_stat("total_royalties_earned", royalties_earned)
+
+	# Incasso royalties passive mentore in New Game+ (Contratto D1)
+	if player_data and player_data.is_new_game_plus and player_data.mentor_passive_daily_royalty > 0.0:
+		player_data.modify_money(player_data.mentor_passive_daily_royalty)
+		EventBus.money_changed.emit(player_data.money, player_data.mentor_passive_daily_royalty, "Royalties Mentore (%s)" % player_data.mentor_name)
+		if GameManager and GameManager.economy_system:
+			GameManager.economy_system.log_transaction(player_data.mentor_passive_daily_royalty, "income", "Royalties Mentore: %s" % player_data.mentor_name, day_num)
+		
+	# Incasso automatico sub-affitto passivo della sala prove (Tier 2 e 3)
+	var sublet_earned: float = 0.0
+	if player_data and player_data.rehearsal_sublet_active and player_data.rehearsal_tier >= UpgradeData.RehearsalTier.PRO_ISOLATION:
+		if player_data.rehearsal_tier == UpgradeData.RehearsalTier.MASTER_STUDIO:
+			sublet_earned = Constants.REHEARSAL_SUBLET_DAILY_TIER_3
+		else:
+			sublet_earned = Constants.REHEARSAL_SUBLET_DAILY_TIER_2
+		player_data.modify_money(sublet_earned)
+		EventBus.money_changed.emit(player_data.money, sublet_earned, "rehearsal_sublet_income")
+		if GameManager and GameManager.economy_system:
+			GameManager.economy_system.log_transaction(sublet_earned, "income", "Sub-affitto Sala Prove", day_num)
 		
 	# Rilevamento tensioni critiche nei compagni di band
 	var band_crises: Array[String] = []
 	if player_data and not player_data.band_members.is_empty():
 		for m in player_data.band_members:
 			if m.tension >= Constants.BAND_TENSION_CRITICAL:
-				band_crises.append(m.name)
+				band_crises.append(m.member_name)
 				
-	# Sgravio stress organizzativo dal Manager
+	# Sgravio stress organizzativo o stress notturno dal Manager
 	if GameManager and GameManager.industry_system:
 		GameManager.industry_system.apply_daily_manager_stress_relief()
+		# Incasso royalties catalogo propria etichetta discografica (Endgame Sezione 9)
+		if player_data and player_data.has_own_label():
+			GameManager.industry_system.process_own_label_daily_royalties()
 		
 	# Decadimento notturno hype social e reset limite post giornalieri
 	if GameManager and GameManager.social_media_system:
@@ -89,10 +146,13 @@ func _on_day_ended(day_num: int) -> void:
 		"food": food_exp,
 		"royalties": royalties_earned,
 		"album_count": album_count,
+		"sublet_income": sublet_earned,
 		"new_balance": player_data.money if player_data else 0.0,
 		"current_energy": player_data.energy if player_data else 100,
 		"current_stress": player_data.stress if player_data else 0,
 		"housing_name": HousingData.get_tier_name(tier),
+		"early_sleep_bonus": has_early_sleep_bonus,
+		"sleep_quality": sleep_quality_desc,
 		"band_crises": band_crises,
 		"pending_dilemma": pending_dilemma.to_dict() if pending_dilemma else {}
 	}
@@ -108,6 +168,8 @@ func _on_day_ended(day_num: int) -> void:
 	]
 	if royalties_earned > 0.0:
 		speech += " Royalties catalogo: +%.2f euro da %d album." % [royalties_earned, album_count]
+	if sublet_earned > 0.0:
+		speech += " Sub-affitto sala prove: +%.2f euro." % sublet_earned
 	speech += " Nuovo saldo: %.2f euro. Sonno ristoratore completato." % [
 		player_data.money if player_data else 0.0
 	]
@@ -115,6 +177,7 @@ func _on_day_ended(day_num: int) -> void:
 		speech += " ATTENZIONE: Tensione critica per %s!" % ", ".join(band_crises)
 		
 	AccessibilityManager.announce(speech, true)
+	return summary
 
 func advance_to_next_day() -> void:
 	if calendar_data:
@@ -122,6 +185,8 @@ func advance_to_next_day() -> void:
 		calendar_data.reset_daily_saturation()
 		
 	var new_day: int = calendar_data.day_number if calendar_data else 1
+	if player_data:
+		player_data.increment_career_stat("total_days_active", 1)
 	
 	# Controllo impegni a calendario e avanzamento dell'agenda
 	var schedule_report: Dictionary = {}

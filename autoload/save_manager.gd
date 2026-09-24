@@ -7,6 +7,9 @@ const SAVE_PATH: String = "user://savegame.json"
 const TEMP_PATH: String = "user://savegame.tmp"
 const CURRENT_SCHEMA_VERSION: int = 1
 
+const AwardSystemScript = preload("res://systems/award_system.gd")
+const LegacySystemScript = preload("res://systems/legacy_system.gd")
+
 signal save_completed(success: bool)
 signal load_completed(success: bool)
 
@@ -31,7 +34,9 @@ func save_game() -> bool:
 		"festivals": GameManager.festival_system.to_dict() if GameManager.festival_system else {},
 		"social": GameManager.social_media_system.to_dict() if GameManager.social_media_system else {},
 		"rivals": GameManager.rival_system.to_dict() if GameManager.rival_system else {},
-		"charts": GameManager.chart_system.to_dict() if GameManager.chart_system else {}
+		"charts": GameManager.chart_system.to_dict() if GameManager.chart_system else {},
+		"media": GameManager.media_system.to_dict() if GameManager.media_system else {},
+		"concerts": GameManager.concert_system.to_dict() if GameManager.concert_system else {}
 	}
 	
 	var json_string: String = JSON.stringify(save_dict, "\t")
@@ -123,6 +128,16 @@ func load_game() -> bool:
 		GameManager.music_system.player_data = GameManager.player_data
 		GameManager.music_system.calendar_data = GameManager.calendar_data
 		GameManager.music_system.skill_system = GameManager.skill_system
+
+	if not GameManager.concert_system:
+		GameManager.concert_system = ConcertSystem.new(GameManager.player_data, GameManager.calendar_data, GameManager.skill_system)
+	else:
+		GameManager.concert_system.player_data = GameManager.player_data
+		GameManager.concert_system.calendar_data = GameManager.calendar_data
+		GameManager.concert_system.skill_system = GameManager.skill_system
+
+	if save_dict.has("concerts") and save_dict["concerts"] is Dictionary:
+		GameManager.concert_system.from_dict(save_dict["concerts"] as Dictionary)
 
 	if not GameManager.band_system:
 		GameManager.band_system = BandSystem.new(GameManager.player_data, GameManager.calendar_data)
@@ -220,7 +235,46 @@ func load_game() -> bool:
 	if save_dict.has("charts") and save_dict["charts"] is Dictionary:
 		GameManager.chart_system.from_dict(save_dict["charts"] as Dictionary)
 
+	if not GameManager.media_system:
+		GameManager.media_system = MediaSystem.new(GameManager.player_data, GameManager.calendar_data)
+	else:
+		GameManager.media_system.player_data = GameManager.player_data
+		GameManager.media_system.calendar_data = GameManager.calendar_data
+
+	if save_dict.has("media") and save_dict["media"] is Dictionary:
+		GameManager.media_system.from_dict(save_dict["media"] as Dictionary)
+
+	if not GameManager.career_system:
+		GameManager.career_system = CareerSystem.new(GameManager.player_data)
+	else:
+		GameManager.career_system.player_data = GameManager.player_data
+
+	if not GameManager.economy_system:
+		GameManager.economy_system = EconomySystem.new(GameManager.player_data, GameManager.calendar_data)
+	else:
+		GameManager.economy_system.player_data = GameManager.player_data
+		GameManager.economy_system.calendar_data = GameManager.calendar_data
+
+	if not GameManager.end_day_system:
+		GameManager.end_day_system = EndDaySystem.new(GameManager.player_data, GameManager.calendar_data)
+	else:
+		GameManager.end_day_system.player_data = GameManager.player_data
+		GameManager.end_day_system.calendar_data = GameManager.calendar_data
+
+	if not GameManager.award_system:
+		GameManager.award_system = AwardSystemScript.new(GameManager.player_data, GameManager.calendar_data)
+	else:
+		GameManager.award_system.player_data = GameManager.player_data
+		GameManager.award_system.calendar_data = GameManager.calendar_data
+
+	if not GameManager.legacy_system:
+		GameManager.legacy_system = LegacySystemScript.new(GameManager.player_data, GameManager.calendar_data)
+	else:
+		GameManager.legacy_system.player_data = GameManager.player_data
+		GameManager.legacy_system.calendar_data = GameManager.calendar_data
+
 	GameManager.change_state(Enums.GameState.GAMEPLAY_IDLE)
+
 	
 	# Allineamento della lingua salvata nella scheda giocatore se presente
 	if GameManager.player_data and not GameManager.player_data.language.is_empty():

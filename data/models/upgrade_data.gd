@@ -355,3 +355,136 @@ static func compare_instruments(category: String, current_tier: int, target_tier
 		"comparison_text": comparison_text,
 		"cost": target.cost
 	}
+
+# --- 4. Sound Shaping: Amplificatori ed Effettistica (Sezione 4) ---
+enum AmpType {
+	SOLID_STATE_BASIC = 0, # Transistor base (Costo 0 €)
+	BRITISH_TUBE = 1,      # Valvolare britannico caldo (Costo 600 €)
+	AMERICAN_CLEAN = 2     # Pulito americano cristallino (Costo 600 €)
+}
+
+const AMP_MODELS: Dictionary = {
+	AmpType.SOLID_STATE_BASIC: {
+		"name": "Amplificatore Standard Transistor",
+		"cost": 0.0,
+		"desc": "Amplificatore da studio essenziale, risposta lineare.",
+		"genres": [],
+		"bonus": 0.0
+	},
+	AmpType.BRITISH_TUBE: {
+		"name": "Testata & Cassa Valvolare Britannica",
+		"cost": 600.0,
+		"desc": "Calore valvolare britannico, sustain cremoso e saturazione armonica ideale per Rock e Indie.",
+		"genres": [Enums.MusicalGenre.ROCK, Enums.MusicalGenre.INDIE],
+		"bonus": 5.0
+	},
+	AmpType.AMERICAN_CLEAN: {
+		"name": "Combo Valvolare American Clean",
+		"cost": 600.0,
+		"desc": "Pulito americano cristallino con grande headroom e dinamica ideale per Pop, Elettronica e Metal.",
+		"genres": [Enums.MusicalGenre.POP, Enums.MusicalGenre.ELECTRONIC, Enums.MusicalGenre.METAL],
+		"bonus": 5.0
+	}
+}
+
+static func get_amp_model(tier: int) -> Dictionary:
+	if AMP_MODELS.has(tier):
+		return AMP_MODELS[tier]
+	return {}
+
+# 5 Pedali d'Effetto Iconici
+const PEDAL_OVERDRIVE: String = "overdrive"
+const PEDAL_HIGH_GAIN: String = "high_gain_distortion"
+const PEDAL_CHORUS: String = "chorus"
+const PEDAL_TAPE_DELAY: String = "tape_delay"
+const PEDAL_WAH_WAH: String = "wah_wah"
+
+const PEDALS: Dictionary = {
+	"overdrive": {
+		"id": "overdrive",
+		"name": "Pedale Overdrive Caldo",
+		"cost": 120.0,
+		"genres": [Enums.MusicalGenre.ROCK, Enums.MusicalGenre.INDIE],
+		"score_bonus": 3.0,
+		"desc": "Saturazione valvolare dinamica e risposta al tocco. +3 score per Rock e Indie."
+	},
+	"high_gain_distortion": {
+		"id": "high_gain_distortion",
+		"name": "Distorsione High-Gain",
+		"cost": 150.0,
+		"genres": [Enums.MusicalGenre.METAL, Enums.MusicalGenre.ROCK],
+		"score_bonus": 4.0,
+		"desc": "Gain estremo e sustain infinito per riff pesanti e assoli metal. +4 score per Metal e Rock."
+	},
+	"chorus": {
+		"id": "chorus",
+		"name": "Chorus Analogico Spaziale",
+		"cost": 130.0,
+		"genres": [Enums.MusicalGenre.INDIE, Enums.MusicalGenre.POP],
+		"score_bonus": 3.0,
+		"desc": "Doppia voce e modulazione d'ambiente anni '80. +3 score per Indie e Pop."
+	},
+	"tape_delay": {
+		"id": "tape_delay",
+		"name": "Delay a Nastro Vintage",
+		"cost": 180.0,
+		"genres": [Enums.MusicalGenre.INDIE, Enums.MusicalGenre.ELECTRONIC],
+		"score_bonus": 3.0,
+		"desc": "Eco organico e ripetizioni calde dal sapore psichedelico. +3 score per Indie ed Elettronica."
+	},
+	"wah_wah": {
+		"id": "wah_wah",
+		"name": "Pedale Wah-Wah Espressivo",
+		"cost": 140.0,
+		"genres": [Enums.MusicalGenre.ROCK, Enums.MusicalGenre.POP],
+		"score_bonus": 3.0,
+		"desc": "Filtro dinamico a pedale per assoli espressivi e ritmiche funky. +3 score per Rock e Pop."
+	}
+}
+
+static func get_pedal(pedal_id: String) -> Dictionary:
+	if PEDALS.has(pedal_id):
+		return PEDALS[pedal_id]
+	return {}
+
+static func get_all_pedal_ids() -> Array[String]:
+	var list: Array[String] = ["overdrive", "high_gain_distortion", "chorus", "tape_delay", "wah_wah"]
+	return list
+
+# --- 5. Filosofia di Registrazione Studio ---
+enum RecordingPhilosophy {
+	DIGITAL_HD = 0, # Digitale ad alta definizione (Costo 0)
+	ANALOG_TAPE = 1 # Nastro analogico a bobina (Costo 25 € a brano)
+}
+
+static func get_recording_philosophy_name(phil: int) -> String:
+	match phil:
+		RecordingPhilosophy.DIGITAL_HD:
+			return "Digitale High-Definition"
+		RecordingPhilosophy.ANALOG_TAPE:
+			return "Analogico su Nastro Magnetico"
+		_:
+			return "Standard"
+
+## Calcola il bonus sonoro totale (Pedalboard + Amplificatore) rispetto a un genere
+static func calculate_sound_shaping_bonus(active_pedals: Array, amp_tier: int, target_genre: int) -> float:
+	var total_bonus: float = 0.0
+	
+	# Bonus amplificatore
+	var amp: Dictionary = get_amp_model(amp_tier)
+	if not amp.is_empty():
+		var genres: Array = amp.get("genres", [])
+		if genres.has(target_genre):
+			total_bonus += float(amp.get("bonus", 0.0))
+			
+	# Bonus pedali attivi (max 3 slot)
+	for p_id in active_pedals:
+		var p_str: String = str(p_id)
+		var p_data: Dictionary = get_pedal(p_str)
+		if not p_data.is_empty():
+			var p_genres: Array = p_data.get("genres", [])
+			if p_genres.has(target_genre):
+				total_bonus += float(p_data.get("score_bonus", 0.0))
+				
+	return total_bonus
+

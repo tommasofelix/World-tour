@@ -1,50 +1,82 @@
-# Consuetudini operative e sinergia con gli assistenti
+# 00 — Consuetudini Operative, Dialogo a 2 Tempi & Protocolli ASTRALIS (v3.0.7)
 
-## Stato
+## Stato & Ambito
+- **Ambito**: Progetto World-tour (Music Career Simulator / Life Simulation).
+- **Framework**: ASTRALIS v3.0.7 (Architettura Universale & Governance Polimorfica).
+- **Runtime**: Godot Engine 4.7.2 win64, GDScript 2.0, Clean Architecture DDD.
+- **Accessibilità**: Screen reader NVDA via driver nativo AccessKit (Zero Mouse).
 
-- Ambito: progetto World-tour.
-- Fonte: baseline pubblica ASTRALIS `main@d28d1f9`.
-- Dominio applicativo: non ancora determinato.
+---
 
-## Dialogo a due tempi
+## 1. Principio del Dialogo a 2 Tempi & Gating Semantico
 
-1. L’assistente analizza, verifica e propone.
-2. Il responsabile autorizza esplicitamente l’oggetto e la fase successiva.
-3. L’assistente esegue soltanto quanto autorizzato.
-4. Il risultato rimane “implementato ma non validato” finché non esistono evidenze pertinenti.
+1. **Default Consultivo Permanente**:
+   - L'assistente opera in modalità consultiva permanente: analizza, verifica i log, consulta le schede di riferimento e formula proposte strutturate.
+   - **Divieto Assoluto di Modifica Autonoma**: Nessun file, codice sorgente o impostazione può essere creato, modificato o eliminato senza l'esplicito comando di Luca (*"procedi"*, *"applica"*, *"esegui"*).
+   - Richieste come *"cosa ne pensi?"*, *"valuta"*, *"come faresti?"*, *"analizza"* impongono all'assistente di rimanere in modalità consultiva pura (zero azioni modificative).
+2. **Gating Semantico e Disaccoppiamento Fase 1**:
+   - Comandi come *"passa alla fase 1"* autorizzano **esclusivamente la stesura del Piano Tecnico Formale (Sotto-Fase 1A)** in `docs/piani/attivi/`.
+   - L'assistente redige il piano, lo registra e si arresta tassativamente (**Stop Obbligatorio**), attendendo la convalida esplicita di Luca post-lettura prima di toccare codice o configurazioni (Sotto-Fase 1B).
+3. **Matrice di Avanzamento a 3 Stati per NVDA**:
+   - `- [ ] [DA AVVIARE]`: Attività pianificata ma non ancora iniziata;
+   - `- [/] [IMPLEMENTATO — IN ATTESA DI CONVALIDA]`: Codice scritto o intervento completato, in attesa di test o collaudo formale (spunta parziale);
+   - `- [x] [CONVALIDATO CON SUCCESSO]`: Spunta definitiva concessa **esclusivamente POST-CONVALIDA** (approvazione per la 1A, test suite 100% verde per la 1B, collaudo pratico NVDA per la Fase 2). Divieto assoluto di spunta preventiva.
 
-Le autorizzazioni non si propagano automaticamente tra piano, codice, configurazione, test, deploy, commit, push, cancellazione e chiusura.
+---
 
-## Ruoli
+## 2. I 12 Protocolli Operativi Ufficiali ASTRALIS
 
-- L’AI primaria coordina eventuali modifiche autorizzate.
-- Un’AI ausiliaria opera come revisore indipendente e non modifica in concorrenza gli stessi file.
-- Se il ruolo non è dichiarato, l’assistente lo esplicita prima di un’azione operativa.
+L'assistente riconosce e aggancia dinamicamente i 12 protocolli formali del framework:
 
-## Validazione preventiva
+1. **Protocollo Progettazione** *(Fase 0 & Sotto-Fase 1A)*: Definizione modello mentale, architettura e contratti D0..DN prima di modificare codice;
+2. **Protocollo Validazione** *(7 Assi + 3 Livelli)*: Certificazione di robustezza e assenza regressioni;
+3. **Protocollo Esecuzione** *(Sotto-Fase 1B / Deploy Fase 2)*: Modifiche chirurgiche, build pulita e deploy proattivo;
+4. **Protocollo Telemetria & Monitoraggio Live** *(Fase 2)*: Affiancamento durante il collaudo con filtro ad alto segnale ed estrazione anomalie nel `REGISTRO_REVISIONI.md`;
+5. **Protocollo Revisione & Affinamento (PRAPI)**: Ciclo rapido di feedback post-collaudo con la Strategia dei Buffer di Rifinitura;
+6. **Protocollo Chiusura** *(Fase 3)*: Commit Git (`feat:`, `fix:`, `docs:`), calcolo versione AVF (`V.A.R[.M]`), archiviazione piani in `docs/piani/completati/` e Domanda Ponte Obbligatoria;
+7. **Protocollo Auto-Apprendimento Continuo** *(Fase 4)*: Consolidamento delle lezioni su Doppio Binario (Binario A Locale in `knowledge/`, Binario B Globale nel Master Hub);
+8. **Protocollo Aggiornamento & Migrazione Stack**: Avanzamento versioni runtime/motore e compatibilità binaria;
+9. **Protocollo Diagnosi & Risoluzione Bug Sistemici**: Isolamento cause radice deterministiche (RCA) senza workaround fragili;
+10. **Protocollo Configurazione & Ambiente**: Setup CLI, percorsi dinamici e toolchain;
+11. **Protocollo Pulizia, Bonifica & Rifinitura**: Rimozione codice morto ed elementi obsoleti con Contratto D0 Clean Sweep e Canone 7 (D41 Guard);
+12. **Protocollo Dialettica Ingegneristica & Auto-Revisione Avversariale**: Inner Codex Pattern basato sui 6 Cancelli Inviolabili.
 
-Ogni proposta non banale viene valutata per:
+---
 
-- validità;
-- efficacia;
-- coerenza;
-- completezza;
-- precisione;
-- prestazioni e affidabilità;
-- assenza di regressioni.
+## 3. Pipeline Operativa a 4 Fasi & Domanda Ponte di Chiusura
 
-La simulazione considera:
+- **Fase 1A (Pianificazione & Stop Obbligatorio)**: Stesura del piano tecnico in `docs/piani/attivi/` con audit preventivo dei 6 Cancelli e checkpoint di convalida.
+- **Fase 1B (Esecuzione Tecnica & Test Headless)**: Pre-Flight Check, modifiche chirurgiche, compilazione e suite di test automatici a 0 ms (solo post-convalida del piano).
+- **Fase 2 (Deploy Proattivo, Telemetria & Collaudo Manuale)**: Avvio del motore con console e supporto screen reader, monitoraggio log ed esecuzione test pratico di Luca da tastiera con NVDA.
+- **Fase 3 (Chiusura Tecnica, Git & AVF)**: Commit strutturato, aggiornamento Living Documentation, archiviazione del piano in `docs/piani/completati/` e chiusura tassativa con la **Domanda Ponte Obbligatoria**:
+  > *"Vuoi che avviamo ora la sessione formale di Auto-Apprendimento (Fase 4) per elaborare la bozza dettagliata delle regole e aggiornare le schede di conoscenza e governance?"*
+- **Fase 4 (Auto-Apprendimento Continuo — al via libera di Luca)**: Mappatura file di destinazione, redazione paragrafi completi su Binario A (Locale) e Binario B (Master Hub) e applicazione autorizzata.
 
-- percorso normale;
-- concorrenza o alternative;
-- casi limite e fallimenti recuperabili.
+---
 
-## Eliminazione protetta
+## 4. Validazione Preventiva sui 7 Assi di Qualità & Matrice a 3 Livelli
 
-Prima di cancellare un file o dato:
+Ogni proposta tecnica deve soddisfare i **7 Assi di Qualità**:
+1. *Validità*: Rispetto rigoroso dei contratti logici e dei tipi GDScript tipizzati;
+2. *Efficacia*: Risoluzione deterministica del problema alla radice senza pezze euristiche;
+3. *Coerenza*: Armonia architetturale con Clean Architecture e disaccoppiamento EventBus;
+4. *Completezza*: Gestione esplicita di tutti i rami di errore e condizioni al contorno;
+5. *Precisione*: Modifiche chirurgiche minime, preservando codice e commenti esistenti;
+6. *Affidabilità & Prestazioni*: Zero leak, rispetto delle risorse ed esecuzione headless a 0 ms;
+7. *Assenza di Regressioni*: Tutela del comportamento preesistente e delle suite di test attive.
 
-1. identificare esattamente il bersaglio;
-2. spiegare la necessità;
-3. verificare dipendenze e perdita potenziale;
-4. descrivere la possibilità di recupero;
-5. ottenere autorizzazione esplicita.
+La proposta viene verificata sulla **Matrice di Simulazione a 3 Livelli**:
+- *Livello 1: Scenari Comuni* (Happy Path — flusso tipico di gameplay e UI);
+- *Livello 2: Scenari Meno Comuni* (Alternative Paths & condizioni concorrenti);
+- *Livello 3: Casi Limite & Condizioni Estreme* (Corner Cases, valori nulli, array vuoti, boundary values).
+
+---
+
+## 5. Protocollo di Eliminazione Consapevole e Protetta (5 Passi)
+
+Prima di procedere alla cancellazione di qualsiasi file o directory:
+1. **Identificazione Esatta**: Indicare chiaramente percorso e natura del bersaglio;
+2. **Motivazione Tecnica**: Spiegare perché il file deve essere eliminato;
+3. **Analisi d'Impatto**: Descrivere le conseguenze sul progetto, sulle dipendenze e sui test;
+4. **Verifica Dati & Recuperabilità**: Accertare che dati storici o note utili siano preservati altrove;
+5. **Richiesta di Consenso Specifico**: Attendere l'autorizzazione esplicita di Luca prima di procedere.

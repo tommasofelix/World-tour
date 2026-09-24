@@ -5,6 +5,8 @@ extends RefCounted
 ## Modello Dati del Brano Musicale per World-tour
 ## Rappresenta una canzone attraverso le 5 fasi di lavorazione, il rilascio e la permanenza in catalogo.
 
+const LyricThemeData = preload("res://data/models/lyric_theme_data.gd")
+
 var id: String = ""
 var title: String = "Untitled Track"
 var genre: int = Enums.MusicalGenre.ROCK
@@ -20,6 +22,7 @@ var prod_skill_used: float = 10.0
 var studio_bonus: float = 0.0
 var inspiration_bonus: float = 0.0
 var quality_score: float = 0.0
+var is_cover: bool = false
 
 # Tratto speciale emergente
 var traits: Array[int] = []
@@ -37,6 +40,9 @@ var plays: int = 0
 var plays_count: int:
 	get: return plays
 	set(val): plays = val
+
+var is_released: bool:
+	get: return status == Enums.SongStatus.RELEASED
 
 var revenue: float = 0.0
 var revenue_generated: float:
@@ -83,7 +89,8 @@ func to_dict() -> Dictionary:
 		"plays": plays,
 		"plays_count": plays,
 		"revenue": revenue,
-		"revenue_generated": revenue
+		"revenue_generated": revenue,
+		"is_cover": is_cover
 	}
 
 func from_dict(dict: Dictionary) -> void:
@@ -102,6 +109,7 @@ func from_dict(dict: Dictionary) -> void:
 		studio_bonus = 15.0
 	inspiration_bonus = float(dict.get("inspiration_bonus", inspiration_bonus))
 	quality_score = float(dict.get("quality_score", quality_score))
+	is_cover = bool(dict.get("is_cover", is_cover))
 	traits.clear()
 	if dict.has("traits") and dict["traits"] is Array:
 		for t in dict["traits"]:
@@ -111,6 +119,28 @@ func from_dict(dict: Dictionary) -> void:
 	release_day = int(dict.get("release_day", release_day))
 	plays = int(dict.get("plays", dict.get("plays_count", plays)))
 	revenue = float(dict.get("revenue", dict.get("revenue_generated", revenue)))
+
+static func create_cover_song(p_genre: int, skill_level: float = 10.0) -> SongData:
+	var cover_title := "Cover Hit di Repertorio"
+	match p_genre:
+		Enums.MusicalGenre.ROCK:
+			cover_title = "Classic Rock Anthem (Cover)"
+		Enums.MusicalGenre.POP:
+			cover_title = "Pop Radio Banger (Cover)"
+		Enums.MusicalGenre.METAL:
+			cover_title = "Heavy Metal Riff (Cover)"
+		Enums.MusicalGenre.INDIE:
+			cover_title = "Underground Indie Hit (Cover)"
+		Enums.MusicalGenre.ELECTRONIC:
+			cover_title = "Club Electro Beat (Cover)"
+		Enums.MusicalGenre.HIPHOP:
+			cover_title = "Old School Hip Hop (Cover)"
+	var song := SongData.new("cover_%d_%d" % [Time.get_ticks_msec(), randi() % 1000], cover_title, p_genre, "life")
+	song.status = Enums.SongStatus.RELEASED
+	song.stage = Enums.SongStage.COMPLETED
+	song.is_cover = true
+	song.quality_score = clampf(55.0 + (skill_level * 0.30), 55.0, 85.0)
+	return song
 
 func get_genre_name() -> String:
 	match genre:
@@ -152,8 +182,18 @@ func get_trait_name() -> String:
 			return tr("TRAIT_AUDIOPHILE_GEM")
 		Enums.SongTrait.ROUGH_DIAMOND:
 			return tr("TRAIT_ROUGH_DIAMOND")
+		Enums.SongTrait.GENERATIONAL_ANTHEM:
+			return tr("TRAIT_GENERATIONAL_ANTHEM")
+		Enums.SongTrait.TEARJERKER_BALLAD:
+			return tr("TRAIT_TEARJERKER_BALLAD")
+		Enums.SongTrait.EPIC_RIFF:
+			return tr("TRAIT_EPIC_RIFF")
 		_:
 			return tr("TRAIT_NONE")
+
+func get_theme_name() -> String:
+	var theme_obj := LyricThemeData.get_theme_by_id(theme)
+	return theme_obj.get_localized_name()
 
 func get_stage_name() -> String:
 	match stage:

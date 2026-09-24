@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://test_endgame_legacy_sys_scene"]
+
+[ext_resource type="Script" path="res://tests/test_endgame_and_legacy_system.gd" id="1_endgame_test"]
+
+[node name="TestEndgameAndLegacySystem" type="Node"]
+script = ExtResource("1_endgame_test")

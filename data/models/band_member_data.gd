@@ -46,6 +46,8 @@ func get_role_name() -> String:
 			return tr("ROLE_KEYBOARDS")
 		Enums.BandRole.GUITAR_RHYTHM:
 			return tr("ROLE_GUITAR_RHYTHM")
+		Enums.BandRole.VOCALS:
+			return tr("ROLE_VOCALS")
 		_:
 			return tr("ROLE_BASS")
 
@@ -59,6 +61,14 @@ func get_personality_name() -> String:
 			return tr("PERSONALITY_WILD_PARTY")
 		Enums.BandPersonality.EGO_ARTIST:
 			return tr("PERSONALITY_EGO_ARTIST")
+		Enums.BandPersonality.MERCENARY:
+			return tr("PERSONALITY_MERCENARY")
+		Enums.BandPersonality.STAGE_ANXIOUS:
+			return tr("PERSONALITY_STAGE_ANXIOUS")
+		Enums.BandPersonality.NATURAL_LEADER:
+			return tr("PERSONALITY_NATURAL_LEADER")
+		Enums.BandPersonality.PEACEMAKER:
+			return tr("PERSONALITY_PEACEMAKER")
 		_:
 			return tr("PERSONALITY_RELIABLE")
 
@@ -103,6 +113,18 @@ var respect: float:
 	set(value):
 		musical_respect = value
 
+var name: String:
+	get:
+		return member_name
+	set(value):
+		member_name = value
+
+# Dotazione strumentale personale assegnata dal leader (Tier 0..3)
+var equipped_gear_tier: int = 0
+
+func equip_gear(tier: int) -> void:
+	equipped_gear_tier = clampi(tier, 0, 3)
+
 func is_threatening_to_quit() -> bool:
 	return tension >= Constants.BAND_TENSION_CRITICAL
 
@@ -118,7 +140,8 @@ func to_dict() -> Dictionary:
 		"musical_respect": musical_respect,
 		"tension": tension,
 		"is_active": is_active,
-		"joined_day": joined_day
+		"joined_day": joined_day,
+		"equipped_gear_tier": equipped_gear_tier
 	}
 
 func from_dict(data: Dictionary) -> void:
@@ -133,3 +156,5 @@ func from_dict(data: Dictionary) -> void:
 	tension = float(data.get("tension", tension))
 	is_active = bool(data.get("is_active", is_active))
 	joined_day = int(data.get("joined_day", joined_day))
+	equipped_gear_tier = int(data.get("equipped_gear_tier", 0))
+

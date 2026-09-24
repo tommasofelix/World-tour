@@ -7,6 +7,7 @@ extends Control
 @onready var label_title: Label = $CenterContainer/VBoxMain/Header/LabelTitle
 @onready var label_subtitle: Label = $CenterContainer/VBoxMain/Header/LabelSubtitle
 @onready var vbox_menu: VBoxContainer = $CenterContainer/VBoxMain/VBoxMenu
+@onready var btn_new_game: Button = $CenterContainer/VBoxMain/VBoxMenu/BtnNewGame
 @onready var btn_quick_start: Button = $CenterContainer/VBoxMain/VBoxMenu/BtnQuickStart
 @onready var btn_settings: Button = $CenterContainer/VBoxMain/VBoxMenu/BtnSettings
 @onready var btn_quit: Button = $CenterContainer/VBoxMain/VBoxMenu/BtnQuit
@@ -30,6 +31,7 @@ func _ready() -> void:
 	_populate_day_duration_options()
 	
 	# Connessione segnali bottoni
+	btn_new_game.pressed.connect(_on_new_game_pressed)
 	btn_quick_start.pressed.connect(_on_quick_start_pressed)
 	btn_settings.pressed.connect(_on_settings_pressed)
 	btn_quit.pressed.connect(_on_quit_pressed)
@@ -47,8 +49,8 @@ func _ready() -> void:
 	# Aggiorna testi secondo la lingua corrente
 	_refresh_ui_text()
 	
-	# Auto-focus sul primo elemento
-	btn_quick_start.grab_focus()
+	# Auto-focus sul primo elemento (Nuova Partita)
+	btn_new_game.grab_focus()
 
 func _populate_language_options() -> void:
 	opt_lang.clear()
@@ -88,7 +90,8 @@ func _refresh_ui_text() -> void:
 	# Aggiorna testi a video (Holy Diver)
 	label_title.text = tr("GAME_TITLE")
 	label_subtitle.text = tr("GAME_SUBTITLE")
-	btn_quick_start.text = tr("MENU_QUICK_START")
+	btn_new_game.text = tr("MENU_NEW_GAME")
+	btn_quick_start.text = tr("MENU_TEST_MODE")
 	btn_settings.text = tr("MENU_SETTINGS")
 	btn_quit.text = tr("MENU_QUIT")
 	
@@ -98,17 +101,22 @@ func _refresh_ui_text() -> void:
 	btn_back_settings.text = tr("SETTINGS_BACK")
 	
 	# Configurazione semantica per Screen Reader NVDA (Luca)
-	AccessibilityManager.hook_control_accessibility(btn_quick_start, tr("MENU_QUICK_START"), tr("MENU_QUICK_START_DESC"))
+	AccessibilityManager.hook_control_accessibility(btn_new_game, tr("MENU_NEW_GAME"), tr("MENU_NEW_GAME_DESC"))
+	AccessibilityManager.hook_control_accessibility(btn_quick_start, tr("MENU_TEST_MODE"), tr("MENU_TEST_MODE_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_settings, tr("MENU_SETTINGS"), tr("MENU_SETTINGS_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_quit, tr("MENU_QUIT"), tr("MENU_QUIT_DESC"))
 	AccessibilityManager.hook_control_accessibility(opt_lang, tr("SETTINGS_LANGUAGE_LABEL"), tr("SETTINGS_LANGUAGE_DESC"))
 	AccessibilityManager.hook_control_accessibility(opt_day_duration, "Durata Giornata", "Seleziona la durata reale di ogni giornata di gioco: 5, 10, 15 o 20 minuti.")
 	AccessibilityManager.hook_control_accessibility(btn_back_settings, tr("SETTINGS_BACK"), tr("SETTINGS_BACK_DESC"))
 
+func _on_new_game_pressed() -> void:
+	# Apre la schermata di creazione e personalizzazione del personaggio
+	get_tree().change_scene_to_file("res://ui/character/character_creation.tscn")
+
 func _on_quick_start_pressed() -> void:
-	# Inizializza partita con starter pack e durata configurata
+	# Inizializza partita in modalità test (con 10 brani dello starter pack e 500 € di liquidità)
 	if GameManager:
-		GameManager.start_new_game()
+		GameManager.start_new_game("Alex", "Chitarra Elettrica", "self_taught", true)
 	# Avvia HUD di simulazione
 	get_tree().change_scene_to_file("res://ui/hud/hud.tscn")
 

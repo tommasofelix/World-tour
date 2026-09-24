@@ -4,6 +4,30 @@ Le revisioni vengono archiviate qui soltanto dopo risoluzione verificata e accet
 
 ## Revisioni archiviate
 
+### RRU-06 — Rebinding Scalare nelle Closure Lambda Headless & Idempotenza Segnali UI in _ready()
+
+- Stato: `[x] RISOLTA E VALIDATA`.
+- Data di chiusura: `2026-09-23`.
+- Componente: `tests/test_vital_resources_system.gd` e `ui/relax/relax_modal.gd`.
+- Sintomo osservato: Fallimento asserzione headless con `SCRIPT ERROR: Invalid access to property or key 'action_id' on a base object of type 'Nil'` ed eccezioni a console `Signal already connected`.
+- Evidenza: Una variabile locale inizializzata a `null` catturata dalla lambda (`func(act): received = act`) non propagava l'assegnazione all'esterno; chiamare manualmente `inst._ready()` dopo `add_child(inst)` tentava di ricollegare i pulsanti senza guardie.
+- Causa radice: Cattura per valore delle variabili scalari/nulle nelle chiusure anonime GDScript 4 e doppia esecuzione sincrona del bootstrap su nodi già innestati nell'albero attivo.
+- Soluzione applicata: Adozione del **Closure Container Pattern** (`var received: Array = []` e `received.append(act)`) nei test runner e inserimento della guardia `if btn and not btn.pressed.is_connected(_handler)` nel `_ready()` di tutti i controlli UI.
+- Test automatici eseguiti: 37/37 test superati in `test_vital_resources_system.tscn` (exit code 0).
+- Collaudo manuale eseguito: Superato con esito 100% positivo.
+
+### RRU-05 — Disattivazione Pop-up Bloccanti a Mezzanotte & Adozione Overtime Progressivo su 22h con Avvisi Discreti NVDA
+
+- Stato: `[x] RISOLTA E VALIDATA`.
+- Data di chiusura: `2026-09-23`.
+- Componente: `systems/time_system.gd`, `data/models/calendar_data.gd`, `core/constants.gd`, `ui/hud/hud.gd`.
+- Sintomo osservato: La precedente gestione oraria interrompeva bruscamente il flusso di gioco a mezzanotte o forzava la fine della giornata senza concedere al musicista la libertà di proseguire le attività creative e di routine notturna.
+- Evidenza: Mancanza di una finestra di Overtime oltre la mezzanotte e assenza di controlli rapidi per la gestione manuale del sonno anticipato.
+- Causa radice: Modello temporale rigido a 18 ore senza scala notturna e assenza di de-escalation guidata.
+- Soluzione applicata: Estensione della giornata virtuale a 22 ore (06:00 – 04:00), eliminazione di finestre modali o pop-up a mezzanotte, accumulo progressivo di stress notturno (+2, +3, +5, +10), annunci vocali discreti per NVDA alle 02:00 e 03:00, e controlli HUD con tasto rapido `X` (Aspetta fascia successiva) e `Z` (Dormi / Riposo Anticipato Ristoratore con bonus recupero).
+- Test automatici eseguiti: 28/28 test superati in `test_time_night_system.tscn`.
+- Collaudo manuale eseguito: Superato con successo con piena fluidità di gameplay da tastiera (Zero Mouse).
+
 ### RRU-04 — Trasparenza Finestre Modali e Interferenza Lettura AccessKit/NVDA con HUD Sottostante
 
 - Stato: `[x] RISOLTA E VALIDATA`.

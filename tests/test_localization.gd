@@ -137,11 +137,13 @@ func test_main_menu_instantiation() -> void:
 	var instance: Node = menu_scene.instantiate()
 	assert_true(instance != null, "Istanziazione Main Menu riuscita")
 	
+	var btn_ng: Button = instance.find_child("BtnNewGame", true, false)
 	var btn_qs: Button = instance.find_child("BtnQuickStart", true, false)
 	var btn_set: Button = instance.find_child("BtnSettings", true, false)
 	var btn_q: Button = instance.find_child("BtnQuit", true, false)
 	var opt_l: OptionButton = instance.find_child("OptLang", true, false)
 	
+	assert_true(btn_ng != null, "Pulsante BtnNewGame presente")
 	assert_true(btn_qs != null, "Pulsante BtnQuickStart presente")
 	assert_true(btn_set != null, "Pulsante BtnSettings presente")
 	assert_true(btn_q != null, "Pulsante BtnQuit presente")

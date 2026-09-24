@@ -1,37 +1,53 @@
-# World-tour — Direttive locali per OpenAI Codex
+# World-tour — Direttive di Progetto per Codex / ChatGPT (ASTRALIS v3.0.7)
+# Autore: Luca (Sviluppatore Senior Non Vedente con Screen Reader NVDA) & Antigravity
+# Framework: ASTRALIS v3.0.7 (Architettura Universale & Governance Polimorfica)
+# Target AI: OpenAI Codex / ChatGPT (Copilota Ausiliario e Peer Programmer - Opzionale)
+# Hub di Contesto Primario: GEMINI.md
+# Repository: pubblico (tommasofelix/World-tour) — Link relativi obbligatori, zero percorsi personali o segreti
 
-- Framework: ASTRALIS, baseline pubblica `main@d28d1f9`.
-- Ruolo predefinito di Codex: copilota ausiliario e revisore, salvo mandato operativo esplicito.
-- Hub di contesto: [`GEMINI.md`](./GEMINI.md).
-- Repository pubblico: nessun dato personale, percorso macchina o contenuto del Master Hub privato.
+Questo repository implementa il simulatore musicale **World-tour** in pair programming con **Luca**, sviluppatore completamente non vedente su Windows 11 con screen reader **NVDA** (**ZERO MOUSE**).
+Tutta l'interazione con l'ambiente, il codice, la console e i log avviene tramite sintesi vocale (NVDA / SAPI), feedback acustici calibrati e comandi da tastiera completi. Formattazione rigorosamente lineare ad elenchi (divieto assoluto di tabelle o grafici 2D).
 
-## Caricamento progressivo
+---
 
-- Per richieste brevi usare questo file e `GEMINI.md`.
-- Per analisi o pianificazione consultare soltanto da una a tre schede pertinenti in [`knowledge/`](./knowledge/).
-- Non caricare in massa documentazione, piani completati o archivi.
+## ⚡ 1. REGOLA DI INGAGGIO E CARICAMENTO PROGRESSIVO (ON-DEMAND)
 
-## Vincoli operativi
+Per garantire la massima velocità di risposta e preservare la finestra di contesto di Codex:
+- **Richieste brevi, chiarimenti o domande veloci**: usa unicamente questo file `AGENTS.md` e [`GEMINI.md`](./GEMINI.md) senza caricare la documentazione estesa.
+- **Pianificazione, revisione approfondita o test**: consulta le Fonti di Verità caricando **esclusivamente da 1 a 3 schede pertinenti in `knowledge/`** (tramite l'Indice Ragionato in `GEMINI.md`).
+- **Divieto di sovraccarico**: non caricare mai in massa l'intera cartella `knowledge/`, i piani archiviati in `docs/piani/completati/` o le revisioni storiche chiuse.
 
-1. Richieste come “analizza”, “verifica”, “valuta” o “cosa ne pensi?” impongono modalità consultiva e sola lettura.
-2. Modifiche a file o configurazioni richiedono un comando esplicito e circoscritto come “procedi”, “applica” o “esegui”.
-3. L’autorizzazione a scrivere un piano non autorizza codice, build, test, deploy, commit, push, cancellazioni o chiusura.
-4. Prima di eliminare qualsiasi elemento spiegare motivo, impatto, recuperabilità e attendere un consenso specifico.
-5. Distinguere sempre evidenza osservata, inferenza, proposta e risultato validato.
-6. Tutte le procedure devono funzionare da tastiera ed essere descritte linearmente per NVDA, senza diagrammi bidimensionali.
-7. Usare percorsi relativi o variabili d’ambiente. Non introdurre percorsi utente o segreti nei file pubblici.
-8. Mantenere i router sotto 250 righe e collocare i dettagli nelle schede `knowledge/`.
-9. Non creare configurazioni per strumenti o assistenti non presenti e non richiesti.
-10. Non effettuare commit o push senza autorizzazione separata.
+---
 
-## Fonti operative
+## 🏛️ 2. FONTI DI VERITÀ E REGOLE DI PROGETTO (POINTER HUB DRY)
 
-- Coordinatore Master e Roadmap: [`docs/todo.md`](./docs/todo.md).
-- Sottopiani tematici per competenze: [`docs/piani/completati/sottopiani/`](./docs/piani/completati/sottopiani/) (e attivi in [`docs/piani/attivi/sottopiani/`](./docs/piani/attivi/sottopiani/)).
-- Rapporto di analisi e consolidamento: [`docs/report/archivio/ANALISI_E_CONSOLIDAMENTO_WORLD_TOUR.md`](./docs/report/archivio/ANALISI_E_CONSOLIDAMENTO_WORLD_TOUR.md).
-- Governance e gating: [`knowledge/00_consuetudini_operative_e_sinergia_assistente.md`](./knowledge/00_consuetudini_operative_e_sinergia_assistente.md).
-- Accessibilità: [`knowledge/01_accessibilita_vocale_e_interazione_tastiera.md`](./knowledge/01_accessibilita_vocale_e_interazione_tastiera.md).
-- Stack rilevato: [`knowledge/02_architettura_stack_e_runtime.md`](./knowledge/02_architettura_stack_e_runtime.md).
-- Git: [`knowledge/03_standard_git_branching_e_commit.md`](./knowledge/03_standard_git_branching_e_commit.md).
-- Piani e verifiche: [`knowledge/10_standard_piani_verifiche_e_living_documentation.md`](./knowledge/10_standard_piani_verifiche_e_living_documentation.md).
+- [`GEMINI.md`](./GEMINI.md): Hub centrale di contesto con le regole auree e i parametri del progetto.
+- [`knowledge/`](./knowledge/): Base di conoscenza modulare (architettura, flussi, convenzioni e registro bug).
+- [`docs/todo.md`](./docs/todo.md): Coordinatore Master e Roadmap delle fasi.
+- [`docs/piani/attivi/`](./docs/piani/attivi/): Piani tecnici formali autorizzati (Sotto-Fase 1A/1B).
+- [`docs/report/REGISTRO_REVISIONI.md`](./docs/report/REGISTRO_REVISIONI.md): Registro attivo delle anomalie e revisioni aperte (RRU).
 
+---
+
+## 🛡️ 3. VINCOLI TECNICI INVIOLABILI
+
+1. **Regola 0 (Default Consultivo Permanente & Gating Semantico)**:
+   - Non effettuare MAI modifiche autonome a file o codice senza il comando esplicito di Luca (*"procedi"*, *"applica"*, *"esegui"*).
+   - Richieste come *"cosa ne pensi?"*, *"valuta"*, *"analizza"* richiedono risposte esclusivamente consultive.
+   - Gating Fase 1: *"passa alla fase 1"* autorizza SOLO la stesura del piano tecnico (1A) con Stop Obbligatorio prima del codice (1B).
+   - Validazione preventiva: proposta verificata sui **7 Assi di Qualità** e **3 Livelli di Simulazione**.
+2. **Accessibilità Vocale & Zero Mouse**:
+   - Nessuna interfaccia o funzionalità deve richiedere l'uso del mouse.
+   - I volumi sonori ed effetti audio devono essere congelati a un massimo compreso tra `0.7f` e `0.8f` per non coprire mai la voce di NVDA.
+3. **Protocollo 12 — Inner Codex Pattern (I 6 Cancelli Inviolabili)**:
+   - *Cancello 1 (Rifiuto Patching Euristico)*: diagnosi deterministica della causa radice (RCA);
+   - *Cancello 2 (Hardware Grounding)*: input diretto da tastiera, zero mouse;
+   - *Cancello 3 (Hitbox, Clearance Continua & Volumi Sicuri)*: rispetto dei livelli sonori 0.7f–0.8f;
+   - *Cancello 4 (Named Contracts D0..DN / S1..SN)*: scomposizione atomica delle modifiche;
+   - *Cancello 5 (Determinismo Headless)*: test seams a 0 ms senza ritardi o `OS.delay()`;
+   - *Cancello 6 (Budget Token & Anti-Bloat Normativo)*: router $\le 250$ righe, link relativi.
+4. **Principio di Integrità Evolutiva & Bonifica dei Residui (Contratto D0 Clean Sweep)**:
+   - Divieto di lasciare coesistere codice o strutture obsolete; bonifica verificata prima del rilascio.
+5. **Disciplina di Versionamento AVF & Separazione Git**:
+   - Calcolo deterministico della versione secondo la disciplina AVF (`V.A.R[.M]`).
+   - L'autorizzazione al commit e all'aggiornamento della Living Documentation non autorizza il push remoto, che richiede assenso separato.

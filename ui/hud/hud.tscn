@@ -18,6 +18,8 @@
 [ext_resource type="PackedScene" uid="uid://b8m1n6ydye71u" path="res://ui/charts/chart_modal.tscn" id="16_chart"]
 [ext_resource type="PackedScene" uid="uid://dm2systemmenu01" path="res://ui/system_menu/system_menu_modal.tscn" id="17_sysmenu"]
 [ext_resource type="PackedScene" uid="uid://dm4upgradesmod01" path="res://ui/upgrades/upgrades_modal.tscn" id="18_upgrades"]
+[ext_resource type="PackedScene" uid="uid://dmrelaxmodal01" path="res://ui/relax/relax_modal.tscn" id="19_relax"]
+[ext_resource type="PackedScene" uid="uid://dmlegacymodal01" path="res://ui/legacy/legacy_modal.tscn" id="20_legacy"]
 
 [node name="HUD" type="Control" unique_id=580846484]
 layout_mode = 3
@@ -87,13 +89,27 @@ text = "Velocità: 1x (T)"
 [node name="BtnPause" type="Button" parent="VBoxMain/PanelTop/HBoxTop" unique_id=1693903049]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnSpeed")
-focus_neighbor_right = NodePath("../BtnSave")
+focus_neighbor_right = NodePath("../BtnWait")
 focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnCharacter")
 text = "Pausa (Spazio)"
 
-[node name="BtnSave" type="Button" parent="VBoxMain/PanelTop/HBoxTop" unique_id=201408763]
+[node name="BtnWait" type="Button" parent="VBoxMain/PanelTop/HBoxTop"]
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnPause")
+focus_neighbor_right = NodePath("../BtnSleep")
+focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnCharacter")
+text = "Aspetta (X)"
+
+[node name="BtnSleep" type="Button" parent="VBoxMain/PanelTop/HBoxTop"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnWait")
+focus_neighbor_right = NodePath("../BtnSave")
+focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnCharacter")
+text = "Dormi (Z)"
+
+[node name="BtnSave" type="Button" parent="VBoxMain/PanelTop/HBoxTop" unique_id=201408763]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnSleep")
 focus_neighbor_right = NodePath("../BtnMainMenu")
 focus_neighbor_bottom = NodePath("../../../PanelCenter/HBoxActions/BtnCharacter")
 text = "Salva Partita"
@@ -175,12 +191,19 @@ text = "Personaggio (C)"
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnCharacter")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
+focus_neighbor_right = NodePath("../BtnRelax")
+text = "Allenamento (1)"
+
+[node name="BtnRelax" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnPractice")
+focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
 focus_neighbor_right = NodePath("../BtnCatalog")
-text = "1. Allenamento Rapido (10s)"
+text = "Relax (R)"
 
 [node name="BtnCatalog" type="Button" parent="VBoxMain/PanelCenter/HBoxActions" unique_id=622029772]
 layout_mode = 2
-focus_neighbor_left = NodePath("../BtnPractice")
+focus_neighbor_left = NodePath("../BtnRelax")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
 focus_neighbor_right = NodePath("../BtnNewSong")
 text = "Catalogo (M)"
@@ -266,8 +289,15 @@ text = "Classifiche (H)"
 layout_mode = 2
 focus_neighbor_left = NodePath("../BtnChart")
 focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
-focus_neighbor_right = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
+focus_neighbor_right = NodePath("../BtnLegacy")
 text = "Miglioramenti (U)"
+
+[node name="BtnLegacy" type="Button" parent="VBoxMain/PanelCenter/HBoxActions"]
+layout_mode = 2
+focus_neighbor_left = NodePath("../BtnUpgrades")
+focus_neighbor_top = NodePath("../../../PanelTop/HBoxTop/BtnMainMenu")
+focus_neighbor_right = NodePath("../../../PanelTop/HBoxTop/BtnSpeed")
+text = "Legacy (W)"
 
 [node name="SongCatalog" parent="." unique_id=757915434 instance=ExtResource("2_catalog")]
 visible = false
@@ -336,3 +366,12 @@ layout_mode = 1
 [node name="UpgradesModal" parent="." unique_id=305224176 instance=ExtResource("18_upgrades")]
 visible = false
 layout_mode = 1
+
+[node name="RelaxModal" parent="." instance=ExtResource("19_relax")]
+visible = false
+layout_mode = 1
+
+[node name="LegacyModal" parent="." instance=ExtResource("20_legacy")]
+visible = false
+layout_mode = 1
+

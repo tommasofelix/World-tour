@@ -24,7 +24,7 @@ func _ready() -> void:
 	print("\n========================================================")
 	print("   SUITE TEST PIANIFICAZIONE & GESTIONE TOUR (F8.2)     ")
 	print("========================================================")
-	
+
 	test_vehicle_specs_and_costs()
 	test_tour_data_model()
 	test_tour_feasibility_checks()
@@ -34,16 +34,20 @@ func _ready() -> void:
 	test_cumulative_hype_mechanics()
 	test_concert_system_tour_integration()
 	test_tour_completion_and_band_dynamics()
+	test_tour_day_off_mechanics()
+	test_promotional_radio_interviews()
+	test_vehicle_stickers_collection()
+	test_road_dilemmas_engine()
 	test_linear_nvda_speech_and_serialization()
-	
+
 	print("\n--------------------------------------------------------")
-	print("ESITO COMPLESSIVO TEST TOUR & TOURNÉE (F8.2):")
+	print("ESITO COMPLESSIVO TEST TOUR & TOURNÉE (F8.2 / SEZIONE 6):")
 	print("  Test Superati: %d" % tests_passed)
 	print("  Test Falliti:  %d" % tests_failed)
 	print("--------------------------------------------------------\n")
-	
+
 	if tests_failed == 0:
-		print("[SUCCESSO] La Pianificazione & Gestione del Tour (F8.2) è convalidata al 100%!")
+		print("[SUCCESSO] La Pianificazione & Gestione del Tour (Sezione 6) è convalidata al 100%!")
 		get_tree().quit(0)
 	else:
 		printerr("[ERRORE CRITICO] Alcuni test del sistema tour sono falliti!")
@@ -83,13 +87,13 @@ func test_vehicle_specs_and_costs() -> void:
 	assert_equal(rusty.stress_per_stop, 15, "Furgone Scassato genera +15 stress a tappa")
 	assert_equal(rusty.energy_per_stop, -20, "Furgone Scassato consuma 20 energia a tappa")
 	assert_almost_equal(rusty.breakdown_chance, 0.15, 0.01, "Furgone Scassato ha 15% rischio guasto")
-	
+
 	var pro := TourSystemScript.get_vehicle_specs(Enums.TourVehicleType.PRO_VAN)
 	assert_equal(pro.cost_per_stop, 150.0, "Van Professionale costa 150.0 € per tappa")
 	assert_equal(pro.stress_per_stop, 5, "Van Professionale genera moderato stress (+5)")
 	assert_equal(pro.breakdown_chance, 0.0, "Van Professionale ha 0% rischio guasti")
 	assert_true(pro.min_reputation >= 15.0, "Van Professionale richiede reputazione >= 15.0")
-	
+
 	var luxury := TourSystemScript.get_vehicle_specs(Enums.TourVehicleType.LUXURY_BUS)
 	assert_equal(luxury.cost_per_stop, 450.0, "Tour Bus di Lusso costa 450.0 € per tappa")
 	assert_equal(luxury.stress_per_stop, 0, "Tour Bus di Lusso azzera lo stress da viaggio (0 stress)")
@@ -107,12 +111,12 @@ func test_tour_data_model() -> void:
 	assert_equal(tour.vehicle_type, Enums.TourVehicleType.PRO_VAN, "Tipo veicolo Pro Van")
 	assert_equal(tour.status, TourDataScript.TourStatus.PLANNED, "Stato iniziale PLANNED")
 	assert_equal(tour.stops.size(), 0, "Nessuna tappa inizialmente")
-	
+
 	tour.add_stop(Enums.CityId.MILANO, "Milano", "milano_club", "Alcatraz", 12)
 	tour.add_stop(Enums.CityId.BOLOGNA, "Bologna", "bologna_covo", "Covo", 14)
 	assert_equal(tour.stops.size(), 2, "Aggiunte 2 tappe")
 	assert_equal(tour.is_tour_finished(), false, "Tour non ancora concluso")
-	
+
 	var cur := tour.get_current_stop()
 	assert_equal(cur.city_id, Enums.CityId.MILANO, "La prima tappa è a Milano")
 
@@ -124,32 +128,32 @@ func test_tour_feasibility_checks() -> void:
 	var player := PlayerDataScript.new()
 	player.money = 200.0
 	player.reputation = 5.0
-	
+
 	var calendar := CalendarDataScript.new()
 	calendar.day_number = 1
-	
+
 	var tour_sys := TourSystemScript.new(player, calendar)
-	
+
 	var valid_stops: Array[Dictionary] = [
 		{ "city_id": Enums.CityId.MILANO, "venue_id": "v1", "venue_name": "Club 1", "day_number": 3 },
 		{ "city_id": Enums.CityId.BOLOGNA, "venue_id": "v2", "venue_name": "Club 2", "day_number": 5 }
 	]
-	
+
 	# Reputazione insufficiente per Luxury Bus (richiede 40, player ha 5)
 	var check_lux := tour_sys.can_plan_tour(Enums.TourVehicleType.LUXURY_BUS, valid_stops)
 	assert_equal(check_lux.allowed, false, "Luxury Bus rifiutato per reputazione insufficiente")
 	assert_equal(check_lux.reason, "reputation_insufficient_for_vehicle", "Motivazione reputazione corretta")
-	
+
 	# Troppe poche tappe (< 2)
 	var check_few := tour_sys.can_plan_tour(Enums.TourVehicleType.RUSTY_VAN, [{ "city_id": 0, "day_number": 3 }])
 	assert_equal(check_few.allowed, false, "Tour rifiutato se ha meno di 2 tappe")
-	
+
 	# Fondi insufficienti per noleggio (Pro Van per 2 tappe = 300 €, player ha 200 €)
 	player.reputation = 20.0
 	var check_broke := tour_sys.can_plan_tour(Enums.TourVehicleType.PRO_VAN, valid_stops)
 	assert_equal(check_broke.allowed, false, "Pro Van rifiutato se fondi insufficienti")
 	assert_equal(check_broke.reason, "funds_insufficient_for_vehicle", "Motivazione fondi corretta")
-	
+
 	# Date nel passato
 	var invalid_dates: Array[Dictionary] = [
 		{ "city_id": Enums.CityId.MILANO, "venue_id": "v1", "venue_name": "Club 1", "day_number": 0 },
@@ -157,7 +161,7 @@ func test_tour_feasibility_checks() -> void:
 	]
 	var check_dates := tour_sys.can_plan_tour(Enums.TourVehicleType.RUSTY_VAN, invalid_dates)
 	assert_equal(check_dates.allowed, false, "Tour rifiutato con date nel passato o incoerenti")
-	
+
 	# Pianificazione valida con Rusty Van (2 tappe * 40 = 80 €, player ha 200 €)
 	var check_valid := tour_sys.can_plan_tour(Enums.TourVehicleType.RUSTY_VAN, valid_stops)
 	assert_equal(check_valid.allowed, true, "Pianificazione valida consentita con Rusty Van")
@@ -171,32 +175,32 @@ func test_tour_planning_and_schedule_integration() -> void:
 	var player := PlayerDataScript.new()
 	player.money = 1000.0
 	player.reputation = 20.0
-	
+
 	var calendar := CalendarDataScript.new()
 	calendar.day_number = 5
-	
+
 	var schedule := ScheduleSystemScript.new(player, calendar)
 	var tour_sys := TourSystemScript.new(player, calendar, null, schedule)
-	
+
 	var stops: Array[Dictionary] = [
 		{ "city_id": Enums.CityId.MILANO, "venue_id": "v_mi", "venue_name": "Magazzini", "day_number": 7 },
 		{ "city_id": Enums.CityId.BOLOGNA, "venue_id": "v_bo", "venue_name": "Estragon", "day_number": 9 },
 		{ "city_id": Enums.CityId.ROMA, "venue_id": "v_ro", "venue_name": "Atlantico", "day_number": 11 }
 	]
-	
+
 	var res := tour_sys.plan_tour("Giro d'Italia", Enums.TourVehicleType.PRO_VAN, stops)
 	assert_true(res.success, "Tour pianificato con successo")
 	assert_equal(tour_sys.active_tour.status, TourDataScript.TourStatus.IN_PROGRESS, "Lo stato del tour è IN_PROGRESS")
 	assert_equal(player.money, 1000.0 - 450.0, "Detratti 450.0 € per noleggio Pro Van (3 tappe * 150)")
-	
+
 	# Verifica che gli impegni a calendario siano stati registrati
 	var ev_day7 := schedule.get_events_for_day(7)
 	assert_true(ev_day7.size() > 0, "Tappa 1 registrata sul calendario al giorno 7")
 	assert_equal(ev_day7[0].event_type, Enums.CalendarEventType.TOUR_STOP, "Tipo evento è TOUR_STOP")
-	
+
 	var ev_day9 := schedule.get_events_for_day(9)
 	assert_true(ev_day9.size() > 0, "Tappa 2 registrata sul calendario al giorno 9")
-	
+
 	var ev_day11 := schedule.get_events_for_day(11)
 	assert_true(ev_day11.size() > 0, "Tappa 3 registrata sul calendario al giorno 11")
 
@@ -211,24 +215,24 @@ func test_logistics_and_vehicle_fatigue() -> void:
 	player.stress = 10.0
 	player.reputation = 50.0
 	player.current_city_id = Enums.CityId.MILANO
-	
+
 	var calendar := CalendarDataScript.new()
 	var travel := TravelSystemScript.new(player, calendar)
 	var tour_sys := TourSystemScript.new(player, calendar, travel, null)
-	
+
 	# Tour con Luxury Bus
 	var stops: Array[Dictionary] = [
 		{ "city_id": Enums.CityId.ROMA, "venue_id": "v_ro", "venue_name": "Atlantico", "day_number": 3 },
 		{ "city_id": Enums.CityId.NAPOLI, "venue_id": "v_na", "venue_name": "Palapartenope", "day_number": 5 }
 	]
 	tour_sys.plan_tour("Luxury Tour", Enums.TourVehicleType.LUXURY_BUS, stops)
-	
+
 	# Spostamento verso Tappa 1 (Roma) con Luxury Bus
 	var move_res := tour_sys.advance_to_next_stop()
 	assert_true(move_res.success, "Spostamento con Luxury Bus riuscito")
 	assert_equal(player.current_city_id, Enums.CityId.ROMA, "Giocatore spostato a Roma")
 	assert_equal(travel.current_city_id, Enums.CityId.ROMA, "TravelSystem sincronizzato a Roma")
-	
+
 	# Con Luxury Bus: 0 stress aggiuntivo, recupero +15 energia
 	assert_almost_equal(player.stress, 10.0, 0.01, "Nessun accumulo di stress con il Luxury Bus")
 	assert_equal(player.energy, 95, "Energia rigenerata a bordo (+15, da 80 a 95)")
@@ -241,7 +245,7 @@ func test_breakdown_mechanics() -> void:
 	var specs := TourSystemScript.get_vehicle_specs(Enums.TourVehicleType.RUSTY_VAN)
 	assert_true(specs.breakdown_chance > 0.0, "Rusty Van include probabilità di guasto meccanico")
 	assert_true(specs.breakdown_cost > 0.0, "Riparazione guasto ha un costo in denaro")
-	
+
 	var pro_specs := TourSystemScript.get_vehicle_specs(Enums.TourVehicleType.PRO_VAN)
 	assert_equal(pro_specs.breakdown_chance, 0.0, "Pro Van garantisce zero rischi di guasto stradale ordinario")
 
@@ -254,14 +258,14 @@ func test_cumulative_hype_mechanics() -> void:
 	player.money = 1000.0
 	player.reputation = 20.0
 	var tour_sys := TourSystemScript.new(player)
-	
+
 	var stops: Array[Dictionary] = [
 		{ "city_id": Enums.CityId.MILANO, "venue_id": "v1", "venue_name": "Club 1", "day_number": 2 },
 		{ "city_id": Enums.CityId.BOLOGNA, "venue_id": "v2", "venue_name": "Club 2", "day_number": 4 }
 	]
 	tour_sys.plan_tour("Hype Tour", Enums.TourVehicleType.PRO_VAN, stops)
 	assert_almost_equal(tour_sys.get_tour_hype_multiplier(), 1.0, 0.01, "Hype di partenza è 1.0 (neutro)")
-	
+
 	# Registrazione di un concerto trionfale (Score 85.0 >= 70.0)
 	var concert_result := {
 		"gross_revenue": 500.0,
@@ -285,27 +289,27 @@ func test_concert_system_tour_integration() -> void:
 	player.energy = 90
 	player.popularity = 40.0
 	player.reputation = 30.0
-	
+
 	var calendar := CalendarDataScript.new()
 	var tour_sys := TourSystemScript.new(player, calendar)
 	var concert_sys := ConcertSystemScript.new(player, calendar)
-	
+
 	var stops: Array[Dictionary] = [
 		{ "city_id": Enums.CityId.MILANO, "venue_id": "milano_pub", "venue_name": "Navigli Rock Pub", "day_number": 2 },
 		{ "city_id": Enums.CityId.BOLOGNA, "venue_id": "bologna_covo", "venue_name": "Covo Indie Club", "day_number": 4 }
 	]
 	tour_sys.plan_tour("Live Tour", Enums.TourVehicleType.PRO_VAN, stops)
 	tour_sys.active_tour.accumulated_hype = 1.20 # +20% hype accumulato
-	
+
 	if GameManager:
 		GameManager.player_data = player
 		GameManager.tour_system = tour_sys
-		
+
 	var venue := VenueDataScript.new("test_v", "Test Venue", 100, 50.0, 10.0, 20.0, 10.0, "Club", "Intimo")
 	var song := SongDataScript.new("s_test", "Hit Song", Enums.MusicalGenre.ROCK, "Energy")
 	song.quality_score = 75.0
 	song.status = Enums.SongStatus.PRODUCED
-	
+
 	var result := concert_sys.resolve_concert(venue, [song], 10.0)
 	assert_true(result.get("success", false), "Concerto eseguito con successo")
 	assert_true(result.has("tour_hype_mult"), "Il risultato include tour_hype_mult")
@@ -319,37 +323,190 @@ func test_tour_completion_and_band_dynamics() -> void:
 	var player := PlayerDataScript.new()
 	player.money = 2000.0
 	player.reputation = 20.0
-	
+
 	const BandMemberDataScript = preload("res://data/models/band_member_data.gd")
 	var member := BandMemberDataScript.new("m1", "Marco Bass", Enums.BandRole.BASS, Enums.BandPersonality.RELIABLE, Enums.MusicalGenre.ROCK, 50)
 	member.affinity = 50.0
 	member.musical_respect = 50.0
 	member.tension = 30.0
 	player.add_band_member(member)
-	
+
 	var calendar := CalendarDataScript.new()
 	var band := BandSystemScript.new(player, calendar)
 	var tour_sys := TourSystemScript.new(player, calendar, null, null, band)
-	
+
 	var stops: Array[Dictionary] = [
 		{ "city_id": Enums.CityId.MILANO, "venue_id": "v1", "venue_name": "Club 1", "day_number": 2 },
 		{ "city_id": Enums.CityId.BOLOGNA, "venue_id": "v2", "venue_name": "Club 2", "day_number": 4 }
 	]
 	tour_sys.plan_tour("Triumphant Tour", Enums.TourVehicleType.PRO_VAN, stops)
-	
+
 	# Tappa 1
 	tour_sys.record_stop_result({ "gross_revenue": 600.0, "player_share": 400.0, "rent_cost": 100.0, "new_fans": 60, "concert_score": 80.0 })
 	# Tappa 2 (conclude il tour)
 	tour_sys.record_stop_result({ "gross_revenue": 800.0, "player_share": 500.0, "rent_cost": 150.0, "new_fans": 70, "concert_score": 85.0 })
-	
+
 	assert_true(tour_sys.active_tour.is_tour_finished(), "Tutte le tappe del tour risultano completate")
 	assert_equal(tour_sys.active_tour.status, TourDataScript.TourStatus.COMPLETED, "Stato aggiornato a COMPLETED")
-	
+
 	# Il tour trionfale consolida la band: +15 Affinità, +15 Rispetto, -20 Tensione
 	assert_almost_equal(member.affinity, 65.0, 0.01, "Affinità aumentata a 65.0 (+15)")
 	assert_almost_equal(member.musical_respect, 65.0, 0.01, "Rispetto musicale aumentato a 65.0 (+15)")
 	assert_almost_equal(member.tension, 10.0, 0.01, "Tensione interna scesa a 10.0 (-20)")
 	assert_true(player.reputation > 20.0, "Reputazione complessiva del musicista aumentata")
+
+# ------------------------------------------------------------------------------
+# 9b. MECCANICHE DAY OFF & RECUPERO BAND (SEZIONE 6)
+# ------------------------------------------------------------------------------
+func test_tour_day_off_mechanics() -> void:
+	print("\n--- TEST 9b: MECCANICHE DAY OFF & RECUPERO ---")
+	var player := PlayerDataScript.new()
+	player.money = 2000.0
+	player.reputation = 30.0
+	player.energy = 50
+	player.stress = 60.0
+	const BandMemberDataScript = preload("res://data/models/band_member_data.gd")
+	var member := BandMemberDataScript.new("m1", "Drummer Bob", Enums.BandRole.DRUMS, Enums.BandPersonality.RELIABLE, Enums.MusicalGenre.ROCK, 80)
+	member.tension = 50.0
+	player.add_band_member(member)
+
+	var tour_sys := TourSystemScript.new(player)
+	var stops: Array[Dictionary] = [
+		{ "city_id": Enums.CityId.MILANO, "venue_id": "v1", "venue_name": "Club 1", "day_number": 2 },
+		{ "city_id": Enums.CityId.PARIGI, "city_name": "Parigi", "is_day_off": true, "day_number": 4 }
+	]
+
+	var plan_res := tour_sys.plan_tour("Rest Tour", Enums.TourVehicleType.PRO_VAN, stops)
+	assert_true(plan_res.success, "Tour con Day Off pianificato con successo")
+
+	# Avanzamento alla tappa 1 (Concerto Milano)
+	var adv1 := tour_sys.advance_to_next_stop()
+	assert_true(adv1.success, "Arrivo a Milano per concerto")
+	assert_equal(adv1.get("is_day_off", false), false, "La prima tappa non è un Day Off")
+
+	# Risoluzione fittizia concerto tappa 1
+	tour_sys.record_stop_result({
+		"gross_revenue": 500.0, "player_share": 350.0, "rent_cost": 50.0, "new_fans": 60, "concert_score": 75.0
+	})
+
+	# Avanzamento alla tappa 2 (Day Off a Parigi)
+	var adv2 := tour_sys.advance_to_next_stop()
+	assert_true(adv2.success, "Arrivo al Day Off a Parigi")
+	assert_true(adv2.get("is_day_off", false), "Rilevata tappa come Day Off")
+	assert_true(player.energy >= 60, "Energia recuperata (+25)")
+	assert_true(player.stress <= 45.0, "Stress ridotto (-20)")
+	assert_true(member.tension < 50.0, "Tensione band mitigata (-15)")
+	assert_equal(tour_sys.active_tour.status, TourDataScript.TourStatus.COMPLETED, "Tour completato automaticamente al termine del Day Off")
+
+# ------------------------------------------------------------------------------
+# 9c. INTERVISTE RADIOFONICHE PROMOZIONALI (SEZIONE 6)
+# ------------------------------------------------------------------------------
+func test_promotional_radio_interviews() -> void:
+	print("\n--- TEST 9c: INTERVISTE RADIOFONICHE PROMOZIONALI ---")
+	var player := PlayerDataScript.new()
+	player.money = 2000.0
+	player.energy = 80
+	player.reputation = 20.0
+
+	var tour_sys := TourSystemScript.new(player)
+	var stops: Array[Dictionary] = [
+		{ "city_id": Enums.CityId.BOLOGNA, "venue_id": "v1", "venue_name": "Estragon", "day_number": 2 },
+		{ "city_id": Enums.CityId.ROMA, "venue_id": "v2", "venue_name": "Atlantico", "day_number": 4 }
+	]
+	tour_sys.plan_tour("Radio Rock", Enums.TourVehicleType.PRO_VAN, stops)
+	tour_sys.advance_to_next_stop()
+
+	var check := tour_sys.can_do_radio_interview()
+	assert_true(check.allowed, "Intervista radio consentita per la tappa attiva")
+
+	var prev_hype: float = tour_sys.active_tour.accumulated_hype
+	var radio_res := tour_sys.do_radio_interview()
+	assert_true(radio_res.success, "Intervista radio eseguita con successo")
+	assert_almost_equal(tour_sys.active_tour.accumulated_hype, prev_hype + 0.10, 0.01, "Hype del tour incrementato del 10%")
+	assert_equal(tour_sys.active_tour.radio_interviews_count, 1, "Conteggio interviste radio aggiornato")
+	assert_equal(player.get_city_fans(Enums.CityId.BOLOGNA), 25, "Accreditati 25 nuovi fan locali a Bologna")
+	assert_almost_equal(player.get_city_popularity(Enums.CityId.BOLOGNA), 10.0, 0.01, "Popolarità a Bologna aumentata di 10.0")
+
+	# Tentativo ripetuto sulla stessa tappa
+	var second_check := tour_sys.can_do_radio_interview()
+	assert_equal(second_check.allowed, false, "Seconda intervista nella stessa tappa bloccata (already_done)")
+
+# ------------------------------------------------------------------------------
+# 9d. DIARIO DI BORDO & ADESIVI CITTÀ (SEZIONE 6)
+# ------------------------------------------------------------------------------
+func test_vehicle_stickers_collection() -> void:
+	print("\n--- TEST 9d: DIARIO DI BORDO & ADESIVI CITTÀ ---")
+	var player := PlayerDataScript.new()
+	var tour_sys := TourSystemScript.new(player)
+
+	assert_true(tour_sys.award_city_sticker(Enums.CityId.MILANO), "Primo adesivo di Milano assegnato")
+	assert_equal(tour_sys.award_city_sticker(Enums.CityId.MILANO), false, "Adesivo duplicato non riassegnato")
+	assert_true(player.visited_city_stickers.has(Enums.CityId.MILANO), "Adesivo registrato in PlayerData")
+
+	tour_sys.award_city_sticker(Enums.CityId.LONDRA)
+	assert_equal(player.visited_city_stickers.size(), 2, "Due adesivi collezionati nel diario")
+
+	var speech := tour_sys.get_vehicle_stickers_speech()
+	assert_true(speech.find("Milano") != -1, "Discorso include Milano")
+	assert_true(speech.find("Londra") != -1, "Discorso include Londra")
+
+# ------------------------------------------------------------------------------
+# 9e. MOTORE DILEMMI STRADALI PROCEDURALI (SEZIONE 6)
+# ------------------------------------------------------------------------------
+func test_road_dilemmas_engine() -> void:
+	print("\n--- TEST 9e: DILEMMI STRADALI PROCEDURALI ---")
+	var player := PlayerDataScript.new()
+	player.money = 1000.0
+	player.energy = 80
+	player.stress = 20.0
+	player.reputation = 25.0
+	const BandMemberDataScript = preload("res://data/models/band_member_data.gd")
+	var member := BandMemberDataScript.new("b1", "Bassist Sid", Enums.BandRole.BASS, Enums.BandPersonality.RELIABLE, Enums.MusicalGenre.ROCK, 75)
+	member.tension = 20.0
+	player.add_band_member(member)
+
+	var tour_sys := TourSystemScript.new(player)
+	var stops: Array[Dictionary] = [
+		{ "city_id": Enums.CityId.MILANO, "venue_id": "v1", "venue_name": "Club 1", "day_number": 2 },
+		{ "city_id": Enums.CityId.ROMA, "venue_id": "v2", "venue_name": "Club 2", "day_number": 4 }
+	]
+	tour_sys.plan_tour("Dilemma Highway", Enums.TourVehicleType.PRO_VAN, stops)
+
+	# Dilemma 1: FLAT_TIRE_RAIN -> Scelta 1 (Soccorso rapido: -120 euro)
+	tour_sys.force_next_road_dilemma(Enums.RoadDilemmaType.FLAT_TIRE_RAIN)
+	var d1 := tour_sys.check_and_trigger_road_dilemma()
+	assert_true(d1.triggered, "Dilemma foratura sotto pioggia attivato")
+	var r1 := tour_sys.resolve_road_dilemma_choice(1)
+	assert_true(r1.success, "Scelta 1 risolta")
+	assert_equal(r1.money_cost, 120.0, "Costo soccorso 120 €")
+	assert_almost_equal(player.money, 1000.0 - (150.0 * 2.0) - 120.0, 0.01, "Denaro aggiornato post noleggio e soccorso")
+
+	# Dilemma 2: REST_STOP_NIGHT -> Scelta 3 (Jam session: +5% hype, -15 energia)
+	var cur_hype: float = tour_sys.active_tour.accumulated_hype
+	var cur_energy: int = player.energy
+	tour_sys.force_next_road_dilemma(Enums.RoadDilemmaType.REST_STOP_NIGHT)
+	tour_sys.check_and_trigger_road_dilemma()
+	var r2 := tour_sys.resolve_road_dilemma_choice(3)
+	assert_true(r2.success, "Scelta 3 autogrill risolta")
+	assert_almost_equal(tour_sys.active_tour.accumulated_hype, cur_hype + 0.05, 0.01, "Hype aumentato del 5%")
+	assert_equal(player.energy, cur_energy - 15, "Energia diminuita di 15 per la jam")
+
+	# Dilemma 3: BUDGET_MOTEL -> Scelta 1 (Camere singole: -180 euro, +30 energia, -20 stress)
+	var pre_motel_money: float = player.money
+	tour_sys.force_next_road_dilemma(Enums.RoadDilemmaType.BUDGET_MOTEL)
+	tour_sys.check_and_trigger_road_dilemma()
+	var r3 := tour_sys.resolve_road_dilemma_choice(1)
+	assert_true(r3.success, "Scelta 1 motel risolta")
+	assert_almost_equal(player.money, pre_motel_money - 180.0, 0.01, "Costo camere singole applicato (-180 €)")
+
+	# Dilemma 4: LOST_ROUTE -> Scelta 3 (Trattoria: -60 euro, +15 energia, -10 stress)
+	player.stress = 30.0
+	var pre_trattoria_stress: float = player.stress
+	tour_sys.force_next_road_dilemma(Enums.RoadDilemmaType.LOST_ROUTE)
+	tour_sys.check_and_trigger_road_dilemma()
+	var r4 := tour_sys.resolve_road_dilemma_choice(3)
+	assert_true(r4.success, "Scelta 3 trattoria risolta")
+	assert_true(player.stress < pre_trattoria_stress, "Stress ridotto dal pranzo distensivo")
 
 # ------------------------------------------------------------------------------
 # 10. RESA VOCALE NVDA & SERIALIZZAZIONE
@@ -360,24 +517,24 @@ func test_linear_nvda_speech_and_serialization() -> void:
 	player.money = 1000.0
 	player.reputation = 25.0
 	var tour_sys := TourSystemScript.new(player)
-	
+
 	var stops: Array[Dictionary] = [
 		{ "city_id": Enums.CityId.MILANO, "venue_id": "v1", "venue_name": "Club 1", "day_number": 2 },
 		{ "city_id": Enums.CityId.BOLOGNA, "venue_id": "v2", "venue_name": "Club 2", "day_number": 4 }
 	]
 	tour_sys.plan_tour("Acoustic Journey", Enums.TourVehicleType.PRO_VAN, stops)
-	
+
 	# Resa Vocale
 	var speech := tour_sys.get_tour_summary_speech()
 	assert_true(speech.length() > 0, "Discorso vocale generato")
 	assert_true(speech.find("Acoustic Journey") != -1, "Discorso include il titolo del tour")
 	assert_true(speech.find("Van Professionale") != -1, "Discorso include il nome del veicolo")
 	assert_true(speech.find("┌") == -1 and speech.find("│") == -1, "Zero caratteri grafici ASCII per NVDA")
-	
+
 	# Serializzazione & Deserializzazione
 	var save_dict := tour_sys.to_dict()
 	assert_true(save_dict.has("active_tour"), "Dizionario di salvataggio include active_tour")
-	
+
 	var loaded_sys := TourSystemScript.new(player)
 	loaded_sys.from_dict(save_dict)
 	assert_true(loaded_sys.active_tour != null, "Tour attivo ripristinato con successo")

@@ -136,9 +136,27 @@ func calculate_album_metrics(
 	var lead_bonus: float = 0.0
 	if lead_song:
 		lead_bonus = (lead_song.quality_score / 100.0) * 8.0
+		if lead_song.special_trait == Enums.SongTrait.GENERATIONAL_ANTHEM:
+			lead_bonus += 2.0
+		elif lead_song.special_trait == Enums.SongTrait.EARWORM:
+			lead_bonus += 1.5
 	else:
 		lead_bonus = 2.0 # Default minimo se nessuna traccia speciale indicata
 		
+	# Bonus Tratti Speciali delle Tracce
+	var traits_bonus: float = 0.0
+	for s_id in song_ids:
+		for s in player_data.songs:
+			if s.id == s_id:
+				if s.special_trait == Enums.SongTrait.AUDIOPHILE_GEM:
+					traits_bonus += 1.0
+				elif s.special_trait == Enums.SongTrait.EPIC_RIFF:
+					traits_bonus += 0.8
+				elif s.special_trait == Enums.SongTrait.TEARJERKER_BALLAD:
+					traits_bonus += 0.8
+				break
+	traits_bonus = minf(traits_bonus, 5.0)
+
 	# Bonus Concept e Artwork
 	var concept_bonus: float = 3.0
 	match concept:
@@ -170,7 +188,7 @@ func calculate_album_metrics(
 		band_bonus = (avg_chem / 100.0) * 8.0
 		
 	var overall_quality: float = clampf(
-		avg_quality + lead_bonus + concept_bonus + artwork_bonus + band_bonus,
+		avg_quality + lead_bonus + concept_bonus + artwork_bonus + band_bonus + traits_bonus,
 		Constants.SONG_MIN_QUALITY,
 		Constants.SONG_MAX_QUALITY
 	)
@@ -256,6 +274,7 @@ func create_and_release_album(
 	album.is_released = true
 	
 	player_data.albums.append(album)
+	player_data.increment_career_stat("total_albums_released", 1)
 	
 	# Aggiorna lo stato dei singoli inclusi a RELEASED se non lo erano già
 	for s_id in song_ids:
@@ -339,12 +358,24 @@ func process_daily_royalties() -> Dictionary:
 		var decay: float = pow(0.97, clampf(float(days_old), 0.0, 60.0))
 		var daily_units: float = maxf(1.0, (album.overall_quality * 0.35 + float(player_data.fans) * 0.03) * decay)
 		var royalty_rate: float = Constants.ALBUM_EP_ROYALTY_RATE if album.album_type == Enums.AlbumType.EP else Constants.ALBUM_LP_ROYALTY_RATE
+		
+		# Applicazione clausola distribuzione fisica esclusiva (Sezione 9)
+		if player_data.has_active_contract() and player_data.active_contract.has_physical_distribution:
+			var p_dist_mult: float = float(player_data.active_contract.physical_sales_multiplier)
+			var p_dist_cut: float = float(player_data.active_contract.physical_dist_cut)
+			daily_units *= p_dist_mult
+			royalty_rate *= (1.0 - p_dist_cut)
+			
 		var gross_album_royalty: float = daily_units * royalty_rate
 		var player_album_royalty: float = snappedf(gross_album_royalty * leader_ratio, 0.01)
 		
 		if GameManager and GameManager.industry_system and player_data and player_data.has_active_contract():
-			var recoup_res: Dictionary = GameManager.industry_system.process_royalties_recoupment(player_album_royalty)
-			player_album_royalty = recoup_res.artist_received
+			# Se il master dell'album è stato riscattato (Master Buyback), incassa 100% senza recoupment
+			if player_data.active_contract.is_master_bought_back(album.id):
+				pass
+			else:
+				var recoup_res: Dictionary = GameManager.industry_system.process_royalties_recoupment(player_album_royalty)
+				player_album_royalty = recoup_res.artist_received
 		
 		album.total_sales += daily_units
 		total_player_royalties += player_album_royalty

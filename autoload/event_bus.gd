@@ -58,14 +58,21 @@ signal album_sales_updated(total_royalties: float, album_count: int)
 signal album_creator_requested()
 signal housing_changed(new_tier: int, rent: float)
 
-# --- Segnali Industria, Contratti & Manager (World-tour V3.0) ---
+# --- Segnali Industria, Contratti & Manager (World-tour V3.0 & Sezione 9) ---
 signal contract_offered(contract_data: Dictionary)
 signal contract_signed(contract_data: Dictionary)
 signal contract_completed(contract_data: Dictionary)
 signal contract_canceled(contract_data: Dictionary)
+signal contract_renegotiated(contract_data: Dictionary)
+signal master_bought_back(album_id: String, cost: float)
 signal recoupment_updated(recouped_amount: float, remaining_debt: float)
 signal manager_hired(manager_data: Dictionary)
 signal manager_fired(manager_data: Dictionary)
+signal manager_trust_changed(new_trust: float, delta: float)
+signal manager_promise_updated(promise_data: Dictionary)
+signal own_label_founded(label_data: Dictionary)
+signal own_label_band_signed(band_data: Dictionary)
+signal own_label_royalties_received(amount: float)
 signal industry_hub_requested()
 
 # --- Segnali Bivi Etico-Narrativi ---
@@ -89,22 +96,46 @@ signal tour_planned(tour_data: TourData)
 signal tour_stop_completed(stop_index: int, concert_result: Dictionary)
 signal tour_finished(summary: Dictionary)
 signal tour_screen_requested()
+signal road_dilemma_triggered(dilemma_data: Dictionary)
+signal road_dilemma_resolved(choice: int, outcome: Dictionary)
+signal tour_radio_interview_completed(interview_data: Dictionary)
+signal city_sticker_collected(city_id: int)
 
-# Segnali Grandi Festival Estivi (SP-11 / F8.3)
+# Segnali Grandi Festival Estivi (SP-11 / F8.3 / Sezione 7)
 signal festival_slot_booked(festival_id: String, slot: int)
 signal festival_performed(festival_id: String, result: Dictionary)
 signal festival_screen_requested()
+signal battle_of_bands_completed(result: Dictionary)
+signal festival_sponsor_signed(festival_id: String, sponsor_type: int)
 
-# --- Segnali Social Media & Fan Engagement (World-tour V4.0 / SP-12 / F8.4) ---
+# --- Segnali Social Media & Fan Engagement (World-tour V4.0 / SP-12 / F8.4 & Sezione 8) ---
 signal social_post_published(post: SocialPostData)
 signal social_controversy_triggered(controversy_data: Dictionary)
 signal social_controversy_resolved(choice: int, outcome: Dictionary)
 signal social_buzz_updated(new_buzz: float)
 signal social_screen_requested()
+signal social_post_sponsored(post_id: String, budget: int, views_added: int)
+signal live_stream_completed(stream_summary: Dictionary)
+signal fan_club_founded(fan_club_data: RefCounted)
+signal fan_mail_received(mail_data: Dictionary)
 
 # --- Segnali Classifiche Musicali & Artisti Rivali (World-tour V4.0 / SP-13 / F8.5) ---
 signal weekly_charts_updated(charts_data: Dictionary)
 signal chart_debut_achieved(category: String, title: String, rank: int)
 signal chart_number_one_achieved(category: String, title: String)
 signal chart_screen_requested()
+
+# --- Segnali Endgame, Certificazioni, Music Awards & Legacy (World-tour V5.0 / Sezione 11) ---
+signal certification_awarded(cert_data: Dictionary)
+signal music_awards_ceremony_held(awards_summary: Dictionary)
+signal award_won(award_data: Dictionary)
+signal hall_of_fame_inducted(artist_name: String)
+signal last_waltz_performed(concert_summary: Dictionary)
+signal legacy_ending_triggered(ending_type: int, ending_data: Dictionary)
+signal legacy_screen_requested()
+
+# --- Segnali Sound Design, Audio Cues & Statistiche (World-tour V5.1.0 / Sezione 12) ---
+signal audio_cue_requested(cue_type: int)
+signal career_stats_updated(stats: Dictionary)
+
 

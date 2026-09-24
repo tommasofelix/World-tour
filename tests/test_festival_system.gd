@@ -22,7 +22,7 @@ var tests_failed: int = 0
 
 func _ready() -> void:
 	print("\n========================================================")
-	print("   SUITE TEST GRANDI FESTIVAL ESTIVI & SLOTS (F8.3)     ")
+	print("   SUITE TEST GRANDI FESTIVAL ESTIVI & SLOTS (F8.3 / SEZIONE 7)   ")
 	print("========================================================")
 	
 	test_festival_catalog_initialization()
@@ -35,9 +35,15 @@ func _ready() -> void:
 	test_steal_the_show_defeat_dynamics()
 	test_territorial_fan_spread_and_fatigue()
 	test_linear_nvda_speech_and_savegame_serialization()
+	test_battle_of_bands_contest_and_pass()
+	test_stage_types_and_underground_tent()
+	test_festival_sponsorships()
+	test_extreme_moves_and_steal_the_show()
+	test_outdoor_weather_and_storm_bivio()
+	test_time_clash_resolution()
 	
 	print("\n--------------------------------------------------------")
-	print("ESITO COMPLESSIVO TEST GRANDI FESTIVAL ESTIVI (F8.3):")
+	print("ESITO COMPLESSIVO TEST GRANDI FESTIVAL ESTIVI (SEZIONE 7):")
 	print("  Test Superati: %d" % tests_passed)
 	print("  Test Falliti:  %d" % tests_failed)
 	print("--------------------------------------------------------\n")
@@ -77,10 +83,10 @@ func assert_almost_equal(actual: float, expected: float, tolerance: float, messa
 # 1. CATALOGO DEI 6 GRANDI FESTIVAL CONTINENTALI
 # ------------------------------------------------------------------------------
 func test_festival_catalog_initialization() -> void:
-	print("\n--- TEST 1: CATALOGO DEI 6 GRANDI FESTIVAL CONTINENTALI ---")
+	print("\n--- TEST 1: CATALOGO DEI 16 GRANDI FESTIVAL MONDIALI ---")
 	var fest_sys := FestivalSystemScript.new()
 	var all_fests := fest_sys.get_all_festivals()
-	assert_equal(all_fests.size(), 6, "Presenti esattamente 6 festival continentali")
+	assert_equal(all_fests.size(), 16, "Presenti esattamente 16 festival mondiali")
 	
 	var mi := fest_sys.get_festival("fest_milano")
 	assert_true(mi != null, "Festival di Milano presente")
@@ -105,6 +111,35 @@ func test_festival_catalog_initialization() -> void:
 	
 	var be := fest_sys.get_festival("fest_berlino")
 	assert_equal(be.capacity, 50000, "Capienza Berlino (Tempelhof): 50.000 persone")
+
+	# Nuovi Festival Mondiali (Sezione 7)
+	var du := fest_sys.get_festival("fest_dublino")
+	assert_true(du != null, "Festival di Dublino presente")
+	assert_equal(du.city_id, Enums.CityId.DUBLINO, "Dublino è la città ospitante")
+	assert_equal(du.capacity, 45000, "Capienza Dublino: 45.000 persone")
+	assert_equal(du.rival_band_name, "Celtic Fiddle Rebels", "Rivale di Dublino: Celtic Fiddle Rebels")
+
+	var pa := fest_sys.get_festival("fest_parigi")
+	assert_true(pa != null, "Festival di Parigi presente")
+	assert_equal(pa.capacity, 55000, "Capienza Parigi: 55.000 persone")
+
+	var ma := fest_sys.get_festival("fest_madrid")
+	assert_true(ma != null, "Festival di Madrid presente")
+	assert_equal(ma.capacity, 40000, "Capienza Madrid: 40.000 persone")
+
+	var ny := fest_sys.get_festival("fest_new_york")
+	assert_true(ny != null, "Festival di New York presente")
+	assert_equal(ny.capacity, 70000, "Capienza New York: 70.000 persone")
+	assert_equal(ny.rival_band_name, "Gotham Underground Kings", "Rivale di New York: Gotham Underground Kings")
+
+	var la := fest_sys.get_festival("fest_los_angeles")
+	assert_true(la != null, "Festival di Los Angeles presente")
+	assert_equal(la.capacity, 60000, "Capienza Los Angeles: 60.000 persone")
+
+	var tk := fest_sys.get_festival("fest_tokyo")
+	assert_true(tk != null, "Festival di Tokyo presente")
+	assert_equal(tk.capacity, 65000, "Capienza Tokyo: 65.000 persone")
+	assert_equal(tk.rival_band_name, "Neo Tokyo Cyber Syndicate", "Rivale di Tokyo: Neo Tokyo Cyber Syndicate")
 
 # ------------------------------------------------------------------------------
 # 2. SPECIFICHE DEI 3 SLOT ORARI
@@ -348,3 +383,215 @@ func test_linear_nvda_speech_and_savegame_serialization() -> void:
 	assert_true(loaded_na != null, "Festival di Napoli ripristinato")
 	assert_equal(loaded_na.booked_slot, Enums.FestivalSlot.SUNSET_SLOT, "Slot Tramonto ripristinato a Napoli")
 	assert_equal(loaded_na.rival_band_name, "Vesuvio Posse", "Rivale Vesuvio Posse ripristinata")
+
+# ------------------------------------------------------------------------------
+# 11. CONTEST PRIMAVERILE BATTLE OF THE BANDS & PASS SPECIALE
+# ------------------------------------------------------------------------------
+func test_battle_of_bands_contest_and_pass() -> void:
+	print("\n--- TEST 11: CONTEST BATTLE OF THE BANDS & PASS SPECIALE ---")
+	var player := PlayerDataScript.new()
+	player.reputation = 5.0
+	player.money = 100.0
+	var song := SongDataScript.new("s1", "Demo Track", Enums.MusicalGenre.ROCK)
+	song.quality_score = 75.0
+	player.add_song(song)
+	
+	var calendar := CalendarDataScript.new()
+	calendar.day_number = 10 # Inverno (Mese 1)
+	var fest_sys := FestivalSystemScript.new(player, calendar)
+	
+	# Tentativo fuori stagione: bloccato
+	var check_winter := fest_sys.can_enter_battle_of_bands()
+	assert_equal(check_winter.allowed, false, "Battle of the Bands non accessibile in inverno (Giorno 10)")
+	assert_equal(check_winter.reason, "not_spring_season", "Motivo rifiuto: not_spring_season")
+	
+	# Avanziamo alla primavera (Giorno 65, Mese 3)
+	calendar.day_number = 65
+	var check_spring := fest_sys.can_enter_battle_of_bands()
+	assert_equal(check_spring.allowed, true, "Battle of the Bands accessibile in primavera (Giorno 65)")
+	
+	# Esecuzione contest e vittoria (score 75.0 >= rivale 65.0)
+	var result := fest_sys.compete_in_battle_of_bands([song], 75.0)
+	assert_true(result.success, "Sfida Battle of the Bands completata")
+	assert_true(result.won, "Vittoria contro la band rivale The Young Challengers")
+	assert_true(player.battle_of_bands_pass, "Pass Battle of the Bands assegnato al giocatore")
+	assert_equal(player.money, 400.0, "Premio in denaro 300.0 € accreditato (100 -> 400)")
+	assert_almost_equal(player.reputation, 13.0, 0.01, "Reputazione aumentata di +8.0 (5.0 -> 13.0)")
+	assert_true(player.festival_trophies.has("Trofeo Battle of the Bands (Primavera)"), "Trofeo aggiunto alla bacheca")
+	
+	# Tentativo di re-iscrizione: rifiutato perché già vinto
+	var check_again := fest_sys.can_enter_battle_of_bands()
+	assert_equal(check_again.allowed, false, "Re-iscrizione vietata dopo la vittoria")
+	assert_equal(check_again.reason, "already_won", "Motivo rifiuto: already_won")
+	
+	# Verifica impatto del Pass sulla candidatura ai festival estivi:
+	# Slot Pomeriggio a Milano normalmente richiede 15.0 rep. Con il pass richiede 0.0!
+	player.reputation = 2.0
+	var check_slot_pom := fest_sys.can_apply_for_slot("fest_milano", Enums.FestivalSlot.OPENING_AFTERNOON)
+	assert_equal(check_slot_pom.allowed, true, "Pass Battle of the Bands azzera il requisito rep per Slot Pomeriggio")
+	assert_equal(check_slot_pom.effective_min_rep, 0.0, "Requisito minimo reputazione calcolato a 0.0")
+	
+	# Slot Tramonto normalmente richiede 35.0 rep. Con il pass richiede il 50% (17.5 rep).
+	player.reputation = 18.0
+	var check_slot_sunset := fest_sys.can_apply_for_slot("fest_milano", Enums.FestivalSlot.SUNSET_SLOT)
+	assert_equal(check_slot_sunset.allowed, true, "Pass Battle of the Bands dimezza il requisito rep per Slot Tramonto (17.5)")
+	assert_almost_equal(check_slot_sunset.effective_min_rep, 17.5, 0.01, "Requisito minimo calcolato al 50%")
+
+# ------------------------------------------------------------------------------
+# 12. TIPOLOGIA PALCO: MAIN STAGE VS UNDERGROUND TENT
+# ------------------------------------------------------------------------------
+func test_stage_types_and_underground_tent() -> void:
+	print("\n--- TEST 12: PALCO PRINCIPALE VS TENDA UNDERGROUND ---")
+	var player := PlayerDataScript.new()
+	player.reputation = 50.0
+	player.current_city_id = Enums.CityId.BERLINO
+	
+	var member := BandMemberDataScript.new("m3", "Klaus Bass", Enums.BandRole.BASS, Enums.BandPersonality.RELIABLE, Enums.MusicalGenre.ELECTRONIC, 50)
+	member.tension = 40.0
+	player.add_band_member(member)
+	
+	var calendar := CalendarDataScript.new()
+	calendar.day_number = 135
+	var band_sys := BandSystemScript.new(player, calendar)
+	var fest_sys := FestivalSystemScript.new(player, calendar, null, null, band_sys)
+	
+	# Configurazione Palco Underground Tent
+	var set_stage := fest_sys.set_festival_stage_type("fest_berlino", Enums.FestivalStageType.UNDERGROUND_TENT)
+	assert_true(set_stage, "Impostato palco Underground Tent per Berlino")
+	
+	var fest := fest_sys.get_festival("fest_berlino")
+	assert_equal(fest.stage_type, Enums.FestivalStageType.UNDERGROUND_TENT, "Tipo palco memorizzato: UNDERGROUND_TENT")
+	
+	fest_sys.book_festival_slot("fest_berlino", Enums.FestivalSlot.SUNSET_SLOT)
+	var res := fest_sys.perform_festival_concert("fest_berlino", [], 80.0)
+	assert_true(res.success, "Esibizione nella tenda completata")
+	assert_true(res.actual_audience < 20000, "Audience ridotta per tenda underground (< 20.000 persone)")
+	assert_almost_equal(member.tension, 15.0, 0.01, "Tensione membro ridotta da 40 a 15 (tenda -10 e vittoria -15)")
+
+# ------------------------------------------------------------------------------
+# 13. SPONSOR FESTIVALIERI & BENEFIT IMMEDIATI
+# ------------------------------------------------------------------------------
+func test_festival_sponsorships() -> void:
+	print("\n--- TEST 13: SPONSOR FESTIVALIERI & BENEFIT IMMEDIATI ---")
+	var player := PlayerDataScript.new()
+	player.money = 200.0
+	player.morale = 50.0
+	player.reputation = 40.0
+	
+	var member := BandMemberDataScript.new("m4", "Max Rhythm", Enums.BandRole.GUITAR_RHYTHM, Enums.BandPersonality.RELIABLE, Enums.MusicalGenre.ROCK, 50)
+	member.tension = 30.0
+	player.add_band_member(member)
+	
+	var calendar := CalendarDataScript.new()
+	var band_sys := BandSystemScript.new(player, calendar)
+	var fest_sys := FestivalSystemScript.new(player, calendar, null, null, band_sys)
+	
+	var sponsors := fest_sys.get_available_sponsors("fest_dublino")
+	assert_equal(sponsors.size(), 4, "Disponibili 4 opzioni sponsor (Integrità, Energy Drink, Birra, Streetwear)")
+	
+	# Firma sponsor Birrificio Artigianale (CRAFT_BEER)
+	var sign_res := fest_sys.sign_festival_sponsor("fest_dublino", Enums.FestivalSponsorType.CRAFT_BEER)
+	assert_true(sign_res.success, "Sponsor Birrificio Artigianale firmato")
+	assert_true(player.money > 200.0, "Anticipo in denaro accreditato")
+	assert_almost_equal(player.morale, 70.0, 0.01, "Morale incrementato di +20 (50 -> 70)")
+	assert_true(member.tension < 30.0, "Tensione band ridotta per fornitura birra nel backstage")
+	
+	var fest := fest_sys.get_festival("fest_dublino")
+	assert_equal(fest.active_sponsor, Enums.FestivalSponsorType.CRAFT_BEER, "Sponsor attivo memorizzato nel festival")
+
+# ------------------------------------------------------------------------------
+# 14. MOSSE SCENICHE ESTREME & RUBARE LA SCENA POTENZIATO
+# ------------------------------------------------------------------------------
+func test_extreme_moves_and_steal_the_show() -> void:
+	print("\n--- TEST 14: MOSSE SCENICHE ESTREME & RUBARE LA SCENA ---")
+	var player := PlayerDataScript.new()
+	player.reputation = 50.0
+	player.energy = 80
+	player.morale = 60.0
+	player.current_city_id = Enums.CityId.LONDRA
+	
+	var calendar := CalendarDataScript.new()
+	calendar.day_number = 100 # Londra si tiene al giorno 104
+	var fest_sys := FestivalSystemScript.new(player, calendar)
+	fest_sys.book_festival_slot("fest_londra", Enums.FestivalSlot.SUNSET_SLOT)
+	
+	# Esecuzione con Stage Diving riuscito (mock_move_success = true)
+	var res_dive := fest_sys.perform_festival_concert(
+		"fest_londra",
+		[],
+		70.0,
+		Enums.FestivalExtremeMove.STAGE_DIVING,
+		0,
+		-1,
+		true
+	)
+	assert_true(res_dive.success, "Concerto con Stage Diving completato")
+	assert_equal(res_dive.extreme_move, Enums.FestivalExtremeMove.STAGE_DIVING, "Mossa registrata nel risultato")
+	assert_true(res_dive.move_success, "Stage diving riuscito")
+	# Punteggio base 70.0 + 15.0 da stage diving = 85.0 -> batte The Royal Vipers (score 82.0)
+	assert_true(res_dive.stole_the_show, "Steal the Show riuscito grazie allo Stage Diving (85.0 >= 82.0)")
+
+# ------------------------------------------------------------------------------
+# 15. METEO OUTDOOR & BIVIO TEMPORALE ESTIVO
+# ------------------------------------------------------------------------------
+func test_outdoor_weather_and_storm_bivio() -> void:
+	print("\n--- TEST 15: METEO OUTDOOR & GESTIONE TEMPORALE ESTIVO ---")
+	var player := PlayerDataScript.new()
+	player.reputation = 50.0
+	player.energy = 100
+	player.current_city_id = Enums.CityId.PARIGI
+	
+	var calendar := CalendarDataScript.new()
+	calendar.day_number = 128
+	var fest_sys := FestivalSystemScript.new(player, calendar)
+	fest_sys.book_festival_slot("fest_parigi", Enums.FestivalSlot.SUNSET_SLOT)
+	
+	# Caso 1: Ondata di Calore (SUNNY_HEATWAVE)
+	fest_sys.set_festival_weather("fest_parigi", Enums.FestivalWeather.SUNNY_HEATWAVE)
+	var fest := fest_sys.get_festival("fest_parigi")
+	assert_equal(fest.weather, Enums.FestivalWeather.SUNNY_HEATWAVE, "Meteo impostato a Ondata di Calore")
+	
+	# Caso 2: Temporale Estivo Improvviso (SUMMER_STORM) con scelta 0 (suona sotto il diluvio)
+	fest_sys.set_festival_weather("fest_parigi", Enums.FestivalWeather.SUMMER_STORM)
+	var res_storm := fest_sys.perform_festival_concert(
+		"fest_parigi",
+		[],
+		78.0,
+		Enums.FestivalExtremeMove.NONE,
+		0 # Bivio: suona sotto la pioggia
+	)
+	assert_true(res_storm.success, "Concerto sotto il diluvio completato")
+	assert_equal(res_storm.weather, Enums.FestivalWeather.SUMMER_STORM, "Meteo registrato nel report concerto")
+	assert_true(res_storm.concert_score >= 83.0, "Bonus epico per esibizione sotto la pioggia (+5 score)")
+
+# ------------------------------------------------------------------------------
+# 16. CONFLITTO DI ORARIO (TIME CLASH) TRA PALCHI CONCORRENTI
+# ------------------------------------------------------------------------------
+func test_time_clash_resolution() -> void:
+	print("\n--- TEST 16: RISOLUZIONE CONFLITTO DI ORARIO (TIME CLASH) ---")
+	var player := PlayerDataScript.new()
+	player.reputation = 60.0
+	player.energy = 80
+	player.current_city_id = Enums.CityId.NEW_YORK
+	
+	var calendar := CalendarDataScript.new()
+	calendar.day_number = 116
+	var fest_sys := FestivalSystemScript.new(player, calendar)
+	fest_sys.book_festival_slot("fest_new_york", Enums.FestivalSlot.SUNSET_SLOT)
+	
+	# Attivazione Conflitto di Orario con palco rivale
+	var set_clash := fest_sys.set_festival_time_clash("fest_new_york", true)
+	assert_true(set_clash, "Time Clash attivato a New York")
+	
+	# Scelta 0: Attacco Aggressivo (+20% pubblico rubato al rivale)
+	var res_clash := fest_sys.perform_festival_concert(
+		"fest_new_york",
+		[],
+		80.0,
+		Enums.FestivalExtremeMove.NONE,
+		0,
+		0 # Time Clash: Attacco aggressivo
+	)
+	assert_true(res_clash.success, "Concerto con Time Clash completato")
+	assert_true(res_clash.actual_audience > 0, "Pubblico presente all'esibizione")
+

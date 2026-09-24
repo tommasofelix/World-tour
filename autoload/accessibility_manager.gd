@@ -5,15 +5,44 @@ extends Node
 
 signal announcement_spoken(message: String)
 
+const AudioCueSystemScript = preload("res://systems/audio_cue_system.gd")
+
 var is_tts_enabled: bool = true
 var is_ducking: bool = false
 var default_tts_voice_id: String = ""
+var audio_cue_system: Node = null
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	_setup_audio_system()
 	_setup_tts()
 	EventBus.ui_focus_changed.connect(_on_ui_focus_changed)
 	EventBus.language_changed.connect(_on_language_changed)
+
+func _setup_audio_system() -> void:
+	if not audio_cue_system:
+		audio_cue_system = AudioCueSystemScript.new()
+		add_child(audio_cue_system)
+		EventBus.audio_cue_requested.connect(play_cue)
+
+func play_cue(cue_type: int) -> bool:
+	if audio_cue_system:
+		return audio_cue_system.play_cue(cue_type)
+	return false
+
+func silence() -> void:
+	if DisplayServer.tts_is_speaking() != null:
+		DisplayServer.tts_stop()
+	if audio_cue_system:
+		audio_cue_system.stop()
+		audio_cue_system.set_ducking(false)
+	is_ducking = false
+
+func _process(_delta: float) -> void:
+	if audio_cue_system and audio_cue_system.is_ducked:
+		if DisplayServer.tts_is_speaking() != null and not DisplayServer.tts_is_speaking():
+			audio_cue_system.set_ducking(false)
+			is_ducking = false
 
 func _setup_tts(target_lang: String = "it") -> void:
 	# Verifica e selezione voce TTS se disponibile a livello di DisplayServer
@@ -33,10 +62,14 @@ func _on_language_changed(new_lang: String) -> void:
 func announce(text: String, is_interrupt: bool = true) -> void:
 	if text.strip_edges().is_empty():
 		return
-		
+
 	EventBus.accessibility_announced.emit(text, is_interrupt)
 	announcement_spoken.emit(text)
-	
+
+	if audio_cue_system:
+		audio_cue_system.set_ducking(true)
+		is_ducking = true
+
 	if is_tts_enabled and not default_tts_voice_id.is_empty():
 		if is_interrupt:
 			DisplayServer.tts_stop()
@@ -58,68 +91,91 @@ func _on_ui_focus_changed(control_name: String, control_role: String, control_va
 func _unhandled_input(event: InputEvent) -> void:
 	if not (event is InputEventKey) or not event.is_pressed() or event.is_echo():
 		return
-		
+
 	var key_event: InputEventKey = event as InputEventKey
-	
-	# Non intercettare se un LineEdit ha il focus attivo
+
+	# Non intercettare se un LineEdit ha il focus attivo o se siamo nei menu/modali
 	var focused_node: Control = get_viewport().gui_get_focus_owner()
 	if focused_node is LineEdit or focused_node is TextEdit:
 		return
-		
+	if GameManager and GameManager.current_state != Enums.GameState.GAMEPLAY_IDLE and GameManager.current_state != Enums.GameState.GAMEPLAY_BUSY:
+		return
+
 	match key_event.keycode:
-		KEY_SPACE, KEY_P:
-			if GameManager.time_system:
+		# --- Controlli Tastierino Numerico (Numpad Navigation - Sezione 12) ---
+		KEY_KP_PERIOD:
+			silence()
+			get_viewport().set_input_as_handled()
+		KEY_KP_5:
+			announce_current_focus_info()
+			get_viewport().set_input_as_handled()
+		KEY_KP_8:
+			_simulate_ui_action("ui_up")
+			get_viewport().set_input_as_handled()
+		KEY_KP_2:
+			_simulate_ui_action("ui_down")
+			get_viewport().set_input_as_handled()
+		KEY_KP_4:
+			_simulate_ui_action("ui_left")
+			get_viewport().set_input_as_handled()
+		KEY_KP_6:
+			_simulate_ui_action("ui_right")
+			get_viewport().set_input_as_handled()
+		KEY_KP_ENTER, KEY_KP_0:
+			_simulate_ui_action("ui_accept")
+			get_viewport().set_input_as_handled()
+		KEY_KP_ADD:
+			if GameManager and GameManager.time_system:
+				var new_spd: float = GameManager.time_system.cycle_speed()
+				announce("Velocità tempo: %.1fx" % new_spd, true)
+				get_viewport().set_input_as_handled()
+		KEY_KP_SUBTRACT:
+			if GameManager and GameManager.time_system:
 				var paused: bool = GameManager.time_system.toggle_pause()
 				announce("Pausa attiva" if paused else "Simulazione ripresa", true)
 				get_viewport().set_input_as_handled()
-				
-		KEY_1:
-			if key_event.alt_pressed or key_event.ctrl_pressed:
-				return
-			if GameManager.time_system:
-				GameManager.time_system.set_time_scale(Constants.SPEED_NORMAL)
-				announce("Velocità normale 1x", true)
-				get_viewport().set_input_as_handled()
-				
-		KEY_2:
-			if GameManager.time_system:
-				GameManager.time_system.set_time_scale(Constants.SPEED_FAST)
-				announce("Velocità rapida 2x", true)
-				get_viewport().set_input_as_handled()
-				
-		KEY_3:
-			if GameManager.time_system:
-				GameManager.time_system.set_time_scale(Constants.SPEED_ULTRA)
-				announce("Velocità ultra 5x", true)
-				get_viewport().set_input_as_handled()
-				
-		KEY_T:
-			if GameManager.calendar_data:
-				var time_str: String = GameManager.calendar_data.get_formatted_time_string()
-				var period_str: String = GameManager.calendar_data.get_period_name()
-				var sec_left: int = int(round(GameManager.calendar_data.remaining_seconds))
-				announce("Ore %s, %s. Rimangono %d secondi alla fine della giornata." % [time_str, period_str, sec_left], true)
-				get_viewport().set_input_as_handled()
-				
-		KEY_R:
-			if GameManager.player_data:
-				var p: PlayerData = GameManager.player_data
-				announce("Risorse: Energia %d%%, Stress %d%%, Morale %d%%, Saldo %.2f euro." % [p.energy, p.stress, p.morale, p.money], true)
-				get_viewport().set_input_as_handled()
-				
-		KEY_K:
-			if GameManager.player_data:
-				var p: PlayerData = GameManager.player_data
-				announce("Status: Livello carriera %d, Fan stabili %d, Reputazione %.1f." % [p.career_tier, p.fans, p.reputation], true)
-				get_viewport().set_input_as_handled()
-				
-		KEY_M:
-			EventBus.song_catalog_requested.emit()
-			get_viewport().set_input_as_handled()
-			
-		KEY_N:
-			EventBus.song_creator_requested.emit()
-			get_viewport().set_input_as_handled()
+
+func _simulate_ui_action(action_name: String) -> void:
+	var ev_press := InputEventAction.new()
+	ev_press.action = action_name
+	ev_press.pressed = true
+	Input.parse_input_event(ev_press)
+
+	var ev_release := InputEventAction.new()
+	ev_release.action = action_name
+	ev_release.pressed = false
+	Input.parse_input_event(ev_release)
+
+func announce_current_focus_info() -> void:
+	var focused: Control = get_viewport().gui_get_focus_owner()
+	if not focused:
+		announce("Nessun controllo attualmente selezionato nell'interfaccia.", true)
+		return
+
+	var name_str: String = focused.get_accessibility_name()
+	if name_str.is_empty() and focused is Button:
+		name_str = focused.text
+	if name_str.is_empty():
+		name_str = focused.name
+
+	var role_str: String = "Controllo"
+	var val_str: String = ""
+	if focused is Button:
+		role_str = "Pulsante"
+	elif focused is Slider:
+		role_str = "Cursore"
+		val_str = str(round(focused.value))
+	elif focused is CheckBox:
+		role_str = "Casella"
+		val_str = "Selezionato" if focused.button_pressed else "Non selezionato"
+
+	var desc_str: String = focused.get_accessibility_description()
+	var msg: String = "Focus su %s, %s" % [name_str, role_str]
+	if not val_str.is_empty():
+		msg += ", valore " + val_str
+	if not desc_str.is_empty():
+		msg += ". " + desc_str
+	announce(msg, true)
 
 func hook_control_accessibility(node: Control, control_name: String, control_description: String = "") -> void:
 	if not node:
@@ -127,7 +183,7 @@ func hook_control_accessibility(node: Control, control_name: String, control_des
 	node.set_accessibility_name(control_name)
 	if not control_description.is_empty():
 		node.set_accessibility_description(control_description)
-	
+
 	if not node.focus_entered.is_connected(_on_control_focus_entered):
 		node.focus_entered.connect(_on_control_focus_entered.bind(node, control_name))
 
@@ -142,5 +198,5 @@ func _on_control_focus_entered(node: Control, c_name: String) -> void:
 	elif node is CheckBox:
 		c_role = "Casella"
 		c_val = "Selezionato" if node.button_pressed else "Non selezionato"
-		
+
 	EventBus.ui_focus_changed.emit(c_name, c_role, c_val)

@@ -160,21 +160,22 @@ func _create_song_row(index: int, song: SongData) -> HBoxContainer:
 	var status_str := song.get_status_name()
 	var genre_str := song.get_genre_name()
 	var trait_str := song.get_trait_name()
+	var theme_str := song.get_theme_name()
 	
-	var row_text := "%d. '%s' [%s] — %s | Qualità: %.1f | Tratto: %s" % [
-		index, song.title, genre_str, status_str, song.quality_score, trait_str
+	var row_text := "%d. '%s' [%s - %s] — %s | Qualità: %.1f | Tratto: %s" % [
+		index, song.title, genre_str, theme_str, status_str, song.quality_score, trait_str
 	]
 	btn.text = row_text
 	
-	var acc_name := "Brano %d: %s. Genere %s. Stato %s. Qualità %.1f su 100. Tratto %s." % [
-		index, song.title, genre_str, status_str, song.quality_score, trait_str
+	var acc_name := "Brano %d: %s. Genere %s. Tema %s. Stato %s. Qualità %.1f su 100. Tratto %s." % [
+		index, song.title, genre_str, theme_str, status_str, song.quality_score, trait_str
 	]
 	var acc_desc := "Premi Invio per visualizzare dettagli o compiere azioni."
 	
 	if song.status == Enums.SongStatus.DRAFT:
 		var stage_str := song.get_stage_name()
-		acc_name = "Bozza %d: %s. Genere %s. Fase %s. Qualità %.1f su 100." % [
-			index, song.title, genre_str, stage_str, song.quality_score
+		acc_name = "Bozza %d: %s. Genere %s. Tema %s. Fase %s. Qualità %.1f su 100." % [
+			index, song.title, genre_str, theme_str, stage_str, song.quality_score
 		]
 		acc_desc = tr("CATALOG_BTN_EDIT_ACC_DESC")
 		btn.pressed.connect(func():

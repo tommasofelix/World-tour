@@ -195,6 +195,76 @@ func get_rivals_by_city(city_id: int) -> Array[RivalData]:
 func set_rivalry_level(rival_id: String, level: int) -> void:
 	if rivals.has(rival_id):
 		rivals[rival_id].rivalry_level = clampi(level, 0, 2)
+		if level == 0:
+			rivals[rival_id].relationship = Enums.RivalRelationship.NEUTRAL
+		elif level == 1:
+			rivals[rival_id].relationship = Enums.RivalRelationship.HEATED_RIVAL
+		elif level == 2:
+			rivals[rival_id].relationship = Enums.RivalRelationship.OPEN_FEUD
+
+## Interazione amichevole o diplomatica con un rivale (complimento, tributo)
+func praise_rival(rival_id: String) -> Dictionary:
+	var r: RivalData = get_rival(rival_id)
+	if not r:
+		return {"success": false, "reason": "rival_not_found"}
+	r.update_affinity(15.0)
+	var note: String = "Hai espresso stima pubblica per %s (+15 affinità)." % r.name
+	r.history_notes.append(note)
+	return {
+		"success": true,
+		"rival_name": r.name,
+		"new_affinity": r.affinity_score,
+		"relationship": r.relationship,
+		"co_headlining_eligible": r.co_headlining_eligible,
+		"message": note
+	}
+
+## Proposta di Tour Congiunto Co-Headlining
+func propose_co_headlining(rival_id: String) -> Dictionary:
+	var r: RivalData = get_rival(rival_id)
+	if not r:
+		return {"success": false, "reason": "rival_not_found"}
+	if r.co_headlining_eligible:
+		var note: String = "%s ha accettato con entusiasmo la proposta di Co-Headlining Tour!" % r.name
+		r.history_notes.append(note)
+		return {
+			"success": true,
+			"accepted": true,
+			"rival_name": r.name,
+			"fan_bonus_mult": Constants.MEDIA_CO_HEADLINING_FAN_BONUS,
+			"expense_discount": Constants.MEDIA_CO_HEADLINING_EXPENSE_DISCOUNT,
+			"message": note
+		}
+	else:
+		r.update_affinity(-5.0)
+		var note: String = "%s ha rifiutato la proposta di tour congiunto (Affinità insufficiente: %.1f/70)." % [r.name, r.affinity_score]
+		r.history_notes.append(note)
+		return {
+			"success": true,
+			"accepted": false,
+			"rival_name": r.name,
+			"reason": "affinity_too_low",
+			"message": note
+		}
+
+## Dissing e provocazione pubblica verso una band rivale
+func trigger_dissing(rival_id: String, current_day: int = 1) -> Dictionary:
+	var r: RivalData = get_rival(rival_id)
+	if not r:
+		return {"success": false, "reason": "rival_not_found"}
+	r.update_affinity(-35.0)
+	r.relationship = Enums.RivalRelationship.OPEN_FEUD
+	r.rivalry_level = 2
+	r.last_dissing_day = current_day
+	var note: String = "Giorno %d: Lanciato dissing mediatico contro %s! Relazione degenerata in Faida Aperta." % [current_day, r.name]
+	r.history_notes.append(note)
+	return {
+		"success": true,
+		"rival_name": r.name,
+		"relationship": r.relationship,
+		"buzz_multiplier": Constants.MEDIA_DISSING_BUZZ_MULT,
+		"message": note
+	}
 
 ## Simula fluttuazioni e progressione settimanale dei rivali
 func simulate_weekly_performance() -> void:

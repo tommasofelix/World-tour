@@ -1,39 +1,59 @@
-# Game design e primo vertical slice
+# 05 — Game Design, Progressioni di Carriera & Macro-Roadmap (v3.0.7)
 
-## Identità del progetto
+## Identità del Progetto
+- **Titolo di Lavoro**: World-tour (Music Career Simulator / Music Superstar Simulator).
+- **Genere**: Management, Life Simulation e Carriera Musicale.
+- **Piattaforma**: PC Windows 11 (Godot Engine 4.7.2 win64).
+- **Accessibilità Primaria**: 100% Tastiera, Screen Reader NVDA via AccessKit nativo, Simmetria Universale per vedenti.
+- **Coordinatore Master**: [`docs/todo.md`](../docs/todo.md).
 
-- Titolo di lavoro: Music Career Simulator e Music Superstar Simulator.
-- Genere: management, life simulation e carriera musicale.
-- Modalità: single player.
-- Piattaforma iniziale: PC.
-- Stato: GDD e specifiche avanzate; implementazione non iniziata.
+---
 
-## Obiettivo
+## 1. Il Core Gameplay Loop
 
-Il giocatore interpreta un aspirante musicista che parte da zero. Sviluppa abilità, crea e pubblica musica, si esibisce e gestisce tempo, energia, stress, morale, denaro, fan e popolarità.
+Il giocatore interpreta un aspirante musicista che parte dal garage di casa per scalare tutti gli stadi della carriera musicale fino al successo globale:
+1. **Gestione Quotidiana della Vita**: Routine a ore, bilanciamento di Energia, Stress, Morale, Denaro, Fan e Popolarità.
+2. **Sviluppo Abilità (Le 7 Abilità Musicali)**: Strumento, Canto, Composizione, Arrangiamento, Testi, Produzione e Performance Live.
+3. **Pipeline Creativa di Produzione Brani**: Dalla scintilla compositiva (Bozza/Draft), attraverso arrangiamento e registrazione, fino al rilascio (Singolo, EP, Album) con calcolo deterministico del Quality Score.
+4. **Attività Live & Concerti**: Dai pub underground e piccoli club locali fino ai teatri, festival estivi e grandi stadi, con selezione scaletta, interazione con il pubblico, incassi e conversione dei partecipanti in fan stabili.
+5. **Dinamiche di Band & Industria Discografica**: Gestione dei membri della band, accordi contrattuali con etichette indipendenti o major, merchandise e presenza sui social media.
 
-## Primo vertical slice proposto
+---
 
-1. Avvio di una nuova partita.
-2. Creazione del personaggio.
-3. Visualizzazione del tempo.
-4. Scelta di un allenamento.
-5. Avanzamento dell’azione per la durata prevista.
-6. Assegnazione dell’esperienza.
-7. Aggiornamento di energia e tempo.
-8. Fine giornata e riepilogo.
-9. Passaggio al giorno successivo.
+## 2. Quadro dei Sottopiani Archiviati e Convalidati (V1.0 – V4.0)
 
-Questo vertical slice è una proposta di design, non un piano tecnico autorizzato e non un’implementazione esistente.
+La visione di game design è stata declinata e interamente convalidata con NVDA attraverso 8 sottopiani specialistici archiviati in [`docs/piani/completati/sottopiani/`](../docs/piani/completati/sottopiani/):
 
-## Architettura proposta
+1. **`SP-01`: Game Design, Visione e Progressione** [x]: High concept, 8 stadi di carriera e macro-roadmap;
+2. **`SP-02`: Simulazione Vita, Gestione Tempo e Routine** [x]: Orologio giornaliero, stati IDLE/BUSY, pausa dinamica automatica nei menu e ciclo di fine giornata;
+3. **`SP-03`: Sistema Musicale, Abilità e Creazione Brani** [x]: Meccaniche di composizione, calcolo punteggio brani e formati discografici;
+4. **`SP-04`: Concerti, Locali, Pubblico e Fanbase** [x]: Locali, Concert Score, affluenza, scalette e conversioni live;
+5. **`SP-05`: Economia, Carriera, Band e Industria** [x]: Flussi economici, indipendenza finanziaria, royalties e bivi etici con le etichette;
+6. **`SP-06`: Formule Matematiche e Bilanciamento** [x]: Modelli algoritmici (XP esponenziali, curve di rendimento marginale decrescente, freno anti-stress);
+7. **`SP-07`: Architettura Software, Sistemi e Modello Dati** [x]: Clean Architecture, EventBus disaccoppiato e salvataggio atomico JSON;
+8. **`SP-08`: Accessibilità Vocale, Tastiera e Simmetria Universale** [x]: Bridge AccessKit/NVDA, comandi da tastiera e volumi audio di sicurezza.
 
-Le sezioni più recenti del documento convergono su Godot e GDScript, separando manager, sistemi, dati, resource, scene e interfaccia. La versione di Godot non è ancora specificata e il progetto engine non è presente nel repository.
+---
 
-## Cancelli aperti
+## 3. Stato Attuale & Roadmap Attiva (Versione 5.0 Endgame)
 
-- [ ] Confermare Godot e la versione minima supportata.
-- [ ] Definire i requisiti di accessibilità da tastiera e NVDA.
-- [ ] Trasformare il vertical slice in una strategia di Fase 0.
-- [ ] Redigere un piano tecnico di Fase 1A con contratti numerati.
-- [ ] Fermarsi prima di creare codice o progetto Godot fino a nuova autorizzazione.
+- **Fasi 1–8**: Completate, convalidate e consolidate con 17 suite di test automatici headless a exit code 0.
+- **Fase 9 Attiva (Versione 5.0: Endgame, Grandi Stadi & Superstar Mondiale)**:
+  - `F9.0` (Completata [x]): Riorganizzazione della UI, menu di sistema Esc, Top Bar permanente e navigazione per 4 macro-aree (`test_v5_ui_overhaul.gd`).
+  - `F9.1` (Completata [x]): Skills Upgrade Hub e gestione strumentazione da palco, lifestyle e insonorizzazione (`test_upgrades_system.gd`).
+  - `F9.1B` (Completata [x] — Sez. 1.1): Creazione guidata del personaggio con 6 strumenti, 5 background, 5 tratti e modalità test rapida (`test_character_creation.gd`).
+  - `F9.1C` (Completata [x] — Sez. 1.2): Filosofia della Notte su 22 ore virtuali (06:00–04:00), overtime progressivo non forfettario, skip time e riposo anticipato ristoratore (`test_time_night_system.gd`).
+  - `F9.1D` (Completata [x] — Sez. 1.3): Triade risorse vitali (Energia, Stress, Morale), burnout (<15%), soglia di panico (>=80%), modale `RelaxModal` accessibile con tasto `R` e recupero attivo diurno (`test_vital_resources_system.gd`).
+  - `F9.1E` (Completata [x] — Sez. 2): Creatività Musicale & Crafting Avanzato: 10 Tematiche Liriche (`LyricThemeData`), sinergia genere-tema (+3.5, 0.0, -1.5), 3 nuovi tratti canzone (`GENERATIONAL_ANTHEM`, `TEARJERKER_BALLAD`, `EPIC_RIFF`), sconto martedì 20% studio professionale, calibrazione hardware home studio, rielaborazione bozze e suite dedicata `test_advanced_crafting_system.gd` (65 test). Archiviato.
+  - `F9.1F` (Completata [x] — Sez. 3): La Band, Reclutamento, Dinamiche Relazionali & Revenue Split: 5 ruoli in `BandRole` (incluso Cantante `VOCALS`), 8 personalità psicologiche (`BandPersonality`), bacheca audizioni con rifiuto deterministico basato sul divario abilità-reputazione, sinergia front-man live, prove potenziate da pacificatore/perfezionista, risentimento a quote predatorie e suite `test_band_system.gd` (58 test). Archiviato.
+  - `F9.1G` (Completata [x] — Sez. 4): Strumenti Musicali, Sala Prove, Home Studio & Upgrades Hub: negozio multicategoria con comparatore e dotazione band, 5 pedali e 2 amplificatori, insonorizzazione e sub-affitto sala prove, nastro analogico vs digitale, usura, muletto van salvavita e manutenzione liutaio (`test_upgrades_hub_system.gd`, 58 test). Archiviato.
+  - `F9.1H` (Completata [x] — Sez. 5): Concerti dal Vivo, Locali, Scaletta & Pubblico: catalogo espanso a 6 locali (inclusi Centro Sociale Occupato e Teatro d'Opera Storico), calendario disponibilità venue con occupazione procedurale e sovrapprezzo weekend (+20% affitto ven/sab), drammaturgia scaletta (Opener, Mid Ballad, Closer Stage Beast) e cover famose, 7 Stage Events procedurali a bivi con check abilità, banchetto Merchandising al Foyer (4 articoli) e momento Bis / Encore su score >= 85, modale `LiveConcert` (tasto `L`) e suite `test_concert_system.gd` (92 test). Archiviato.
+  - `F9.1I` (Completata [x] — Sez. 6): Geografia, Metropoli & Tournée: espansione rete a 12 metropoli (Dublino, Parigi, Madrid, New York, Los Angeles, Tokyo), eventi cittadini temporanei, tratte transoceaniche con Jet Lag, Custom Tour Builder flessibile (2-8 date) con Day Off rigeneranti, interviste radio promozionali e 4 imprevisti procedurali a bivi; suite `test_tour_system.gd` (98 test) e `test_travel_system.gd` (64 test). Archiviato (Versione AVF `V4.6.0`).
+  - `F9.1L` (Completata [x] — Sez. 7): Grandi Festival Estivi all'Aperto: circuito espanso a 12 Grandi Festival Mondiali nelle 12 metropoli (Dublino, Parigi, Madrid, New York, Los Angeles, Tokyo, ecc.); contest primaverile "Battle of the Bands" (Mese 3) con emissione del Pass speciale (azzeramento requisito reputazione per Pomeriggio e dimezzamento per Tramonto); scelta palco tra Main Stage e Tenda Underground (+50% conversione fan, +30% vendite merch, -10 tensione band); 4 categorie di sponsor festivalieri con anticipi di cassa e benefici morali/tensione; mosse sceniche estreme a bivi ad alto rischio/rendimento (Stage Diving, Scalata Americane, Assolo tra la folla); meteo outdoor con ondata di calore e bivio temporale estivo (suonare sotto la pioggia +5 score); risoluzione Time Clash tra palchi concorrenti; modale `FestivalModal` (tasto `F`) accessibile 100% NVDA con selezione rapida `1`..`9`, `0`, `-`, `=`, `B`, `M`, `U`, `O`, `E`, `P`, `T`, `H`, `S`; suite `test_festival_system.gd` (123 test a 0 errori e 0 ms). Archiviato (Versione AVF `V4.7.0`).
+  - `F9.1M` (Completata [x] — Sez. 8): Social Media, Fanbase Digitale, Fan Club Ufficiale & Stampa Musicale: tendenze settimanali algoritmiche (Lunedì ciclico, +40% views per formato in trend), campagne promozionali sponsorizzate a budget (Tier 100 €, 250 €, 500 € con boost x2.0..x5.0 reach), dirette live streaming interattive con chat live e bivi a quiz, delega controversia online al Manager (`D`), modello dati `FanClubData` con tesseramento, cassa quote associative, livello fedeltà 1..5 (+5%..+25% presenze garantite concerti live), raduno annuale dei fan con introiti merchandising esclusivo, aggregazione fandom territoriale in `PlayerData` (`italian_fans`, `european_fans`, `global_fans`), eventi posta fan ossessivi al ciclo notturno; modale `SocialModal` rinnovata con tasti `1`..`5`, `S`, `F`, `A`..`D`, `Esc` e annunci lineari NVDA; suite dedicata `test_advanced_social_system.gd` (51 test a 0 errori) e 24/24 suite di test del progetto superate con 0 errori a 0 ms. Archiviato (Versione AVF `V4.8.0`).
+  - `F9.1N` (Completata [x] — Sez. 9): L'Industria Musicale, Contratti Discografici & Management: 3 modelli produttivi (Autoproduzione 100%, Indie Label 45% con 8.000 € anticipo, Major 15% con 60.000 € anticipo e vincolo Quality Score >= 65), recoupment debito su vendite album, clausola distribuzione fisica esclusiva (+40% vendite, 20% trattenuta), rinegoziazione contrattuale al 25% su rep >= 70 o Disco d'Oro, riscatto definitivo dei master (Master Buyback); relazioni manager con fiducia 0-100, promesse con scadenze, chiamate notturne dello Squalo (+4 stress), trattenuta fraudolenta del 10% sui live, avvocato dello spettacolo protettivo e penale di licenziamento; fondazione della propria etichetta indipendente (`OwnLabelData`, 25.000 € capitale, rep >= 60, regime libero), talent scouting giovani band, gestione roster (fino a 3 band) e royalties passive giornaliere di catalogo; 4 nuovi dilemmi narrativi; dashboard accessibile `IndustryHub` su 3 schede (`1` Contratti, `2` Manager, `3` Propria Etichetta, tasti `R`, `M`, `D`, `L`, `F`, `S`, `Esc`/`K`) 100% NVDA Zero Mouse; suite dedicata `test_industry_system.gd` (106 test a 0 errori e 0 ms). Archiviato (Versione AVF `V4.9.0`).
+  - `F9.1O` (Completata [x] — Sez. 10): Artisti Rivali, Hit Parade & Media Broadcaster: relazioni umane e affinità con le 10 band rivali continentali (`RivalRelationship`), possibilità di proporre Tour Congiunti Co-Headlining (-30% costi, +35% affluenza) o dissing mediatico su BandFeed (buzz 1.60x); espansione della Hit Parade settimanale con classifiche territoriali/nazionali per le principali metropoli (`ChartScope.NATIONAL`) e meccanica del Tormentone Stagionale estivo/invernale (+35% stream per `EARWORM` e `GENERATIONAL_ANTHEM`); sottosistema Media Broadcaster & Critica Specialistica (`MediaSystem`, `MediaOutletData`) con interviste radio/podcast/TV del mattino per innalzare l'Hype dei concerti, rassegna stampa critica con voti in stelle e commenti narrativi, e interviste di riparazione post-scandalo; modale `ChartModal` quadri-scheda (tasti `1`..`4`, `E`, `D`, `C`, `I`, `R`, frecce) 100% accessibile con NVDA Zero Mouse; persistenza atomica savegame. Convalidato con 50/50 test dedicati (`test_media_and_rivals_system.gd`) e 25/25 suite headless complessive superate con 0 errori e 0 ms. Archiviato (Versione AVF `V4.10.0`).
+  - `F9.2 / F9.3 / F9.4` (Completata [x] — Sez. 11): Endgame, Grandi Stadi, Mega-Produzioni & Legacy Mondiale: espansione catalogo venue con Palasport (15.000 posti) e Mega Stadio Mondiale (65.000 posti); allestimenti scenici professionali a 4 tier (`StageProductionTier`), certificazioni FIMI/RIAA, World Music Awards al Mese 12, Rock and Roll Hall of Fame, concerto d'addio "The Last Waltz", epiloghi multipli, dashboard `LegacyModal` e suite `test_endgame_and_legacy_system.gd` (87 test). Archiviato (Versione AVF `V5.0.0`).
+  - `F9.5` (Completata [x] — Sez. 12): Sound Design Specialistico & Numpad Accessibility: sintesi procedurale in memoria di 9 earcons PCM mono senza asset esterni, volumi sicuri salvavita (<= 0.75f), ducking automatico (40%), Numpad Navigation System per operatività ad una mano, statistiche di carriera e suite `test_ui_audio_and_numpad_system.gd` (128 test). Archiviato (Versione AVF `V5.1.0`).
+  - `F9.6` (Completata [x] — Espansione Post-V5.1): Endless Horizon & World Empire: modalità carriera infinita sandbox oltre il Mese 12 con incremento annuale (`current_year`), meccanica New Game+ con discepolo erede (`LEGACY_DISCIPLE`), royalties del mentore (15 €/giorno), circuito a 16 metropoli mondiali (San Paolo, Buenos Aires, Sydney, Seoul) con 16 festival estivi, etichetta discografica con produzione attiva roster band e scalata Hit Parade; suite `test_endless_and_ngplus_system.gd` (67 test) e suite globale 28/28 a 0 errori e 0 ms (Versione AVF `V5.2.0`).
+- **Traguardo Raggiunto**: Tutte le sezioni della Roadmap Modulare (Sezioni 1..12) e l'Espansione Post-V5.1 (Endless Horizon V5.2.0) sono completate, validate ed archiviate al 100% con 28/28 suite headless verdi a 0 errori e piena conformità Zero Mouse per NVDA.

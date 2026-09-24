@@ -76,17 +76,22 @@ theme_override_constants/separation = 10
 [node name="BtnTabSingles" type="Button" parent="PanelMain/VBox/HBoxTabs"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "[1] Top 10 Singoli"
+text = "[1] Top 10 Continentale"
 
-[node name="BtnTabAlbums" type="Button" parent="PanelMain/VBox/HBoxTabs"]
+[node name="BtnTabTerritorial" type="Button" parent="PanelMain/VBox/HBoxTabs"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "[2] Top 10 Album & EP"
+text = "[2] Hit Parade Nazionali"
 
 [node name="BtnTabRivals" type="Button" parent="PanelMain/VBox/HBoxTabs"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "[R] Artisti e Band Rivali"
+text = "[3] Artisti Rivali & Relazioni"
+
+[node name="BtnTabMedia" type="Button" parent="PanelMain/VBox/HBoxTabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "[4] Media, Radio & Stampa"
 
 [node name="PanelBody" type="PanelContainer" parent="PanelMain/VBox"]
 layout_mode = 2

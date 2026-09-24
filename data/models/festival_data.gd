@@ -41,6 +41,21 @@ var is_completed: bool = false
 ## Esito memorizzato dell'esibizione
 var performance_result: Dictionary = {}
 
+## Tipologia palco per l'esibizione (Enums.FestivalStageType: MAIN_STAGE o UNDERGROUND_TENT)
+var stage_type: int = Enums.FestivalStageType.MAIN_STAGE
+
+## Sponsor attivo per l'evento (Enums.FestivalSponsorType)
+var active_sponsor: int = Enums.FestivalSponsorType.NONE
+
+## Condizione meteo dell'evento (Enums.FestivalWeather)
+var weather: int = Enums.FestivalWeather.PERFECT_MILD
+
+## Indica se è attivo un conflitto di orario (Time Clash) con altro palco
+var time_clash_active: bool = false
+
+## Mossa scenica estrema selezionata/tentata (Enums.FestivalExtremeMove)
+var extreme_move_attempted: int = Enums.FestivalExtremeMove.NONE
+
 func _init(
 	p_id: String = "",
 	p_name: String = "",
@@ -133,7 +148,12 @@ func to_dict() -> Dictionary:
 		"rival_band_score": rival_band_score,
 		"booked_slot": booked_slot,
 		"is_completed": is_completed,
-		"performance_result": performance_result.duplicate(true)
+		"performance_result": performance_result.duplicate(true),
+		"stage_type": stage_type,
+		"active_sponsor": active_sponsor,
+		"weather": weather,
+		"time_clash_active": time_clash_active,
+		"extreme_move_attempted": extreme_move_attempted
 	}
 
 func from_dict(d: Dictionary) -> void:
@@ -155,3 +175,8 @@ func from_dict(d: Dictionary) -> void:
 	booked_slot = int(d.get("booked_slot", -1))
 	is_completed = bool(d.get("is_completed", false))
 	performance_result = d.get("performance_result", {}).duplicate(true)
+	stage_type = int(d.get("stage_type", Enums.FestivalStageType.MAIN_STAGE))
+	active_sponsor = int(d.get("active_sponsor", Enums.FestivalSponsorType.NONE))
+	weather = int(d.get("weather", Enums.FestivalWeather.PERFECT_MILD))
+	time_clash_active = bool(d.get("time_clash_active", false))
+	extreme_move_attempted = int(d.get("extreme_move_attempted", Enums.FestivalExtremeMove.NONE))

@@ -44,10 +44,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -480.0
-offset_top = -300.0
-offset_right = 480.0
-offset_bottom = 300.0
+offset_left = -520.0
+offset_top = -320.0
+offset_right = 520.0
+offset_bottom = 320.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_indhub")
@@ -63,13 +63,13 @@ theme_override_constants/separation = 4
 [node name="LabelTitle" type="Label" parent="PanelMain/VBox/Header"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
-text = "Industria Musicale, Contratti Discografici & Manager"
+text = "Industria Musicale, Contratti Discografici & Management"
 
 [node name="LabelStatusSummary" type="Label" parent="PanelMain/VBox/Header"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
 theme_override_colors/font_color = Color(0.75, 0.85, 0.95, 1)
-text = "Contratto: Autoproduzione | Manager: Nessuno"
+text = "Contratto: Autoproduzione | Manager: Nessuno | Etichetta: Nessuna"
 
 [node name="HSeparator1" type="HSeparator" parent="PanelMain/VBox"]
 layout_mode = 2
@@ -87,6 +87,11 @@ text = "1. Contratti Discografici (Tasto 1)"
 layout_mode = 2
 size_flags_horizontal = 3
 text = "2. Manager & Rappresentanza (Tasto 2)"
+
+[node name="BtnTabOwnLabel" type="Button" parent="PanelMain/VBox/HBoxTabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "3. La Mia Etichetta (Tasto 3)"
 
 [node name="HSeparator2" type="HSeparator" parent="PanelMain/VBox"]
 layout_mode = 2
@@ -116,11 +121,27 @@ text = "Trattieni il 100% dei ricavi sui brani e album. Nessun anticipo né vinc
 
 [node name="HBoxActions" type="HBoxContainer" parent="PanelMain/VBox/TabContracts/PanelActiveContract/VBox"]
 layout_mode = 2
+theme_override_constants/separation = 10
 
 [node name="BtnRescindContract" type="Button" parent="PanelMain/VBox/TabContracts/PanelActiveContract/VBox/HBoxActions"]
 visible = false
 layout_mode = 2
 text = "Rescindi Contratto"
+
+[node name="BtnRenegotiate" type="Button" parent="PanelMain/VBox/TabContracts/PanelActiveContract/VBox/HBoxActions"]
+visible = false
+layout_mode = 2
+text = "Rinegozia Contratto (R)"
+
+[node name="BtnMasterBuyback" type="Button" parent="PanelMain/VBox/TabContracts/PanelActiveContract/VBox/HBoxActions"]
+visible = false
+layout_mode = 2
+text = "Riscatta Master Album (M)"
+
+[node name="BtnPhysicalDist" type="Button" parent="PanelMain/VBox/TabContracts/PanelActiveContract/VBox/HBoxActions"]
+visible = false
+layout_mode = 2
+text = "Distribuzione Fisica (D)"
 
 [node name="HBoxOffersHeader" type="HBoxContainer" parent="PanelMain/VBox/TabContracts"]
 layout_mode = 2
@@ -179,11 +200,17 @@ text = "Nessun professionista cura i tuoi ingaggi dal vivo o la tua agenda."
 
 [node name="HBoxActions" type="HBoxContainer" parent="PanelMain/VBox/TabManagers/PanelActiveManager/VBox"]
 layout_mode = 2
+theme_override_constants/separation = 10
 
 [node name="BtnFireManager" type="Button" parent="PanelMain/VBox/TabManagers/PanelActiveManager/VBox/HBoxActions"]
 visible = false
 layout_mode = 2
-text = "Licenzia Manager"
+text = "Licenzia Manager (F)"
+
+[node name="BtnHireLawyer" type="Button" parent="PanelMain/VBox/TabManagers/PanelActiveManager/VBox/HBoxActions"]
+visible = false
+layout_mode = 2
+text = "Assumi Avvocato Tutela (L)"
 
 [node name="LabelManagersTitle" type="Label" parent="PanelMain/VBox/TabManagers"]
 layout_mode = 2
@@ -199,6 +226,57 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
+[node name="TabOwnLabel" type="VBoxContainer" parent="PanelMain/VBox"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="PanelOwnLabelStatus" type="PanelContainer" parent="PanelMain/VBox/TabOwnLabel"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="PanelMain/VBox/TabOwnLabel/PanelOwnLabelStatus"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="LabelOwnLabelTitle" type="Label" parent="PanelMain/VBox/TabOwnLabel/PanelOwnLabelStatus/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Nessuna Etichetta Discografica Fondata"
+
+[node name="LabelOwnLabelDetails" type="Label" parent="PanelMain/VBox/TabOwnLabel/PanelOwnLabelStatus/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.8, 0.85, 0.9, 1)
+text = "Requisiti per fondare la tua label indipendente: Reputazione >= 60.0, 25.000 € di capitale sociale e regime di autoproduzione."
+
+[node name="HBoxOwnLabelActions" type="HBoxContainer" parent="PanelMain/VBox/TabOwnLabel/PanelOwnLabelStatus/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BtnFoundLabel" type="Button" parent="PanelMain/VBox/TabOwnLabel/PanelOwnLabelStatus/VBox/HBoxOwnLabelActions"]
+layout_mode = 2
+text = "Fonda Etichetta Discografica (F)"
+
+[node name="BtnScoutBands" type="Button" parent="PanelMain/VBox/TabOwnLabel/PanelOwnLabelStatus/VBox/HBoxOwnLabelActions"]
+visible = false
+layout_mode = 2
+text = "Talent Scouting Giovani Band (S)"
+
+[node name="LabelRosterTitle" type="Label" parent="PanelMain/VBox/TabOwnLabel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Roster Band Sotto Contratto & Scouting:"
+
+[node name="ScrollRoster" type="ScrollContainer" parent="PanelMain/VBox/TabOwnLabel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxRosterList" type="VBoxContainer" parent="PanelMain/VBox/TabOwnLabel/ScrollRoster"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
 [node name="HSeparator3" type="HSeparator" parent="PanelMain/VBox"]
 layout_mode = 2
 
@@ -209,7 +287,7 @@ layout_mode = 2
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_font_sizes/font_size = 12
-text = "1: Contratti | 2: Manager | R: Nuove Offerte | Esc/K: Chiudi"
+text = "1: Contratti | 2: Manager | 3: Mia Etichetta | R: Offerte/Rinegozia | Esc/K: Chiudi"
 
 [node name="Spacer" type="Control" parent="PanelMain/VBox/HBoxFooter"]
 layout_mode = 2
