@@ -218,6 +218,66 @@ func _init_festival_catalog() -> void:
 	)
 	festivals["fest_tokyo"] = fest_tk
 
+	# 13. SAN PAOLO: São Paulo Rock & Metal Carnival
+	var fest_sp := FestivalData.new(
+		"fest_sao_paulo",
+		"São Paulo Rock & Metal Carnival",
+		Enums.CityId.SAO_PAULO,
+		"Interlagos Circuit Lawn",
+		96, # Mese 4 (Giugno)
+		4,
+		70000,
+		[Enums.MusicalGenre.METAL, Enums.MusicalGenre.ROCK],
+		"Sepultura Spirit Band",
+		82.0
+	)
+	festivals["fest_sao_paulo"] = fest_sp
+
+	# 14. BUENOS AIRES: Buenos Aires Indie & Rock Fest
+	var fest_ba := FestivalData.new(
+		"fest_buenos_aires",
+		"Buenos Aires Indie & Rock Fest",
+		Enums.CityId.BUENOS_AIRES,
+		"Costanera Sur Live Arena",
+		124, # Mese 5 (Luglio)
+		5,
+		50000,
+		[Enums.MusicalGenre.INDIE, Enums.MusicalGenre.ROCK],
+		"Plata Rockeros",
+		79.0
+	)
+	festivals["fest_buenos_aires"] = fest_ba
+
+	# 15. SYDNEY: Sydney Harbour Sound Wave
+	var fest_syd := FestivalData.new(
+		"fest_sydney",
+		"Sydney Harbour Sound Wave",
+		Enums.CityId.SYDNEY,
+		"The Domain Great Lawn",
+		140, # Mese 5 (Luglio)
+		5,
+		55000,
+		[Enums.MusicalGenre.ROCK, Enums.MusicalGenre.INDIE],
+		"Oceanic Thunder",
+		81.0
+	)
+	festivals["fest_sydney"] = fest_syd
+
+	# 16. SEOUL: Seoul Global K-Wave & Digital Fest
+	var fest_seo := FestivalData.new(
+		"fest_seoul",
+		"Seoul Global K-Wave & Digital Fest",
+		Enums.CityId.SEOUL,
+		"Han River World Stage",
+		156, # Mese 6 (Agosto)
+		6,
+		60000,
+		[Enums.MusicalGenre.POP, Enums.MusicalGenre.ELECTRONIC, Enums.MusicalGenre.HIPHOP],
+		"Seoul Cyber Beats",
+		83.0
+	)
+	festivals["fest_seoul"] = fest_seo
+
 ## Restituisce tutti i festival del catalogo
 func get_all_festivals() -> Array[FestivalData]:
 	var list: Array[FestivalData] = []

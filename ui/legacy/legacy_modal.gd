@@ -237,12 +237,36 @@ func _render_legacy_tab(player: PlayerData, legacy_sys: RefCounted) -> void:
 		var narrative: String = ending_eval.get("narrative", "")
 
 		var lbl_done := Label.new()
-		lbl_done.text = "🎬 CONCERTO D'ADDIO 'THE LAST WALTZ' COMPLETATO 🎬\n\nEPILOGO DELLA CARRIERA: %s\n\n%s\n\nPuoi continuare a giocare liberamente per esplorare nuovi traguardi!" % [
+		lbl_done.text = "🎬 CONCERTO D'ADDIO 'THE LAST WALTZ' COMPLETATO 🎬\n\nEPILOGO DELLA CARRIERA: %s\n\n%s\n\nScegli la tua prossima direzione artistica:" % [
 			title.to_upper(), narrative
 		]
 		lbl_done.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		vbox_entries.add_child(lbl_done)
-		label_status.text = "Epilogo conseguito: %s" % title
+
+		var btn_endless := Button.new()
+		btn_endless.text = "🌟 Continua in Modalità Carriera Infinita (Endless Horizon)"
+		btn_endless.pressed.connect(func():
+			if legacy_sys:
+				legacy_sys.continue_in_endless_mode()
+				refresh_view()
+				_announce_current_view()
+		)
+		AccessibilityManager.hook_control_accessibility(btn_endless, "Modalità Carriera Infinita", "Rifiuta il ritiro e prosegue la carriera senza limiti di tempo negli stadi e nei festival mondiali.")
+		vbox_entries.add_child(btn_endless)
+
+		var btn_ngplus := Button.new()
+		btn_ngplus.text = "🔄 Passaggio del Testimone (Prepara New Game+)"
+		btn_ngplus.pressed.connect(func():
+			if legacy_sys:
+				legacy_sys.prepare_new_game_plus()
+				refresh_view()
+				_announce_current_view()
+		)
+		AccessibilityManager.hook_control_accessibility(btn_ngplus, "Passaggio del Testimone New Game+", "Salva l'eredità artistica per consentire alla prossima partita di iniziare con il tratto Discepolo del Rock e royalties passive.")
+		vbox_entries.add_child(btn_ngplus)
+
+		btn_endless.grab_focus()
+		label_status.text = "Epilogo conseguito: %s. Scegli tra Carriera Infinita o New Game+." % title
 		return
 
 	var lbl_intro := Label.new()

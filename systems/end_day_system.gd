@@ -91,6 +91,13 @@ func process_day_end(day_num: int = 1, p_early_sleep_override: bool = false) -> 
 		album_count = roy_res.get("album_count", 0)
 		if player_data and royalties_earned > 0.0:
 			player_data.increment_career_stat("total_royalties_earned", royalties_earned)
+
+	# Incasso royalties passive mentore in New Game+ (Contratto D1)
+	if player_data and player_data.is_new_game_plus and player_data.mentor_passive_daily_royalty > 0.0:
+		player_data.modify_money(player_data.mentor_passive_daily_royalty)
+		EventBus.money_changed.emit(player_data.money, player_data.mentor_passive_daily_royalty, "Royalties Mentore (%s)" % player_data.mentor_name)
+		if GameManager and GameManager.economy_system:
+			GameManager.economy_system.log_transaction(player_data.mentor_passive_daily_royalty, "income", "Royalties Mentore: %s" % player_data.mentor_name, day_num)
 		
 	# Incasso automatico sub-affitto passivo della sala prove (Tier 2 e 3)
 	var sublet_earned: float = 0.0

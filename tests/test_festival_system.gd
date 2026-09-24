@@ -83,10 +83,10 @@ func assert_almost_equal(actual: float, expected: float, tolerance: float, messa
 # 1. CATALOGO DEI 6 GRANDI FESTIVAL CONTINENTALI
 # ------------------------------------------------------------------------------
 func test_festival_catalog_initialization() -> void:
-	print("\n--- TEST 1: CATALOGO DEI 12 GRANDI FESTIVAL MONDIALI ---")
+	print("\n--- TEST 1: CATALOGO DEI 16 GRANDI FESTIVAL MONDIALI ---")
 	var fest_sys := FestivalSystemScript.new()
 	var all_fests := fest_sys.get_all_festivals()
-	assert_equal(all_fests.size(), 12, "Presenti esattamente 12 festival mondiali")
+	assert_equal(all_fests.size(), 16, "Presenti esattamente 16 festival mondiali")
 	
 	var mi := fest_sys.get_festival("fest_milano")
 	assert_true(mi != null, "Festival di Milano presente")

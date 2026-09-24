@@ -63,17 +63,22 @@ func calculate_travel_cost(from_city_id: int, to_city_id: int) -> Dictionary:
 	var to_ocean: bool = to_city and to_city.is_transoceanic
 
 	if from_ocean != to_ocean:
-		# Da Europa/Italia a USA/Giappone o viceversa
+		# Da Europa/Italia a Americhe/Asia/Oceania o viceversa
 		is_transoceanic = true
 		is_intl = true
 	elif from_ocean and to_ocean:
-		# Entrambe oltreoceano: se una è Tokyo e l'altra è USA (NY/LA) è un volo transpacifico
-		if from_city_id == Enums.CityId.TOKYO or to_city_id == Enums.CityId.TOKYO:
-			is_transoceanic = true
+		# Entrambe oltreoceano: verifica se sullo stesso continente o trans-continentale/trans-pacifico
+		var is_same_continent: bool = false
+		if (from_city_id in [Enums.CityId.NEW_YORK, Enums.CityId.LOS_ANGELES]) and (to_city_id in [Enums.CityId.NEW_YORK, Enums.CityId.LOS_ANGELES]):
+			is_same_continent = true
+		elif (from_city_id in [Enums.CityId.SAO_PAULO, Enums.CityId.BUENOS_AIRES]) and (to_city_id in [Enums.CityId.SAO_PAULO, Enums.CityId.BUENOS_AIRES]):
+			is_same_continent = true
+
+		if is_same_continent:
+			is_transoceanic = false
 			is_intl = true
 		else:
-			# Tra New York e Los Angeles (costa est - costa ovest, continentale USA)
-			is_transoceanic = false
+			is_transoceanic = true
 			is_intl = true
 
 	var money: float = 50.0
@@ -82,10 +87,14 @@ func calculate_travel_cost(from_city_id: int, to_city_id: int) -> Dictionary:
 
 	if is_transoceanic:
 		# Voli a lungo raggio transoceanici
-		if from_city_id == Enums.CityId.TOKYO or to_city_id == Enums.CityId.TOKYO:
+		if from_city_id in [Enums.CityId.TOKYO, Enums.CityId.SYDNEY, Enums.CityId.SEOUL] or to_city_id in [Enums.CityId.TOKYO, Enums.CityId.SYDNEY, Enums.CityId.SEOUL]:
 			money = 1150.0
 			energy = 55
 			stress = 30
+		elif from_city_id in [Enums.CityId.SAO_PAULO, Enums.CityId.BUENOS_AIRES] or to_city_id in [Enums.CityId.SAO_PAULO, Enums.CityId.BUENOS_AIRES]:
+			money = 1050.0
+			energy = 52
+			stress = 28
 		elif from_city_id == Enums.CityId.LOS_ANGELES or to_city_id == Enums.CityId.LOS_ANGELES:
 			money = 980.0
 			energy = 50
@@ -95,10 +104,15 @@ func calculate_travel_cost(from_city_id: int, to_city_id: int) -> Dictionary:
 			energy = 45
 			stress = 22
 	elif from_ocean and to_ocean:
-		# Tra New York e Los Angeles (volo continentale USA)
-		money = 350.0
-		energy = 30
-		stress = 12
+		# Tratte continentali oltreoceano interne (es. NY-LA o San Paolo-Buenos Aires)
+		if (from_city_id in [Enums.CityId.SAO_PAULO, Enums.CityId.BUENOS_AIRES]) and (to_city_id in [Enums.CityId.SAO_PAULO, Enums.CityId.BUENOS_AIRES]):
+			money = 220.0
+			energy = 25
+			stress = 10
+		else:
+			money = 350.0
+			energy = 30
+			stress = 12
 	else:
 		# Matrice nazionale e continentale europea
 		var pair_key := "%d_%d" % [mini(from_city_id, to_city_id), maxi(from_city_id, to_city_id)]

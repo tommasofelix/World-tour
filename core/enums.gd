@@ -215,7 +215,11 @@ enum CityId {
 	MADRID = 8,
 	NEW_YORK = 9,
 	LOS_ANGELES = 10,
-	TOKYO = 11
+	TOKYO = 11,
+	SAO_PAULO = 12,
+	BUENOS_AIRES = 13,
+	SYDNEY = 14,
+	SEOUL = 15
 }
 
 enum RoadDilemmaType {
@@ -397,6 +401,14 @@ static func get_city_name(city_id: int) -> String:
 			return "Los Angeles"
 		CityId.TOKYO:
 			return "Tokyo"
+		CityId.SAO_PAULO:
+			return "San Paolo"
+		CityId.BUENOS_AIRES:
+			return "Buenos Aires"
+		CityId.SYDNEY:
+			return "Sydney"
+		CityId.SEOUL:
+			return "Seoul"
 		_:
 			return "Sconosciuta"
 

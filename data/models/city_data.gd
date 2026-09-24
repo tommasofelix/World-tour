@@ -324,4 +324,76 @@ static func get_all_cities() -> Array[CityData]:
 		true
 	))
 
+	# 13. SAN PAOLO (Brasile) - Metal, Rock, Punk (Oltreoceano Intercontinentale)
+	var sao_paulo_venues: Array[VenueData] = [
+		VenueDataScript.new("sp_augusta", "Rua Augusta Rock Bar", 80, 120.0, 20.0, 45.0, 15.0, "Locale ribelle nel cuore pulsante di San Paolo.", "Rumoroso"),
+		VenueDataScript.new("sp_circo", "Circo Paulistano Live", 350, 600.0, 40.0, 70.0, 25.0, "Palcoscenico caldo con acustica travolgente.", "Underground"),
+		VenueDataScript.new("sp_arena", "Allianz Parque Arena Hall", 1600, 3800.0, 85.0, 99.0, 55.0, "Mega impianto oceanico per il metal e il rock mondiale.", "Prestigioso")
+	]
+	list.append(CityData.new(
+		Enums.CityId.SAO_PAULO,
+		"San Paolo",
+		"Brasile",
+		"Capitale del rock sudamericano. Pubblico oceanico e passionale con vendite merch esplosive.",
+		{ Enums.MusicalGenre.METAL: 1.35, Enums.MusicalGenre.ROCK: 1.30 },
+		true,
+		50.0,
+		sao_paulo_venues,
+		true
+	))
+
+	# 14. BUENOS AIRES (Argentina) - Indie, Rock, Pop (Oltreoceano Intercontinentale)
+	var ba_venues: Array[VenueData] = [
+		VenueDataScript.new("ba_san_telmo", "San Telmo Underground", 75, 110.0, 20.0, 40.0, 14.0, "Cantina artistica e viscerale nei vicoli storici.", "Underground"),
+		VenueDataScript.new("ba_niceto", "Niceto Club Palermo", 320, 550.0, 35.0, 65.0, 22.0, "Il tempio dell'indie rock e della new wave argentina.", "Underground"),
+		VenueDataScript.new("ba_luna_park", "Estadio Luna Park", 1500, 3600.0, 80.0, 98.0, 50.0, "Arena leggendaria con cori assordanti a squarciagola.", "Prestigioso")
+	]
+	list.append(CityData.new(
+		Enums.CityId.BUENOS_AIRES,
+		"Buenos Aires",
+		"Argentina",
+		"La città dell'ardore e della poesia rock. Scena alternativa devota e fedele.",
+		{ Enums.MusicalGenre.INDIE: 1.30, Enums.MusicalGenre.ROCK: 1.25, Enums.MusicalGenre.POP: 1.15 },
+		true,
+		50.0,
+		ba_venues,
+		true
+	))
+
+	# 15. SYDNEY (Australia) - Classic Rock, Punk Rock (Oltreoceano Intercontinentale)
+	var sydney_venues: Array[VenueData] = [
+		VenueDataScript.new("syd_oxford", "Oxford Art Factory", 90, 150.0, 25.0, 50.0, 16.0, "Fucina creativa e rumorosa per band emergenti.", "Rumoroso"),
+		VenueDataScript.new("syd_metro", "The Metro Theatre", 400, 750.0, 45.0, 75.0, 28.0, "Teatro iconico al centro della nightlife australiana.", "Underground"),
+		VenueDataScript.new("syd_hordern", "Hordern Pavilion", 1800, 4200.0, 85.0, 99.0, 55.0, "Padiglione monumentale teatro dei tour oceanici.", "Prestigioso")
+	]
+	list.append(CityData.new(
+		Enums.CityId.SYDNEY,
+		"Sydney",
+		"Australia",
+		"Patria del pub rock e dell'adrenalina all'aperto. Mercato isolato ma ricchissimo.",
+		{ Enums.MusicalGenre.ROCK: 1.35, Enums.MusicalGenre.INDIE: 1.20 },
+		true,
+		60.0,
+		sydney_venues,
+		true
+	))
+
+	# 16. SEOUL (Corea del Sud) - Pop, Elettronica, Hip-Hop (Oltreoceano Intercontinentale)
+	var seoul_venues: Array[VenueData] = [
+		VenueDataScript.new("seoul_hongdae", "Hongdae Live Club FF", 110, 180.0, 30.0, 55.0, 18.0, "Cuore della scena indie e punk alternativa di Seoul.", "Underground"),
+		VenueDataScript.new("seoul_yes24", "YES24 Live Hall", 500, 900.0, 55.0, 85.0, 32.0, "Auditorium hi-tech per live performance ad altissima energia.", "Prestigioso"),
+		VenueDataScript.new("seoul_kspo", "KSPO Olympic Dome", 2000, 4500.0, 90.0, 100.0, 60.0, "Colossale cupola olimpica per mega produzioni mondiali.", "Prestigioso")
+	]
+	list.append(CityData.new(
+		Enums.CityId.SEOUL,
+		"Seoul",
+		"Corea del Sud",
+		"Capitale della tecnologia e del pop globale. Viralità social e produzioni all'avanguardia.",
+		{ Enums.MusicalGenre.POP: 1.35, Enums.MusicalGenre.ELECTRONIC: 1.30, Enums.MusicalGenre.HIPHOP: 1.25 },
+		true,
+		65.0,
+		seoul_venues,
+		true
+	))
+
 	return list

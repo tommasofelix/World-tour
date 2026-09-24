@@ -179,3 +179,50 @@ func evaluate_legacy_ending() -> Dictionary:
 		"ending_title": ending_title,
 		"narrative": narrative
 	}
+
+## Attiva la Modalità Carriera Infinita (Endless Horizon)
+func continue_in_endless_mode() -> Dictionary:
+	if not player_data:
+		return {"success": false, "reason": "no_player_data"}
+
+	player_data.is_endless_mode = true
+	var name_disp: String = player_data.get_effective_name()
+	var speech: String = "CARRIERA INFINITA AVVIATA! %s ha rifiutato il ritiro. La leggenda continua senza limiti negli stadi e nei festival di tutto il mondo!" % name_disp
+	AccessibilityManager.announce(speech, true)
+	EventBus.legacy_ending_triggered.emit(player_data.legacy_ending if player_data.legacy_ending != -1 else Enums.LegacyEndingType.IMMORTAL_ICON, {
+		"is_endless_mode": true
+	})
+	return {
+		"success": true,
+		"is_endless_mode": true,
+		"message": speech
+	}
+
+## Prepara e registra il passaggio del testimone (New Game+)
+func prepare_new_game_plus() -> Dictionary:
+	if not player_data:
+		return {"success": false, "reason": "no_player_data"}
+
+	var mentor: String = player_data.get_effective_name()
+	var ng_data := {
+		"mentor_name": mentor,
+		"inherited_instrument_category": "guitar",
+		"inherited_instrument_tier": player_data.get_instrument_tier("guitar"),
+		"mentor_passive_daily_royalty": 15.0,
+		"created_day": calendar_data.day_number if calendar_data else 336
+	}
+
+	var path: String = "user://new_game_plus.json"
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file:
+		file.store_string(JSON.stringify(ng_data, "\t"))
+		file.close()
+
+	var speech: String = "PASSAGGIO DEL TESTIMONE REGISTRATO! %s diventa il mentore della nuova generazione. La nuova partita avrà il tratto Discepolo del Rock e 15.00 euro al giorno di royalties passive." % mentor
+	AccessibilityManager.announce(speech, true)
+
+	return {
+		"success": true,
+		"ng_plus_data": ng_data,
+		"message": speech
+	}

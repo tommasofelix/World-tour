@@ -12,6 +12,10 @@ var primary_instrument: String = "Chitarra Elettrica"
 var background_id: String = "self_taught"
 var trait_id: String = "charismatic"
 var language: String = "it"
+var is_endless_mode: bool = false
+var is_new_game_plus: bool = false
+var mentor_name: String = ""
+var mentor_passive_daily_royalty: float = 0.0
 
 func get_effective_name() -> String:
 	return stage_name if not stage_name.is_empty() else player_name
@@ -45,6 +49,8 @@ func get_trait_name() -> String:
 			return "Insonne Creativo (+Idee di Notte, -Recupero Sonno)"
 		"resilient":
 			return "Resiliente (-Consumo Energia e Stress)"
+		"legacy_disciple":
+			return "Discepolo del Rock (+10% XP a tutti gli strumenti, +15 Rispetto)"
 		_:
 			return "Carismatico"
 
@@ -204,7 +210,11 @@ var city_fans: Dictionary = {
 	Enums.CityId.MADRID: 0,
 	Enums.CityId.NEW_YORK: 0,
 	Enums.CityId.LOS_ANGELES: 0,
-	Enums.CityId.TOKYO: 0
+	Enums.CityId.TOKYO: 0,
+	Enums.CityId.SAO_PAULO: 0,
+	Enums.CityId.BUENOS_AIRES: 0,
+	Enums.CityId.SYDNEY: 0,
+	Enums.CityId.SEOUL: 0
 }
 var city_popularity: Dictionary = {
 	Enums.CityId.MILANO: 1.0,
@@ -218,7 +228,11 @@ var city_popularity: Dictionary = {
 	Enums.CityId.MADRID: 0.0,
 	Enums.CityId.NEW_YORK: 0.0,
 	Enums.CityId.LOS_ANGELES: 0.0,
-	Enums.CityId.TOKYO: 0.0
+	Enums.CityId.TOKYO: 0.0,
+	Enums.CityId.SAO_PAULO: 0.0,
+	Enums.CityId.BUENOS_AIRES: 0.0,
+	Enums.CityId.SYDNEY: 0.0,
+	Enums.CityId.SEOUL: 0.0
 }
 
 # Logistica di Viaggio, Jet Lag & Diario Adesivi Mezzo (Sezione 6)
@@ -237,7 +251,7 @@ var fan_club: RefCounted = FanClubDataScript.new()
 func get_territorial_fans_summary() -> Dictionary:
 	var it_fans: int = int(city_fans.get(Enums.CityId.MILANO, 0)) + int(city_fans.get(Enums.CityId.BOLOGNA, 0)) + int(city_fans.get(Enums.CityId.ROMA, 0)) + int(city_fans.get(Enums.CityId.NAPOLI, 0))
 	var eu_fans: int = it_fans + int(city_fans.get(Enums.CityId.LONDRA, 0)) + int(city_fans.get(Enums.CityId.BERLINO, 0)) + int(city_fans.get(Enums.CityId.DUBLINO, 0)) + int(city_fans.get(Enums.CityId.PARIGI, 0)) + int(city_fans.get(Enums.CityId.MADRID, 0))
-	var world_fans: int = eu_fans + int(city_fans.get(Enums.CityId.NEW_YORK, 0)) + int(city_fans.get(Enums.CityId.LOS_ANGELES, 0)) + int(city_fans.get(Enums.CityId.TOKYO, 0))
+	var world_fans: int = eu_fans + int(city_fans.get(Enums.CityId.NEW_YORK, 0)) + int(city_fans.get(Enums.CityId.LOS_ANGELES, 0)) + int(city_fans.get(Enums.CityId.TOKYO, 0)) + int(city_fans.get(Enums.CityId.SAO_PAULO, 0)) + int(city_fans.get(Enums.CityId.BUENOS_AIRES, 0)) + int(city_fans.get(Enums.CityId.SYDNEY, 0)) + int(city_fans.get(Enums.CityId.SEOUL, 0))
 	return {
 		"italian_fans": it_fans,
 		"european_fans": eu_fans,
@@ -751,6 +765,10 @@ func to_dict() -> Dictionary:
 		"hall_of_fame_inducted": hall_of_fame_inducted,
 		"last_waltz_completed": last_waltz_completed,
 		"legacy_ending": legacy_ending,
+		"is_endless_mode": is_endless_mode,
+		"is_new_game_plus": is_new_game_plus,
+		"mentor_name": mentor_name,
+		"mentor_passive_daily_royalty": mentor_passive_daily_royalty,
 		"career_stats": career_stats.duplicate(true)
 	}
 
@@ -884,6 +902,10 @@ func from_dict(dict: Dictionary) -> void:
 	hall_of_fame_inducted = bool(dict.get("hall_of_fame_inducted", hall_of_fame_inducted))
 	last_waltz_completed = bool(dict.get("last_waltz_completed", last_waltz_completed))
 	legacy_ending = int(dict.get("legacy_ending", legacy_ending))
+	is_endless_mode = bool(dict.get("is_endless_mode", is_endless_mode))
+	is_new_game_plus = bool(dict.get("is_new_game_plus", is_new_game_plus))
+	mentor_name = str(dict.get("mentor_name", mentor_name))
+	mentor_passive_daily_royalty = float(dict.get("mentor_passive_daily_royalty", mentor_passive_daily_royalty))
 
 	if dict.has("career_stats") and dict["career_stats"] is Dictionary:
 		for k in dict["career_stats"]:

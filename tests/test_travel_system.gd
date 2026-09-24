@@ -77,7 +77,7 @@ func assert_almost_equal(actual: float, expected: float, tolerance: float, messa
 func test_city_data_catalog() -> void:
 	print("\n--- TEST 1: CATALOGO CITTÀ (12 METROPOLI) ---")
 	var cities: Array[CityData] = CityDataScript.get_all_cities()
-	assert_equal(cities.size(), 12, "Il catalogo contiene esattamente 12 città (4 nazionali, 5 europee, 3 oltreoceano)")
+	assert_equal(cities.size(), 16, "Il catalogo contiene esattamente 16 città (4 nazionali, 5 europee, 7 oltreoceano)")
 
 	var city_ids: Array[int] = []
 	for c in cities:
@@ -95,6 +95,10 @@ func test_city_data_catalog() -> void:
 	assert_true(city_ids.has(Enums.CityId.NEW_YORK), "New York presente nel catalogo")
 	assert_true(city_ids.has(Enums.CityId.LOS_ANGELES), "Los Angeles presente nel catalogo")
 	assert_true(city_ids.has(Enums.CityId.TOKYO), "Tokyo presente nel catalogo")
+	assert_true(city_ids.has(Enums.CityId.SAO_PAULO), "San Paolo presente nel catalogo")
+	assert_true(city_ids.has(Enums.CityId.BUENOS_AIRES), "Buenos Aires presente nel catalogo")
+	assert_true(city_ids.has(Enums.CityId.SYDNEY), "Sydney presente nel catalogo")
+	assert_true(city_ids.has(Enums.CityId.SEOUL), "Seoul presente nel catalogo")
 
 	var milano: CityData = CityDataScript.get_city(Enums.CityId.MILANO)
 	assert_equal(milano.name, "Milano", "Nome di Milano corretto")
@@ -255,7 +259,7 @@ func test_territorial_fans_and_reverberation() -> void:
 	}
 
 	# Aggiungiamo 100 fan a Bologna:
-	# 85% vanno a Bologna (+85), 15% distribuiti con riverbero (+1 fan a ciascuna delle altre 11 metropoli)
+	# 85% vanno a Bologna (+85), 15% distribuiti con riverbero (+1 fan a ciascuna delle altre 15 metropoli)
 	travel_sys.add_fans_in_city(Enums.CityId.BOLOGNA, 100)
 
 	var bo_fans: int = travel_sys.get_fans_in_city(Enums.CityId.BOLOGNA)
@@ -267,7 +271,7 @@ func test_territorial_fans_and_reverberation() -> void:
 	var ro_fans: int = travel_sys.get_fans_in_city(Enums.CityId.ROMA)
 	assert_equal(ro_fans, 1, "Roma riceve il riverbero (+1 fan)")
 
-	assert_equal(player.fans, 196, "Il totale dei fan su tutte le città ammonta a 196 (100 iniziali + 85 locali + 11 riverbero)")
+	assert_equal(player.fans, 200, "Il totale dei fan su tutte le città ammonta a 200 (100 iniziali + 85 locali + 15 riverbero)")
 
 	# Modifica popolarità locale
 	travel_sys.modify_popularity_in_city(Enums.CityId.ROMA, 25.0)

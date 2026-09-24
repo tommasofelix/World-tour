@@ -796,3 +796,77 @@ func process_own_label_daily_royalties() -> Dictionary:
 		"total_label_royalties": total_label_income,
 		"band_count": bands_active
 	}
+
+## Produce esecutivamente un album per una band del proprio roster (Contratto D3)
+func produce_band_album(band_id: String, budget_tier: int = 1) -> Dictionary:
+	var active_player := get_active_player_data()
+	var active_calendar := get_active_calendar_data()
+	if not active_player or not active_player.has_own_label():
+		return {"success": false, "reason": "no_own_label"}
+
+	var label = active_player.own_label
+	var band: Dictionary = label.get_band_by_id(band_id)
+	if band.is_empty():
+		return {"success": false, "reason": "band_not_found"}
+
+	var cost: float = 2000.0
+	var talent_gain: float = 5.0
+	var pop_gain: float = 8.0
+	var tier_name: String = "Produzione Base"
+
+	match budget_tier:
+		2:
+			cost = 5000.0
+			talent_gain = 12.0
+			pop_gain = 18.0
+			tier_name = "Produzione Professionale"
+		3:
+			cost = 10000.0
+			talent_gain = 20.0
+			pop_gain = 30.0
+			tier_name = "Mega Produzione Top Tier"
+		_:
+			cost = 2000.0
+			talent_gain = 5.0
+			pop_gain = 8.0
+			tier_name = "Produzione Base"
+
+	if active_player.money < cost:
+		return {
+			"success": false,
+			"reason": "money_insufficient",
+			"required": cost,
+			"balance": active_player.money
+		}
+
+	active_player.modify_money(-cost)
+	EventBus.money_changed.emit(active_player.money, -cost, "Produzione Album Roster: %s" % band.get("name", "Band"))
+
+	# Aggiorna talent e popularity della band
+	band["talent"] = clampf(float(band.get("talent", 60.0)) + talent_gain, 10.0, 100.0)
+	band["popularity"] = clampf(float(band.get("popularity", 10.0)) + pop_gain, 1.0, 100.0)
+	band["albums_count"] = int(band.get("albums_count", 0)) + 1
+	var album_title: String = "%s Vol. %d" % [band.get("name", "Band"), band["albums_count"]]
+	band["last_produced_album"] = album_title
+	band["last_produced_day"] = active_calendar.day_number if active_calendar else 1
+
+	# Aggiorna nel roster
+	label.add_band(band)
+
+	var speech: String = "ALBUM PRODOTTO! L'etichetta %s ha finanziato '%s' per %s con %s (costo: %.2f euro). Popolarità band: %.1f!" % [
+		label.label_name,
+		album_title,
+		band.get("name", "Band"),
+		tier_name,
+		cost,
+		band["popularity"]
+	]
+	AccessibilityManager.announce(speech, true)
+
+	return {
+		"success": true,
+		"band": band,
+		"album_title": album_title,
+		"cost": cost,
+		"message": speech
+	}

@@ -149,10 +149,28 @@ func update_weekly_charts(current_day: int = 1) -> Dictionary:
 					"title": s.title,
 					"artist": player_data.band_name if not player_data.band_name.is_empty() else "The Rebels",
 					"is_player": true,
+					"is_label_roster": false,
 					"genre": s.genre,
 					"metric": player_stream
 				})
-				
+
+	# Candidati dalle band del roster dell'etichetta del giocatore (Contratto D3)
+	if player_data and player_data.has_own_label():
+		for b in player_data.own_label.signed_bands:
+			var b_pop: float = float(b.get("popularity", 15.0))
+			var b_talent: float = float(b.get("talent", 60.0))
+			var b_name: String = str(b.get("name", "Band Roster"))
+			var single_metric: int = int((b_pop * 1300.0) + (b_talent * 320.0) + float(randi_range(600, 3200)))
+			candidate_singles.append({
+				"id": "roster_single_" + str(b.get("id", "")),
+				"title": "%s (Hit Single)" % b_name,
+				"artist": b_name,
+				"is_player": false,
+				"is_label_roster": true,
+				"genre": Enums.MusicalGenre.ROCK,
+				"metric": single_metric
+			})
+
 	# Ordinamento decrescente per metric (stream)
 	candidate_singles.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		return int(a.metric) > int(b.metric)
@@ -186,9 +204,16 @@ func update_weekly_charts(current_day: int = 1) -> Dictionary:
 			int(cand.genre),
 			int(cand.metric),
 			weeks,
-			peak
+			peak,
+			Enums.ChartScope.CONTINENTAL,
+			Enums.CityId.MILANO,
+			bool(cand.get("is_label_roster", false))
 		)
 		top_singles.append(new_entry)
+
+		# Traguardi per band del roster dell'etichetta
+		if new_entry.is_label_roster and player_data and player_data.has_own_label():
+			player_data.own_label.reputation = minf(100.0, player_data.own_label.reputation + 0.5)
 		
 		# Traguardi del giocatore
 		if new_entry.is_player:
@@ -242,31 +267,52 @@ func update_weekly_charts(current_day: int = 1) -> Dictionary:
 				"title": alb.title,
 				"artist": player_data.band_name if not player_data.band_name.is_empty() else "The Rebels",
 				"is_player": true,
+				"is_label_roster": false,
 				"genre": alb.genre,
 				"metric": alb_sales
 			})
-			
+
+	# Candidati dal roster dell'etichetta del giocatore (Contratto D3)
+	if player_data and player_data.has_own_label():
+		for b in player_data.own_label.signed_bands:
+			var b_pop: float = float(b.get("popularity", 15.0))
+			var b_talent: float = float(b.get("talent", 60.0))
+			var b_name: String = str(b.get("name", "Band Roster"))
+			var b_genre: int = Enums.MusicalGenre.ROCK
+			var last_alb: String = str(b.get("last_produced_album", ""))
+			if not last_alb.is_empty():
+				var alb_metric: int = int((b_pop * 140.0) + (b_talent * 45.0) + float(randi_range(300, 1800)))
+				candidate_albums.append({
+					"id": "roster_alb_" + str(b.get("id", "")),
+					"title": last_alb,
+					"artist": b_name,
+					"is_player": false,
+					"is_label_roster": true,
+					"genre": b_genre,
+					"metric": alb_metric
+				})
+
 	candidate_albums.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		return int(a.metric) > int(b.metric)
 	)
-	
+
 	top_albums.clear()
 	var albums_limit: int = mini(10, candidate_albums.size())
 	for i in range(albums_limit):
 		var cand: Dictionary = candidate_albums[i]
 		var cur_rank: int = i + 1
 		var c_id: String = str(cand.id)
-		
+
 		var prev_rank: int = 0
 		var weeks: int = 1
 		var peak: int = cur_rank
-		
+
 		if old_albums_map.has(c_id):
 			var old_ent: ChartEntryData = old_albums_map[c_id]
 			prev_rank = old_ent.rank
 			weeks = old_ent.weeks_on_chart + 1
 			peak = mini(cur_rank, old_ent.peak_rank)
-			
+
 		var new_entry := ChartEntryData.new(
 			cur_rank,
 			prev_rank,
@@ -277,9 +323,15 @@ func update_weekly_charts(current_day: int = 1) -> Dictionary:
 			int(cand.genre),
 			int(cand.metric),
 			weeks,
-			peak
+			peak,
+			Enums.ChartScope.CONTINENTAL,
+			Enums.CityId.MILANO,
+			bool(cand.get("is_label_roster", false))
 		)
 		top_albums.append(new_entry)
+
+		if new_entry.is_label_roster and player_data and player_data.has_own_label():
+			player_data.own_label.reputation = minf(100.0, player_data.own_label.reputation + 0.5)
 		
 		if new_entry.is_player:
 			if cur_rank < player_highest_album_rank:
