@@ -41,6 +41,24 @@ func _collect_and_setup_props() -> void:
 				child.player_entered_zone.connect(_on_player_entered_prop)
 			if child.has_signal("player_exited_zone"):
 				child.player_exited_zone.connect(_on_player_exited_prop)
+			if child.has_signal("prop_clicked"):
+				child.prop_clicked.connect(_on_prop_clicked)
+
+func _on_prop_clicked(prop: Area2D) -> void:
+	if not hud or hud.is_any_modal_open():
+		return
+	AccessibilityManager.play_cue(Enums.AudioCueType.HOTSPOT_PROXIMITY)
+	if ("is_player_in_range" in prop and prop.is_player_in_range) or (player and player.global_position.distance_to(prop.global_position) < 55.0):
+		prop.trigger_interaction()
+		return
+	
+	var target_pos: Vector2 = prop.get_stand_position() if prop.has_method("get_stand_position") else (prop.global_position + Vector2(0, 30))
+	if player and player.has_method("walk_to_target"):
+		player.walk_to_target(target_pos, func():
+			prop.trigger_interaction()
+		)
+	else:
+		prop.trigger_interaction()
 
 func _on_player_entered_prop(prop: Area2D) -> void:
 	if not hud or hud.is_any_modal_open():
@@ -68,11 +86,13 @@ func _on_prop_interaction(prop_id: String) -> void:
 	hud.open_modal_by_prop_id(prop_id)
 
 func _on_modal_opened(_modal_name: String) -> void:
+	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
 	if player:
 		player.is_movement_locked = true
 		player.cancel_auto_walk()
 
 func _on_modal_closed(_modal_name: String) -> void:
+	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
 	if player:
 		player.is_movement_locked = false
 	if hud and not hud.is_any_modal_open():

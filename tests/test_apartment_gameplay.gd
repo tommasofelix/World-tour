@@ -124,7 +124,8 @@ func test_interactive_prop_component() -> void:
 	assert_eq(signal_received.size(), 1, "Segnale interaction_triggered emesso")
 	assert_eq(signal_received[0], "test_guitar", "ID emesso corrisponde a 'test_guitar'")
 
-	# Verifica highlight visivo
+	# Verifica highlight visivo e segnale mouse click
+	assert_true(prop.has_signal("prop_clicked"), "Segnale prop_clicked presente su InteractiveProp")
 	prop.set_highlight(true)
 	assert_true(prop._prompt_node.visible, "Prompt visibile con highlight attivo")
 	prop.set_highlight(false)
@@ -180,10 +181,10 @@ func test_apartment_scene_integration() -> void:
 	assert_true(apt.camera != null, "Camera2D presente")
 	assert_true(apt.hud != null, "ApartmentHud presente nel CanvasLayer")
 
-	# Verifica raccolta dei 9 arredi interattivi
-	assert_eq(apt.props.size(), 9, "Esattamente 9 arredi interattivi registrati nella stanza")
+	# Verifica raccolta dei 10 arredi interattivi (incluso Stereo)
+	assert_eq(apt.props.size(), 10, "Esattamente 10 arredi interattivi registrati nella stanza")
 
-	var expected_ids := ["guitar", "kitchen", "couch", "turntable", "arcade", "bed", "wardrobe", "toolbox", "door"]
+	var expected_ids := ["guitar", "kitchen", "couch", "turntable", "arcade", "bed", "wardrobe", "toolbox", "door", "stereo"]
 	for expected_id in expected_ids:
 		var found: bool = false
 		for p in apt.props:
@@ -205,16 +206,22 @@ func test_apartment_scene_integration() -> void:
 	assert_eq(apt.selected_prop_index, 0, "Shift+Tab torna ad arredo 0 (guitar)")
 
 	apt._cycle_prop_selection(-1)
-	assert_eq(apt.selected_prop_index, 8, "Shift+Tab avvolge all'ultimo arredo (door)")
+	assert_eq(apt.selected_prop_index, 9, "Shift+Tab avvolge all'ultimo arredo (stereo)")
 
 	apt._clear_prop_selection()
 	assert_eq(apt.selected_prop_index, -1, "_clear_prop_selection ripristina stato a -1")
 
-	# Test router interazione arredi
-	apt._on_prop_interaction("guitar")
-	assert_true(apt.hud.is_any_modal_open(), "Interazione con 'guitar' apre la modale corrispondente")
-
+	# Test mouse click interattivo su arredo (Holy Diver The Sims style)
+	var guitar_prop: InteractiveProp = apt.props[0]
+	assert_true(guitar_prop.has_signal("prop_clicked"), "InteractiveProp espone segnale prop_clicked")
+	guitar_prop.is_player_in_range = true
+	guitar_prop.prop_clicked.emit(guitar_prop)
+	assert_true(apt.hud.is_any_modal_open(), "Click mouse su arredo apre la modale corrispondente")
 	apt.hud.hide_all_modals()
-	assert_true(not apt.hud.is_any_modal_open(), "Modali chiuse con successo")
+
+	# Test interazione specifica stereo
+	apt._on_prop_interaction("stereo")
+	assert_true(apt.hud.label_speaker.text.contains("STEREO"), "Interazione stereo aggiorna inspection box")
+	apt.hud.reset_inspection()
 
 	apt.queue_free()

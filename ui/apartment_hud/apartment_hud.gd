@@ -264,8 +264,8 @@ func open_modal_by_prop_id(prop_id: String) -> void:
 				update_hud_display()
 		"arcade":
 			if GameManager and GameManager.player_data:
-				GameManager.player_data.add_morale(10.0)
-				GameManager.player_data.reduce_stress(5.0)
+				GameManager.player_data.morale = mini(Constants.MAX_MORALE, GameManager.player_data.morale + 10)
+				GameManager.player_data.stress = maxi(Constants.MIN_STRESS, GameManager.player_data.stress - 5)
 				AccessibilityManager.announce("Partita al cabinato arcade! Morale aumentato di 10.", true)
 				AccessibilityManager.play_cue(Enums.AudioCueType.AREA_PERSONAL)
 				update_hud_display()
@@ -277,5 +277,13 @@ func open_modal_by_prop_id(prop_id: String) -> void:
 			open_modal(upgrades_modal)
 		"door":
 			open_modal(live_concert_modal)
+		"stereo":
+			if GameManager and GameManager.player_data:
+				GameManager.player_data.morale = mini(Constants.MAX_MORALE, GameManager.player_data.morale + 5)
+				GameManager.player_data.stress = maxi(Constants.MIN_STRESS, GameManager.player_data.stress - 5)
+			AccessibilityManager.play_cue(Enums.AudioCueType.AREA_PERSONAL)
+			AccessibilityManager.announce("Stereo da studio acceso! Riff rock diffusi nel loft.", true)
+			show_inspection("Impianto stereo monitor acceso! La musica rock riempie la stanza, riducendo lo stress.", "STEREO", "[Spazio] Chiudi")
+			update_hud_display()
 		_:
 			reset_inspection()

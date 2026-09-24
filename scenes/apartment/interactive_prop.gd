@@ -9,6 +9,7 @@ extends Area2D
 signal interaction_triggered(prop_id: String)
 signal player_entered_zone(prop: InteractiveProp)
 signal player_exited_zone(prop: InteractiveProp)
+signal prop_clicked(prop: InteractiveProp)
 
 @export var prop_id: String = ""
 @export var prop_name: String = ""
@@ -36,6 +37,30 @@ func _ready() -> void:
 		
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
+	mouse_entered.connect(_on_mouse_entered)
+	mouse_exited.connect(_on_mouse_exited)
+	input_event.connect(_on_input_event)
+
+func _exit_tree() -> void:
+	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+
+func _on_mouse_entered() -> void:
+	if not is_interactable:
+		return
+	Input.set_default_cursor_shape(Input.CURSOR_POINTING_HAND)
+	set_highlight(true)
+
+func _on_mouse_exited() -> void:
+	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+	set_highlight(false)
+
+func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
+	if not is_interactable:
+		return
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
+		prop_clicked.emit(self)
+		get_viewport().set_input_as_handled()
+
 
 func _on_body_entered(body: Node2D) -> void:
 	if not is_interactable:

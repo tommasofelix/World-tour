@@ -72,6 +72,15 @@ radius = 55.0
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_door"]
 size = Vector2(111.5, 46.570335)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_coffeetable"]
+size = Vector2(70, 24)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_stereo_trigger"]
+radius = 55.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_stereo"]
+size = Vector2(76, 28)
+
 [node name="Apartment" type="Node2D" unique_id=1416186043]
 script = ExtResource("1_apt_script")
 
@@ -300,31 +309,36 @@ position = Vector2(-16, -84)
 polygon = PackedVector2Array(-27, -4, -2, -38, 12, -4, 0, 4)
 
 [node name="CoffeeTable" type="StaticBody2D" parent="YSortRoot" unique_id=1308771964]
-position = Vector2(-60, 105)
+position = Vector2(-6, 50)
 
 [node name="Sprite2D" type="Sprite2D" parent="YSortRoot/CoffeeTable" unique_id=1403840762]
-position = Vector2(54.000004, -55)
+position = Vector2(0, -25)
 scale = Vector2(1.4186047, 1.2540984)
 texture = ExtResource("15_coffeetable")
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="YSortRoot/CoffeeTable" unique_id=1070097066]
-position = Vector2(49, -51)
-polygon = PackedVector2Array(-54, 17, -54, -12, 1.4941254, -34.766815, 24, -44, 39, -43, 53.635483, -35.934597, 61, -33, 68, -29, 66.42499, -13.2499275, 65, 1, 11.75972, 25.319633, -16, 38)
+[node name="SolidShape" type="CollisionShape2D" parent="YSortRoot/CoffeeTable" unique_id=1070097066]
+position = Vector2(0, 0)
+shape = SubResource("RectangleShape2D_coffeetable")
 
-[node name="SolidShape" type="CollisionShape2D" parent="YSortRoot/CoffeeTable" unique_id=1358994875]
-position = Vector2(60, -54)
-shape = SubResource("RectangleShape2D_door")
+[node name="PropStereo" parent="YSortRoot" unique_id=115660521 instance=ExtResource("4_prop")]
+position = Vector2(150, -58)
+prop_id = "stereo"
+prop_name = "Stereo & Casse Monitor da Studio"
+prop_description = "Accendi l'impianto hi-fi per ascoltare riff rock e alzare il morale"
+inspection_text = "Impianto hi-fi e diffusori monitor da studio. La colonna sonora perfetta per caricare il loft di pura energia rock! [Click o Spazio]"
+stand_offset = Vector2(-30, 25)
 
-[node name="SpeakerStudio" type="StaticBody2D" parent="YSortRoot" unique_id=115660521]
-position = Vector2(165, 60)
+[node name="TriggerShape" parent="YSortRoot/PropStereo" index="0"]
+position = Vector2(0, 10)
+shape = SubResource("CircleShape2D_stereo_trigger")
 
-[node name="Sprite2D" type="Sprite2D" parent="YSortRoot/SpeakerStudio" unique_id=1911003052]
-position = Vector2(-15, -118)
+[node name="Sprite2D" parent="YSortRoot/PropStereo" index="1"]
+position = Vector2(0, -15)
 texture = ExtResource("17_speaker")
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="YSortRoot/SpeakerStudio" unique_id=549839129]
-position = Vector2(-36, -108)
-polygon = PackedVector2Array(-25, 0, 0, -12, 79, 25, 43, 40)
+[node name="SolidShape" parent="YSortRoot/PropStereo/StaticBody2D" index="0"]
+position = Vector2(0, 0)
+shape = SubResource("RectangleShape2D_stereo")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=131046530]
 position = Vector2(0, 30)
@@ -337,10 +351,6 @@ limit_bottom = 350
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1026098481]
 
 [node name="ApartmentHud" parent="CanvasLayer" unique_id=2010071486 instance=ExtResource("3_hud")]
-offset_left = -2161.0
-offset_top = -305.0
-offset_right = -2843.0
-offset_bottom = -780.0
 
 [editable path="YSortRoot/PropGuitar"]
 [editable path="YSortRoot/PropKitchen"]
@@ -351,3 +361,5 @@ offset_bottom = -780.0
 [editable path="YSortRoot/PropWardrobe"]
 [editable path="YSortRoot/PropToolbox"]
 [editable path="YSortRoot/PropDoor"]
+[editable path="YSortRoot/PropStereo"]
+
