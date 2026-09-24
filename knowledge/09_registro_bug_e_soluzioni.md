@@ -250,3 +250,25 @@ Questo registro contiene soltanto problemi tecnici confermati e soluzioni con ev
 - Test automatici eseguiti: 33/33 test superati in `test_main_menu.gd` e 29/29 suite headless complessive dell'intero progetto superate con 0 errori, 0 warning e 0 ms.
 - Misure di prevenzione delle regressioni: Nei controller UI, qualsiasi cambio globale di scena (`change_scene_to_file` o `change_scene_to_packed`) scatenato da pulsanti, dialoghi modali o segnali di gioco deve essere obbligatoriamente invocato tramite `.call_deferred(...)`.
 
+### BUG-016 (RRU-22) — Disallineamento Collider Istanziali 2.5D, Hitbox Deadlock & Coordinate HUD Off-Screen (V5.4.0)
+
+- Data e componente: `2026-09-24`, `scenes/apartment/apartment.tscn`, `scenes/apartment/interactive_prop.gd`, `ui/apartment_hud/apartment_hud.tscn`, `tests/test_apartment_gameplay.gd` (Versione AVF `V5.4.0`).
+- Sintomi osservati:
+  1. Collisione del tavolino (`CoffeeTable`) bloccante e sfasata, con collisioni duplicate e poligoni asimmetrici che ostacolavano il passaggio fluido di Alex nel loft.
+  2. Impossibilità per Holy Diver di cliccare o interagire con arredi chiave (stereo, tavolino) e auto-walk che sbatteva contro gli ostacoli fisici senza innescare l'interazione.
+  3. Modali e viste dell'HUD dell'appartamento renderizzate completamente fuori dallo schermo visibile a causa di offset storici negativi anomali (`offset_top = -2161`, `offset_bottom = -1049`).
+- Evidenza riproducibile: Apertura della scena dell'appartamento nell'editor o avvio runtime, tentativo di click del mouse sugli arredi o movimento verso il letto/stereo.
+- Causa radice verificata:
+  1. Nelle scene 2D con nodi istanziati e modificati (`[editable path="..."]`), le collisioni modificate graficamente subiscono drift rispetto al centro dell'arredo, e l'aggiunta di poligoni concorrenti crea collisioni spurie.
+  2. Hitbox clearance assente o negativa: l'area sensibile di trigger (`Area2D`) aveva raggio uguale o inferiore alla sagoma solida (`StaticBody2D`), facendo urtare i piedi del personaggio contro la barriera fisica prima di toccare l'area di trigger, bloccando l'emissione del segnale `body_entered` (Hitbox Deadlock).
+  3. L'auto-walk verso il bersaglio puntava a `global_position` dell'arredo, che coincideva con il centro dell'ostacolo solido; senza punto di arrivo calpestabile antistante, il movimento falliva o scivolava.
+  4. L'istanza dell'HUD ereditava ancoraggi e coordinate assolute obsolete invece del Full Rect `(0, 0, 0, 0)`.
+- Soluzione applicata:
+  1. Normalizzazione concentrica dei prop: radice dell'arredo alle coordinate del mondo, `Sprite2D` e collider centrati concentricamente o posizionati alla base d'appoggio. Sostituzione dei poligoni del tavolino con un `RectangleShape2D` pulito (70x24 a offset `(-6, 50)`).
+  2. Promozione dello stereo a `InteractiveProp` con trigger radius di 55 px (clearance >= 25 px rispetto alla base solida) e bonus morale (+5) / relax stress (-5).
+  3. Implementazione di `get_stand_position()` con `stand_offset` in `InteractiveProp` per guidare l'auto-walk verso lo spazio libero antistante.
+  4. Reset completo degli ancoraggi e offset di `ApartmentHud` in `apartment.tscn` a Full Rect `(0, 0, 0, 0)`.
+  5. Integrazione dei gestori mouse (`mouse_entered`, `mouse_exited`, `_input_event`) con icona a manina (`CURSOR_POINTING_HAND`) e click per Holy Diver, preservando il 100% dell'accessibilità tastiera/NVDA per Luca.
+- Test automatici eseguiti: 68/68 test superati in `test_apartment_gameplay.gd` e 30/30 suite headless complessive superate con 0 errori a 0 ms.
+- Misure di prevenzione delle regressioni: Negli arredi interattivi 2.5D, garantire sempre clearance minima di 25–35 px tra trigger sensibile e collider solido, esporre un punto di stazionamento antistante e verificare che i controlli `CanvasLayer` abbiano offset Full Rect a zero.
+
