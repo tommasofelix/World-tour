@@ -26,7 +26,7 @@
 Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal rendering grafico e progettati per essere testati senza albero di scena (`SceneTree`) tramite test seams deterministici.
 
 1. **Assenza Totale di Latenze Artificiali**: Divieto di impiegare `OS.delay()`, timer di sleep o yield fittizi nei runner di test. Ogni asserzione viene calcolata ed emessa istantaneamente (tempo medio di esecuzione: 0–15 ms per suite).
-2. **Le 26 Suite di Test Headless Validate (Exit Code 0)**:
+2. **Le 28 Suite di Test Headless Validate (Exit Code 0)**:
    - `test_formulas.gd`: formule matematiche, curve XP e bilanciamento;
    - `test_time_system.gd`: orologio, routine giornaliera, passaggio giorno;
    - `test_player_system.gd`: attributi, energia, stress, morale, progressione;
@@ -43,6 +43,8 @@ Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal r
    - `test_vital_resources_system.gd`: triade risorse, burnout, panico e recupero attivo (Sez. 1.3);
    - `test_upgrades_system.gd`: lifestyle, insonorizzazione, strumenti e home studio;
    - `test_v5_ui_overhaul.gd`: architettura UI a 5 sezioni, navigazione macro-aree e modali;
+   - `test_ui_audio_and_numpad_system.gd`: earcons procedurali, volumi sicuri <=0.75f, ducking 40%, numpad navigation e dashboard statistiche (128 test, Sez. 12);
+   - `test_endless_and_ngplus_system.gd`: espansione Endless Horizon, New Game+, 16 metropoli e roster discografico magnate (AVF V5.2.0);
    - `test_advanced_social_system.gd`: social media avanzati, trend algoritmici settimanali, campagne sponsorizzate, live streaming, fan club, raduno annuale e deleghe manager (51 test, Sez. 8);
    - `test_industry_system.gd`: contratti discografici, manager, recoupment, riscatto master e propria etichetta discografica (106 test, Sez. 9);
    - `test_media_and_rivals_system.gd`: relazioni rivali approfondite (affinità, co-headlining tour, dissing buzz x1.6), Hit Parade territoriali, tormentone stagionale (x1.35 vendite/stream) e sistema Media Broadcaster con interviste radio/podcast/TV del mattino e di riparazione (50 test, Sez. 10);
@@ -80,6 +82,15 @@ Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal r
    - Nei controller di interfaccia (`ui/`) o nei consumer di modelli runtime, evitare l'uso diretto di annotazioni di tipo statico verso classi introdotte di recente (`var x: NuovaClasse`) prima che l'editor abbia sincronizzato la cache.
    - Impiegare sempre il pattern `const NuovaClasseScript = preload("res://data/models/nuova_classe.gd")` e annotare i parametri di ricezione con la classe base nativa `: RefCounted` o sfruttare il duck typing strutturato.
    - Questo previene qualsiasi errore di compilazione/parsing prematuro e garantisce la massima indipendenza e resilienza dell'interfaccia anche nelle sessioni di sviluppo headless continuative.
+
+10. **Pattern ModalRouter per la Scomposizione Modulare dei Controller di Schermata**:
+    - Quando un'interfaccia grafica gestisce una molteplicità di finestre modali o sottomenu complessi (es. 19 modali nell'HUD), la gestione dei segnali, l'ascolto EventBus, la mutua esclusione atomica (`hide_all_modals()`), la visibilità del backdrop e il ripristino del focus devono essere delegati a una classe router dedicata (`ModalRouter extends RefCounted`).
+    - Il controller di schermata mantiene forwarder trasparenti per non alterare l'API pubblica verso i test headless, riducendo le dimensioni del controller verso la soglia del Cancello 6 ($\le 250$ righe) e isolando le responsabilità di orchestrazione.
+
+11. **Headless Dummy Audio Driver & ObjectDB Leak Prevention**:
+    - In modalità headless, il driver audio dummy di Godot 4 non consuma campioni audio né avanza il mixer temporale; di conseguenza, la chiamata `AudioStreamPlayer.play()` instanzia un `AudioStreamPlaybackWAV` nel registro C++ dell'engine che non viene mai completato né deallocato, generando avvisi di memory leak (`ObjectDB instances leaked at exit`).
+    - I sottosistemi di sonificazione devono proteggere l'invocazione di `play()` con la guardia `if DisplayServer.get_name() != "headless":`, consentendo la completa validazione headless di generazione stream in memoria, volumi sicuri e ducking a 0 ms senza sporcare il registro ObjectDB.
+    - All'arresto dei suoni (`stop()`) e in `_exit_tree()`, reimpostare sempre `audio_player.stream = null` e invocare `AccessibilityManager.silence()` all'uscita delle suite di test.
 
 ---
 

@@ -89,3 +89,16 @@ Per consentire l'utilizzo ergonomico e rapido del gioco con la sola mano destra 
    - Gli stream generati sono indicizzati in una cache dizionario interna per azzerare il carico CPU dopo il primo ascolto.
 3. **Ducking Dinamico al 40%**:
    - All'emissione di qualsiasi sintesi vocale da parte di `AccessibilityManager.announce()` o `speak()`, `AudioCueSystem.set_ducking(true)` attenua il volume al 40% (`AUDIO_DUCKING_RATIO = 0.40`), ripristinandolo a fine parlato o su silenziamento.
+4. **Protezione Dummy Audio Driver nei Runner Headless**:
+   - Nei test eseguiti con `--headless`, il driver audio fittizio di Godot 4 non consuma i frame di riproduzione. L'invocazione di `play()` su `AudioStreamPlayer` viene protetta da `if DisplayServer.get_name() != "headless":`, mentre la generazione e caching dello stream, il calcolo dei volumi e il ducking rimangono convalidati al 100% prevenendo memory leak nel registro ObjectDB dell'engine.
+
+---
+
+## 7. Disaccoppiamento Gerarchico dell'Input: Autoload vs Controller di Scena
+
+1. **Segregazione dei Ruoli di Input**:
+   - Gli Autoload globali (come `AccessibilityManager`) sono riservati esclusivamente all'accessibilità di sistema e all'orientamento universale: gestione del tastierino numerico Numpad e tasto di emergenza per silenziamento immediato (`silence()`).
+   - È fatto divieto di mappare tasti alfanumerici della tastiera principale (`1`..`4`, `T`, `R`, `C`, `Space`, ecc.) all'interno degli Autoload.
+2. **Prevenzione del Mascheramento (Input Shadowing)**:
+   - In Godot, un Autoload che consuma eventi tramite `_unhandled_input` può intercettare o mascherare prematuramente comandi destinati all'interfaccia attiva (`HUD` o finestre modali).
+   - Mantenendo i tasti contestuali unicamente nei controller di scena e proteggendoli con guardie `if _is_any_modal_open(): return`, si garantisce che la digitazione e i comandi di navigazione fluiscano linearmente senza interferenze o conflitti di priorità.

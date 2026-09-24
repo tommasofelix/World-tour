@@ -198,3 +198,39 @@ Questo registro contiene soltanto problemi tecnici confermati e soluzioni con ev
   1. Ricalibrazione dell'asserzione del test a 200 fan e formalizzazione del pattern di parametrizzazione $(N - 1)$ per qualsiasi espansione di topologie geografiche o grafi di rete.
 - Test automatici eseguiti: 93/93 asserzioni superate in `tests/test_travel_system.gd` e 28/28 suite headless complessive dell'intero progetto superate con 0 errori e 0 ms.
 - Misure di prevenzione delle regressioni: Nei test di algoritmi che iterano o distribuiscono risorse su grafi di nodi o enumerazioni, evitare costanti scalari assolute figlie di una specifica dimensione storica; parametrizzare le formule attese sulla cardinalità dinamica del set di nodi o ancorarle a costanti derivate (`CityId.size() - 1`).
+
+### BUG-013 — Conflitto di Intercettazione Input (Autoload Shadowing) & Memory Leak del Dummy Audio Driver nei Test Headless (Fase 2)
+
+- Data e componente: `2026-09-24`, `autoload/accessibility_manager.gd`, `systems/audio_cue_system.gd`, `tests/test_v5_ui_overhaul.gd`.
+- Sintomo osservato:
+  1. I tasti alfanumerici (`1`, `2`, `3`, `T`, `R`, `P`, `K`, `M`, `N`, `Space`) risultavano mappati sia in `AccessibilityManager._unhandled_input` che in `HUD._unhandled_input`, creando imprevedibilità di instradamento dell'input e rischio di race conditions.
+  2. Nei test headless con verbosità o all'uscita dal processo, l'engine emetteva `WARNING: ObjectDB instances were leaked at exit` relativo a istanze `AudioStreamPlaybackWAV` rimaste allocate in memoria.
+- Evidenza riproducibile:
+  1. Presenza di blocchi `match event.keycode` duplicati tra un Autoload globale e una scena locale.
+  2. Invocazione di `audio_player.play()` su un `AudioStreamPlayer` in modalità headless senza chiusura né silenziamento esplicito prima di `get_tree().quit(0)`.
+- Causa radice verificata:
+  1. In Godot gli Autoload elaborano l'input globale e, se non strettamente circoscritti, mascherano o anticipano i controlli contestuali della scena attiva a video.
+  2. In modalità `--headless` (driver `Dummy`), Godot 4 non avanza il mixer audio a frame reali; di conseguenza gli stream avviati con `play()` non raggiungono mai la fine della riproduzione e restano registrati nell'ObjectDB C++ fino al crash o warning di uscita.
+- Soluzione applicata:
+  1. Rimozione di tutte le scorciatoie alfanumeriche da `AccessibilityManager._unhandled_input`, mantenendo unicamente la navigazione da tastierino numerico (`KEY_KP_*`) e il silenziamento d'emergenza (`silence()`).
+  2. In `AudioCueSystem`: aggiunta della guardia `if DisplayServer.get_name() != "headless": audio_player.play()` per generare gli stream e testare volumi e ducking senza allocare playback C++ headless orfani; azzeramento di `audio_player.stream = null` in `stop()` e in `_exit_tree()`.
+  3. Invocazione di `AccessibilityManager.silence()` prima del quit in `test_v5_ui_overhaul.gd` e `queue_free()` sostituito con `free()` per deallocazione sincrona immediata.
+- Test automatici eseguiti: 28/28 suite headless convalidate a 0 ms con 0 memory leak rilevati dall'engine ObjectDB.
+- Misure di prevenzione delle regressioni: Riservare gli Autoload esclusivamente a comandi globali di sistema o navigazione ausiliaria a basso livello; proteggere le invocazioni di riproduzione audio nei sottosistemi simulati contro il dummy audio driver headless.
+
+### BUG-014 — Scomposizione Modulare Monolite HUD (ModalRouter Pattern) & Risoluzione Ordine di Caricamento Preload (Fase 3)
+
+- Data e componente: `2026-09-24`, `ui/hud/hud.gd`, `ui/hud/modal_router.gd`.
+- Sintomo osservato:
+  1. File `hud.gd` ipertrofico (1.038 righe) che aggregava la logica di visualizzazione HUD principale e il coordinamento atomico di 19 finestre modali distinte, violando il Cancello 6 del Protocollo 12.
+  2. Durante la scomposizione, il tool `tools/check.ps1` (`check_syntax.gd`) falliva con `Could not find type "ModalRouter" in the current scope` a riga 68 di `hud.gd`.
+- Evidenza riproducibile: Scansione alfabetica di cartella in cui `res://ui/hud/hud.gd` viene analizzato prima di `res://ui/hud/modal_router.gd` senza class cache compilata.
+- Causa radice verificata:
+  1. Mancanza di un coordinatore modale specializzato separato dalla vista HUD.
+  2. In Godot 4, quando gli script vengono compilati o verificati singolarmente da utility esterne o senza cache dell'editor aggiornata, i tipi dichiarati tramite `class_name` non sono immediatamente disponibili agli script che li precedono in ordine alfabetico.
+- Soluzione applicata:
+  1. Creazione di `ui/hud/modal_router.gd` (`class_name ModalRouter extends RefCounted`) per gestire registrazione, mutua esclusione atomica (`hide_all_modals()`), ascolto eventi `EventBus`, aperture/chiusure e memorizzazione/ripristino focus.
+  2. Implementazione su `hud.gd` di metodi forwarder trasparenti per conservare il 100% di compatibilità verso le 28 suite di test headless preesistenti, riducendo `hud.gd` da 1.038 a 715 righe.
+  3. Aggiunta in `hud.gd` della direttiva `const ModalRouter = preload("res://ui/hud/modal_router.gd")` per garantire indipendenza totale dall'ordine di scansione o dal bootstrap dell'editor.
+- Test automatici eseguiti: 105/105 file GDScript compilati con successo in `tools/check.ps1` (0 errori, 0 warning) e 28/28 suite headless superate al 100% a 0 ms.
+- Misure di prevenzione delle regressioni: Scomporre sempre i monoliti UI complessi delegando a router dedicati con forwarder retrocompatibili; per script e classi strettamente accoppiati nei controller, utilizzare `preload` deterministico per azzerare dipendenze dall'ordine di indicizzazione dell'engine.
