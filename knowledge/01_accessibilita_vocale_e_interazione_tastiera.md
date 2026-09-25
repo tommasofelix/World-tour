@@ -201,5 +201,31 @@ Per consentire l'utilizzo ergonomico e rapido del gioco con la sola mano destra 
    - Nel `SystemMenuModal` aperto con `Esc` a riposo, la chiusura tramite pulsante "Riprendi" o tasto `Esc` emette il segnale specializzato `resume_requested`;
    - `ApartmentHud` connette sia `resume_requested` che `closed` al metodo unificato `close_modal(system_menu_modal)`, garantendo il ripristino di `player.is_movement_locked = false`, la ripresa dell'orologio virtuale (`set_game_paused(false)`) e il ritorno a `GAMEPLAY_IDLE` senza alcun freeze.
 
+---
+
+## 13. Disaccoppiamento Cinetico Zero-Stop, Riposo Breve 5s & Restyle Menu Interazioni (Validato in V5.6.4)
+
+1. **Fluidità Cinetica Continua a 210 px/s & Zero-Stop all'Avvicinamento Arredi**:
+   - Eliminato il micro-stop/hitch del personaggio all'ingresso nelle aree di trigger degli arredi (`_on_player_entered_prop()`):
+     * **Pre-caching Audio a 0 ms**: In `systems/audio_cue_system.gd`, implementato `precache_all_cues()` invocato direttamente in `_ready()`, che sintetizza e carica deterministicamente nella cache di memoria tutti i cue sonori procedurali (inclusi `HOTSPOT_PROXIMITY`, `COLLISION_BUMP`, `AREA_PERSONAL`), eliminando allocazioni dinamiche e cicli trigonometrici sincroni al primo contatto con l'arredo;
+     * **TTS Non-Interrupting per Hotspot**: In `scenes/apartment/apartment.gd`, gli annunci vocali di prossimità agli arredi vengono emessi con `is_interrupt = false`. Questo evita chiamate sincrone bloccanti a `DisplayServer.tts_stop()` che in Windows 11 congelavano il thread principale per svariati millisecondi con drop di frame e perdita di input da tastiera;
+     * Il movimento del giocatore rimane perfettamente fluido e continuo a 210 px/s, mentre la voce di NVDA e il feedback acustico continuano a informare Luca senza alcuna esitazione fisica.
+
+2. **Calibrazione Azione "Riposo Breve" sul Letto (5.0s & Avanzamento Temporale Differito)**:
+   - In `scenes/apartment/apartment_interactions.gd`, l'azione `bed_rest` è configurata con `duration_seconds: 5.0` e tipo `"advance_period"`;
+   - In `ui/apartment_hud/apartment_hud.gd`, le azioni con durata e tipo `"advance_period"` vengono instradate attraverso `_run_action_with_duration()`:
+     * Il personaggio entra nello stato FSM `GAMEPLAY_BUSY`, il movimento viene inibito fisicamente e la barra di avanzamento nell'HUD Inspection Box traccia i 5 secondi effettivi;
+     * L'avanzamento alla fascia oraria successiva (`time_system.advance_to_next_period()`) viene differito e scatenato esclusivamente al completamento naturale dei 5 secondi (`EventBus.action_completed`);
+     * Se il giocatore annulla l'azione con il tasto `Esc` (`EventBus.action_canceled`), l'orologio virtuale non viene toccato, nessuna risorsa viene spesa e il giocatore torna immediatamente a `GAMEPLAY_IDLE`.
+
+3. **Restyle Tipografico Vettoriale del Menu Interazioni (WCAG AAA & Zero Pergamene)**:
+   - In `ui/interaction_menu/interaction_menu.tscn` e `interaction_menu.gd`:
+     * Rimosse totalmente le texture a pergamena disegnate (`interazione_corta.png`, `interazione_media.png`, `interazione_lunga.png`) e il relativo scaling bitmap;
+     * Introdotto contenitore vettoriale sobrio ad alto contrasto (`BackgroundPanel`) con `StyleBoxFlat` scuro `#11121a` e bordo dorato sottile `#c49a45`;
+     * Dimensioni e leggibilità ampliate: larghezza estesa da 320 px a **480 px**, font del titolo a **16 px** e font delle opzioni a **14 px** (con padding interno 12x8 px e `autowrap_mode = AUTOWRAP_WORD_SMART`), garantendo massima leggibilità visiva per utenti ipovedenti o normovedenti;
+     * Piena compatibilità da tastiera: selezione istantanea tramite numeri `1`..`9` e `Numpad 1`..`Numpad 9`, frecce direzionali Su/Giù, Numpad 8/2, Invio/Spazio ed Esc per chiusura rapida;
+     * Lettura vocale lineare immediata su NVDA tramite `AccessibilityManager.announce()` all'apertura del menu.
+
+
 
 

@@ -443,3 +443,49 @@ Questo registro contiene soltanto problemi tecnici confermati e soluzioni con ev
 - Test automatici eseguiti: 65/65 test superati in `test_vertical_slice.tscn`, 30/30 suite headless superate con 0 fallimenti e 114 file GDScript privi di errori sintattici in `tools/check.ps1`.
 - Misure di prevenzione delle regressioni: Negli Autoload singleton evitare di tipizzare staticamente classi di sottosistemi che a loro volta referenziano l'Autoload; nei file di test o classi consumatrici accedere agli stati globali preferibilmente tramite metodi accessor (`get_current_state()`) anziché interrogare direttamente proprietà primitive durante la fase di parsing.
 
+### BUG-024 (RRU-30) — Avanzamento Temporale Istantaneo dell'Azione "Riposo Breve" sul Letto (V5.6.4)
+
+- Data e componente: `2026-09-25`, `scenes/apartment/apartment_interactions.gd`, `ui/apartment_hud/apartment_hud.gd`, `tests/test_apartment_gameplay.gd` (Versione AVF `V5.6.4`).
+- Sintomi osservati:
+  1. Selezionando l'azione "Riposo breve" dal Letto nel loft, l'orario avanzava istantaneamente alla fascia successiva senza attendere i 5 secondi previsti, saltando la barra di progressione dell'HUD e lo stato `GAMEPLAY_BUSY`.
+- Evidenza riproducibile: Nel menu del letto, selezione dell'opzione 1 ("Riposo breve (+10 morale, +5 energia)"). L'orologio passava immediatamente da Morning ad Afternoon a 0 ms.
+- Causa radice verificata:
+  1. In `scenes/apartment/apartment_interactions.gd`, l'azione `bed_rest` aveva `duration_seconds: 0.0`.
+  2. In `ui/apartment_hud/apartment_hud.gd`, nel gestore `_on_interaction_action_selected()`, il ramo `match action_type: "advance_period":` eseguiva direttamente e sincronamente `time_system.advance_to_next_period()`, senza controllare se l'azione possedesse una durata `duration_seconds > 0.0` da instradare attraverso `_run_action_with_duration()`.
+- Soluzione applicata:
+  1. Contratto D0: In `apartment_interactions.gd`, impostato `duration_seconds: 5.0` per `bed_rest`.
+  2. Contratto D1: In `apartment_hud.gd`, modificato `_on_interaction_action_selected()` in modo che se `duration_seconds > 0.0`, l'azione viene instradata a `_run_action_with_duration()`, memorizzando `_current_running_action`. L'avanzamento effettivo `advance_to_next_period()` viene differito al callback di completamento `_on_hud_action_completed()`. In caso di annullamento (`Esc`), `_on_hud_action_canceled()` azzera l'azione senza toccare l'orologio.
+- Test automatici eseguiti: Nuova asserzione dedicata in `test_apartment_gameplay.gd` che verifica lo stato `GAMEPLAY_BUSY`, l'invarianza oraria iniziale e l'avanzamento differito post-5s. 30/30 suite headless superate con 0 errori a 0 ms.
+- Misure di prevenzione delle regressioni: Ogni azione di simulazione associata a passaggio orario o cambio stato deve verificare preliminarmente se ha una durata fisica associata prima di attivare direttamente l'effetto terminale; gli effetti differiti devono sempre attendere il completamento naturale di `ActionSystem`.
+
+### BUG-025 (RRU-31) — Hitch Cinetico / Micro-stop all'Avvicinamento Arredi da Lock TTS e Sintesi Audio Procedurale al Volo (V5.6.4)
+
+- Data e componente: `2026-09-25`, `scenes/apartment/apartment.gd`, `systems/audio_cue_system.gd`, `autoload/accessibility_manager.gd` (Versione AVF `V5.6.4`).
+- Sintomi osservati:
+  1. Mentre il personaggio cammina liberamente nel loft a velocità normale (210 px/s), quando si avvicina a un qualsiasi arredo interattivo si verificava un vistoso micro-stop / scatto cinetico (frame freeze per svariati millisecondi), interrompendo la fluidità del movimento prima che la sintesi vocale pronunciasse il nome dell'arredo.
+- Evidenza riproducibile: Camminata continua con Frecce o Numpad attraversando la zona di prossimità di `PropBed`, `PropKitchen` o `PropTurntable`.
+- Causa radice verificata:
+  1. In `AudioCueSystem`: la generazione procedurale dei campioni audio PCM mono 16-bit (cicli `sin` in GDScript su 2646 campioni) avveniva *on-demand* alla prima riproduzione di `HOTSPOT_PROXIMITY`, allocando memoria e calcolando campioni sincroni sul main thread durante il frame di collisione.
+  2. In `apartment.gd`: `_on_player_entered_prop()` invocava `AccessibilityManager.announce(..., true)`. Il parametro `is_interrupt = true` causava una chiamata sincrona bloccante a `DisplayServer.tts_stop()`, che in Windows 11 effettua lock UIA/COM sul thread principale dell'applicazione, causando un drop di frame durante il quale la lettura dell'input in `_physics_process` veniva persa.
+- Soluzione applicata:
+  1. Contratto D0: In `systems/audio_cue_system.gd`, introdotto il metodo `precache_all_cues()` invocato direttamente in `_ready()`, che sintetizza in memoria tutti i suoni procedurali all'avvio a 0 ms.
+  2. Contratto D1: In `scenes/apartment/apartment.gd`, in `_on_player_entered_prop()` impostato `is_interrupt = false`, permettendo l'accodamento trasparente della sintesi vocale senza arresto forzato del driver TTS e senza interruzione del frame rate.
+- Test automatici eseguiti: Verifica di pre-caching e continuità cinetica in `test_apartment_gameplay.gd` (356 asserzioni). 30/30 suite headless convalidate con 0 errori a 0 ms.
+- Misure di prevenzione delle regressioni: Negli annunci vocali frequenti generati da trigger fisici di prossimità, non usare mai interruzioni forzate sincroniche (`is_interrupt = true`); pre-caricare sempre tutti i campioni sonori procedurali in memoria durante la fase di setup (`_ready()`).
+
+### BUG-026 (RRU-32) — Scarsa Leggibilità del Menu Interazione da Pergamene Bitmap a 8px e Mancanza di Contrasto (V5.6.4)
+
+- Data e componente: `2026-09-25`, `ui/interaction_menu/interaction_menu.tscn`, `ui/interaction_menu/interaction_menu.gd` (Versione AVF `V5.6.4`).
+- Sintomi osservati:
+  1. Il menu di interazione con gli arredi utilizzava texture a pergamena disegnata con font bitmap a 8 pixel e larghezza contenitore a 320 px, risultando difficilmente leggibile su schermi moderni o a distanza, con contrasto visivo insufficiente e aspetto non integrato con l'HUD.
+- Evidenza riproducibile: Apertura del menu interazioni di qualsiasi arredo (es. Chitarra o Cucina).
+- Causa radice verificata: Utilizzo di asset bitmap a pergamena (`interazione_corta.png`, ecc.) che imponevano vincoli geometrici rigidi e font di ridotte dimensioni per non sbordare.
+- Soluzione applicata:
+  1. Rimozione totale delle texture bitmap a pergamena e dei relativi calcoli di scala in `interaction_menu.gd`.
+  2. Creazione di un layout vettoriale `BackgroundPanel` ad alto contrasto con `StyleBoxFlat` scuro `#11121a` e bordo dorato `#c49a45`.
+  3. Allargamento del menu a 480 px, font del titolo portato a 16 px e font delle opzioni portato a 14 px con autowrap word-smart e margini interni confortevoli (12x8 px).
+  4. Piena conformità WCAG AAA e conservazione del 100% dell'accessibilità da tastiera (numeri 1..9, Numpad 1..9, Frecce, Invio, Spazio ed Esc).
+- Test automatici eseguiti: 356 asserzioni in `test_apartment_gameplay.gd` superate al 100% a 0 ms; 30/30 suite headless superate con 0 errori.
+- Misure di prevenzione delle regressioni: Privilegiare sempre pannelli vettoriali ad alto contrasto scalabili per i menu di testo interattivi, con font non inferiore a 14 px per garantire accessibilità universale sia per ipovedenti che per utenti con display ad alta risoluzione.
+
+

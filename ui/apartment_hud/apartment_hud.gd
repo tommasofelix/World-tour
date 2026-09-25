@@ -119,6 +119,7 @@ const TEX_BTN_TEMPO_X2 = preload("res://assets/img/gameplay/GUI/Elementi/Pulsant
 
 var _all_modals: Array[Control] = []
 var action_system: ActionSystem = null
+var _current_running_action: Dictionary = {}
 var is_stereo_on: bool = false
 var _current_speaker: String = "ALEX"
 
@@ -181,6 +182,8 @@ func _connect_events() -> void:
 		EventBus.certification_awarded.connect(func(_d): AccessibilityManager.play_cue(Enums.AudioCueType.CERTIFICATION_AWARD))
 		EventBus.chart_number_one_achieved.connect(func(_c, _t): AccessibilityManager.play_cue(Enums.AudioCueType.CHART_NUMBER_ONE))
 		EventBus.award_won.connect(func(_a): AccessibilityManager.play_cue(Enums.AudioCueType.CERTIFICATION_AWARD))
+		EventBus.action_completed.connect(_on_hud_action_completed)
+		EventBus.action_canceled.connect(_on_hud_action_canceled)
 
 func _connect_modal_signals() -> void:
 	if song_catalog_modal and song_catalog_modal.has_signal("closed"):
@@ -660,10 +663,22 @@ func execute_interaction_action(prop_id: String, action: Dictionary) -> void:
 				update_hud_display()
 
 		"advance_period":
-			if GameManager and GameManager.time_system:
-				AccessibilityManager.announce("Avanzamento fascia oraria.", true)
-				GameManager.time_system.advance_to_next_period()
-			_apply_action_effects(action)
+			if dur > 0.0:
+				if action_system == null:
+					var p_data: PlayerData = GameManager.player_data if GameManager else null
+					var c_data: CalendarData = GameManager.calendar_data if GameManager else null
+					action_system = ActionSystem.new(p_data, c_data)
+				else:
+					if GameManager and GameManager.player_data:
+						action_system.player_data = GameManager.player_data
+					if GameManager and GameManager.calendar_data:
+						action_system.calendar_data = GameManager.calendar_data
+				_run_action_with_duration(action)
+			else:
+				if GameManager and GameManager.time_system:
+					AccessibilityManager.announce("Avanzamento fascia oraria.", true)
+					GameManager.time_system.advance_to_next_period()
+				_apply_action_effects(action)
 
 		"action":
 			if action_system == null:
@@ -681,6 +696,7 @@ func execute_interaction_action(prop_id: String, action: Dictionary) -> void:
 				_apply_action_effects(action)
 
 func _run_action_with_duration(action: Dictionary) -> void:
+	_current_running_action = action
 	var act_id: String = action.get("id", "loft_act")
 	var act_name: String = action.get("title", "Azione")
 	var dur: float = action.get("duration_seconds", 5.0)
@@ -760,6 +776,17 @@ func _apply_action_effects(action: Dictionary) -> void:
 	update_hud_display()
 
 func _on_hud_action_completed(_action_id: String, _reward: Dictionary) -> void:
+	if _current_running_action.get("type", "") == "advance_period":
+		if GameManager and GameManager.time_system:
+			GameManager.time_system.advance_to_next_period()
+	var res_msg: String = _current_running_action.get("result_message", "Azione completata con successo!")
+	_current_running_action = {}
 	update_hud_display()
 	AccessibilityManager.play_cue(Enums.AudioCueType.AREA_PERSONAL)
-	show_inspection("Azione completata con successo!", "ALEX", "[Spazio] Chiudi")
+	AccessibilityManager.announce(res_msg, true)
+	show_inspection(res_msg, "ALEX", "[Spazio] Chiudi")
+
+func _on_hud_action_canceled(_action_id: String) -> void:
+	_current_running_action = {}
+	reset_inspection()
+	update_hud_display()

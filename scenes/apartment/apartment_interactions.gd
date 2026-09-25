@@ -218,7 +218,7 @@ static func get_actions_for_prop(prop_id: String) -> Array[Dictionary]:
 					"id": "bed_rest",
 					"title": "Riposo breve",
 					"description": "Riposati sul letto e avanza alla fascia oraria successiva (+15 Energia).",
-					"duration_seconds": 8.0,
+					"duration_seconds": 5.0,
 					"type": "advance_period",
 					"energy_delta": 15,
 					"stress_delta": -5,

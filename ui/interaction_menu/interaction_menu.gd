@@ -2,19 +2,16 @@
 class_name InteractionMenu
 extends Control
 
-## Menu Interazioni a Pergamena Pixel Art per gli Arredi del Loft NYC (V5.6.0)
-## Adatta dinamicamente lo sfondo (interazione_corta, interazione_media, interazione_lunga)
-## e garantisce la perfetta Simmetria Universale (mouse per Holy Diver, NVDA Zero Mouse per Luca).
+## Menu Interazioni Testuale ad Alto Contrasto per gli Arredi del Loft NYC (V5.6.4)
+## Interfaccia pulita senza immagini grafiche, testo ingrandito e ad alta leggibilità,
+## navigazione da tastiera completa (Frecce, numeri 1..9, Numpad) e supporto totale NVDA (Zero Mouse).
 
 signal action_chosen(prop_id: String, action_data: Dictionary)
 signal menu_closed()
 
-const TEX_CORTA = preload("res://assets/img/gameplay/GUI/Menu_interazione/interazione_corta.png")
-const TEX_MEDIA = preload("res://assets/img/gameplay/GUI/Menu_interazione/interazione_media.png")
-const TEX_LUNGA = preload("res://assets/img/gameplay/GUI/Menu_interazione/interazione_lunga.png")
 const FONT_ARCADE = preload("res://assets/img/font_text/press_start_2p/PressStart2P.ttf")
 
-@onready var background_texture: TextureRect = $BackgroundTexture
+@onready var background_panel: Panel = get_node_or_null("BackgroundPanel")
 @onready var content_margin: MarginContainer = $ContentMargin
 @onready var title_label: Label = $ContentMargin/VBoxMain/TitleLabel
 @onready var options_container: VBoxContainer = $ContentMargin/VBoxMain/OptionsContainer
@@ -42,22 +39,9 @@ func open_menu(prop_id: String, prop_name: String, actions: Array[Dictionary], t
 	visible = true
 	set_anchors_preset(Control.PRESET_TOP_LEFT)
 
-	# Scelta deterministica della texture pergamena in base al numero di azioni
-	var chosen_tex: Texture2D = TEX_CORTA
-	var menu_size: Vector2 = Vector2(320, 190)
-
-	if actions.size() <= 2:
-		chosen_tex = TEX_CORTA
-		menu_size = Vector2(320, 190)
-	elif actions.size() <= 4:
-		chosen_tex = TEX_MEDIA
-		menu_size = Vector2(320, 400)
-	else:
-		chosen_tex = TEX_LUNGA
-		menu_size = Vector2(320, mini(680, 110 + actions.size() * 55))
-
-	if background_texture:
-		background_texture.texture = chosen_tex
+	# Calcolo dinamico dimensione menu ad alta leggibilità (larghezza 480px, altezza scalabile)
+	var base_height: float = 110.0 + (float(actions.size()) * 58.0)
+	var menu_size: Vector2 = Vector2(480.0, clampf(base_height, 180.0, 720.0))
 
 	custom_minimum_size = menu_size
 	size = menu_size
@@ -65,18 +49,16 @@ func open_menu(prop_id: String, prop_name: String, actions: Array[Dictionary], t
 	# Posizionamento a schermo con clamping di sicurezza (non esce da 1920x1080)
 	var final_pos: Vector2 = target_screen_pos
 	if final_pos == Vector2.ZERO:
-		# Default centrato o offset standard
 		final_pos = Vector2((1920.0 - menu_size.x) * 0.5, (1080.0 - menu_size.y) * 0.5)
 	else:
-		# Offset per non coprire direttamente l'arredo
 		final_pos += Vector2(40.0, -menu_size.y * 0.5)
 
-	# Clamping entro i limiti viewport (lasciando spazio per HUD superiore e inferiore)
+	# Clamping entro i limiti viewport (lasciando respiro per HUD superiore e inferiore)
 	final_pos.x = clampf(final_pos.x, 20.0, 1920.0 - menu_size.x - 20.0)
 	final_pos.y = clampf(final_pos.y, 80.0, 1080.0 - menu_size.y - 130.0)
 	position = final_pos
 
-	# Titolo dell'arredo
+	# Titolo dell'arredo in evidenza
 	if title_label:
 		title_label.text = prop_name.to_upper()
 
@@ -122,7 +104,7 @@ func _build_options() -> void:
 		btn.focus_mode = FOCUS_ALL
 		btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 
-		# Stile visivo pulsante retrò con alto contrasto
+		# Stile visivo pulsante retrò con alto contrasto e font ingrandito
 		_apply_button_style(btn)
 
 		var idx: int = i
@@ -136,46 +118,46 @@ func _build_options() -> void:
 func _apply_button_style(btn: Button) -> void:
 	if FONT_ARCADE:
 		btn.add_theme_font_override("font", FONT_ARCADE)
-	btn.add_theme_font_size_override("font_size", 8)
+	btn.add_theme_font_size_override("font_size", 14)
 
 	var sb_normal := StyleBoxFlat.new()
-	sb_normal.bg_color = Color(0.18, 0.11, 0.06, 0.75)
+	sb_normal.bg_color = Color(0.10, 0.11, 0.16, 0.88)
 	sb_normal.border_width_left = 1
 	sb_normal.border_width_top = 1
 	sb_normal.border_width_right = 1
 	sb_normal.border_width_bottom = 1
-	sb_normal.border_color = Color(0.42, 0.28, 0.16, 0.9)
-	sb_normal.corner_radius_top_left = 3
-	sb_normal.corner_radius_top_right = 3
-	sb_normal.corner_radius_bottom_right = 3
-	sb_normal.corner_radius_bottom_left = 3
-	sb_normal.content_margin_left = 6
-	sb_normal.content_margin_top = 5
-	sb_normal.content_margin_right = 6
-	sb_normal.content_margin_bottom = 5
+	sb_normal.border_color = Color(0.35, 0.38, 0.50, 0.9)
+	sb_normal.corner_radius_top_left = 4
+	sb_normal.corner_radius_top_right = 4
+	sb_normal.corner_radius_bottom_right = 4
+	sb_normal.corner_radius_bottom_left = 4
+	sb_normal.content_margin_left = 12
+	sb_normal.content_margin_top = 8
+	sb_normal.content_margin_right = 12
+	sb_normal.content_margin_bottom = 8
 
 	var sb_hover := StyleBoxFlat.new()
-	sb_hover.bg_color = Color(0.72, 0.45, 0.12, 0.95)
+	sb_hover.bg_color = Color(0.78, 0.52, 0.16, 0.96)
 	sb_hover.border_width_left = 2
 	sb_hover.border_width_top = 2
 	sb_hover.border_width_right = 2
 	sb_hover.border_width_bottom = 2
-	sb_hover.border_color = Color(0.98, 0.85, 0.40, 1.0)
-	sb_hover.corner_radius_top_left = 3
-	sb_hover.corner_radius_top_right = 3
-	sb_hover.corner_radius_bottom_right = 3
-	sb_hover.corner_radius_bottom_left = 3
-	sb_hover.content_margin_left = 6
-	sb_hover.content_margin_top = 5
-	sb_hover.content_margin_right = 6
-	sb_hover.content_margin_bottom = 5
+	sb_hover.border_color = Color(1.0, 0.92, 0.55, 1.0)
+	sb_hover.corner_radius_top_left = 4
+	sb_hover.corner_radius_top_right = 4
+	sb_hover.corner_radius_bottom_right = 4
+	sb_hover.corner_radius_bottom_left = 4
+	sb_hover.content_margin_left = 12
+	sb_hover.content_margin_top = 8
+	sb_hover.content_margin_right = 12
+	sb_hover.content_margin_bottom = 8
 
 	btn.add_theme_stylebox_override("normal", sb_normal)
 	btn.add_theme_stylebox_override("hover", sb_hover)
 	btn.add_theme_stylebox_override("focus", sb_hover)
 	btn.add_theme_stylebox_override("pressed", sb_hover)
 
-	btn.add_theme_color_override("font_color", Color(0.95, 0.92, 0.85, 1.0))
+	btn.add_theme_color_override("font_color", Color(0.95, 0.95, 0.98, 1.0))
 	btn.add_theme_color_override("font_hover_color", Color(1.0, 1.0, 1.0, 1.0))
 	btn.add_theme_color_override("font_focus_color", Color(1.0, 1.0, 1.0, 1.0))
 

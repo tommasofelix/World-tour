@@ -22,6 +22,25 @@ func _init() -> void:
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_setup_audio_player()
+	precache_all_cues()
+
+## Pre-riscaldamento deterministico della cache audio all'avvio per eliminare ogni hitch durante il gameplay
+func precache_all_cues() -> void:
+	var all_types: Array[int] = [
+		Enums.AudioCueType.AREA_PERSONAL,
+		Enums.AudioCueType.AREA_CREATION,
+		Enums.AudioCueType.AREA_CAREER,
+		Enums.AudioCueType.AREA_UPGRADES,
+		Enums.AudioCueType.CERTIFICATION_AWARD,
+		Enums.AudioCueType.CHART_NUMBER_ONE,
+		Enums.AudioCueType.STADIUM_SOLD_OUT,
+		Enums.AudioCueType.NIGHT_OVERTIME_BELL,
+		Enums.AudioCueType.HIGH_SIGNAL_ALERT,
+		Enums.AudioCueType.COLLISION_BUMP,
+		Enums.AudioCueType.HOTSPOT_PROXIMITY
+	]
+	for t in all_types:
+		get_or_generate_cue_stream(t)
 
 func _setup_audio_player() -> void:
 	if not audio_player:

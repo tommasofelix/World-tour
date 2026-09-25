@@ -14,6 +14,7 @@ const ApartmentHud = preload("res://ui/apartment_hud/apartment_hud.gd")
 const ApartmentScene = preload("res://scenes/apartment/apartment.gd")
 const ApartmentInteractions = preload("res://scenes/apartment/apartment_interactions.gd")
 const InteractionMenu = preload("res://ui/interaction_menu/interaction_menu.gd")
+const TimeSystem = preload("res://systems/time_system.gd")
 
 var tests_passed: int = 0
 var tests_failed: int = 0
@@ -30,6 +31,7 @@ func _ready() -> void:
 	test_interaction_menu_and_actions()
 	test_key_segregation_and_sleep_cycle()
 	test_action_busy_lifecycle_and_safety()
+	test_bed_rest_and_movement_fluidity()
 
 	print("\n--------------------------------------------------------")
 	print("ESITO COMPLESSIVO TEST GAMEPLAY APPARTAMENTO:")
@@ -376,7 +378,7 @@ func test_interaction_menu_and_actions() -> void:
 	assert_true(not menu.visible, "InteractionMenu inizialmente nascosto")
 
 	# Test selezione texture dinamica in base al numero di opzioni
-	# 1. Texture corta per <= 2 opzioni
+	# 1. Layout testuale pulito per <= 2 opzioni
 	var actions_corta: Array[Dictionary] = [
 		{"id": "a1", "title": "Azione 1", "description": "Desc 1", "duration_seconds": 0.0},
 		{"id": "a2", "title": "Azione 2", "description": "Desc 2", "duration_seconds": 5.0}
@@ -384,11 +386,12 @@ func test_interaction_menu_and_actions() -> void:
 	menu.open_menu("test_prop", "Arredo Test", actions_corta, Vector2(500, 400))
 	assert_true(menu.visible, "Menu visibile dopo open_menu")
 	assert_true(menu.is_menu_open, "is_menu_open è true")
-	assert_eq(menu.background_texture.texture, menu.TEX_CORTA, "2 azioni usano pergamena corta (interazione_corta.png)")
+	assert_true(menu.get_node_or_null("BackgroundPanel") != null, "BackgroundPanel presente a tinta unita (zero texture pergamena)")
+	assert_eq(menu.size.x, 480.0, "Menu impostato a larghezza maggiorata 480px per alta leggibilità")
 	assert_eq(menu.buttons.size(), 2, "Esattamente 2 pulsanti generati")
 	assert_true(menu.buttons[1].text.contains("(5s)"), "Testo opzione con durata indica (5s)")
 
-	# 2. Texture media per 3-4 opzioni
+	# 2. Layout per 4 opzioni
 	var actions_media: Array[Dictionary] = [
 		{"id": "a1", "title": "A1", "description": "", "duration_seconds": 0.0},
 		{"id": "a2", "title": "A2", "description": "", "duration_seconds": 0.0},
@@ -396,10 +399,10 @@ func test_interaction_menu_and_actions() -> void:
 		{"id": "a4", "title": "A4", "description": "", "duration_seconds": 0.0}
 	]
 	menu.open_menu("test_prop", "Arredo Test 4", actions_media, Vector2(500, 400))
-	assert_eq(menu.background_texture.texture, menu.TEX_MEDIA, "4 azioni usano pergamena media (interazione_media.png)")
+	assert_true(menu.size.y >= 300.0, "Altezza menu scala dinamicamente per 4 opzioni")
 	assert_eq(menu.buttons.size(), 4, "Esattamente 4 pulsanti generati")
 
-	# 3. Texture lunga per 5+ opzioni
+	# 3. Layout per 5+ opzioni
 	var actions_lunga: Array[Dictionary] = [
 		{"id": "a1", "title": "A1", "description": "", "duration_seconds": 0.0},
 		{"id": "a2", "title": "A2", "description": "", "duration_seconds": 0.0},
@@ -408,7 +411,7 @@ func test_interaction_menu_and_actions() -> void:
 		{"id": "a5", "title": "A5", "description": "", "duration_seconds": 0.0}
 	]
 	menu.open_menu("test_prop", "Arredo Test 5", actions_lunga, Vector2(500, 400))
-	assert_eq(menu.background_texture.texture, menu.TEX_LUNGA, "5 azioni usano pergamena lunga (interazione_lunga.png)")
+	assert_true(menu.size.y >= 350.0, "Altezza menu scala per 5 opzioni")
 	assert_eq(menu.buttons.size(), 5, "Esattamente 5 pulsanti generati")
 
 	# Test clamping viewport
@@ -541,8 +544,9 @@ func test_interaction_menu_and_actions() -> void:
 	add_child(check_menu)
 	var wrap_actions: Array[Dictionary] = [{"id": "t1", "title": "Testo Lungo di Prova per Autowrap", "duration_seconds": 5.0}]
 	check_menu.open_menu("test_prop", "Test Layout", wrap_actions, Vector2(200, 200))
-	assert_eq(check_menu.size.x, 320.0, "Larghezza pergamena standard a 320px")
-	assert_eq(check_menu.buttons[0].autowrap_mode, TextServer.AUTOWRAP_WORD_SMART, "Autowrap attivo su pulsante pergamena")
+	assert_eq(check_menu.size.x, 480.0, "Larghezza menu testuale pulito ingrandito a 480px")
+	assert_true(check_menu.get_node_or_null("BackgroundPanel") != null, "BackgroundPanel presente senza texture pergamena")
+	assert_eq(check_menu.buttons[0].autowrap_mode, TextServer.AUTOWRAP_WORD_SMART, "Autowrap attivo su pulsante menu")
 	check_menu.queue_free()
 
 	test_hud.queue_free()
@@ -754,5 +758,101 @@ func test_action_busy_lifecycle_and_safety() -> void:
 	assert_eq(p_data.energy, pre_energy - 10, "Energia scalata correttamente al termine naturale dell'azione (-10)")
 	assert_eq(p_data.stress, pre_stress + 5, "Stress incrementato correttamente al termine naturale dell'azione (+5)")
 
+	apt.queue_free()
+
+func test_bed_rest_and_movement_fluidity() -> void:
+	print("\n8. Verifica Riposo Breve 5s, Fluidità Cinetica & Pre-caching Audio (V5.6.4):")
+
+	# --- Blocco 1: Verifica Pre-caching AudioCueSystem (Contratto D0) ---
+	var audio_system := AudioCueSystem.new()
+	add_child(audio_system)
+	assert_true(audio_system._stream_cache.has(Enums.AudioCueType.HOTSPOT_PROXIMITY), "Audio proximity cue pre-riscaldato in cache all'avvio")
+	assert_true(audio_system._stream_cache.has(Enums.AudioCueType.COLLISION_BUMP), "Audio bump cue pre-riscaldato in cache all'avvio")
+	assert_true(audio_system._stream_cache.has(Enums.AudioCueType.AREA_PERSONAL), "Audio personal cue pre-riscaldato in cache all'avvio")
+	audio_system.queue_free()
+
+	# --- Blocco 2: Setup Scena Appartamento e Modello Temporale ---
+	var apt_scene: PackedScene = load("res://scenes/apartment/apartment.tscn")
+	var apt: ApartmentScene = apt_scene.instantiate() as ApartmentScene
+	add_child(apt)
+
+	var p_data := PlayerData.new()
+	p_data.energy = 50.0
+	p_data.stress = 30.0
+	p_data.money = 500.0
+	GameManager.player_data = p_data
+
+	var c_data := CalendarData.new()
+	c_data.day_number = 1
+	c_data.current_period = Enums.TimePeriod.MORNING
+	c_data.remaining_seconds = 300.0
+	GameManager.calendar_data = c_data
+	GameManager.time_system = TimeSystem.new(c_data, p_data)
+	GameManager.change_state(Enums.GameState.GAMEPLAY_IDLE)
+
+	# --- Blocco 3: Verifica Configurazione Azione bed_rest (Contratto D2) ---
+	var bed_acts: Array[Dictionary] = ApartmentInteractions.get_actions_for_prop("bed")
+	var bed_rest_act: Dictionary = {}
+	for act in bed_acts:
+		if act.get("id", "") == "bed_rest":
+			bed_rest_act = act
+			break
+	assert_true(not bed_rest_act.is_empty(), "Azione 'bed_rest' presente tra gli arredi letto")
+	assert_eq(bed_rest_act.get("duration_seconds", 0.0), 5.0, "Durata bed_rest calibrata esattamente a 5.0 secondi")
+	assert_eq(bed_rest_act.get("type", ""), "advance_period", "Tipo bed_rest è advance_period")
+
+	# --- Blocco 4: Avvio bed_rest con FSM BUSY e Blocco Movimento ---
+	apt.hud.execute_interaction_action("bed", bed_rest_act)
+	assert_true(apt.hud.action_system.is_running, "bed_rest avvia ActionSystem con durata 5s")
+	assert_eq(GameManager.current_state, Enums.GameState.GAMEPLAY_BUSY, "FSM globale transita in GAMEPLAY_BUSY per bed_rest")
+	assert_true(apt.player.is_movement_locked, "Alex riceve lock di movimento durante bed_rest")
+	assert_eq(c_data.current_period, Enums.TimePeriod.MORNING, "Fascia oraria NON avanzata a metà riposo (ancora MORNING)")
+
+	# --- Blocco 5: Annullamento con Esc: Nessun Avanzamento Orario ---
+	var ev_esc := InputEventKey.new()
+	ev_esc.pressed = true
+	ev_esc.keycode = KEY_ESCAPE
+	apt._unhandled_input(ev_esc)
+	assert_true(not apt.hud.action_system.is_running, "Tasto Esc annulla bed_rest prima dei 5s")
+	assert_eq(GameManager.current_state, Enums.GameState.GAMEPLAY_IDLE, "FSM globale ritorna in GAMEPLAY_IDLE dopo Esc")
+	assert_true(not apt.player.is_movement_locked, "Alex sbloccato dopo annullamento riposo")
+	assert_eq(c_data.current_period, Enums.TimePeriod.MORNING, "Periodo orario immutato dopo annullamento (nessun salto fasce orarie)")
+	assert_eq(p_data.energy, 50.0, "Energia invariata dopo annullamento riposo")
+
+	# --- Blocco 6: Completamento Naturale dei 5s: Avanzamento Fascia Oraria e Benefici ---
+	apt.hud.execute_interaction_action("bed", bed_rest_act)
+	assert_true(apt.hud.action_system.is_running, "bed_rest riavviato regolarmente")
+	assert_true(apt.player.is_movement_locked, "Alex vincolato in BUSY")
+
+	# Simuliamo il decorso completo dei 5.0 secondi
+	apt.hud.action_system.update_action(5.0)
+	assert_true(not apt.hud.action_system.is_running, "bed_rest concluso al 100% dopo 5s")
+	assert_eq(GameManager.current_state, Enums.GameState.GAMEPLAY_IDLE, "FSM ripristinata in GAMEPLAY_IDLE")
+	assert_true(not apt.player.is_movement_locked, "Alex sbloccato al risveglio dal riposo breve")
+	assert_eq(c_data.current_period, Enums.TimePeriod.AFTERNOON, "Fascia oraria avanzata a AFTERNOON post-riposo naturale")
+	assert_eq(p_data.energy, 65.0, "Energia aumentata di +15 (50 -> 65) dopo riposo breve")
+	assert_eq(p_data.stress, 25.0, "Stress ridotto di -5 (30 -> 25) dopo riposo breve")
+
+	# --- Blocco 7: Verifica Fluidità Cinetica all'Ingresso in Area Arredo (Contratto D1) ---
+	var prop_guitar: InteractiveProp = apt.props[0]
+	apt.player.velocity = Vector2(210, 0)
+	apt._on_player_entered_prop(prop_guitar)
+	assert_true(not apt.player.is_movement_locked, "Ingresso in area arredo NON impone lock di movimento")
+	assert_eq(GameManager.current_state, Enums.GameState.GAMEPLAY_IDLE, "FSM rimane in GAMEPLAY_IDLE all'ingresso nella zona")
+	assert_eq(apt.player.velocity, Vector2(210, 0), "Velocità cinetica inalterata a 210 px/s all'avvicinamento (zero mini-stop)")
+
+	# --- Blocco 8: Verifica Menu Interazioni Senza Pergamena e Font Ingrandito (Contratto D3) ---
+	apt.hud.open_interaction_menu_for_prop("guitar", "Chitarra", bed_acts, Vector2(400, 300))
+	var menu: InteractionMenu = apt.hud.interaction_menu
+	assert_true(menu.visible and menu.is_menu_open, "Menu interazioni aperto regolarmente")
+	assert_eq(menu.size.x, 480.0, "Larghezza menu interazioni impostata a 480px per massima leggibilità")
+	assert_true(menu.get_node_or_null("BackgroundPanel") != null, "BackgroundPanel vettoriale presente (nessuna texture pergamena)")
+	assert_eq(menu.title_label.get_theme_font_size("font_size"), 16, "Titolo arredo ingrandito a 16 px")
+	assert_true(menu.buttons.size() > 0, "Pulsanti opzioni generati")
+	assert_eq(menu.buttons[0].get_theme_font_size("font_size"), 14, "Font opzioni ingrandito a 14 px")
+	menu.close_menu()
+	assert_true(not menu.is_menu_open, "Menu interazioni chiuso regolarmente")
+
+	GameManager.time_system = null
 	apt.queue_free()
 

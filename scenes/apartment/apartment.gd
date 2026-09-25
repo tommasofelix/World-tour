@@ -88,7 +88,7 @@ func _on_player_entered_prop(prop: Area2D) -> void:
 	var txt: String = prop.inspection_text if ("inspection_text" in prop and not prop.inspection_text.is_empty()) else prop.get_accessible_label()
 	hud.show_inspection(txt, "ALEX", "[Spazio] Interagisci   [Tab] Altri arredi   [Esc] Menu")
 	var p_name: String = prop.prop_name if "prop_name" in prop else "Arredo"
-	AccessibilityManager.announce("Vicino a: " + p_name, true)
+	AccessibilityManager.announce("Vicino a: " + p_name, false)
 
 func _on_player_exited_prop(_prop: Area2D) -> void:
 	if not hud or hud.is_any_modal_open():
