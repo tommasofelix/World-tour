@@ -163,7 +163,7 @@ func test_action_system_execution() -> void:
 	var started: bool = act_sys.start_action(test_action)
 	assert_true(started, "Avvio azione regolare consentito")
 	assert_true(act_sys.is_running, "ActionSystem risulta in stato di esecuzione")
-	assert_equal(GameManager.current_state, Enums.GameState.GAMEPLAY_BUSY, "FSM globale transita in GAMEPLAY_BUSY")
+	assert_equal(GameManager.get_current_state(), Enums.GameState.GAMEPLAY_BUSY, "FSM globale transita in GAMEPLAY_BUSY")
 	
 	# Aggiornamento parziale (50%)
 	act_sys.update_action(5.0)
@@ -175,7 +175,7 @@ func test_action_system_execution() -> void:
 	assert_equal(p.energy, 80, "Consumo energia applicato (100 - 20 = 80)")
 	assert_equal(p.stress, 5, "Stress accumulato applicato (0 + 5 = 5)")
 	assert_true(p.skills["instrument"]["xp"] > 0.0, "XP assegnati allo strumento")
-	assert_equal(GameManager.current_state, Enums.GameState.GAMEPLAY_IDLE, "FSM globale ritorna in GAMEPLAY_IDLE")
+	assert_equal(GameManager.get_current_state(), Enums.GameState.GAMEPLAY_IDLE, "FSM globale ritorna in GAMEPLAY_IDLE")
 
 func test_action_anti_grinding() -> void:
 	print("\n5. Verifica Anti-Grinding Azioni nel CalendarData:")
@@ -204,7 +204,7 @@ func test_end_day_resolution() -> void:
 	# Simulazione emissione giorno terminato
 	EventBus.day_ended.emit(1)
 	
-	assert_equal(GameManager.current_state, Enums.GameState.DAILY_SUMMARY, "Transizione a DAILY_SUMMARY")
+	assert_equal(GameManager.get_current_state(), Enums.GameState.DAILY_SUMMARY, "Transizione a DAILY_SUMMARY")
 	assert_equal(p.money, 175.0, "Spese vive (25€) detratte dal saldo (200 - 25 = 175€)")
 	assert_equal(p.energy, 90, "Sonno ristoratore: +70 energia (20 + 70 = 90)")
 	assert_equal(p.stress, 25, "Sonno ristoratore: -15 stress (40 - 15 = 25)")
@@ -213,7 +213,7 @@ func test_end_day_resolution() -> void:
 	end_day.advance_to_next_day()
 	assert_equal(c.day_number, 2, "Giorno incrementato a 2")
 	assert_equal(c.remaining_seconds, 300.0, "Orologio ripristinato a 300s")
-	assert_equal(GameManager.current_state, Enums.GameState.GAMEPLAY_IDLE, "FSM ritorna in GAMEPLAY_IDLE")
+	assert_equal(GameManager.get_current_state(), Enums.GameState.GAMEPLAY_IDLE, "FSM ritorna in GAMEPLAY_IDLE")
 
 func test_atomic_save_and_load() -> void:
 	print("\n7. Verifica Persistenza Atomica (SaveManager):")

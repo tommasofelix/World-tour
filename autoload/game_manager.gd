@@ -16,7 +16,7 @@ var music_system: MusicSystem
 var concert_system: ConcertSystem
 var career_system: CareerSystem
 var economy_system: EconomySystem
-var end_day_system: EndDaySystem
+var end_day_system: RefCounted
 var band_system: BandSystem
 var album_system: AlbumSystem
 var industry_system: IndustrySystem
@@ -79,6 +79,9 @@ func change_state(new_state: int) -> bool:
 	
 	state_changed.emit(old_state, new_state)
 	return true
+
+func get_current_state() -> int:
+	return current_state
 
 func is_action_allowed() -> bool:
 	return current_state == Enums.GameState.GAMEPLAY_IDLE

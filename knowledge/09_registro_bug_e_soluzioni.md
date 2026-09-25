@@ -430,3 +430,16 @@ Questo registro contiene soltanto problemi tecnici confermati e soluzioni con ev
   * Nelle finestre modali di sistema e menu di pausa, verificare sempre tutti i segnali di chiusura/uscita (es. `closed`, `resume_requested`, `cancelled`) e assicurarsi che ciascuno di essi sblocchi il movimento del giocatore e ripristini la scala temporale;
   * Ogni qualvolta la FSM globale entra nello stato `GAMEPLAY_BUSY`, il controller del personaggio deve azzerare immediatamente la velocità fisica, cancellare gli itinerari di auto-walk e inibire l'acquisizione di ulteriori input direzionali o modali fino al completamento naturale o all'annullamento (`Esc`);
   * I metodi getter di fallback nei sistemi di gioco devono sempre dare priorità alle dipendenze esplicitamente iniettate nell'istanza rispetto ai singleton autoload globali, preservando l'isolamento dei test unitari headless.
+
+### BUG-023 (RRU-29) — Dipendenza Ciclica Compilatore su GameManager.current_state & Tipizzazione EndDaySystem (V5.6.3)
+
+- Data e componente: `2026-09-25`, `autoload/game_manager.gd`, `tests/test_vertical_slice.gd` (Versione AVF `V5.6.3`).
+- Sintomi osservati: Errore irreversibile di compilazione in fase di analisi: `ERROR: res://tests/test_vertical_slice.gd:216 - Parse Error: Could not resolve member "current_state": Cyclic reference.` ed arresto del caricamento dello script `test_vertical_slice.gd`.
+- Evidenza riproducibile: Compilazione statica di `test_vertical_slice.gd` in contesti in cui `EndDaySystem` e `GameManager` vengono caricati contemporaneamente.
+- Causa radice verificata: Anello circolare di risoluzione simboli tra la classe globale `class_name EndDaySystem` e l'Autoload `GameManager`. In `game_manager.gd`, la variabile d'istanza era tipizzata staticamente `var end_day_system: EndDaySystem`, mentre `end_day_system.gd` invoca direttamente `GameManager`. Quando `test_vertical_slice.gd` istanziava `EndDaySystem` e accedeva direttamente alla proprietà membro `GameManager.current_state`, il resolver di GDScript 2.0 rilevava la mutua dipendenza non ancora chiusa e bloccava la risoluzione del membro come "Cyclic reference".
+- Soluzione applicata:
+  1. In `autoload/game_manager.gd`: de-tipizzato `var end_day_system: RefCounted` (spezzando la dipendenza statica a monte, analogamente a `award_system` e `legacy_system`) e introdotto il metodo getter pubblico `func get_current_state() -> int: return current_state`.
+  2. In `tests/test_vertical_slice.gd`: sostituito l'accesso diretto alla proprietà `GameManager.current_state` (righe 166, 178, 207, 216) con il metodo disaccoppiato `GameManager.get_current_state()`.
+- Test automatici eseguiti: 65/65 test superati in `test_vertical_slice.tscn`, 30/30 suite headless superate con 0 fallimenti e 114 file GDScript privi di errori sintattici in `tools/check.ps1`.
+- Misure di prevenzione delle regressioni: Negli Autoload singleton evitare di tipizzare staticamente classi di sottosistemi che a loro volta referenziano l'Autoload; nei file di test o classi consumatrici accedere agli stati globali preferibilmente tramite metodi accessor (`get_current_state()`) anziché interrogare direttamente proprietà primitive durante la fase di parsing.
+
