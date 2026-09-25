@@ -9,6 +9,8 @@ extends Control
 
 signal modal_opened(modal_name: String)
 signal modal_closed(modal_name: String)
+signal interaction_menu_opened(prop_id: String)
+signal interaction_menu_closed()
 
 # Preload Texture Pixel Art Ritratti Alex
 const TEX_ALEX_NORMALE = preload("res://assets/img/gameplay/GUI/Portrait/Alex/alex_normale.png")
@@ -113,6 +115,7 @@ const TEX_BTN_TEMPO_X2 = preload("res://assets/img/gameplay/GUI/Elementi/Pulsant
 @onready var upgrades_modal: Control = get_node_or_null("Modals/UpgradesModal")
 @onready var relax_modal: Control = get_node_or_null("Modals/RelaxModal")
 @onready var legacy_modal: Control = get_node_or_null("Modals/LegacyModal")
+@onready var interaction_menu: InteractionMenu = get_node_or_null("InteractionMenu")
 
 var _all_modals: Array[Control] = []
 var action_system: ActionSystem = null
@@ -134,6 +137,8 @@ func _ready() -> void:
 	update_hud_display()
 
 func _process(delta: float) -> void:
+	if GameManager and GameManager.is_paused():
+		return
 	if GameManager and GameManager.time_system:
 		GameManager.time_system.advance_time(delta)
 	if action_system and action_system.is_running:
@@ -170,8 +175,8 @@ func _connect_events() -> void:
 	if EventBus:
 		EventBus.money_changed.connect(func(_b, _d, _r): update_hud_display())
 		EventBus.time_ticked.connect(func(_rem, _t, _p): update_hud_display())
-		EventBus.action_completed.connect(func(_a, _r): update_hud_display())
-		EventBus.day_ended.connect(_on_day_ended)
+		EventBus.day_ended.connect(func(_d: int): update_hud_display())
+		EventBus.daily_summary_ready.connect(_on_daily_summary_ready)
 		EventBus.dilemma_triggered.connect(open_dilemma)
 		EventBus.certification_awarded.connect(func(_d): AccessibilityManager.play_cue(Enums.AudioCueType.CERTIFICATION_AWARD))
 		EventBus.chart_number_one_achieved.connect(func(_c, _t): AccessibilityManager.play_cue(Enums.AudioCueType.CHART_NUMBER_ONE))
@@ -180,6 +185,18 @@ func _connect_events() -> void:
 func _connect_modal_signals() -> void:
 	if song_catalog_modal and song_catalog_modal.has_signal("closed"):
 		song_catalog_modal.closed.connect(func(): close_modal(song_catalog_modal))
+	if song_catalog_modal and song_catalog_modal.has_signal("new_song_requested"):
+		song_catalog_modal.new_song_requested.connect(func():
+			close_modal(song_catalog_modal)
+			open_modal(song_creator_modal)
+		)
+	if song_catalog_modal and song_catalog_modal.has_signal("edit_song_requested"):
+		song_catalog_modal.edit_song_requested.connect(func(song):
+			close_modal(song_catalog_modal)
+			open_modal(song_creator_modal)
+			if song_creator_modal and song_creator_modal.has_method("edit_existing_song"):
+				song_creator_modal.edit_existing_song(song)
+		)
 	if song_creator_modal and song_creator_modal.has_signal("creation_canceled"):
 		song_creator_modal.creation_canceled.connect(func(): close_modal(song_creator_modal))
 	if song_creator_modal and song_creator_modal.has_signal("creation_finished"):
@@ -218,6 +235,16 @@ func _connect_modal_signals() -> void:
 		relax_modal.activity_selected.connect(_on_relax_activity_selected)
 	if legacy_modal and legacy_modal.has_signal("closed"):
 		legacy_modal.closed.connect(func(): close_modal(legacy_modal))
+	if system_menu_modal:
+		if system_menu_modal.has_signal("resume_requested"):
+			system_menu_modal.resume_requested.connect(func(): close_modal(system_menu_modal))
+		if system_menu_modal.has_signal("closed"):
+			system_menu_modal.closed.connect(func(): close_modal(system_menu_modal))
+	if interaction_menu:
+		if not interaction_menu.action_chosen.is_connected(_on_interaction_action_chosen):
+			interaction_menu.action_chosen.connect(_on_interaction_action_chosen)
+		if not interaction_menu.menu_closed.is_connected(_on_interaction_menu_closed):
+			interaction_menu.menu_closed.connect(_on_interaction_menu_closed)
 
 func _connect_dock_buttons() -> void:
 	if btn_dock_personal and not btn_dock_personal.pressed.is_connected(_on_dock_personal_pressed):
@@ -281,20 +308,48 @@ func _on_relax_activity_selected(action: ActionData) -> void:
 		action_system.start_action(action)
 
 func is_any_modal_open() -> bool:
+	if interaction_menu and interaction_menu.visible and interaction_menu.is_menu_open:
+		return true
 	for m in _all_modals:
 		if m and m.visible:
 			return true
 	return false
 
 func hide_all_modals() -> void:
+	if interaction_menu:
+		interaction_menu.visible = false
+		interaction_menu.is_menu_open = false
 	for m in _all_modals:
 		if m:
 			m.visible = false
+	if has_node("Modals"):
+		$Modals.visible = false
+
+func open_interaction_menu_for_prop(prop_id: String, prop_name: String, actions: Array[Dictionary], screen_pos: Vector2 = Vector2.ZERO) -> void:
+	hide_all_modals()
+	if interaction_menu:
+		interaction_menu.open_menu(prop_id, prop_name, actions, screen_pos)
+		modal_opened.emit("InteractionMenu")
+		interaction_menu_opened.emit(prop_id)
+		if GameManager:
+			GameManager.open_menu()
+
+func close_interaction_menu() -> void:
+	if interaction_menu and interaction_menu.is_menu_open:
+		interaction_menu.close_menu()
+
+func _on_interaction_menu_closed() -> void:
+	if GameManager:
+		GameManager.close_menu()
+	modal_closed.emit("InteractionMenu")
+	interaction_menu_closed.emit()
 
 func open_modal(modal_node: Control) -> void:
 	if not modal_node:
 		return
 	hide_all_modals()
+	if has_node("Modals"):
+		$Modals.visible = true
 	modal_node.visible = true
 	if modal_node.has_method("open"):
 		modal_node.call("open")
@@ -306,6 +361,13 @@ func close_modal(modal_node: Control) -> void:
 	if not modal_node:
 		return
 	modal_node.visible = false
+	var any_modal_open: bool = false
+	for m in _all_modals:
+		if m and m.visible:
+			any_modal_open = true
+			break
+	if not any_modal_open and has_node("Modals"):
+		$Modals.visible = false
 	if GameManager:
 		GameManager.close_menu()
 	modal_closed.emit(modal_node.name)
@@ -443,8 +505,10 @@ func _get_localized_weekday(day_number: int) -> String:
 	var index: int = (day_number - 1) % 7
 	return days[index]
 
-func _on_day_ended(summary_data: Dictionary) -> void:
+func _on_daily_summary_ready(summary_data: Dictionary) -> void:
 	hide_all_modals()
+	if has_node("Modals"):
+		$Modals.visible = true
 	if daily_summary_modal:
 		daily_summary_modal.show_summary(summary_data)
 		modal_opened.emit("DailySummary")
@@ -453,6 +517,8 @@ func open_dilemma(dilemma_dict: Dictionary) -> void:
 	if is_any_modal_open() and daily_summary_modal and daily_summary_modal.visible:
 		return
 	hide_all_modals()
+	if has_node("Modals"):
+		$Modals.visible = true
 	if dilemma_modal:
 		dilemma_modal.open(dilemma_dict)
 		modal_opened.emit("DilemmaModal")
@@ -533,3 +599,167 @@ func open_modal_by_prop_id(prop_id: String) -> void:
 			update_hud_display()
 		_:
 			reset_inspection()
+
+func _on_interaction_action_chosen(prop_id: String, action: Dictionary) -> void:
+	execute_interaction_action(prop_id, action)
+
+func execute_interaction_action(prop_id: String, action: Dictionary) -> void:
+	var a_type: String = action.get("type", "inspect")
+	var dur: float = action.get("duration_seconds", 0.0)
+
+	match a_type:
+		"inspect":
+			var desc: String = action.get("dialogue_text", action.get("description", ""))
+			show_inspection(desc, prop_id.to_upper(), "[Spazio] Chiudi   [Tab] Altri arredi")
+			AccessibilityManager.announce(desc, true)
+			AccessibilityManager.play_cue(Enums.AudioCueType.HOTSPOT_PROXIMITY)
+
+		"modal":
+			var m_name: String = action.get("modal_name", "")
+			match m_name:
+				"SongCreator":
+					open_modal(song_creator_modal)
+				"LiveConcert":
+					open_modal(live_concert_modal)
+				"TourModal":
+					open_modal(tour_modal)
+				"TravelModal":
+					open_modal(travel_modal)
+				"FestivalModal":
+					open_modal(festival_modal)
+				"CharacterSheet":
+					open_modal(character_sheet_modal)
+				"SongCatalog":
+					open_modal(song_catalog_modal)
+				"BandHub":
+					open_modal(band_hub_modal)
+				"Upgrades":
+					open_modal(upgrades_modal)
+				_:
+					open_modal(song_creator_modal)
+
+		"toggle":
+			if not is_stereo_on:
+				is_stereo_on = true
+				if GameManager and GameManager.player_data:
+					GameManager.player_data.morale = mini(Constants.MAX_MORALE, GameManager.player_data.morale + 5)
+					GameManager.player_data.stress = maxi(Constants.MIN_STRESS, GameManager.player_data.stress - 5)
+				AccessibilityManager.play_cue(Enums.AudioCueType.AREA_PERSONAL)
+				AccessibilityManager.announce("Stereo acceso! Riff rock in diffusione nello studio.", true)
+				show_inspection("Stereo acceso! I riff rock riempiono la stanza, allontanando lo stress. Premi di nuovo per spegnere.", "STEREO", "[Spazio] Spegni")
+			else:
+				is_stereo_on = false
+				AccessibilityManager.announce("Stereo spento. Silenzio ripristinato nello studio.", true)
+				show_inspection("Stereo spento. La stanza torna in silenzio. Premi di nuovo per accendere.", "STEREO", "[Spazio] Accendi")
+			update_hud_display()
+
+		"sleep":
+			if GameManager and GameManager.time_system:
+				AccessibilityManager.announce("Buonanotte. Sonno profondo fino a domani mattina.", true)
+				GameManager.time_system.trigger_sleep_now()
+				update_hud_display()
+
+		"advance_period":
+			if GameManager and GameManager.time_system:
+				AccessibilityManager.announce("Avanzamento fascia oraria.", true)
+				GameManager.time_system.advance_to_next_period()
+			_apply_action_effects(action)
+
+		"action":
+			if action_system == null:
+				var p_data: PlayerData = GameManager.player_data if GameManager else null
+				var c_data: CalendarData = GameManager.calendar_data if GameManager else null
+				action_system = ActionSystem.new(p_data, c_data)
+			else:
+				if GameManager and GameManager.player_data:
+					action_system.player_data = GameManager.player_data
+				if GameManager and GameManager.calendar_data:
+					action_system.calendar_data = GameManager.calendar_data
+			if dur > 0.0:
+				_run_action_with_duration(action)
+			else:
+				_apply_action_effects(action)
+
+func _run_action_with_duration(action: Dictionary) -> void:
+	var act_id: String = action.get("id", "loft_act")
+	var act_name: String = action.get("title", "Azione")
+	var dur: float = action.get("duration_seconds", 5.0)
+	var e_cost: int = maxi(0, -action.get("energy_delta", 0))
+	var s_gain: int = maxi(0, action.get("stress_delta", 0))
+	var xp: float = action.get("xp_amount", 0.0)
+	var skill: String = action.get("xp_skill", "instrument")
+	var money: float = action.get("money_cost", 0.0)
+
+	var is_rec: bool = (xp <= 0.0)
+	var act_data := ActionData.new(
+		act_id,
+		act_name,
+		dur,
+		e_cost,
+		s_gain,
+		xp,
+		skill,
+		is_rec,
+		action.get("energy_delta", 0),
+		action.get("stress_delta", 0),
+		action.get("morale_delta", 0),
+		money,
+		action.get("inspiration_chance", 0.0)
+	)
+
+	var check: Dictionary = action_system.can_start_action(act_data)
+	if not check.get("can_start", false):
+		AccessibilityManager.announce(check.get("reason", "Impossibile avviare azione."), true)
+		show_inspection(check.get("reason", "Impossibile avviare azione."), "ALEX", "[Spazio] Chiudi")
+		return
+
+	show_inspection("In corso: %s (%ds)..." % [act_name, int(dur)], "ALEX", "[Esc] Annulla")
+	action_system.start_action(act_data)
+
+func _apply_action_effects(action: Dictionary) -> void:
+	if not GameManager or not GameManager.player_data:
+		return
+	var player: PlayerData = GameManager.player_data
+	var e_delta: int = action.get("energy_delta", 0)
+	var s_delta: int = action.get("stress_delta", 0)
+	var m_delta: int = action.get("morale_delta", 0)
+	var money: float = action.get("money_cost", 0.0)
+	var xp: float = action.get("xp_amount", 0.0)
+	var skill: String = action.get("xp_skill", "")
+	var is_gamble: bool = action.get("is_gamble", false)
+	var insp_chance: float = action.get("inspiration_chance", 0.0)
+
+	if money > 0.0:
+		player.modify_money(-money)
+	if e_delta != 0:
+		player.energy = clampf(player.energy + e_delta, 0.0, Constants.MAX_ENERGY)
+	if s_delta != 0:
+		player.stress = clampf(player.stress + s_delta, Constants.MIN_STRESS, Constants.MAX_STRESS)
+	if m_delta != 0:
+		if is_gamble:
+			var won: bool = randf() < 0.5
+			var gamble_delta: int = m_delta if won else -5
+			player.morale = clampf(player.morale + gamble_delta, Constants.MIN_MORALE, Constants.MAX_MORALE)
+		else:
+			player.morale = clampf(player.morale + m_delta, Constants.MIN_MORALE, Constants.MAX_MORALE)
+	if xp > 0.0 and not skill.is_empty():
+		if player.has_method("add_xp_to_skill"):
+			player.add_xp_to_skill(skill, xp)
+		elif player.has_method("add_skill_xp"):
+			player.add_skill_xp(skill, xp)
+	if insp_chance > 0.0 and randf() < insp_chance:
+		if player.has_method("add_xp_to_skill"):
+			player.add_xp_to_skill("composition", Constants.RECOVERY_MUSIC_SPARK_XP)
+		elif player.has_method("add_skill_xp"):
+			player.add_skill_xp("composition", Constants.RECOVERY_MUSIC_SPARK_XP)
+
+	var res_msg: String = action.get("result_message", "Azione completata!")
+	AccessibilityManager.play_cue(Enums.AudioCueType.AREA_PERSONAL)
+	AccessibilityManager.announce(res_msg, true)
+	show_inspection(res_msg, "ALEX", "[Spazio] Chiudi")
+	update_hud_display()
+
+func _on_hud_action_completed(_action_id: String, _reward: Dictionary) -> void:
+	update_hud_display()
+	AccessibilityManager.play_cue(Enums.AudioCueType.AREA_PERSONAL)
+	show_inspection("Azione completata con successo!", "ALEX", "[Spazio] Chiudi")

@@ -18,26 +18,42 @@ func _init(p_player: PlayerData = null, p_calendar: CalendarData = null) -> void
 	player_data = p_player
 	calendar_data = p_calendar
 
+func get_player_data() -> PlayerData:
+	if player_data:
+		return player_data
+	if GameManager and GameManager.player_data:
+		return GameManager.player_data
+	return null
+
+func get_calendar_data() -> CalendarData:
+	if calendar_data:
+		return calendar_data
+	if GameManager and GameManager.calendar_data:
+		return GameManager.calendar_data
+	return null
+
 func can_start_action(action: ActionData) -> Dictionary:
+	var p: PlayerData = get_player_data()
+	var c: CalendarData = get_calendar_data()
 	if not action:
 		return {"can_start": false, "reason": "Azione non valida."}
 	if is_running:
 		return {"can_start": false, "reason": "Un'altra azione è attualmente in corso."}
-	if player_data and action.money_cost > 0.0 and player_data.money < action.money_cost:
+	if p and action.money_cost > 0.0 and p.money < action.money_cost:
 		return {"can_start": false, "reason": "Denaro insufficiente (richiesti %.2f €)." % action.money_cost}
 		
 	# Per azioni ordinarie o azioni con costo energetico esplicito
 	var required_energy: int = action.energy_cost
 	if action.is_recovery:
 		required_energy = maxi(0, -action.energy_delta)
-	if player_data and required_energy > 0 and player_data.energy < required_energy:
+	if p and required_energy > 0 and p.energy < required_energy:
 		return {"can_start": false, "reason": "Energia insufficiente per avviare questa azione."}
 		
 	var effective_duration: float = action.duration_seconds
-	if player_data and player_data.energy < Constants.ENERGY_BURNOUT_THRESHOLD and not action.is_recovery:
+	if p and p.energy < Constants.ENERGY_BURNOUT_THRESHOLD and not action.is_recovery:
 		effective_duration *= 2.0
 		
-	if calendar_data and calendar_data.remaining_seconds < effective_duration:
+	if c and c.remaining_seconds < effective_duration:
 		return {"can_start": false, "reason": "Il tempo residuo nella giornata non è sufficiente."}
 		
 	return {"can_start": true, "reason": ""}
@@ -51,16 +67,18 @@ func start_action(action: ActionData) -> bool:
 	current_action = action
 	action_elapsed = 0.0
 	is_running = true
+	var p: PlayerData = get_player_data()
+	var c: CalendarData = get_calendar_data()
 	
 	# Controllo Burnout (< 15% energia) per azioni ordinarie
-	if player_data and player_data.energy < Constants.ENERGY_BURNOUT_THRESHOLD and not action.is_recovery:
+	if p and p.energy < Constants.ENERGY_BURNOUT_THRESHOLD and not action.is_recovery:
 		current_action_duration = action.duration_seconds * 2.0
 		AccessibilityManager.announce("Attenzione: Burnout fisico! Livello di energia critico, l'azione richiederà il doppio del tempo.", false)
 	else:
 		current_action_duration = action.duration_seconds
 		
 	# Controllo Panico (>= 80% stress)
-	if player_data and player_data.stress >= Constants.STRESS_PANIC_THRESHOLD:
+	if p and p.stress >= Constants.STRESS_PANIC_THRESHOLD:
 		AccessibilityManager.announce("Attenzione: Stato di Panico! Livello di stress critico.", false)
 		
 	GameManager.change_state(Enums.GameState.GAMEPLAY_BUSY)
@@ -83,34 +101,36 @@ func _complete_action() -> void:
 	var action_name_ref: String = current_action.action_name
 	var is_rec: bool = current_action.is_recovery
 	is_running = false
+	var p: PlayerData = get_player_data()
+	var c: CalendarData = get_calendar_data()
 	
 	# Applicazione costi monetari
-	if player_data and current_action.money_cost > 0.0:
-		player_data.modify_money(-current_action.money_cost)
-		EventBus.money_changed.emit(player_data.money, -current_action.money_cost, action_name_ref)
+	if p and current_action.money_cost > 0.0:
+		p.modify_money(-current_action.money_cost)
+		EventBus.money_changed.emit(p.money, -current_action.money_cost, action_name_ref)
 		
 	# Applicazione delta fisiologici (Energia, Stress, Morale)
-	if player_data:
+	if p:
 		if is_rec:
 			if current_action.energy_delta != 0:
 				if current_action.energy_delta > 0:
-					player_data.add_energy(current_action.energy_delta)
+					p.add_energy(current_action.energy_delta)
 				else:
-					player_data.consume_energy(abs(current_action.energy_delta))
+					p.consume_energy(abs(current_action.energy_delta))
 			if current_action.stress_delta != 0:
 				if current_action.stress_delta > 0:
-					player_data.add_stress(current_action.stress_delta)
+					p.add_stress(current_action.stress_delta)
 				else:
-					player_data.reduce_stress(abs(current_action.stress_delta))
+					p.reduce_stress(abs(current_action.stress_delta))
 			if current_action.morale_delta != 0:
-				player_data.modify_morale(current_action.morale_delta)
+				p.modify_morale(current_action.morale_delta)
 		else:
-			player_data.consume_energy(current_action.energy_cost)
-			player_data.add_stress(current_action.stress_gain)
+			p.consume_energy(current_action.energy_cost)
+			p.add_stress(current_action.stress_gain)
 			
 	# Aggiornamento contatore saturazione
-	if calendar_data:
-		calendar_data.increment_action_count(completed_id)
+	if c:
+		c.increment_action_count(completed_id)
 		
 	# Calcolo XP o benefici speciali
 	var gained_xp: float = 0.0
@@ -118,24 +138,14 @@ func _complete_action() -> void:
 	var new_lvl: int = 10
 	var spark_triggered: bool = false
 	
-	if is_rec:
-		# Gestione chance ispirazione / Scintilla Creativa per ascolto musica
-		if current_action.inspiration_chance > 0.0:
-			var roll: float = randf()
-			if roll < current_action.inspiration_chance:
-				spark_triggered = true
-				gained_xp = Constants.RECOVERY_MUSIC_SPARK_XP
-				if player_data:
-					leveled_up = player_data.add_xp_to_skill("songwriting", gained_xp)
-					new_lvl = player_data.get_skill_level("songwriting")
-	else:
+	if current_action.base_xp > 0.0:
 		# Calcolo matematico XP standard per allenamenti
 		var day_reps: int = 1
-		if calendar_data:
-			day_reps = calendar_data.get_action_count(completed_id)
+		if c:
+			day_reps = c.get_action_count(completed_id)
 			
-		var stress_val: float = float(player_data.stress) if player_data else 0.0
-		var morale_val: float = float(player_data.morale) if player_data else 100.0
+		var stress_val: float = float(p.stress) if p else 0.0
+		var morale_val: float = float(p.morale) if p else 100.0
 		
 		gained_xp = Formulas.calculate_training_xp(
 			current_action.base_xp,
@@ -145,14 +155,24 @@ func _complete_action() -> void:
 			morale_val
 		)
 		
-		if player_data:
-			leveled_up = player_data.add_xp_to_skill(current_action.target_skill, gained_xp)
-			new_lvl = player_data.get_skill_level(current_action.target_skill)
+		if p:
+			leveled_up = p.add_xp_to_skill(current_action.target_skill, gained_xp)
+			new_lvl = p.get_skill_level(current_action.target_skill)
+	elif is_rec:
+		# Gestione chance ispirazione / Scintilla Creativa per ascolto musica
+		if current_action.inspiration_chance > 0.0:
+			var roll: float = randf()
+			if roll < current_action.inspiration_chance:
+				spark_triggered = true
+				gained_xp = Constants.RECOVERY_MUSIC_SPARK_XP
+				if p:
+					leveled_up = p.add_xp_to_skill("songwriting", gained_xp)
+					new_lvl = p.get_skill_level("songwriting")
 			
 	var rewards: Dictionary = {
 		"xp_gained": gained_xp,
 		"leveled_up": leveled_up,
-		"target_skill": "songwriting" if is_rec else current_action.target_skill,
+		"target_skill": current_action.target_skill if current_action.base_xp > 0.0 else ("songwriting" if is_rec else current_action.target_skill),
 		"new_level": new_lvl,
 		"is_recovery": is_rec,
 		"spark_triggered": spark_triggered
@@ -161,7 +181,7 @@ func _complete_action() -> void:
 	EventBus.action_completed.emit(completed_id, rewards)
 	
 	var announcement_text: String = ""
-	if is_rec:
+	if is_rec and current_action.base_xp <= 0.0:
 		announcement_text = "Completato: %s." % action_name_ref
 		if spark_triggered:
 			announcement_text += " Ispirazione musicale! Hai colto un'idea brillante per un nuovo brano (+%.0f XP Scrittura testi)!" % gained_xp

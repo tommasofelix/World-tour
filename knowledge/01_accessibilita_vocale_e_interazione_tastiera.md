@@ -130,3 +130,76 @@ Per consentire l'utilizzo ergonomico e rapido del gioco con la sola mano destra 
    - In un layout Full HD 1920x1080 con tre blocchi orizzontali sulla stessa fascia (es. Dialogo a sinistra, Dock al centro, Info a destra), la clearance tra l'estremità destra del primo blocco e l'estremità sinistra del secondo deve essere `>= 80 pixel` (ideale 100–120 px).
    - Nelle test suite headless deve essere sempre inserita un'asserzione geometrica esplicita (`assert_true(dialogue_right < dock_left)`) a 0 ms per impedire regressioni visive in caso di aggiunta di pulsanti o variazioni di testo.
 
+---
+
+## 10. Menu Interazioni Popup a Pergamena Pixel Art & Azioni con Durata Temporale (Validato in V5.6.0)
+
+1. **Apertura Contestuale & Annuncio Vocale Lineare**:
+   - All'interazione con un arredo interattivo del loft (click del mouse o `Spazio`/`Invio` da tastiera), si apre il componente `InteractionMenu` posizionato accanto all'oggetto con clamping di sicurezza entro i margini 1920x1080 Full HD (rispettando la Top Bar e il Dock inferiore).
+   - All'apertura viene emesso un cue sonoro discreto a volume salvavita (`<= 0.75f`) e un annuncio vocale completo per NVDA che include il titolo dell'arredo, il numero di opzioni e l'elenco sequenziale con scorciatoia e durata temporale (es. *"Cucina. 4 azioni disponibili: 1 Prepara espresso (5s), 2 Snack veloce (10s), ..."*).
+
+2. **Navigazione & Scorciatoie Numeriche Immediate (Zero Mouse)**:
+   - Ogni opzione è associata al tasto corrispondente sulla tastiera estesa (`1`..`9`) e sul tastierino numerico (`KP_1`..`KP_9`), consentendo l'attivazione istantanea senza navigazione preliminare;
+   - In alternativa è attiva la navigazione ciclica con freccia Su / Numpad 8 e freccia Giù / Numpad 2, con conferma tramite Invio / Spazio / KP_Enter;
+   - La pressione del tasto `Esc` chiude immediatamente il menu, ripristina lo stato idle e vocalizza la chiusura senza effetti collaterali.
+
+3. **Esecuzione Azioni a Durata Temporale (`duration_seconds`)**:
+   - Le azioni con durata `> 0.0` secondi bloccano il protagonista Alex nello stato `GAMEPLAY_BUSY`, impedendo doppi comandi o movimenti concorrenti mentre l'attività è in corso;
+   - Il box di dialogo inferiore sinistro visualizza in tempo reale il messaggio di svolgimento e la durata;
+   - NVDA riceve un annuncio vocale all'avvio con la durata stimata e un annuncio di completamento all'arrivo a termine con il riepilogo delle modifiche di stato (es. *"Espresso bevuto! Ti senti rinvigorito. Energia +10, Stress -3"*);
+   - A fine azione viene riprodotto il cue di notifica posizionale e lo stato del giocatore torna a `GAMEPLAY_IDLE`.
+
+4. **Isolamento Semantico dei Servizi Domestici**:
+   - **Guardaroba**: Limitato rigorosamente al cambio look (`wardrobe_change_look` / `cambiarsi_il_look()`), escludendo scorciatoie a finestre esterne per preservare l'immersione nella vita domestica;
+   - **Cassa Attrezzi**: Dedicata alla cura artigianale degli strumenti (controllo cavi/jack e manutenzione chitarra), rimuovendo collegamenti diretti all'Upgrades Hub che risiede regolarmente nel dock di carriera.
+
+5. **Sblocco e Gestione Sincrona del Contenitore Modali (`$Modals`) (Validato in V5.6.1)**:
+   - In Godot 4, se un nodo contenitore padre (`Modals: Control`) ha `visible = false`, qualsiasi finestra modale figlia (es. `SongCreator`, `LiveConcert`, `TravelModal`, `TourModal`, `FestivalModal`) impostata a `visible = true` rimane completamente invisibile a video e sorda agli eventi di input.
+   - Poiché l'evento `modal_opened.emit()` blocca coerentemente il movimento del personaggio (`player.is_movement_locked = true`), l'invisibilità del contenitore causava un deadlock percettivo (il giocatore appariva congelato).
+   - Canone di Governance: `ApartmentHud.open_modal()` impone deterministicamente `$Modals.visible = true` prima di attivare la modale figlia, mentre `close_modal()` e `hide_all_modals()` verificano `is_any_modal_open()` nascondendo `$Modals` solo quando non vi sono ulteriori modali aperte.
+
+6. **Contratto di Focus per Finestre Aperte da Arredi (`open()` Grab Focus)**:
+   - Ogni finestra modale deve implementare un metodo canonico `open()` che inizializza lo stato, assegna esplicitamente il focus da tastiera (`grab_focus()`) al primo controllo interattivo (es. `edit_title` in `SongCreator`, `opt_venue` in `LiveConcert`, `btn_filter_all` in `SongCatalog`), ed emette contestualmente l'annuncio vocale tramite `AccessibilityManager.announce()`.
+
+7. **Adattamento del Testo e Autowrap nelle Pergamene Pixel Art**:
+   - Nelle interfacce a pergamena pixel art con texture fisse, la larghezza standard è fissata a **320 pixel** (Short $320 \times 190$, Medium $320 \times 400$, Long $320 \times 680$) con margini interni di 20 px laterali e 28 px verticali.
+   - Tutti i pulsanti di opzione utilizzano `autowrap_mode = TextServer.AUTOWRAP_WORD_SMART` e font bitmap da 8 px, impedendo qualsiasi troncamento o sbordamento visivo di testi lunghi o etichette di durata (`(%ds)`).
+
+---
+
+## 11. Segregazione Tasti Movimento (Zero WASD) & Flusso Ciclo Sonno / DailySummary (Validato in V5.6.2)
+
+1. **Segregazione Inviolabile Movimento vs Scorciatoie Alfanumeriche**:
+   - I tasti alfabetici WASD sono categoricamente disabilitati per la navigazione spaziale di Alex. La camminata è affidata al 100% alle Frecce Direzionali (`ui_*`) e al Tastierino Numerico (Numpad 8, 2, 4, 6 e diagonali 7, 9, 1, 3);
+   - Questo previene qualsiasi sovrapposizione tra comandi di movimento e scorciatoie mnemoniche: premendo `W` per aprire l'Albo d'Oro (`LegacyModal`), Alex non avvia alcuna camminata verso l'alto dello schermo e la finestra si apre istantaneamente.
+
+2. **Azzeramento Immediato dell'Inerzia all'Apertura Modali**:
+   - All'emissione di `modal_opened`, il controller di scena `apartment.gd` impone immediatamente `player.velocity = Vector2.ZERO`, `player.is_movement_locked = true` e `player.cancel_auto_walk()`;
+   - Questo garantisce che nessun movimento residuo o vettore pendente possa spostare il personaggio mentre una finestra di interazione, dialogo o modale è a schermo.
+
+3. **Flusso Deterministico del Sonno e Ricezione Daily Summary**:
+   - L'azione del sonno notturno (dal letto o dal controllo rapido nel dock) esegue `TimeSystem.trigger_sleep_now()`, che a sua volta attiva `EndDaySystem.process_day_end()`;
+   - La notifica del riepilogo giornaliero transita per il segnale dedicato `EventBus.daily_summary_ready(summary_data: Dictionary)`;
+   - `ApartmentHud` intercetta il dizionario, attiva la visibilità del genitore `$Modals.visible = true` e invoca `daily_summary_modal.show_summary(summary_data)` con focus immediato su `btn_next_day`;
+   - Alla conferma del giorno successivo, il riepilogo si chiude, `$Modals.visible` viene ripristinato a `false` e la libertà di movimento di Alex viene ripristinata per il nuovo giorno, scongiurando qualsiasi blocco o deadlock reattivo.
+
+---
+
+## 12. Blindatura FSM GAMEPLAY_BUSY, Blocco Fisico Input & Zero Freeze SystemMenu (Validato in V5.6.3)
+
+1. **Ciclo di Vita dello Stato `GAMEPLAY_BUSY`**:
+   - Quando il giocatore avvia un'azione con durata temporale (routine domestica, suonare la chitarra, preparare il caffè, fare flessioni, o qualsiasi azione coordinata da `ActionSystem`), `GameManager.change_state(Enums.GameState.GAMEPLAY_BUSY)` entra in vigore;
+   - All'emissione di `EventBus.action_started`, il controller di scena `apartment.gd` e l'avatar `player_alex.gd` azzerano istantaneamente la velocità (`velocity = Vector2.ZERO`), disarmano l'auto-walk e impongono `player.is_movement_locked = true`;
+   - Sia in `_physics_process` che in `_unhandled_input`, la guardia reattiva `is_busy` sopprime qualsiasi comando di movimento (Frecce, Numpad, click mouse) e inibisce i tasti rapidi delle finestre modali;
+   - Durante `GAMEPLAY_BUSY`, il salvataggio partita è categoricamente vietato (`SaveManager.is_save_allowed() == false`) per prevenire corruzioni di stato persistente a metà azione.
+
+2. **Interruzione Sicura & Reversibile da Tastiera (`Esc`)**:
+   - Premendo il tasto `Esc` durante lo stato `GAMEPLAY_BUSY`, l'azione in corso viene immediatamente interrotta senza consumi indebiti di energia, stress o denaro tramite `ActionSystem.cancel_action()`;
+   - L'evento `EventBus.action_canceled` riporta la FSM globale in `GAMEPLAY_IDLE`, sblocca il movimento di Alex, notifica l'annuncio vocale ad alta priorità per NVDA ("Azione interrotta.") e chiude il box di ispezione.
+
+3. **Risoluzione Definitiva Softlock Menu di Sistema (`resume_requested`)**:
+   - Nel `SystemMenuModal` aperto con `Esc` a riposo, la chiusura tramite pulsante "Riprendi" o tasto `Esc` emette il segnale specializzato `resume_requested`;
+   - `ApartmentHud` connette sia `resume_requested` che `closed` al metodo unificato `close_modal(system_menu_modal)`, garantendo il ripristino di `player.is_movement_locked = false`, la ripresa dell'orologio virtuale (`set_game_paused(false)`) e il ritorno a `GAMEPLAY_IDLE` senza alcun freeze.
+
+
+

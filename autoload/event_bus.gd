@@ -8,6 +8,7 @@ extends Node
 signal time_ticked(remaining_seconds: float, time_str: String, period: int)
 signal day_started(day_number: int)
 signal day_ended(day_number: int)
+signal daily_summary_ready(summary_data: Dictionary)
 signal pause_toggled(is_paused: bool)
 signal speed_changed(new_speed: float)
 

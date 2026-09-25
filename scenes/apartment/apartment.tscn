@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://p7net81cg37e" path="res://scenes/apartment/apartment.gd" id="1_apt_script"]
 [ext_resource type="PackedScene" uid="uid://bplalexny001" path="res://scenes/apartment/player_alex.tscn" id="2_player"]
-[ext_resource type="PackedScene" uid="uid://cm0x0dmn5fs3y" path="res://ui/apartment_hud/apartment_hud.tscn" id="3_hud"]
+[ext_resource type="PackedScene" uid="uid://d3l6filxru2m3" path="res://ui/apartment_hud/apartment_hud.tscn" id="3_hud"]
 [ext_resource type="PackedScene" uid="uid://cpropny001" path="res://scenes/apartment/interactive_prop.tscn" id="4_prop"]
 [ext_resource type="Texture2D" uid="uid://bsaroadyrivbq" path="res://assets/img/gameplay/casa/camera/stanza_iniziale/camera_vuota_1024.png" id="5_bg_room"]
 [ext_resource type="Texture2D" uid="uid://ddouo26uu6ux3" path="res://assets/img/gameplay/casa/camera/stanza_iniziale/chitarra_bianca.png" id="6_guitar"]
@@ -110,15 +110,16 @@ inspection_text = "Chitarra su supporto e cassa amplificatore. Posso esercitarmi
 stand_offset = Vector2(30, 20)
 
 [node name="TriggerShape" parent="YSortRoot/PropGuitar" index="0"]
+position = Vector2(-81, -46)
 shape = SubResource("CircleShape2D_guitar_trigger")
 
 [node name="Sprite2D" parent="YSortRoot/PropGuitar" index="1"]
-position = Vector2(0, -25)
-scale = Vector2(1.1785715, 1)
+position = Vector2(-80.25, -74.5)
+scale = Vector2(1.4464285, 1.1547619)
 texture = ExtResource("6_guitar")
 
 [node name="SolidShape" parent="YSortRoot/PropGuitar/StaticBody2D" index="0"]
-position = Vector2(0, 0)
+position = Vector2(-81, -43)
 shape = SubResource("RectangleShape2D_guitar")
 
 [node name="PropKitchen" parent="YSortRoot" unique_id=310771382 instance=ExtResource("4_prop")]
@@ -229,10 +230,9 @@ shape = SubResource("RectangleShape2D_bed")
 [node name="PropWardrobe" parent="YSortRoot" unique_id=537401073 instance=ExtResource("4_prop")]
 position = Vector2(440, -90)
 prop_id = "wardrobe"
-prop_name = "Libreria Guardaroba & Scheda Artista"
-prop_description = "Consulta la scheda anagrafica dell'artista, statistiche e stile"
-hotkey_hint = "C"
-inspection_text = "Libreria in legno d'epoca con dischi e toppe rock. Qui consulto la scheda artista, lo stile e le abilità! [Spazio]"
+prop_name = "Guardaroba & Outfit"
+prop_description = "Cambiati il look da palco per caricare il morale"
+inspection_text = "Armadio guardaroba con toppe e giacche da rocker. Qui puoi cambiarti il look da palco! [Spazio]"
 stand_offset = Vector2(-35, 45)
 
 [node name="TriggerShape" parent="YSortRoot/PropWardrobe" index="0"]
@@ -252,10 +252,9 @@ shape = SubResource("RectangleShape2D_wardrobe")
 [node name="PropToolbox" parent="YSortRoot" unique_id=1160535962 instance=ExtResource("4_prop")]
 position = Vector2(585, -10)
 prop_id = "toolbox"
-prop_name = "Cassa Attrezzi & Gear Studio"
-prop_description = "Gestisci equipaggiamento, pedali e upgrade home studio"
-hotkey_hint = "U"
-inspection_text = "Cassa degli attrezzi rossa e cavi jack. Gestisco gli upgrade degli strumenti, la pedaliera e la sala prove! [Spazio]"
+prop_name = "Cassa Attrezzi & Manutenzione"
+prop_description = "Controlla cavi jack ed esegui set-up della chitarra"
+inspection_text = "Cassa degli attrezzi rossa con cavi jack e attrezzi di precisione per la manutenzione degli strumenti. [Spazio]"
 stand_offset = Vector2(-25, 25)
 
 [node name="TriggerShape" parent="YSortRoot/PropToolbox" index="0"]

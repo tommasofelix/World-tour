@@ -118,6 +118,12 @@ func _setup_accessibility_hooks() -> void:
 		AccessibilityManager.hook_control_accessibility(btn_proceed_summary, "Resoconto Finale", "Visualizza il resoconto economico e artistico.")
 	AccessibilityManager.hook_control_accessibility(btn_finish_concert, tr("CONCERT_BTN_CLOSE_SUMMARY"), "Incassa i guadagni e ritorna all'HUD principale.")
 
+func open() -> void:
+	open_preparation()
+	if opt_venue:
+		opt_venue.grab_focus()
+	AccessibilityManager.announce("Menu Concerti Live aperto. Seleziona il locale e prepara la scaletta.", true)
+
 func open_preparation() -> void:
 	label_title.text = tr("CONCERT_TITLE_PREP")
 	prep_container.visible = true

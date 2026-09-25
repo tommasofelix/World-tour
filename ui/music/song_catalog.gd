@@ -94,6 +94,12 @@ func show_songs_section() -> void:
 	var count: int = GameManager.player_data.songs.size() if GameManager and GameManager.player_data else 0
 	AccessibilityManager.announce("Sezione Brani e Singoli selezionata. %d tracce presenti." % count, true)
 
+func open() -> void:
+	refresh_catalog()
+	if btn_filter_all:
+		btn_filter_all.grab_focus()
+	AccessibilityManager.announce("Catalogo Discografico aperto. Consulta brani, singoli e album.", true)
+
 func refresh_catalog() -> void:
 	if not vbox_songs:
 		return

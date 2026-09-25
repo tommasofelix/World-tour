@@ -48,7 +48,8 @@ func _physics_process(delta: float) -> void:
 		_process_auto_walk(delta)
 		return
 
-	if is_movement_locked or (GameManager and GameManager.is_paused()):
+	var is_busy: bool = GameManager != null and GameManager.current_state == Enums.GameState.GAMEPLAY_BUSY
+	if is_movement_locked or is_busy or (GameManager and GameManager.is_paused()):
 		_update_animation("idle")
 		velocity = Vector2.ZERO
 		return
@@ -72,14 +73,14 @@ func _physics_process(delta: float) -> void:
 
 func _get_input_vector() -> Vector2:
 	var v := Vector2.ZERO
-	# Controlli Frecce direzionali e WASD
-	if Input.is_action_pressed("ui_up") or Input.is_key_pressed(KEY_W):
+	# Controlli Frecce direzionali (ui_up, ui_down, ui_left, ui_right)
+	if Input.is_action_pressed("ui_up"):
 		v.y -= 1.0
-	if Input.is_action_pressed("ui_down") or Input.is_key_pressed(KEY_S):
+	if Input.is_action_pressed("ui_down"):
 		v.y += 1.0
-	if Input.is_action_pressed("ui_left") or Input.is_key_pressed(KEY_A):
+	if Input.is_action_pressed("ui_left"):
 		v.x -= 1.0
-	if Input.is_action_pressed("ui_right") or Input.is_key_pressed(KEY_D):
+	if Input.is_action_pressed("ui_right"):
 		v.x += 1.0
 
 	# Controlli Numpad (8=su, 2=giù, 4=sinistra, 6=destra, 7/9/1/3 diagonali)
@@ -130,7 +131,8 @@ func _check_collision_bump() -> void:
 			AccessibilityManager.play_cue(Enums.AudioCueType.COLLISION_BUMP)
 
 func _unhandled_input(event: InputEvent) -> void:
-	if is_movement_locked:
+	var is_busy: bool = GameManager != null and GameManager.current_state == Enums.GameState.GAMEPLAY_BUSY
+	if is_movement_locked or is_busy or (GameManager and GameManager.is_paused()):
 		return
 	if event is InputEventKey and event.is_pressed() and not event.is_echo():
 		if event.keycode == KEY_SPACE or event.keycode == KEY_ENTER or event.keycode == KEY_E or event.keycode == KEY_KP_ENTER or event.keycode == KEY_KP_0:

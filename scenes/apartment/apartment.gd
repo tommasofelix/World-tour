@@ -28,6 +28,10 @@ func _ready() -> void:
 		hud.modal_opened.connect(_on_modal_opened)
 		hud.modal_closed.connect(_on_modal_closed)
 
+	EventBus.action_started.connect(_on_action_started)
+	EventBus.action_completed.connect(_on_action_ended)
+	EventBus.action_canceled.connect(_on_action_ended)
+
 	# Annuncio iniziale di benvenuto per NVDA
 	AccessibilityManager.announce("Benvenuto nel loft di New York. Usa le Frecce o il Numpad per muoverti, Tab per scorrere gli arredi, Spazio per interagire, Esc per il menu di sistema.", true)
 
@@ -45,18 +49,35 @@ func _collect_and_setup_props() -> void:
 				child.prop_clicked.connect(_on_prop_clicked)
 
 func _on_prop_clicked(prop: Area2D) -> void:
-	if not hud or hud.is_any_modal_open():
+	if not hud or hud.is_any_modal_open() or (GameManager and GameManager.current_state == Enums.GameState.GAMEPLAY_BUSY) or (hud and hud.action_system and hud.action_system.is_running):
 		return
 	AccessibilityManager.play_cue(Enums.AudioCueType.HOTSPOT_PROXIMITY)
 	if ("is_player_in_range" in prop and prop.is_player_in_range) or (player and player.global_position.distance_to(prop.global_position) < 55.0):
-		prop.trigger_interaction()
+		_open_prop_interaction_menu(prop)
 		return
 	
 	var target_pos: Vector2 = prop.get_stand_position() if prop.has_method("get_stand_position") else (prop.global_position + Vector2(0, 30))
 	if player and player.has_method("walk_to_target"):
 		player.walk_to_target(target_pos, func():
-			prop.trigger_interaction()
+			_open_prop_interaction_menu(prop)
 		, prop)
+	else:
+		_open_prop_interaction_menu(prop)
+
+func _open_prop_interaction_menu(prop: Area2D) -> void:
+	if not hud or not prop:
+		return
+	var p_id: String = prop.prop_id if "prop_id" in prop else ""
+	var p_name: String = prop.prop_name if "prop_name" in prop else "Arredo"
+	var acts: Array[Dictionary] = ApartmentInteractions.get_actions_for_prop(p_id)
+	
+	if not acts.is_empty():
+		var screen_pos: Vector2 = Vector2.ZERO
+		if camera:
+			screen_pos = camera.get_viewport_transform() * prop.global_position
+		else:
+			screen_pos = prop.global_position
+		hud.open_interaction_menu_for_prop(p_id, p_name, acts, screen_pos)
 	else:
 		prop.trigger_interaction()
 
@@ -76,24 +97,37 @@ func _on_player_exited_prop(_prop: Area2D) -> void:
 		hud.reset_inspection()
 
 func _on_player_interaction_requested(prop: Area2D) -> void:
-	if not prop or (hud and hud.is_any_modal_open()):
+	if not prop or (hud and hud.is_any_modal_open()) or (GameManager and GameManager.current_state == Enums.GameState.GAMEPLAY_BUSY) or (hud and hud.action_system and hud.action_system.is_running):
 		return
-	prop.trigger_interaction()
+	_open_prop_interaction_menu(prop)
 
 func _on_prop_interaction(prop_id: String) -> void:
 	if not hud:
 		return
 	hud.open_modal_by_prop_id(prop_id)
 
+func _on_action_started(_action_id: String, _duration: float) -> void:
+	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+	if player:
+		player.is_movement_locked = true
+		player.velocity = Vector2.ZERO
+		player.cancel_auto_walk()
+
+func _on_action_ended(_arg1 = null, _arg2 = null) -> void:
+	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+	if player and not (hud and hud.is_any_modal_open()):
+		player.is_movement_locked = false
+
 func _on_modal_opened(_modal_name: String) -> void:
 	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
 	if player:
 		player.is_movement_locked = true
+		player.velocity = Vector2.ZERO
 		player.cancel_auto_walk()
 
 func _on_modal_closed(_modal_name: String) -> void:
 	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
-	if player:
+	if player and not (GameManager and GameManager.current_state == Enums.GameState.GAMEPLAY_BUSY):
 		player.is_movement_locked = false
 	if hud and not hud.is_any_modal_open():
 		hud.reset_inspection()
@@ -103,6 +137,15 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 
 	var key_event := event as InputEventKey
+
+	# Se un'azione a durata temporale è in corso (GAMEPLAY_BUSY), blocca comandi e intercetta Esc per annullare
+	if (GameManager and GameManager.current_state == Enums.GameState.GAMEPLAY_BUSY) or (hud and hud.action_system and hud.action_system.is_running):
+		if key_event.keycode == KEY_ESCAPE:
+			if hud and hud.action_system and hud.action_system.is_running:
+				hud.action_system.cancel_action()
+				hud.reset_inspection()
+			get_viewport().set_input_as_handled()
+		return
 
 	# Se una modale è aperta, l'input viene gestito dalla modale
 	if hud and hud.is_any_modal_open():
@@ -275,9 +318,9 @@ func _interact_with_selected_prop() -> void:
 	
 	if player and player.has_method("walk_to_target"):
 		player.walk_to_target(target_pos, func():
-			p.trigger_interaction()
+			_open_prop_interaction_menu(p)
 			_clear_prop_selection()
 		, p)
 	else:
-		p.trigger_interaction()
+		_open_prop_interaction_menu(p)
 		_clear_prop_selection()

@@ -120,6 +120,13 @@ func _on_genre_or_theme_changed(_index: int = 0) -> void:
 	var acc_theme_desc := "%s. %s %s" % [theme_obj.get_localized_name(), theme_obj.get_localized_description(), aff_desc]
 	AccessibilityManager.hook_control_accessibility(opt_theme, "Tema Lirico", acc_theme_desc)
 
+func open() -> void:
+	start_new_song()
+	_update_stage_display()
+	if edit_title:
+		edit_title.grab_focus()
+	AccessibilityManager.announce("Studio musicale aperto. Componi un nuovo brano. Titolo predefinito: %s. Premi Tab per navigare i parametri o Invio per iniziare." % edit_title.text, true)
+
 func start_new_song() -> void:
 	current_song = null
 	resume_step = 1

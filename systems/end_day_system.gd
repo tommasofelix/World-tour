@@ -158,6 +158,7 @@ func process_day_end(day_num: int = 1, p_early_sleep_override: bool = false) -> 
 	}
 	
 	summary_ready.emit(summary)
+	EventBus.daily_summary_ready.emit(summary)
 	
 	var speech: String = "Fine della giornata %d. Alloggio: %s. Spese vive: %.2f euro (cibo %.2f, affitto %.2f)." % [
 		day_num,

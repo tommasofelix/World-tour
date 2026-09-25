@@ -36,6 +36,7 @@
 [ext_resource type="PackedScene" uid="uid://cokc6bydye71u" path="res://ui/relax/relax_modal.tscn" id="34_relax"]
 [ext_resource type="PackedScene" uid="uid://c4gmh8uiq10gi" path="res://ui/legacy/legacy_modal.tscn" id="35_legacy"]
 [ext_resource type="Texture2D" uid="uid://6ul6s13rkxwj" path="res://assets/img/gameplay/GUI/Elementi/band_icon.png" id="36_dock_band"]
+[ext_resource type="PackedScene" path="res://ui/interaction_menu/interaction_menu.tscn" id="37_intermenu"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud_panel"]
 content_margin_left = 14.0
@@ -52,6 +53,10 @@ corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
+expand_margin_left = 6.0
+expand_margin_top = 6.0
+expand_margin_right = 6.0
+expand_margin_bottom = 6.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_bg"]
 bg_color = Color(0.12, 0.12, 0.17, 0.9)
@@ -92,6 +97,10 @@ corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
+expand_margin_left = 8.0
+expand_margin_top = 6.0
+expand_margin_right = 8.0
+expand_margin_bottom = 6.0
 
 [node name="ApartmentHud" type="Control" unique_id=878860864]
 layout_mode = 3
@@ -296,9 +305,10 @@ theme_override_font_sizes/font_size = 13
 text = "Mattina 08:00"
 
 [node name="HBoxTimeControls" type="HBoxContainer" parent="TopRightTime/VBoxTime" unique_id=279174446]
+custom_minimum_size = Vector2(1, 1)
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
+size_flags_vertical = 6
 theme_override_constants/separation = 12
 alignment = 1
 
@@ -340,10 +350,10 @@ layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 24.0
-offset_top = -140.0
-offset_right = 430.0
-offset_bottom = -20.0
+offset_left = 20.0
+offset_top = -150.0
+offset_right = 478.0
+offset_bottom = -19.0
 grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud_panel")
 
@@ -408,10 +418,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -312.0
-offset_top = -135.0
-offset_right = 312.0
-offset_bottom = -20.0
+offset_left = -234.0
+offset_top = -129.0
+offset_right = 350.0
+offset_bottom = -27.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_dock_panel")
@@ -512,9 +522,9 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -460.0
-offset_top = -200.0
+offset_top = -210.0
 offset_right = -24.0
-offset_bottom = -20.0
+offset_bottom = -30.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud_panel")
@@ -673,5 +683,9 @@ visible = false
 layout_mode = 1
 
 [node name="LegacyModal" parent="Modals" unique_id=195514862 instance=ExtResource("35_legacy")]
+visible = false
+layout_mode = 1
+
+[node name="InteractionMenu" parent="." unique_id=2099881122 instance=ExtResource("37_intermenu")]
 visible = false
 layout_mode = 1

@@ -1,0 +1,61 @@
+[gd_scene load_steps=3 format=3 uid="uid://dm2interact001"]
+
+[ext_resource type="Script" uid="uid://cjy0otub1flh6" path="res://ui/interaction_menu/interaction_menu.gd" id="1_script"]
+[ext_resource type="FontFile" uid="uid://bg3xkadvy8j0d" path="res://assets/img/font_text/press_start_2p/PressStart2P.ttf" id="2_font"]
+
+[node name="InteractionMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 306.0
+offset_bottom = 396.0
+mouse_filter = 1
+script = ExtResource("1_script")
+
+[node name="BackgroundTexture" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+
+[node name="ContentMargin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 28
+
+[node name="VBoxMain" type="VBoxContainer" parent="ContentMargin"]
+layout_mode = 2
+mouse_filter = 1
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="ContentMargin/VBoxMain"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.12, 0.06, 1)
+theme_override_colors/font_shadow_color = Color(0.9, 0.8, 0.65, 0.6)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 10
+text = "ARREDO"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="ContentMargin/VBoxMain"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="OptionsContainer" type="VBoxContainer" parent="ContentMargin/VBoxMain"]
+layout_mode = 2
+mouse_filter = 1
+theme_override_constants/separation = 6

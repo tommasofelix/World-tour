@@ -611,6 +611,9 @@ func add_xp_to_skill(skill_key: String, xp_amount: float) -> bool:
 
 	return leveled_up
 
+func add_skill_xp(skill_key: String, xp_amount: float) -> bool:
+	return add_xp_to_skill(skill_key, xp_amount)
+
 func consume_energy(amount: int) -> bool:
 	if energy < amount:
 		return false
