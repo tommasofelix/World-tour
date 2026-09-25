@@ -299,12 +299,14 @@ text = "Mattina 08:00"
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 10
+theme_override_constants/separation = 12
+alignment = 1
 
 [node name="BtnTimePause" type="Button" parent="TopRightTime/VBoxTime/HBoxTimeControls" unique_id=2132677948]
-custom_minimum_size = Vector2(0, 38)
+custom_minimum_size = Vector2(56, 44)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 4
+size_flags_vertical = 4
 tooltip_text = "Pausa / Riprendi (P)"
 focus_mode = 0
 icon = ExtResource("9_btn_pause")
@@ -312,9 +314,10 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="BtnTimeSpeed" type="Button" parent="TopRightTime/VBoxTime/HBoxTimeControls" unique_id=918396715]
-custom_minimum_size = Vector2(0, 38)
+custom_minimum_size = Vector2(56, 44)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 4
+size_flags_vertical = 4
 tooltip_text = "Velocità x2 (V)"
 focus_mode = 0
 icon = ExtResource("10_btn_speed")
@@ -322,9 +325,10 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="BtnTimeSleep" type="Button" parent="TopRightTime/VBoxTime/HBoxTimeControls" unique_id=386755688]
-custom_minimum_size = Vector2(0, 38)
+custom_minimum_size = Vector2(56, 44)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 4
+size_flags_vertical = 4
 tooltip_text = "Riposo / Salta fascia (X / Z)"
 focus_mode = 0
 theme_override_fonts/font = ExtResource("2_font")
@@ -337,8 +341,8 @@ anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 24.0
-offset_top = -240.0
-offset_right = 540.0
+offset_top = -140.0
+offset_right = 430.0
 offset_bottom = -20.0
 grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud_panel")
@@ -354,11 +358,12 @@ theme_override_constants/margin_bottom = 0
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 14
+theme_override_constants/separation = 10
 
 [node name="TexturePortraitDialogue" type="TextureRect" parent="BottomLeftDialogue/Margin/HBox" unique_id=8663627]
-custom_minimum_size = Vector2(120, 145)
+custom_minimum_size = Vector2(84, 84)
 layout_mode = 2
+size_flags_vertical = 4
 texture = ExtResource("3_alex_normale")
 expand_mode = 1
 stretch_mode = 6
@@ -367,23 +372,23 @@ stretch_mode = 6
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 6
+theme_override_constants/separation = 4
 
 [node name="LabelSpeaker" type="Label" parent="BottomLeftDialogue/Margin/HBox/VBox" unique_id=907857744]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 11
 text = "ALEX"
 
 [node name="LabelText" type="Label" parent="BottomLeftDialogue/Margin/HBox/VBox" unique_id=2022150202]
-custom_minimum_size = Vector2(330, 75)
+custom_minimum_size = Vector2(280, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 9
 text = "New York - Loft Apartment.
 Frecce/WASD/Numpad: cammina.
 Tab: sfoglia arredi. Spazio: interagisci. Esc: menu."
@@ -393,7 +398,7 @@ autowrap_mode = 3
 layout_mode = 2
 theme_override_colors/font_color = Color(0.5, 0.75, 0.9, 0.9)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 8
 text = "[Spazio] Azione  [Tab] Sfoglia  [Esc] Menu"
 
 [node name="BottomCenterDock" type="PanelContainer" parent="." unique_id=1148051006]

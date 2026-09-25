@@ -1,18 +1,28 @@
-[gd_scene format=3 uid="uid://dm2systemmenu01"]
+[gd_scene load_steps=6 format=3 uid="uid://dm2systemmenu01"]
 
 [ext_resource type="Script" uid="uid://d3rjqtlnu71rk" path="res://ui/system_menu/system_menu_modal.gd" id="1_sysmenu"]
+[ext_resource type="Theme" uid="uid://c7bed85unpl3q" path="res://ui/main_menu/menu_theme.tres" id="2_theme"]
+[ext_resource type="FontFile" uid="uid://bg3xkadvy8j0d" path="res://assets/img/font_text/press_start_2p/PressStart2P.ttf" id="3_font"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main"]
-bg_color = Color(0.08, 0.08, 0.12, 0.98)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.85, 0.65, 0.2, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_separator"]
+color = Color(0.22, 0.74, 0.97, 0.6)
+thickness = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_subpanel"]
+content_margin_left = 14.0
+content_margin_top = 12.0
+content_margin_right = 14.0
+content_margin_bottom = 12.0
+bg_color = Color(0.027, 0.051, 0.098, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.18, 0.42, 0.65, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [node name="SystemMenuModal" type="Control"]
 layout_mode = 3
@@ -21,6 +31,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("2_theme")
 script = ExtResource("1_sysmenu")
 
 [node name="Backdrop" type="ColorRect" parent="."]
@@ -30,7 +41,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.02, 0.02, 0.04, 0.92)
+color = Color(0.015, 0.02, 0.035, 0.88)
 
 [node name="PanelMain" type="PanelContainer" parent="."]
 layout_mode = 1
@@ -39,20 +50,19 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -260.0
-offset_top = -240.0
-offset_right = 260.0
-offset_bottom = 240.0
+offset_left = -280.0
+offset_top = -260.0
+offset_right = 280.0
+offset_bottom = 260.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_main")
 
 [node name="Margin" type="MarginContainer" parent="PanelMain"]
 layout_mode = 2
 theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 20
+theme_override_constants/margin_top = 22
 theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 20
+theme_override_constants/margin_bottom = 22
 
 [node name="VBox" type="VBoxContainer" parent="PanelMain/Margin"]
 layout_mode = 2
@@ -60,51 +70,67 @@ theme_override_constants/separation = 14
 
 [node name="LabelTitle" type="Label" parent="PanelMain/Margin/VBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(1, 0.85, 0.25, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 16
 text = "MENU DI SISTEMA"
 horizontal_alignment = 1
 
 [node name="LabelSubtitle" type="Label" parent="PanelMain/Margin/VBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 9
 text = "Pausa di Gioco — World-tour"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="PanelMain/Margin/VBox"]
 layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_separator")
 
 [node name="VBoxMenu" type="VBoxContainer" parent="PanelMain/Margin/VBox"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
 [node name="BtnResume" type="Button" parent="PanelMain/Margin/VBox/VBoxMenu"]
-custom_minimum_size = Vector2(0, 42)
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 10
 text = "1. Riprendi Partita (Esc)"
 
 [node name="BtnSave" type="Button" parent="PanelMain/Margin/VBox/VBoxMenu"]
-custom_minimum_size = Vector2(0, 42)
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 10
 text = "2. Salva Partita"
 
 [node name="BtnCareerStats" type="Button" parent="PanelMain/Margin/VBox/VBoxMenu"]
-custom_minimum_size = Vector2(0, 42)
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 10
 text = "3. Statistiche di Carriera"
 
 [node name="BtnSettings" type="Button" parent="PanelMain/Margin/VBox/VBoxMenu"]
-custom_minimum_size = Vector2(0, 42)
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 10
 text = "4. Impostazioni & Accessibilità"
 
 [node name="BtnMainMenu" type="Button" parent="PanelMain/Margin/VBox/VBoxMenu"]
-custom_minimum_size = Vector2(0, 42)
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 10
 text = "5. Torna al Menu Principale"
 
 [node name="PanelCareerStats" type="PanelContainer" parent="PanelMain/Margin/VBox"]
 visible = false
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_subpanel")
 
 [node name="Margin" type="MarginContainer" parent="PanelMain/Margin/VBox/PanelCareerStats"]
 layout_mode = 2
@@ -119,7 +145,9 @@ theme_override_constants/separation = 10
 
 [node name="LabelStatsTitle" type="Label" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(1, 0.85, 0.25, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 12
 text = "Statistiche Globali di Carriera"
 horizontal_alignment = 1
 
@@ -134,49 +162,57 @@ theme_override_constants/separation = 8
 
 [node name="LabelLifeTitle" type="Label" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats/ScrollStats/VBoxContent"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.75, 0.3, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.22, 0.74, 0.97, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 9
 text = "[ 1. Vita & Routine ]"
 
 [node name="LabelLifeStats" type="Label" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats/ScrollStats/VBoxContent"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 8
 text = "Caricamento statistiche..."
 autowrap_mode = 2
 
 [node name="LabelMusicTitle" type="Label" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats/ScrollStats/VBoxContent"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.75, 0.3, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.22, 0.74, 0.97, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 9
 text = "[ 2. Musica & Discografia ]"
 
 [node name="LabelMusicStats" type="Label" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats/ScrollStats/VBoxContent"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 8
 text = "Caricamento statistiche..."
 autowrap_mode = 2
 
 [node name="LabelLiveTitle" type="Label" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats/ScrollStats/VBoxContent"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.75, 0.3, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.22, 0.74, 0.97, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 9
 text = "[ 3. Palco & Tournée ]"
 
 [node name="LabelLiveStats" type="Label" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats/ScrollStats/VBoxContent"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 8
 text = "Caricamento statistiche..."
 autowrap_mode = 2
 
 [node name="LabelGloryTitle" type="Label" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats/ScrollStats/VBoxContent"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.75, 0.3, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.22, 0.74, 0.97, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 9
 text = "[ 4. Fandom & Riconoscimenti ]"
 
 [node name="LabelGloryStats" type="Label" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats/ScrollStats/VBoxContent"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 8
 text = "Caricamento statistiche..."
 autowrap_mode = 2
 
@@ -185,20 +221,25 @@ layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="BtnReadSpeech" type="Button" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats/HBoxStatsButtons"]
-custom_minimum_size = Vector2(0, 36)
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Ascolta Riepilogo (R)"
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 9
+text = "Ascolta (R)"
 
 [node name="BtnBackStats" type="Button" parent="PanelMain/Margin/VBox/PanelCareerStats/Margin/VBoxCareerStats/HBoxStatsButtons"]
-custom_minimum_size = Vector2(0, 36)
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Torna al Menu (Esc)"
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 9
+text = "Indietro (Esc)"
 
 [node name="PanelSettings" type="PanelContainer" parent="PanelMain/Margin/VBox"]
 visible = false
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_subpanel")
 
 [node name="Margin" type="MarginContainer" parent="PanelMain/Margin/VBox/PanelSettings"]
 layout_mode = 2
@@ -213,13 +254,16 @@ theme_override_constants/separation = 10
 
 [node name="LabelSettingsTitle" type="Label" parent="PanelMain/Margin/VBox/PanelSettings/Margin/VBoxSettings"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(1, 0.85, 0.25, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 12
 text = "Impostazioni & Accessibilità"
 horizontal_alignment = 1
 
 [node name="LabelAudioInfo" type="Label" parent="PanelMain/Margin/VBox/PanelSettings/Margin/VBoxSettings"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 8
 text = "Audio: Calibrato su 0.75f (Ducking Vocale Attivo)"
 
 [node name="HBoxLang" type="HBoxContainer" parent="PanelMain/Margin/VBox/PanelSettings/Margin/VBoxSettings"]
@@ -228,11 +272,15 @@ layout_mode = 2
 [node name="LabelLang" type="Label" parent="PanelMain/Margin/VBox/PanelSettings/Margin/VBoxSettings/HBoxLang"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 9
 text = "Lingua:"
 
 [node name="OptLang" type="OptionButton" parent="PanelMain/Margin/VBox/PanelSettings/Margin/VBoxSettings/HBoxLang"]
-custom_minimum_size = Vector2(140, 0)
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 9
 
 [node name="HBoxDayDuration" type="HBoxContainer" parent="PanelMain/Margin/VBox/PanelSettings/Margin/VBoxSettings"]
 layout_mode = 2
@@ -240,20 +288,27 @@ layout_mode = 2
 [node name="LabelDayDuration" type="Label" parent="PanelMain/Margin/VBox/PanelSettings/Margin/VBoxSettings/HBoxDayDuration"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Durata Giornata:"
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 9
+text = "Durata Giorno:"
 
 [node name="OptDayDuration" type="OptionButton" parent="PanelMain/Margin/VBox/PanelSettings/Margin/VBoxSettings/HBoxDayDuration"]
-custom_minimum_size = Vector2(140, 0)
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 9
 
 [node name="BtnBackSettings" type="Button" parent="PanelMain/Margin/VBox/PanelSettings/Margin/VBoxSettings"]
-custom_minimum_size = Vector2(0, 36)
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
-text = "Torna al Menu di Sistema"
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 9
+text = "Torna al Menu (Esc)"
 
 [node name="LabelFeedback" type="Label" parent="PanelMain/Margin/VBox"]
 custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.2, 0.85, 0.4, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.2, 1, 0.5, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 9
 horizontal_alignment = 1

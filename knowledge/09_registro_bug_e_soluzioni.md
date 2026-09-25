@@ -325,9 +325,33 @@ Questo registro contiene soltanto problemi tecnici confermati e soluzioni con ev
   2. Inserimento di `BtnDockBand` ("5 Band") con texture `band_icon.png`, collegamento al `BandHubModal`, `focus_mode = 0` (Zero Focus Drop) e mappatura tasto `5` in `apartment.gd` (conservando `KEY_B`).
   3. Adozione di `content_margin` (14 px orizzontale, 12 px verticale) negli StyleBox, rimozione di `expand_margin`, pulsanti temporali impostati con `size_flags_horizontal = 3` a tutta larghezza e altezza 38 px, barre vitali ad altezza 18 px e ritratto 120x120.
   4. Suite `test_apartment_gameplay.gd` espansa a 102 asserzioni con test unitario per `BtnDockBand` e verifica matematica di clearance a 0 ms (`dialogue_right < dock_left` e `clearance >= 80 px`). 30/30 suite headless verdi a 0 ms.
+### BUG-019 (RRU-25) — Canvas Padding Eccessivo nell'Icona Band, Altezza Invasiva Dialogue Box e Allineamento Stile Menu di Sistema (V5.5.1)
+
+- Data e componente: `2026-09-25`, `assets/img/gameplay/GUI/Elementi/band_icon.png`, `ui/apartment_hud/apartment_hud.tscn`, `ui/system_menu/system_menu_modal.tscn` (Versione AVF `V5.5.1`).
+- Sintomi osservati:
+  1. L'icona del pulsante Band (`band_icon.png`) appariva visivamente minuscola e sproporzionata all'interno del dock rispetto a `Personale.png`, `Creazione.png`, `Carriera.png` e `Strumenti.png`.
+  2. Il pannello di dialogo e ispezione in basso a sinistra (`BottomLeftDialogue`) torreggiava verso l'alto con un'altezza di 220 px (`offset_top = -240.0`), coprendo una porzione eccessiva della visuale isometrica della stanza (letto, chitarra e pavimentazione).
+  3. Il Menu di Sistema (`SystemMenuModal`, tasto Esc) manteneva uno stile generico dorato e pulsanti grigi standard di Godot, risultando stilisticamente disallineato rispetto al nuovo Menu Principale pixel-art retrò arcade.
+  4. I pulsanti tempo (`BtnTimePause`, `BtnTimeSpeed`, `BtnTimeSleep`) avevano una forma allungata e schiacciata a striscia (136x38 px), con le icone quadrate galleggianti al centro e ampi spazi vuoti laterali.
+- Evidenza riproducibile:
+  1. L'immagine originale `band_icon.png` (2400x1309 px) conteneva oltre 760 px di canvas trasparente vuoto a sinistra e a destra, riducendo l'area grafica effettiva a un terzo della larghezza del pulsante con `expand_icon = true`.
+  2. `BottomLeftDialogue` esteso fino a Y = 840 (su 1080) era più alto di 105 px rispetto al dock centrale (alto solo 115 px).
+  3. `SystemMenuModal` privo del tema `menu_theme.tres` e del font `PressStart2P.ttf`.
+- Causa radice verificata:
+  1. Mancato ritaglio al vivo (crop lossless) della tela trasparente esterna delle risorse grafiche importate da editor terzi prima dell'inserimento nei pulsanti con proporzioni 1:1.
+  2. Sovradimensionamento verticale del box di dialogo (ritratto 120x145 e min_size 330x75 per il testo) non allineato alla linea di altezza del dock centrale.
+  3. Mancata propagazione del tema universale del gioco (`menu_theme.tres`) alla scena della finestra modale di sistema.
+  4. Pulsanti temporali vincolati da `size_flags_horizontal = 3` forzati a riempire l'intero contenitore anziché mantenere una forma quadrata compatta ed ergonomica in stile registratore a cassette (tape-deck).
+- Soluzione applicata:
+  1. Ritaglio lossless di `band_icon.png` sul bounding box opaco effettivo ($884 \times 900$ px), uniformandola perfettamente alla scala quadrata 1:1 delle altre 4 icone del dock.
+  2. Compattamento di `BottomLeftDialogue`: altezza ridotta a 120 px (`offset_top = -140.0`, allineato al dock a 115 px), larghezza fissata a 406 px (`offset_right = 430.0`), ritratto ridotto a $84 \times 84$ px e testo a 9 px su 2-3 righe con autowrap proporzionato. Clearance libera aumentata a **218.0 pixel** (> 80 px).
+  3. Assegnazione del tema `menu_theme.tres` a `SystemMenuModal`, font retrò `PressStart2P.ttf`, bordo neon ciano `#38bdf8` con glow a 12 px, sfondo blu notte `#0c1527` e pulsanti neon arcade da 44 px con font a 10 px.
+  4. Ricalibrazione dei pulsanti tempo (`BtnTimePause`, `BtnTimeSpeed`, `BtnTimeSleep`) a bottoni compatti da $56 \times 44$ px centrati orizzontalmente in `HBoxTimeControls`.
+  5. Convalida con 107/107 test in `test_apartment_gameplay.gd`, 67/67 test in `test_v5_ui_overhaul.gd` e 30/30 suite headless complessive a 0 errori e 0 ms.
 - Misure di prevenzione delle regressioni:
-  * Nelle interfacce HUD con blocchi orizzontali concorrenti, garantire sempre una clearance geometrica minima di sicurezza >= 80 px calcolata deterministicamente nei test headless;
-  * Per il padding interno dei pannelli `PanelContainer`, preferire tassativamente `content_margin` integrato nello `StyleBoxFlat` rispetto ad `expand_margin` (che distorce la geometria esterna);
-  * I controlli interni ai box informativi devono impiegare `size_flags_horizontal = 3` e `size_flags_vertical = 3` per distribuire uniformemente gli spazi ed evitare vuoti anti-estetici.
+  * Tutte le icone per pulsanti quadrati devono essere rigorosamente ritagliate al vivo sul bordo opaco prima dell'importazione in Godot per evitare riduzioni di scala involontarie;
+  * Nelle interfacce di gioco 2.5D, i pannelli HUD periferici devono allinearsi alle altezze di base delle barre adiacenti per preservare la massima area calpestabile visibile;
+  * Le finestre modali di sistema e menu di pausa devono sempre ereditare il tema centrale dell'applicazione (`menu_theme.tres`) per garantire coerenza stilistica e accessibilità unificata.
+
 
 
