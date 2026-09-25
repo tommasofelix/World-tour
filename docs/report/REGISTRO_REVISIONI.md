@@ -11,7 +11,26 @@ Questo documento costituisce il **Registro Attivo Snello** del progetto World-to
 
 ## 📋 REVISIONI ATTIVE IN CORSO
 
-*Nessuna anomalia o revisione aperta al momento. Tutte le revisioni pregresse sono state validate e archiviate in [`ARCHIVIO_REVISIONI.md`](./archivio/ARCHIVIO_REVISIONI.md).*
+### 🟢 RRU-22 — Ricostruzione Planimetria Isometrica Modulare & Blindatura Anti-Freeze Runtime
+- **Stato**: `[CONVALIDATA / ARCHIVIATA]`
+- **Data Rilevamento**: 2026-09-24
+- **Problema Riscontrato (Esperienza Utente NVDA & Holy Diver)**:
+  1. Appartamento visivamente disconnesso: pavimento composto da tessere slegate; pareti a diverse altezze; arredi disallineati nel vuoto.
+  2. Blocco / freeze del gioco dovuto a slittamento HUD a coordinate negative (-1049, -2161) con modali fuori schermo in pausa FSM.
+- **Evidenza Telemetrica / Log**:
+  - Risolto: offset HUD ripristinati a Full Rect; nodi arredi resi concentrici rispetto alle radici mondiali.
+  - Risolto: ricalibrazione hitbox per evitare deadlock del collider solido prima dell'Area2D trigger; stand-point calpestabile per auto-walk.
+  - Risolto: mouse hover con cursore a manina e click sinistro con auto-walk per Holy Diver (The Sims style).
+  - Risolto: ricalibrazione collisione tavolino e promozione cassa monitor a Stereo interattivo (+5 morale, -5 stress).
+- **Causa Radice**: Offset locali spuri dei nodi figli rispetto alla radice in Godot editor 2D, collider solido più largo del trigger raggio 48, HUD offset fuori schermo.
+- **Soluzione di Affinamento (PRAPI - Convalidata)**:
+  1. Normalizzazione concentrica dei 10 arredi interattivi con Y-Sorting matematico.
+  2. Hitbox clearance estesa di 25-35 px oltre i corpi solidi.
+  3. Cursore a manina e click sinistro mouse per Holy Diver.
+  4. Ricalibrazione tavolino e stereo interattivo.
+  5. Centratura HUD e 68/68 test dedicati superati con 0 errori.
+- **Piano Tecnico di Riferimento**: [`docs/piani/completati/PIANO_GAMEPLAY_GRAFICO_APPARTAMENTO.md`](../piani/completati/PIANO_GAMEPLAY_GRAFICO_APPARTAMENTO.md)
+- **Esito Collaudo**: `[x] [CONVALIDATO CON SUCCESSO]` da Luca (NVDA) e Holy Diver (monitor/mouse); 30/30 suite di test headless convalidate con 0 errori a 0 ms. Release V5.4.0.
 
 ---
 

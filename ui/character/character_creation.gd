@@ -246,13 +246,13 @@ func _on_start_pressed() -> void:
 		GameManager.start_new_game(p_name, inst_name, bg_id, false, p_stage, p_age, tr_id)
 		
 	AccessibilityManager.announce("Carriera iniziata! Benvenuto nel mondo della musica, %s." % (p_stage if not p_stage.is_empty() else p_name), true)
-	get_tree().change_scene_to_file("res://ui/hud/hud.tscn")
+	get_tree().change_scene_to_file("res://scenes/apartment/apartment.tscn")
 
 func _on_quick_default_pressed() -> void:
 	if GameManager:
 		GameManager.start_new_game("Alex", "Chitarra Elettrica", "self_taught", false, "", 20, "charismatic")
 	AccessibilityManager.announce("Avvio predefinito completato. Benvenuto Alex!", true)
-	get_tree().change_scene_to_file("res://ui/hud/hud.tscn")
+	get_tree().change_scene_to_file("res://scenes/apartment/apartment.tscn")
 
 func _on_back_pressed() -> void:
 	get_tree().change_scene_to_file("res://ui/main_menu/main_menu.tscn")

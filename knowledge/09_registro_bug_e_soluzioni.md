@@ -250,3 +250,59 @@ Questo registro contiene soltanto problemi tecnici confermati e soluzioni con ev
 - Test automatici eseguiti: 33/33 test superati in `test_main_menu.gd` e 29/29 suite headless complessive dell'intero progetto superate con 0 errori, 0 warning e 0 ms.
 - Misure di prevenzione delle regressioni: Nei controller UI, qualsiasi cambio globale di scena (`change_scene_to_file` o `change_scene_to_packed`) scatenato da pulsanti, dialoghi modali o segnali di gioco deve essere obbligatoriamente invocato tramite `.call_deferred(...)`.
 
+### BUG-016 (RRU-22) — Disallineamento Collider Istanziali 2.5D, Hitbox Deadlock & Coordinate HUD Off-Screen (V5.4.0)
+
+- Data e componente: `2026-09-24`, `scenes/apartment/apartment.tscn`, `scenes/apartment/interactive_prop.gd`, `ui/apartment_hud/apartment_hud.tscn`, `tests/test_apartment_gameplay.gd` (Versione AVF `V5.4.0`).
+- Sintomi osservati:
+  1. Collisione del tavolino (`CoffeeTable`) bloccante e sfasata, con collisioni duplicate e poligoni asimmetrici che ostacolavano il passaggio fluido di Alex nel loft.
+  2. Impossibilità per Holy Diver di cliccare o interagire con arredi chiave (stereo, tavolino) e auto-walk che sbatteva contro gli ostacoli fisici senza innescare l'interazione.
+  3. Modali e viste dell'HUD dell'appartamento renderizzate completamente fuori dallo schermo visibile a causa di offset storici negativi anomali (`offset_top = -2161`, `offset_bottom = -1049`).
+- Evidenza riproducibile: Apertura della scena dell'appartamento nell'editor o avvio runtime, tentativo di click del mouse sugli arredi o movimento verso il letto/stereo.
+- Causa radice verificata:
+  1. Nelle scene 2D con nodi istanziati e modificati (`[editable path="..."]`), le collisioni modificate graficamente subiscono drift rispetto al centro dell'arredo, e l'aggiunta di poligoni concorrenti crea collisioni spurie.
+  2. Hitbox clearance assente o negativa: l'area sensibile di trigger (`Area2D`) aveva raggio uguale o inferiore alla sagoma solida (`StaticBody2D`), facendo urtare i piedi del personaggio contro la barriera fisica prima di toccare l'area di trigger, bloccando l'emissione del segnale `body_entered` (Hitbox Deadlock).
+  3. L'auto-walk verso il bersaglio puntava a `global_position` dell'arredo, che coincideva con il centro dell'ostacolo solido; senza punto di arrivo calpestabile antistante, il movimento falliva o scivolava.
+  4. L'istanza dell'HUD ereditava ancoraggi e coordinate assolute obsolete invece del Full Rect `(0, 0, 0, 0)`.
+- Soluzione applicata:
+  1. Normalizzazione concentrica dei prop: radice dell'arredo alle coordinate del mondo, `Sprite2D` e collider centrati concentricamente o posizionati alla base d'appoggio. Sostituzione dei poligoni del tavolino con un `RectangleShape2D` pulito (70x24 a offset `(-6, 50)`).
+  2. Promozione dello stereo a `InteractiveProp` con trigger radius di 55 px (clearance >= 25 px rispetto alla base solida) e bonus morale (+5) / relax stress (-5).
+  3. Implementazione di `get_stand_position()` con `stand_offset` in `InteractiveProp` per guidare l'auto-walk verso lo spazio libero antistante.
+  4. Reset completo degli ancoraggi e offset di `ApartmentHud` in `apartment.tscn` a Full Rect `(0, 0, 0, 0)`.
+  5. Integrazione dei gestori mouse (`mouse_entered`, `mouse_exited`, `_input_event`) con icona a manina (`CURSOR_POINTING_HAND`) e click per Holy Diver, preservando il 100% dell'accessibilità tastiera/NVDA per Luca.
+- Test automatici eseguiti: 68/68 test superati in `test_apartment_gameplay.gd` e 30/30 suite headless complessive superate con 0 errori a 0 ms.
+- Misure di prevenzione delle regressioni: Negli arredi interattivi 2.5D, garantire sempre clearance minima di 25–35 px tra trigger sensibile e collider solido, esporre un punto di stazionamento antistante e verificare che i controlli `CanvasLayer` abbiano offset Full Rect a zero.
+
+### BUG-017 (RRU-23) — Disassamento Radici 2.5D, Falso Arrivo da Stallo Auto-Walk, Metodi Temporali Mancanti e Differenziazione Azioni Domestiche (V5.4.1)
+
+- Data e componente: `2026-09-25`, `scenes/apartment/apartment.tscn`, `scenes/apartment/player_alex.gd`, `systems/time_system.gd`, `ui/apartment_hud/apartment_hud.gd`, `scenes/apartment/interactive_prop.tscn`, `scenes/apartment/interactive_prop.gd`, `tests/test_apartment_gameplay.gd` (Versione AVF `V5.4.1`).
+- Sintomi osservati:
+  1. All'interazione o click su un oggetto distante, il menu d'interazione si apriva quasi immediatamente anche con Alex lontano (Punto 0).
+  2. Impossibilità di utilizzare correttamente il letto per dormire o riposare per assenza dei metodi temporali attesi dall'HUD (Punto 1).
+  3. Interazioni fuori luogo o ridondanti: l'interazione con il divano offriva di "Prendere un caffè", aprendo la generica `relax_modal` con opzioni incongruenti per l'ambiente domestico del loft (Punto 2).
+  4. L'impianto stereo del loft poteva solo essere acceso, mancando uno stato bistabile per spegnerlo (Punto 3).
+  5. Avvicinandosi agli arredi persisteva a video un'etichetta fluttuante obsoleta `[SPAZIO]` che creava inquinamento visivo (Punto 4).
+- Evidenza riproducibile:
+  1. Click o interazione con il letto o il divano da posizione remota: l'auto-walk si fermava contro un ostacolo (`_stuck_timer > 0.35s`) e scatenava erroneamente l'apertura anticipata del menu pur trovandosi a oltre 100 px di distanza.
+  2. Interazione con il letto: `TimeSystem` implementava `skip_to_next_period` e `sleep_early`, mentre l'interfaccia invocava `advance_to_next_period()` e `trigger_sleep_now()`.
+  3. Divano, cucina e giradischi collegati alla medesima `relax_modal` pensata per i locali della mappa cittadina.
+- Causa radice verificata:
+  1. In `apartment.tscn`, le origini `position` dei nodi radice `InteractiveProp` erano collocate con offset anomali fino a 300 px rispetto agli sprite e alle sagome effettive, falsando il calcolo di `distance_to` e `stand_position`.
+  2. In `player_alex.gd`, lo scadere del timer di stallo ostacoli (`_stuck_timer > 0.35s`) considerava l'evento come "arrivo completato", invocando incautamente la callback di apertura menu a prescindere dalla vicinanza reale.
+  3. Mancanza di metodi wrapper di retrocompatibilità ed allineamento nell'API di `TimeSystem`.
+  4. Accoppiamento improprio degli arredi domestici con modali commerciali generiche esterne anziché azioni contestuali immediate a costo zero.
+  5. Mancanza di una variabile di stato bistabile (`is_stereo_on: bool`) per la gestione a levetta On/Off dello stereo.
+  6. Presenza del nodo orfano `Prompt` in `interactive_prop.tscn` non bonificato dopo l'adozione dell'Inspection Box nell'HUD.
+- Soluzione applicata:
+  1. Normalizzazione geometrica millimetrica di tutti i nodi `InteractiveProp` in `apartment.tscn` posizionando la radice alla base d'appoggio sul pavimento ed azzerando gli offset interni; configurazione di `stand_offset` frontali calpestabili esterni alle sagome solide (Contratto D1).
+  2. Riprogettazione di `_process_auto_walk` in `player_alex.gd`: la callback di interazione viene eseguita *esclusivamente* se Alex è nel raggio effettivo (`dist <= 24.0` o `target_prop.is_player_in_range`). In caso di stallo ostacoli (`_stuck_timer > 0.6s`), l'auto-walk viene interrotto, il menu *non* viene aperto e viene emesso l'annuncio vocale: *"Percorso bloccato. Avvicinati manualmente con i tasti di movimento."* (Contratto D2).
+  3. Aggiunti a `systems/time_system.gd` i metodi ufficiali `advance_to_next_period() -> bool` e `trigger_sleep_now() -> void`, integrando nell'HUD la scelta accessibile Notte (sonno diretto) vs Giorno (scelta Z per dormire, X per riposare, Esc per annullare) (Contratto D3).
+  4. Differenziazione contestuale delle interazioni domestiche in `ApartmentHud`: Divano (relax immediato gratuito: -12 stress, +5 morale), Cucina (espresso del loft: +15 energia, -5 stress, 0 €), Giradischi (sessione vinili: +20 morale, -10 stress, 35% scintilla creativa) (Contratto D4).
+  5. Introdotta variabile `is_stereo_on: bool` con toggle On/Off, annunci NVDA e testi di ispezione coerenti (Contratto D4).
+  6. Rimozione definitiva del nodo `Prompt` in `interactive_prop.tscn` e bonifica della variabile `_prompt_node` in `interactive_prop.gd` (Contratto D0 Clean Sweep).
+- Test automatici eseguiti: 84/84 asserzioni superate in `tests/test_apartment_gameplay.gd` e 30/30 suite headless complessive dell'intero progetto superate con 0 errori e 0 ms.
+- Misure di prevenzione delle regressioni:
+  * In Godot 2.5D, la radice del nodo arredo deve coincidere sempre con la base sul piano di camminamento;
+  * L'arresto per stallo di navigazione non deve mai essere trattato come arrivo a bersaglio;
+  * Le interazioni di riposo domestico devono essere sempre distinte dalle strutture ricettive a pagamento.
+
+

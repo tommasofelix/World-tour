@@ -140,7 +140,7 @@ func _on_load_game_pressed() -> void:
 	var success: bool = SaveManager.load_game()
 	if success:
 		AccessibilityManager.announce("Partita caricata con successo. Accesso alla simulazione.", true)
-		get_tree().change_scene_to_file.call_deferred("res://ui/hud/hud.tscn")
+		get_tree().change_scene_to_file.call_deferred("res://scenes/apartment/apartment.tscn")
 	else:
 		AccessibilityManager.announce("Impossibile caricare la partita salvata.", true)
 
@@ -148,8 +148,8 @@ func _on_quick_start_pressed() -> void:
 	# Inizializza partita in modalità test (con 10 brani dello starter pack e 500 € di liquidità)
 	if GameManager:
 		GameManager.start_new_game("Alex", "Chitarra Elettrica", "self_taught", true)
-	# Avvia HUD di simulazione
-	get_tree().change_scene_to_file.call_deferred("res://ui/hud/hud.tscn")
+	# Avvia scena del loft di New York
+	get_tree().change_scene_to_file.call_deferred("res://scenes/apartment/apartment.tscn")
 
 func _on_settings_pressed() -> void:
 	vbox_menu.visible = false
