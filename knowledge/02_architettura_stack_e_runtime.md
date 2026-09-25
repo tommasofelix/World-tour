@@ -26,7 +26,7 @@
 Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal rendering grafico e progettati per essere testati senza albero di scena (`SceneTree`) tramite test seams deterministici.
 
 1. **Assenza Totale di Latenze Artificiali**: Divieto di impiegare `OS.delay()`, timer di sleep o yield fittizi nei runner di test. Ogni asserzione viene calcolata ed emessa istantaneamente (tempo medio di esecuzione: 0–15 ms per suite).
-2. **Le 30 Suite di Test Headless Validate (Exit Code 0)**:
+2. **Le 31 Suite di Test Headless Validate (Exit Code 0)**:
    - `test_formulas.gd`: formule matematiche, curve XP e bilanciamento;
    - `test_time_system.gd`: orologio, routine giornaliera, passaggio giorno;
    - `test_player_system.gd`: attributi, energia, stress, morale, progressione;
@@ -51,6 +51,7 @@ Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal r
    - `test_industry_system.gd`: contratti discografici, manager, recoupment, riscatto master e propria etichetta discografica (106 test, Sez. 9);
    - `test_media_and_rivals_system.gd`: relazioni rivali approfondite (affinità, co-headlining tour, dissing buzz x1.6), Hit Parade territoriali, tormentone stagionale (x1.35 vendite/stream) e sistema Media Broadcaster con interviste radio/podcast/TV del mattino e di riparazione (50 test, Sez. 10);
    - `test_endgame_and_legacy_system.gd`: Endgame, Grandi Arene & Mega Stadi Mondiali (15k e 65k posti), allestimenti scenici a 4 tier (`StageProductionTier`), certificazioni ufficiali FIMI/RIAA (Oro, Platino, Diamante), cerimonia annuale World Music Awards al Mese 12, Rock and Roll Hall of Fame, concerto celebrativo d'addio "The Last Waltz" ed epiloghi narrativi multipli di fine carriera (87 test, Sez. 11, Versione AVF `V5.0.0`);
+   - `test_skills_and_loft_study_system.gd`: Albero delle Abilità a 6 rami (28 competenze), 5 Gradi di Maestria stellari (Principiante..Maestro Leggendario), 4 attributi fisiologici innati, propedeuticità deterministiche, 4 metodi di studio negli arredi del Loft NYC (manuali, accademia, maestro privato, ascolto vinili con boost di genere) e retrocompatibilità legacy (102 test, Sez. F9.13, Versione AVF `V5.7.0`);
    - Ulteriori suite per i sottosistemi di etichette, tour interurbani, festival estivi e classifiche.
    - *Integrazione Sistemi nel Ciclo di Vita*: Registrazione di `MediaSystem`, `AwardSystem`, `LegacySystem` e dei modelli `MediaOutletData` nel ciclo di vita globale di `GameManager` e nel salvataggio atomico di `SaveManager`.
 
@@ -109,6 +110,10 @@ Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal r
 13. **Discipline di Layout e Padding: `content_margin` vs `expand_margin` in StyleBoxFlat**:
     - **Il Pericolo di `expand_margin`**: In Godot 4, l'uso di `expand_margin_*` su una risorsa `StyleBoxFlat` espande il rettangolo grafico renderizzato *fuori* dai confini geometrici del nodo `Control`. Questo altera la percezione visiva e crea sovrapposizioni o collisioni tra pannelli adiacenti che risultano invisibili al calcolo logico delle coordinate (`offset_*`), provocando sovrapposizioni parziali o artefatti di bordo.
     - **Il Canone di `content_margin`**: Per aggiungere padding interno a un `PanelContainer`, utilizzare tassativamente `content_margin_left`, `content_margin_top`, `content_margin_right` e `content_margin_bottom` sullo `StyleBoxFlat`. Questo approccio preserva la corrispondenza 1:1 tra coordinate del nodo e visuale, garantendo al contempo che i nodi figli ricevano il padding desiderato senza dover inserire nodi `MarginContainer` intermedi, proteggendo i percorsi `get_node()` da rotture.
+
+14. **Disincaglio Sincrono dei Nodi (`remove_child + queue_free`) e Seam Zero-Regressione per Rigenerazioni UI Dinamiche e Test Headless a 0 ms**:
+    - **Disincaglio Dinamico Sincrono**: Quando un container UI (`VBoxContainer`, `HBoxContainer`, `GridContainer`) viene svuotato per ricostruire un elenco (es. rami delle competenze, tracce musicali, contratti discografici), il solo metodo `queue_free()` non altera `get_child_count()` nello stesso frame di esecuzione poiché la distruzione viene accodata a fine frame. L'invocazione preventiva di `container.remove_child(child)` prima di `child.queue_free()` scollega istantaneamente il nodo dall'albero, garantendo determinismo atomico sia nei test headless a 0 ms sia in caso di selezioni rapide da tastiera.
+    - **Seam Zero-Regressione nella Ristrutturazione di Scene Storiche**: Nel refactoring di un'interfaccia preesistente (es. `character_sheet.tscn`) da schermata unica a struttura multi-tab, mantenere intatta la gerarchia dei nodi del Tab 1 primario (es. `PanelMain/VBox/HBoxBody`) e inserire il Tab 2 come fratello opzionale (`PanelTabSkills`), anziché alterare i percorsi assoluti. Questo preserva al 100% le suite di test di integrazione legacy (es. `test_vertical_slice.gd`) che interrogano nodi specifici, prevenendo modifiche a cascata e salvaguardando la regressione verde.
 
 ---
 

@@ -59,6 +59,21 @@ static func get_actions_for_prop(prop_id: String) -> Array[Dictionary]:
 					"xp_skill": "composition",
 					"inspiration_chance": 0.35,
 					"result_message": "Sessione acustica rilassante sul divano (+10 XP Composizione, +10 Morale)!"
+				},
+				{
+					"id": "couch_study_manual",
+					"title": "Studio manuale teorico",
+					"description": "Leggi un testo fondamentale per apprendere le basi o sbloccare una nuova competenza da zero (-12 Energia, +4 Stress, +2 Morale, +35 XP).",
+					"duration_seconds": 10.0,
+					"type": "study_picker",
+					"study_method": 0,
+					"energy_delta": -12,
+					"stress_delta": 4,
+					"morale_delta": 2,
+					"money_cost": 0.0,
+					"xp_amount": 35.0,
+					"xp_skill": "comp_theory",
+					"result_message": "Studio del manuale teorico completato sul divano (+35 XP)!"
 				}
 			]
 
@@ -82,8 +97,8 @@ static func get_actions_for_prop(prop_id: String) -> Array[Dictionary]:
 				},
 				{
 					"id": "guitar_practice",
-					"title": "Scale e riff",
-					"description": "Allenamento tecnico rapido con metronomo (+20 XP Chitarra, -10 Energia).",
+					"title": "Scale e riff alla chitarra",
+					"description": "Pratica tecnica per affinare scale, bending e riff alla chitarra (+20 XP Chitarra, -10 Energia).",
 					"duration_seconds": 10.0,
 					"type": "action",
 					"energy_delta": -10,
@@ -91,8 +106,22 @@ static func get_actions_for_prop(prop_id: String) -> Array[Dictionary]:
 					"morale_delta": 5,
 					"money_cost": 0.0,
 					"xp_amount": 20.0,
-					"xp_skill": "instrument",
-					"result_message": "Sessione intensa di scale e riff terminata (+20 XP Chitarra, -10 Energia)!"
+					"xp_skill": "skill_guitar",
+					"result_message": "Esercizio alla chitarra completato: +20 XP Chitarra, -10 Energia, +3 Stress, +5 Morale!"
+				},
+				{
+					"id": "guitar_mentor_lesson",
+					"title": "Lezione di chitarra col Maestro",
+					"description": "Masterclass intensiva di chitarra a domicilio con un maestro professionista (Costo 50.00 €, +75 XP Chitarra, -22 Energia).",
+					"duration_seconds": 12.0,
+					"type": "action",
+					"energy_delta": -22,
+					"stress_delta": 8,
+					"morale_delta": 10,
+					"money_cost": 50.0,
+					"xp_amount": 75.0,
+					"xp_skill": "skill_guitar",
+					"result_message": "Lezione di chitarra col Maestro completata: +75 XP Chitarra, -50.00 €, -22 Energia, +10 Morale!"
 				},
 				{
 					"id": "guitar_tune",
@@ -182,18 +211,78 @@ static func get_actions_for_prop(prop_id: String) -> Array[Dictionary]:
 					"result_message": "Il calore analogico del vinile risuona nel loft, sciogliendo la tensione (+20 Morale, -10 Stress)!"
 				},
 				{
+					"id": "turntable_listen_rock",
+					"title": "Vinile Classic Rock",
+					"description": "Ascolto rock energico (+20 Morale, -10 Stress, 35% Scintilla, +25 XP Rock Classico).",
+					"duration_seconds": 12.0,
+					"type": "action",
+					"energy_delta": 0,
+					"stress_delta": -10,
+					"morale_delta": 20,
+					"money_cost": 0.0,
+					"inspiration_chance": 0.35,
+					"xp_amount": 25.0,
+					"xp_skill": "genre_rock",
+					"result_message": "Ascolto Classic Rock completato: sound energico assorbito (+25 XP Rock Classico, +20 Morale, -10 Stress)!"
+				},
+				{
+					"id": "turntable_listen_metal",
+					"title": "Vinile Heavy Metal",
+					"description": "Riff veloci e doppia cassa tellurica (+20 Morale, -10 Stress, 35% Scintilla, +25 XP Heavy Metal).",
+					"duration_seconds": 12.0,
+					"type": "action",
+					"energy_delta": 0,
+					"stress_delta": -10,
+					"morale_delta": 20,
+					"money_cost": 0.0,
+					"inspiration_chance": 0.35,
+					"xp_amount": 25.0,
+					"xp_skill": "genre_metal",
+					"result_message": "Ascolto Heavy Metal completato: riff potenti e attacco metallico (+25 XP Heavy Metal)!"
+				},
+				{
+					"id": "turntable_listen_blues",
+					"title": "Vinile Blues & Roots",
+					"description": "Feeling viscerale e pentatoniche (+20 Morale, -10 Stress, 35% Scintilla, +25 XP Blues & Roots).",
+					"duration_seconds": 12.0,
+					"type": "action",
+					"energy_delta": 0,
+					"stress_delta": -10,
+					"morale_delta": 20,
+					"money_cost": 0.0,
+					"inspiration_chance": 0.35,
+					"xp_amount": 25.0,
+					"xp_skill": "genre_blues",
+					"result_message": "Ascolto Blues completato: calore e malinconia viscerale (+25 XP Blues & Roots)!"
+				},
+				{
+					"id": "turntable_listen_jazz",
+					"title": "Vinile Jazz & Fusion",
+					"description": "Accordi estesi e tempi dispari (+20 Morale, -10 Stress, 35% Scintilla, +25 XP Jazz & Fusion).",
+					"duration_seconds": 12.0,
+					"type": "action",
+					"energy_delta": 0,
+					"stress_delta": -10,
+					"morale_delta": 20,
+					"money_cost": 0.0,
+					"inspiration_chance": 0.35,
+					"xp_amount": 25.0,
+					"xp_skill": "genre_jazz",
+					"result_message": "Ascolto Jazz completato: armonie avanzate metabolizzate (+25 XP Jazz & Fusion)!"
+				},
+				{
 					"id": "turntable_study",
 					"title": "Studio produzione",
-					"description": "Ascolto analitico delle frequenze e degli arrangiamenti (+15 XP Produzione).",
+					"description": "Ascolto analitico delle frequenze e degli arrangiamenti (+25 XP Produzione).",
 					"duration_seconds": 10.0,
 					"type": "action",
 					"energy_delta": -5,
 					"stress_delta": 0,
 					"morale_delta": 5,
 					"money_cost": 0.0,
-					"xp_amount": 15.0,
-					"xp_skill": "production",
-					"result_message": "Analisi critica completata: nuove tecniche di missaggio apprese (+15 XP Produzione)!"
+					"xp_amount": 25.0,
+					"xp_skill": "tech_production",
+					"result_message": "Analisi critica completata: nuove tecniche di missaggio apprese (+25 XP Produzione)!"
 				}
 			]
 
@@ -314,28 +403,30 @@ static func get_actions_for_prop(prop_id: String) -> Array[Dictionary]:
 				{
 					"id": "toolbox_check",
 					"title": "Controllo cavi/jack",
-					"description": "Verifica l'integrità dei contatti e l'assenza di fruscii (+5 XP Live).",
+					"description": "Verifica l'integrità dei contatti e l'assenza di fruscii (+10 XP Tecnico Suono Live).",
 					"duration_seconds": 5.0,
 					"type": "action",
 					"energy_delta": -2,
 					"stress_delta": -2,
 					"morale_delta": 5,
 					"money_cost": 0.0,
-					"xp_amount": 5.0,
-					"xp_skill": "live_performance",
-					"result_message": "Cavi jack e connessioni testati: nessun ronzio o dispersione (+5 XP Live, +5 Morale)!"
+					"xp_amount": 10.0,
+					"xp_skill": "tech_live_sound",
+					"result_message": "Cavi jack e connessioni testati: nessun ronzio o dispersione (+10 XP Tecnico Suono Live, +5 Morale)!"
 				},
 				{
 					"id": "toolbox_maintain",
 					"title": "Set-up chitarra",
-					"description": "Pulisci i potenziometri e regola l'action del manico (-5 Energia, +10 Morale).",
+					"description": "Pulisci i potenziometri e regola l'action del manico (-5 Energia, +10 Morale, +15 XP Liuteria).",
 					"duration_seconds": 10.0,
 					"type": "action",
 					"energy_delta": -5,
 					"stress_delta": -5,
 					"morale_delta": 10,
 					"money_cost": 0.0,
-					"result_message": "Set-up chitarra completato: action perfetta e tastiera pulita (-5 Energia, +10 Morale)!"
+					"xp_amount": 15.0,
+					"xp_skill": "tech_lutherie",
+					"result_message": "Set-up chitarra completato: action perfetta e tastiera pulita (-5 Energia, +10 Morale, +15 XP Liuteria)!"
 				}
 			]
 
@@ -380,6 +471,21 @@ static func get_actions_for_prop(prop_id: String) -> Array[Dictionary]:
 					"duration_seconds": 0.0,
 					"type": "modal",
 					"modal_name": "FestivalModal"
+				},
+				{
+					"id": "door_academy_course",
+					"title": "Corso in Accademia",
+					"description": "Frequenta una masterclass pomeridiana al conservatorio su una competenza a scelta (Costo 30.00 €, -18 Energia, +5 Morale, +50 XP).",
+					"duration_seconds": 12.0,
+					"type": "study_picker",
+					"study_method": 1,
+					"energy_delta": -18,
+					"stress_delta": 0,
+					"morale_delta": 5,
+					"money_cost": 30.0,
+					"xp_amount": 50.0,
+					"xp_skill": "comp_theory",
+					"result_message": "Masterclass in Accademia completata con profitto (+50 XP, -30.00 €)!"
 				}
 			]
 

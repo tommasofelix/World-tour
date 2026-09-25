@@ -4,6 +4,80 @@ Le modifiche rilevanti sono registrate in ordine cronologico inverso. Una voce d
 
 ## Non rilasciato
 
+### 2026-09-25 — Ottimizzazione Sistemica Azioni-Skill, Studio Selettivo a 31 Abilità & Pratica Multi-Strumento: Versione 5.8.0 — Catalogo Ramo 2 (8 Discipline), Selettori Accessibili NVDA & Matrice 4 Metodi di Studio
+- **Espansione Catalogo Competenze a 31 Abilità & 8 Discipline Strumentali/Vocali (Contratto D0)**:
+  - In [`data/models/player_data.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/data/models/player_data.gd), integrate nel Ramo 2 (`instrumental_technique`) tre nuove competenze canoniche: Fiati & Sassofono (`skill_horns`), Archi & Violino (`skill_strings`), Armonica & Strumenti Popolari (`skill_harmonica`), portando il catalogo totale a 31 abilità;
+  - Aggiornata la mappatura bidirezionale di retrocompatibilità (`horns`, `strings`, `harmonica`) e bonificata la chiave spuria `live_performance` reindirizzata a `tech_live_sound`.
+- **Matrice Deterministica dei 4 Metodi di Studio & Cap di Padronanza (Contratto D1)**:
+  - In [`data/models/player_data.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/data/models/player_data.gd), introdotto l'enum `StudyMethodType` (`MANUAL = 0`, `ACADEMY = 1`, `MENTOR = 2`, `PRACTICE = 3`);
+  - Implementato `validate_study_eligibility(skill_id, method)` con regole ferree:
+    - *Manuale/Libro*: unico abilitato a sbloccare Grado 0 -> 1; cap al Grado 2;
+    - *Accademia/Conservatorio*: richiede Grado 1; cap al Grado 3 (costo 30 €);
+    - *Maestro Privato*: richiede Grado 1; cap al Grado 5 (costo 50 €);
+    - *Pratica Strumentale/Vocale*: limitata al Ramo 2, cap al Grado 5;
+    - Restituisce dizionario esplicito `{ "eligible": bool, "reason": String }` per il feedback vocale in tempo reale su NVDA.
+- **Selettore di Pratica Strumentale e Vocale (`InstrumentPracticePicker`) (Contratto D2)**:
+  - Creato componente accessibile in [`ui/interaction_menu/instrument_practice_picker.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/interaction_menu/instrument_practice_picker.gd) che espone le 8 discipline (Chitarra, Canto, Basso, Batteria, Tastiere, Fiati, Archi, Armonica) evidenziando il tag `[STRUMENTO PRINCIPALE]`;
+  - Navigazione Zero Mouse con scorciatoie numeriche dirette `1`..`8` (e tastierino numerico), Frecce Su/Giù, Invio ed Esc; feedback sonori calibrati ad alto contrasto acustico.
+- **Selettore di Studio Generale con Filtro di Idoneità (`SkillStudyPicker`) (Contratto D3)**:
+  - Creato componente accessibile in [`ui/interaction_menu/skill_study_picker.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/interaction_menu/skill_study_picker.gd) che espone tutte le 31 competenze canoniche raggruppate per ramo;
+  - Tasti rapidi di salto ramo (`G`, `S`, `A`, `P`, `T`, `B`, `0` per tutte);
+  - Controllo in tempo reale di idoneità rispetto al metodo di studio con annuncio vocale per le competenze non idonee o con cap raggiunto;
+  - Navigazione con Frecce, Invio ed Esc; emissione del segnale `skill_selected(skill_id, skill_name)`.
+- **Riconnessione Arredi Loft NYC & Vincolo Contestuale Diretto Chitarra (Contratto D4)**:
+  - In [`scenes/apartment/apartment_interactions.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/scenes/apartment/apartment_interactions.gd), vincolate le azioni della chitarra direttamente su `skill_guitar`: "Scale e riff alla chitarra" (+20 XP, 10s) e "Lezione di chitarra col Maestro" (+75 XP, 12s, 50 €) convertite in azioni dirette con durata a 0 sottomenu intermedi;
+  - Conservati i selettori `study_picker` a 31 abilità per lo studio su manuale al Divano (`couch_study_manual`) e per il corso al Conservatorio alla Porta (`door_academy_course`);
+  - Assegnata `tech_lutherie` a `toolbox_maintain` (+15 XP) e `tech_live_sound` a `toolbox_check`.
+- **Sanificazione BottomLeftDialogue & Sincronizzazione 1:1 NVDA (Contratto D5)**:
+  - In [`ui/apartment_hud/apartment_hud.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/apartment_hud/apartment_hud.gd), introdotto `clear_inspection()` per azzerare istantaneamente il buffer e occultare il pannello (`panel_dialogue.visible = false`) durante la navigazione libera e all'apertura di modali o menu interazione, eliminando qualsiasi esposizione di nodi fantasma ad AccessKit;
+  - Riformulato `show_inspection()` con sincronizzazione 1:1 rigorosa tra testo visivo ed emissione vocale TTS;
+  - Eliminato il secondo annuncio duplicato concorrente in `_on_hud_action_completed()`;
+  - In [`scenes/apartment/apartment.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/scenes/apartment/apartment.gd), sincronizzati gli annunci di prossimità e di sfoglio Tab, invocando `hud.clear_inspection()` all'allontanamento dagli arredi.
+- **Suite di Test Dedicata & Blindatura Headless 100% Verde (Contratto D6)**:
+  - Estesa la suite [`tests/test_skills_and_loft_study_system.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/tests/test_skills_and_loft_study_system.gd) a 172 asserzioni verificate a 0 ms con 0 errori;
+  - Convalidate tutte le **31 suite di test del progetto al 100% con 0 errori e 0 ms** (`tools/test.ps1`); 117 file GDScript verificati con 0 errori sintattici in `tools/check.ps1`.
+
+
+
+### 2026-09-25 — Scheda Personaggio a 2 Sezioni con Albero Competenze & Attributi Innati: Versione 5.7.1 — Tabbed Navigation, 4 Attributi Fisiologici, Filtro 6 Rami & Lettura Continua NVDA
+- **Riorganizzazione Scena & Tabbed Navigation (Contratto D0)**:
+  - In [`ui/character/character_sheet.tscn`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/character/character_sheet.tscn), ampliato il pannello principale a $960 \times 620$ px con bordo dorato ad alto contrasto `#c49a45` conforme a WCAG AAA;
+  - Introdotto l'header di navigazione a 2 schede con `BtnTabProfile` ("[1] Profilo & Fisiologia") e `BtnTabSkills` ("[2] Albero Competenze (28 Abilità)");
+  - Conservati i percorsi dei nodi storici in `HBoxBody` per piena retrocompatibilità con i test di integrazione.
+- **Esposizione Attributi Fisiologici Innati in Scheda 1 (Contratto D1)**:
+  - In [`ui/character/character_sheet.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/character/character_sheet.gd), integrati nella colonna destra i 4 attributi fisiologici innati (`musicality`, `intelligence`, `stamina`, `charm`) su scala 1–100 ricavati da `PlayerData`;
+  - Annuncio vocale sintetico per NVDA all'apertura arricchito con i valori degli attributi innati e istruzioni di navigazione rapide.
+- **Consultazione Albero Competenze a 6 Rami in Scheda 2 (Contratto D2)**:
+  - Introdotto il selettore dei 6 rami canonici (`genre_mastery`, `instrumental_technique`, `songwriting_harmony`, `stage_showmanship`, `engineering_hardware`, `industry_business`);
+  - Popolamento dinamico delle sole abilità del ramo attivo (da 3 a 7 abilità per volta) tramite `player.get_branch_skills()`, eliminando qualsiasi sovraccarico cognitivo da "muro di testo" per NVDA;
+  - Ogni competenza è rappresentata da una riga focusabile con frecce Su/Giù che espone nome, grado a stelle (`★☆☆☆☆` a `★★★★★`), XP correnti, XP richiesti e motivazione esplicita in caso di propedeuticità bloccata;
+  - Implementato il metodo `_read_current_branch_summary()` azionabile con tasto **`R`** per la lettura vocale continua dell'intero ramo attivo.
+- **Disaccoppiamento Comandi da Tastiera & Zero Mouse (Contratto D3)**:
+  - Gestione ergonomica in `_unhandled_input`: tasti `1` e `2` (e `KP_1`/`KP_2`) per alternare le schede; tasti `G`, `S`, `A`, `P`, `T`, `B` per selezionare istantaneamente i 6 rami; tasto `R` per il riepilogo vocale; `A` per l'agenda in Scheda 1; `Esc`/`C` per chiudere.
+- **Blindatura Headless & Suite di Test (Contratto D4)**:
+  - Estesa la suite [`tests/test_skills_and_loft_study_system.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/tests/test_skills_and_loft_study_system.gd) con `test_character_sheet_tabbed_skills_tree()`, portando a 128 asserzioni convalidate a 0 ms;
+  - Convalidate tutte le **31 suite di test del progetto al 100% con 0 errori e 0 ms** (`tools/test.ps1`); 115 file GDScript verificati con 0 errori sintattici in `tools/check.ps1`.
+
+### 2026-09-25 — Albero delle Abilità a 6 Rami, 5 Gradi di Maestria & 4 Metodi di Studio nel Loft NYC: Versione 5.7.0 — Attributi Innati, Studio Manuali, Accademia, Maestro Privato & Ascolto Vinili
+- **Albero delle Abilità a 6 Rami & 5 Gradi di Maestria (Contratti D0, D1, D2)**:
+  - In [`data/models/player_data.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/data/models/player_data.gd), introdotti i 4 attributi fisiologici innati (`musicality`, `intelligence`, `stamina`, `charm`) su scala 1–100 con relativi getter e modificatori;
+  - Integrato il dizionario `skill_tree` strutturato in 6 rami canonici (`genre`, `instrument`, `composition`, `stagecraft`, `production`, `business`) per complessive 28 abilità canoniche;
+  - Definita la progressione a 5 gradi di padronanza stellari (`★☆☆☆☆` Principiante a 100 XP, `★★☆☆☆` Praticante a 250 XP, `★★★☆☆` Professionista a 500 XP, `★★★★☆` Virtuoso a 1000 XP, `★★★★★` Maestro Leggendario con cap a 2000 XP);
+  - Implementata logica deterministica di propedeuticità ad albero con `can_unlock_skill()`, `get_skill_prerequisites()` e accumulo XP protetto con `add_skill_tree_xp()`;
+  - Retrocompatibilità trasparente garantita con il dizionario `skills` storico tramite mappatura bidirezionale in `get_skill_level()` e `add_xp_to_skill()`;
+  - Serializzazione e deserializzazione atomica persistente in `to_dict()` e `from_dict()`.
+- **Integrazione dei 4 Metodi di Studio negli Arredi del Loft NYC (Contratto D3)**:
+  - In [`scenes/apartment/apartment_interactions.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/scenes/apartment/apartment_interactions.gd):
+    - *Manuale sul Divano* (`couch_study_manual`): studio gratuito dei fondamenti teorici (10s, 0 €, +35 XP `comp_theory`);
+    - *Accademia alla Porta* (`door_academy_course`): corso intensivo formale fino al Grado 3 (12s, 30 €, +45 XP `comp_theory`);
+    - *Maestro Privato alla Chitarra* (`guitar_mentor_lesson`): lezione specialistica ad alto rendimento fino al Grado 5 (12s, 50 €, +75 XP `skill_guitar`);
+    - *Pratica e Ascolto Vinili al Giradischi* (`turntable_listen_rock`, `turntable_listen_metal`, `turntable_listen_blues`, `turntable_listen_jazz`, `turntable_study`): sessioni di ascolto attivo (12s, 0 €, +20 morale, -10 stress, 35% scintilla creativa) con attribuzione passiva di +25 XP nella competenza di genere musicale corrispondente o produzione tecnica.
+- **Dispacciamento Azioni & Notifiche Grado Stellare NVDA (Contratto D4)**:
+  - In [`systems/action_system.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/systems/action_system.gd), esteso il calcolo del completamento azioni con notifica vocale immediata e lineare del passaggio di grado a stelle (es. "Salito di grado! ★★★☆☆ (Grado 3: Professionista)").
+- **Nuova Suite di Test Headless Dedicata & Blindatura Globale (Contratto D5)**:
+  - Creata la suite [`tests/test_skills_and_loft_study_system.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/tests/test_skills_and_loft_study_system.gd) e la scena [`tests/test_skills_and_loft_study_system.tscn`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/tests/test_skills_and_loft_study_system.tscn) con 102 asserzioni verificate con 0 errori a 0 ms;
+  - Convalidate tutte le **31 suite di test su 31 del progetto al 100% con 0 errori e 0 ms** (`tools/test.ps1`); 114 file GDScript convalidati con 0 errori sintattici in `tools/check.ps1`.
+
 ### 2026-09-25 — Riposo Breve Calibrato a 5s, Fluidità Cinetica Zero-Stop & Restyle Menu Interazione: Versione 5.6.4 — FSM BUSY, Pre-caching Audio Cue, Tipografia Ingrandita & WCAG AAA
 - **Calibrazione Riposo Breve 5s & Avanzamento Temporale Differito (Contratto D0)**: Ricalibrata l'azione `bed_rest` in [`scenes/apartment/apartment_interactions.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/scenes/apartment/apartment_interactions.gd) a 5.0 secondi reali di durata con tipo `"advance_period"`; in [`ui/apartment_hud/apartment_hud.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/apartment_hud/apartment_hud.gd), instradamento dell'azione tramite `_run_action_with_duration()` vincolando Alex in `GAMEPLAY_BUSY`, con barra di progressione visibile nell'Inspection Box e avanzamento differito della fascia oraria solo a completamento naturale (`_on_hud_action_completed()`); annullamento atomico sicuro su `Esc` (`_on_hud_action_canceled()`) a zero penalità e orologio congelato.
 - **Fluidità Cinetica Continua a 210 px/s & Zero-Stop all'Avvicinamento Arredi (Contratto D1)**: Eliminato l'hitch/micro-stop del personaggio all'ingresso nelle aree di prossimità degli arredi (`_on_player_entered_prop()`):

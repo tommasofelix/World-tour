@@ -188,7 +188,10 @@ func _complete_action() -> void:
 	else:
 		announcement_text = "Completato: %s. Guadagnati %.1f XP." % [action_name_ref, gained_xp]
 		if leveled_up:
-			announcement_text += " Nuova abilità sbloccata: livello %d!" % new_lvl
+			if p and p.has_method("get_skill_stars_display") and p.get_skill_grade(current_action.target_skill) > 0:
+				announcement_text += " Salito di grado! %s" % p.get_skill_stars_display(current_action.target_skill)
+			else:
+				announcement_text += " Nuova abilità sbloccata: livello %d!" % new_lvl
 	AccessibilityManager.announce(announcement_text, true)
 	
 	current_action = null

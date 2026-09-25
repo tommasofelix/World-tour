@@ -59,23 +59,78 @@ func apply_starting_background_and_trait() -> void:
 		"self_taught":
 			money = 50.0
 			skills["instrument"]["level"] = 12
+			if skill_tree.has("skill_guitar"):
+				skill_tree["skill_guitar"]["grade"] = 1
+				skill_tree["skill_guitar"]["is_unlocked"] = true
+			if skill_tree.has("genre_rock"):
+				skill_tree["genre_rock"]["grade"] = 1
+				skill_tree["genre_rock"]["is_unlocked"] = true
 		"conservatory":
 			money = 30.0
 			skills["composition"]["level"] = 14
 			skills["instrument"]["level"] = 12
+			musicality = 65
+			intelligence = 60
+			if skill_tree.has("comp_theory"):
+				skill_tree["comp_theory"]["grade"] = 2
+				skill_tree["comp_theory"]["is_unlocked"] = true
+			if skill_tree.has("skill_guitar"):
+				skill_tree["skill_guitar"]["grade"] = 1
+				skill_tree["skill_guitar"]["is_unlocked"] = true
 		"busker", "street_kid":
 			money = 25.0
 			skills["performance"]["level"] = 14
 			skills["charisma"]["level"] = 12
+			charm = 65
+			if skill_tree.has("stage_presence"):
+				skill_tree["stage_presence"]["grade"] = 2
+				skill_tree["stage_presence"]["is_unlocked"] = true
+			if skill_tree.has("stage_crowd"):
+				skill_tree["stage_crowd"]["grade"] = 1
+				skill_tree["stage_crowd"]["is_unlocked"] = true
 		"punk_rebel":
 			money = 20.0
 			skills["performance"]["level"] = 15
+			stamina = 65
+			if skill_tree.has("genre_punk"):
+				skill_tree["genre_punk"]["grade"] = 2
+				skill_tree["genre_punk"]["is_unlocked"] = true
+			if skill_tree.has("stage_presence"):
+				skill_tree["stage_presence"]["grade"] = 1
+				skill_tree["stage_presence"]["is_unlocked"] = true
 		"bedroom_producer":
 			money = 40.0
 			skills["production"]["level"] = 15
 			skills["composition"]["level"] = 12
+			if skill_tree.has("tech_production"):
+				skill_tree["tech_production"]["grade"] = 2
+				skill_tree["tech_production"]["is_unlocked"] = true
+			if skill_tree.has("genre_pop"):
+				skill_tree["genre_pop"]["grade"] = 1
+				skill_tree["genre_pop"]["is_unlocked"] = true
 		_:
 			money = 50.0
+
+# --- Attributi Fisiologici Innati (World-tour V5.7.0 / Popomundo Inspired) ---
+var musicality: int = 50
+var intelligence: int = 50
+var stamina: int = 50
+var charm: int = 50
+
+func get_innate_attribute(attr_id: String) -> int:
+	match attr_id:
+		"musicality": return musicality
+		"intelligence": return intelligence
+		"stamina": return stamina
+		"charm": return charm
+		_: return 50
+
+func modify_innate_attribute(attr_id: String, delta: int) -> void:
+	match attr_id:
+		"musicality": musicality = clampi(musicality + delta, 1, 100)
+		"intelligence": intelligence = clampi(intelligence + delta, 1, 100)
+		"stamina": stamina = clampi(stamina + delta, 1, 100)
+		"charm": charm = clampi(charm + delta, 1, 100)
 
 # Risorse fisiologiche e finanziarie
 var energy: int = Constants.MAX_ENERGY
@@ -442,6 +497,61 @@ func get_linear_career_summary_speech() -> String:
 	return summary
 
 
+# --- Albero delle Competenze a 6 Rami & 5 Gradi di Maestria (World-tour V5.7.0 / Popomundo Inspired) ---
+const SKILL_GRADE_THRESHOLDS: Dictionary = {
+	1: 100.0,
+	2: 250.0,
+	3: 500.0,
+	4: 1000.0,
+	5: 2000.0
+}
+
+const SKILL_GRADE_NAMES: Dictionary = {
+	0: "Non Appresa",
+	1: "Principiante",
+	2: "Praticante",
+	3: "Professionista",
+	4: "Esperto / Virtuoso",
+	5: "Maestro Leggendario"
+}
+
+const SKILL_BRANCH_NAMES: Dictionary = {
+	"genre_mastery": "Cultura & Padronanza dei Generi",
+	"instrumental_technique": "Competenze Strumentali & Vocali",
+	"songwriting_harmony": "Composizione, Armonia & Scrittura",
+	"stage_showmanship": "Palco, Spettacolo & Intrattenimento",
+	"engineering_hardware": "Studio, Suono & Liuteria",
+	"industry_business": "Business, Media & Relazioni Industriali"
+}
+
+enum StudyMethodType {
+	MANUAL = 0,
+	ACADEMY = 1,
+	MENTOR = 2,
+	PRACTICE = 3
+}
+
+const LEGACY_SKILL_MAP: Dictionary = {
+	"instrument": "skill_guitar",
+	"guitar": "skill_guitar",
+	"bass": "skill_bass",
+	"drums": "skill_drums",
+	"vocals": "skill_vocals",
+	"horns": "skill_horns",
+	"strings": "skill_strings",
+	"harmonica": "skill_harmonica",
+	"composition": "comp_theory",
+	"songwriting": "comp_theory",
+	"lyrics": "comp_lyrics",
+	"production": "tech_production",
+	"performance": "stage_presence",
+	"live_performance": "tech_live_sound",
+	"charisma": "stage_presence",
+	"business": "biz_media"
+}
+
+var skill_tree: Dictionary = {}
+
 var skills: Dictionary = {
 	"instrument": {"level": 10, "xp": 0.0},
 	"composition": {"level": 10, "xp": 0.0},
@@ -456,6 +566,55 @@ var skills: Dictionary = {
 	"charisma": {"level": 10, "xp": 0.0},
 	"business": {"level": 10, "xp": 0.0}
 }
+
+func _init() -> void:
+	_init_skill_tree()
+
+func _init_skill_tree() -> void:
+	skill_tree = {
+		# Ramo 1: Cultura & Padronanza dei Generi (genre_mastery)
+		"genre_rock": {"name": "Rock Classico & Hard Rock", "branch": "genre_mastery", "grade": 1, "xp": 0.0, "is_unlocked": true},
+		"genre_metal": {"name": "Heavy Metal & Extreme Metal", "branch": "genre_mastery", "grade": 0, "xp": 0.0, "is_unlocked": false},
+		"genre_blues": {"name": "Blues & Roots", "branch": "genre_mastery", "grade": 0, "xp": 0.0, "is_unlocked": false},
+		"genre_pop": {"name": "Pop & Synth-Pop", "branch": "genre_mastery", "grade": 0, "xp": 0.0, "is_unlocked": false},
+		"genre_punk": {"name": "Punk & Garage", "branch": "genre_mastery", "grade": 0, "xp": 0.0, "is_unlocked": false},
+		"genre_jazz": {"name": "Jazz & Fusion", "branch": "genre_mastery", "grade": 0, "xp": 0.0, "is_unlocked": false},
+		"genre_folk": {"name": "Folk & Musica Acustica", "branch": "genre_mastery", "grade": 0, "xp": 0.0, "is_unlocked": false},
+
+		# Ramo 2: Competenze Strumentali & Vocali (instrumental_technique)
+		"skill_guitar": {"name": "Chitarra Elettrica", "branch": "instrumental_technique", "grade": 1, "xp": 0.0, "is_unlocked": true},
+		"skill_vocals": {"name": "Canto & Tecnica Vocale", "branch": "instrumental_technique", "grade": 0, "xp": 0.0, "is_unlocked": false},
+		"skill_bass": {"name": "Basso Elettrico", "branch": "instrumental_technique", "grade": 0, "xp": 0.0, "is_unlocked": false},
+		"skill_drums": {"name": "Batteria & Percussioni", "branch": "instrumental_technique", "grade": 0, "xp": 0.0, "is_unlocked": false},
+		"skill_keyboards": {"name": "Tastiere & Sintetizzatori", "branch": "instrumental_technique", "grade": 0, "xp": 0.0, "is_unlocked": false},
+		"skill_horns": {"name": "Fiati, Tromba & Sassofono", "branch": "instrumental_technique", "grade": 0, "xp": 0.0, "is_unlocked": false},
+		"skill_strings": {"name": "Archi, Violino & Violoncello", "branch": "instrumental_technique", "grade": 0, "xp": 0.0, "is_unlocked": false},
+		"skill_harmonica": {"name": "Armonica a Bocca & Strumenti Folk", "branch": "instrumental_technique", "grade": 0, "xp": 0.0, "is_unlocked": false},
+
+		# Ramo 3: Composizione, Armonia & Scrittura (songwriting_harmony)
+		"comp_theory": {"name": "Teoria Musicale & Armonia", "branch": "songwriting_harmony", "grade": 1, "xp": 0.0, "is_unlocked": true},
+		"comp_lyrics": {"name": "Scrittura Testi & Metrica", "branch": "songwriting_harmony", "grade": 1, "xp": 0.0, "is_unlocked": true},
+		"comp_ballads": {"name": "Composizione Ballate", "branch": "songwriting_harmony", "grade": 0, "xp": 0.0, "is_unlocked": false},
+		"comp_anthems": {"name": "Composizione Inni da Stadio", "branch": "songwriting_harmony", "grade": 0, "xp": 0.0, "is_unlocked": false},
+		"comp_riffs": {"name": "Composizione Riff & Hook", "branch": "songwriting_harmony", "grade": 1, "xp": 0.0, "is_unlocked": true},
+		"comp_history": {"name": "Storia & Cultura Musicale", "branch": "songwriting_harmony", "grade": 0, "xp": 0.0, "is_unlocked": false},
+
+		# Ramo 4: Palco, Spettacolo & Intrattenimento (stage_showmanship)
+		"stage_presence": {"name": "Presenza Scenica", "branch": "stage_showmanship", "grade": 1, "xp": 0.0, "is_unlocked": true},
+		"stage_crowd": {"name": "Interazione col Pubblico", "branch": "stage_showmanship", "grade": 0, "xp": 0.0, "is_unlocked": false},
+		"stage_improv": {"name": "Improvvisazione Live", "branch": "stage_showmanship", "grade": 0, "xp": 0.0, "is_unlocked": false},
+		"stage_athleticism": {"name": "Coordinazione & Atletismo", "branch": "stage_showmanship", "grade": 0, "xp": 0.0, "is_unlocked": false},
+
+		# Ramo 5: Studio, Suono & Liuteria (engineering_hardware)
+		"tech_production": {"name": "Produzione Discografica", "branch": "engineering_hardware", "grade": 0, "xp": 0.0, "is_unlocked": false},
+		"tech_live_sound": {"name": "Tecnico del Suono Live", "branch": "engineering_hardware", "grade": 0, "xp": 0.0, "is_unlocked": false},
+		"tech_lutherie": {"name": "Liuteria & Manutenzione", "branch": "engineering_hardware", "grade": 0, "xp": 0.0, "is_unlocked": false},
+
+		# Ramo 6: Business, Media & Relazioni Industriali (industry_business)
+		"biz_media": {"name": "Relazioni coi Media", "branch": "industry_business", "grade": 0, "xp": 0.0, "is_unlocked": false},
+		"biz_negotiation": {"name": "Negoziazione Contrattuale", "branch": "industry_business", "grade": 0, "xp": 0.0, "is_unlocked": false},
+		"biz_marketing": {"name": "Marketing Digitale & Social", "branch": "industry_business", "grade": 0, "xp": 0.0, "is_unlocked": false}
+	}
 
 # Catalogo brani del musicista
 var songs: Array[SongData] = []
@@ -584,15 +743,29 @@ func populate_starter_test_songs() -> void:
 	songs.append(r3)
 
 
+func _map_legacy_skill_key(key: String) -> String:
+	if skill_tree.has(key):
+		return key
+	return str(LEGACY_SKILL_MAP.get(key, key))
+
 func get_skill_level(skill_key: String) -> int:
 	if skills.has(skill_key):
 		var val = skills[skill_key]
 		if val is Dictionary:
 			return int(val.get("level", 10))
 		return int(val)
+	if skill_tree.has(skill_key):
+		var gr: int = int(skill_tree[skill_key].get("grade", 0))
+		return 10 + gr * 15
 	return 10
 
 func add_xp_to_skill(skill_key: String, xp_amount: float) -> bool:
+	# 1. Sincronizzazione automatica con l'Albero delle Competenze (Contratto D0 / D1)
+	var canonical_key: String = _map_legacy_skill_key(skill_key)
+	if skill_tree.has(canonical_key):
+		add_skill_tree_xp(canonical_key, xp_amount)
+
+	# 2. Aggiornamento legacy garantito per retrocompatibilità
 	if not skills.has(skill_key):
 		return false
 
@@ -613,6 +786,233 @@ func add_xp_to_skill(skill_key: String, xp_amount: float) -> bool:
 
 func add_skill_xp(skill_key: String, xp_amount: float) -> bool:
 	return add_xp_to_skill(skill_key, xp_amount)
+
+# --- Metodi Specialistici Albero Competenze (World-tour V5.7.0) ---
+
+func get_skill_grade(skill_id: String) -> int:
+	var canonical: String = _map_legacy_skill_key(skill_id)
+	if skill_tree.has(canonical):
+		return int(skill_tree[canonical].get("grade", 0))
+	return 0
+
+func get_skill_stars_display(skill_id: String) -> String:
+	var grade: int = get_skill_grade(skill_id)
+	var stars: String = ""
+	for i in range(5):
+		if i < grade:
+			stars += "★"
+		else:
+			stars += "☆"
+	var name_desc: String = str(SKILL_GRADE_NAMES.get(grade, "Sconosciuto"))
+	return "%s (Grado %d: %s)" % [stars, grade, name_desc]
+
+func get_skill_tree_data(skill_id: String) -> Dictionary:
+	var canonical: String = _map_legacy_skill_key(skill_id)
+	if skill_tree.has(canonical):
+		return skill_tree[canonical].duplicate(true)
+	return {}
+
+func can_unlock_skill(skill_id: String) -> Dictionary:
+	var canonical: String = _map_legacy_skill_key(skill_id)
+	if not skill_tree.has(canonical):
+		return {"can_unlock": false, "reason": "Competenza sconosciuta.", "missing_prereqs": []}
+
+	var missing: Array = []
+	match canonical:
+		"comp_ballads", "comp_anthems":
+			var t_grade: int = get_skill_grade("comp_theory")
+			if t_grade < 2:
+				missing.append({"skill_id": "comp_theory", "required_grade": 2, "current_grade": t_grade})
+		"stage_athleticism":
+			var p_grade: int = get_skill_grade("stage_presence")
+			if p_grade < 2:
+				missing.append({"skill_id": "stage_presence", "required_grade": 2, "current_grade": p_grade})
+
+	if not missing.is_empty():
+		var req_text: String = ""
+		for m in missing:
+			var req_name: String = str(skill_tree.get(m["skill_id"], {}).get("name", m["skill_id"]))
+			req_text += "Richiede Grado %d in %s. " % [m["required_grade"], req_name]
+		return {"can_unlock": false, "reason": req_text.strip_edges(), "missing_prereqs": missing}
+
+	return {"can_unlock": true, "reason": "", "missing_prereqs": []}
+
+func get_skill_prerequisites(skill_id: String) -> Array[Dictionary]:
+	var canonical: String = _map_legacy_skill_key(skill_id)
+	var result: Array[Dictionary] = []
+	match canonical:
+		"comp_ballads", "comp_anthems":
+			var t_grade: int = get_skill_grade("comp_theory")
+			result.append({"skill_id": "comp_theory", "required_grade": 2, "current_grade": t_grade, "satisfied": t_grade >= 2})
+		"stage_athleticism":
+			var p_grade: int = get_skill_grade("stage_presence")
+			result.append({"skill_id": "stage_presence", "required_grade": 2, "current_grade": p_grade, "satisfied": p_grade >= 2})
+	return result
+
+func validate_study_eligibility(skill_id: String, method: int) -> Dictionary:
+	var canonical: String = _map_legacy_skill_key(skill_id)
+	if not skill_tree.has(canonical):
+		return {"is_eligible": false, "reason": "Competenza sconosciuta.", "code": "UNKNOWN_SKILL"}
+
+	var data: Dictionary = skill_tree[canonical]
+	var grade: int = int(data.get("grade", 0))
+
+	# 1. Verifica propedeuticità di base (es. ballate e inni)
+	var prereq_check: Dictionary = can_unlock_skill(canonical)
+	if not prereq_check.get("can_unlock", true):
+		return {"is_eligible": false, "reason": prereq_check.get("reason", "Requisiti propedeutici non soddisfatti."), "code": "PREREQ_LOCKED"}
+
+	# 2. Regole specifiche per metodo di apprendimento
+	match method:
+		StudyMethodType.MANUAL:
+			if grade >= 2:
+				return {
+					"is_eligible": false,
+					"reason": "Hai assimilato tutta la teoria di base di questo manuale. Per raggiungere il Grado 3 frequenta l'Accademia o un Maestro Privato.",
+					"code": "MANUAL_CAP_REACHED"
+				}
+			return {"is_eligible": true, "reason": "Idonea per lo studio su manuale teorico (fino a Grado 2).", "code": "OK"}
+
+		StudyMethodType.ACADEMY:
+			if grade == 0:
+				return {
+					"is_eligible": false,
+					"reason": "L'Accademia richiede le basi minime: sblocca prima il Grado 1 leggendo il rispettivo Manuale.",
+					"code": "ACADEMY_REQUIRES_GRADE_1"
+				}
+			if grade >= 3:
+				return {
+					"is_eligible": false,
+					"reason": "L'Accademia forma fino al Grado 3 Professionista. Per raggiungere i gradi d'eccellenza (Virtuoso e Maestro Leggendario) ingaggia un Maestro Privato.",
+					"code": "ACADEMY_CAP_REACHED"
+				}
+			return {"is_eligible": true, "reason": "Idonea per il corso in Accademia Musicale (fino a Grado 3).", "code": "OK"}
+
+		StudyMethodType.MENTOR:
+			if grade == 0:
+				return {
+					"is_eligible": false,
+					"reason": "Il Maestro Privato accetta allievi con le basi già acquisite: sblocca prima il Grado 1 da Manuale.",
+					"code": "MENTOR_REQUIRES_GRADE_1"
+				}
+			if grade >= 5:
+				return {
+					"is_eligible": false,
+					"reason": "Hai già raggiunto il Grado 5: Maestro Leggendario in questa disciplina!",
+					"code": "MAX_GRADE_REACHED"
+				}
+			return {"is_eligible": true, "reason": "Idonea per lezione intensiva col Maestro Privato (fino a Grado 5).", "code": "OK"}
+
+		StudyMethodType.PRACTICE:
+			if data.get("branch", "") != "instrumental_technique":
+				return {
+					"is_eligible": false,
+					"reason": "La pratica quotidiana 'Scale e riff' è dedicata esclusivamente alle discipline strumentali e vocali.",
+					"code": "BRANCH_NOT_PRACTICEABLE"
+				}
+			if grade >= 5:
+				return {
+					"is_eligible": false,
+					"reason": "Hai già raggiunto la perfezione assoluta (Grado 5) in questa disciplina!",
+					"code": "MAX_GRADE_REACHED"
+				}
+			return {"is_eligible": true, "reason": "Idonea per la pratica strumentale o vocale quotidiana.", "code": "OK"}
+
+	return {"is_eligible": true, "reason": "Idonea.", "code": "OK"}
+
+func add_skill_tree_xp(skill_id: String, amount: float) -> Dictionary:
+	var canonical: String = _map_legacy_skill_key(skill_id)
+	if not skill_tree.has(canonical):
+		return {"success": false, "skill_id": skill_id, "leveled_up": false, "old_grade": 0, "new_grade": 0}
+
+	var data: Dictionary = skill_tree[canonical]
+	var old_grade: int = int(data.get("grade", 0))
+
+	# Se a Grado 0 e non sbloccata, il primo XP la attiva a Grado 1 Principiante
+	if old_grade == 0:
+		data["grade"] = 1
+		data["is_unlocked"] = true
+		data["xp"] = 0.0
+		old_grade = 1
+		EventBus.skill_leveled_up.emit(canonical, 1)
+
+	if old_grade >= 5:
+		return {
+			"success": true,
+			"skill_id": canonical,
+			"old_grade": 5,
+			"new_grade": 5,
+			"leveled_up": false,
+			"is_max": true,
+			"current_xp": float(data.get("xp", 0.0)),
+			"required_xp": 2000.0
+		}
+
+	# Moltiplicatore intelligenza innata (+0.5% XP per ogni punto sopra 50)
+	var intel_mult: float = 1.0 + float(intelligence - 50) * 0.005
+	var effective_xp: float = maxf(1.0, amount * intel_mult)
+
+	data["xp"] = float(data.get("xp", 0.0)) + effective_xp
+
+	var current_grade: int = old_grade
+	var req_xp: float = float(SKILL_GRADE_THRESHOLDS.get(current_grade, 250.0))
+	var leveled_up: bool = false
+
+	while data["xp"] >= req_xp and current_grade < 5:
+		data["xp"] -= req_xp
+		current_grade += 1
+		data["grade"] = current_grade
+		req_xp = float(SKILL_GRADE_THRESHOLDS.get(current_grade, 2000.0))
+		leveled_up = true
+
+	if leveled_up:
+		EventBus.skill_leveled_up.emit(canonical, current_grade)
+
+	# Sincronizzazione con legacy skills se presente
+	for leg_k in LEGACY_SKILL_MAP:
+		if LEGACY_SKILL_MAP[leg_k] == canonical and skills.has(leg_k):
+			skills[leg_k]["level"] = mini(99, 10 + current_grade * 15)
+
+	return {
+		"success": true,
+		"skill_id": canonical,
+		"old_grade": old_grade,
+		"new_grade": current_grade,
+		"leveled_up": leveled_up,
+		"current_xp": data["xp"],
+		"required_xp": req_xp
+	}
+
+func get_branch_skills(branch_id: String) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for k in skill_tree:
+		if skill_tree[k].get("branch", "") == branch_id:
+			var s_data: Dictionary = skill_tree[k].duplicate(true)
+			s_data["id"] = k
+			s_data["stars_display"] = get_skill_stars_display(k)
+			result.append(s_data)
+	return result
+
+func get_all_skill_tree_summary() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for k in skill_tree:
+		var s_data: Dictionary = skill_tree[k].duplicate(true)
+		s_data["id"] = k
+		s_data["stars_display"] = get_skill_stars_display(k)
+		result.append(s_data)
+	return result
+
+func _serialize_skill_tree() -> Dictionary:
+	return skill_tree.duplicate(true)
+
+func _deserialize_skill_tree(dict: Dictionary) -> void:
+	if dict.is_empty():
+		return
+	for k in dict:
+		if skill_tree.has(k) and dict[k] is Dictionary:
+			skill_tree[k]["grade"] = int(dict[k].get("grade", skill_tree[k]["grade"]))
+			skill_tree[k]["xp"] = float(dict[k].get("xp", skill_tree[k]["xp"]))
+			skill_tree[k]["is_unlocked"] = bool(dict[k].get("is_unlocked", skill_tree[k]["is_unlocked"]))
 
 func consume_energy(amount: int) -> bool:
 	if energy < amount:
@@ -772,7 +1172,12 @@ func to_dict() -> Dictionary:
 		"is_new_game_plus": is_new_game_plus,
 		"mentor_name": mentor_name,
 		"mentor_passive_daily_royalty": mentor_passive_daily_royalty,
-		"career_stats": career_stats.duplicate(true)
+		"career_stats": career_stats.duplicate(true),
+		"musicality": musicality,
+		"intelligence": intelligence,
+		"stamina": stamina,
+		"charm": charm,
+		"skill_tree": _serialize_skill_tree()
 	}
 
 func from_dict(dict: Dictionary) -> void:
@@ -913,3 +1318,10 @@ func from_dict(dict: Dictionary) -> void:
 	if dict.has("career_stats") and dict["career_stats"] is Dictionary:
 		for k in dict["career_stats"]:
 			career_stats[str(k)] = dict["career_stats"][k]
+
+	musicality = int(dict.get("musicality", musicality))
+	intelligence = int(dict.get("intelligence", intelligence))
+	stamina = int(dict.get("stamina", stamina))
+	charm = int(dict.get("charm", charm))
+	if dict.has("skill_tree") and dict["skill_tree"] is Dictionary:
+		_deserialize_skill_tree(dict["skill_tree"])

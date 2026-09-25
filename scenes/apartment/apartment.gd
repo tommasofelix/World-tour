@@ -86,15 +86,15 @@ func _on_player_entered_prop(prop: Area2D) -> void:
 		return
 	AccessibilityManager.play_cue(Enums.AudioCueType.HOTSPOT_PROXIMITY)
 	var txt: String = prop.inspection_text if ("inspection_text" in prop and not prop.inspection_text.is_empty()) else prop.get_accessible_label()
-	hud.show_inspection(txt, "ALEX", "[Spazio] Interagisci   [Tab] Altri arredi   [Esc] Menu")
 	var p_name: String = prop.prop_name if "prop_name" in prop else "Arredo"
-	AccessibilityManager.announce("Vicino a: " + p_name, false)
+	hud.show_inspection(txt, p_name.to_upper(), "[Spazio] Interagisci   [Tab] Altri arredi   [Esc] Menu", false)
+	AccessibilityManager.announce("Vicino a %s: %s" % [p_name, txt], false)
 
 func _on_player_exited_prop(_prop: Area2D) -> void:
 	if not hud or hud.is_any_modal_open():
 		return
 	if selected_prop_index < 0:
-		hud.reset_inspection()
+		hud.clear_inspection()
 
 func _on_player_interaction_requested(prop: Area2D) -> void:
 	if not prop or (hud and hud.is_any_modal_open()) or (GameManager and GameManager.current_state == Enums.GameState.GAMEPLAY_BUSY) or (hud and hud.action_system and hud.action_system.is_running):
@@ -130,7 +130,7 @@ func _on_modal_closed(_modal_name: String) -> void:
 	if player and not (GameManager and GameManager.current_state == Enums.GameState.GAMEPLAY_BUSY):
 		player.is_movement_locked = false
 	if hud and not hud.is_any_modal_open():
-		hud.reset_inspection()
+		hud.clear_inspection()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not (event is InputEventKey) or not event.is_pressed() or event.is_echo():
@@ -143,7 +143,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if key_event.keycode == KEY_ESCAPE:
 			if hud and hud.action_system and hud.action_system.is_running:
 				hud.action_system.cancel_action()
-				hud.reset_inspection()
+				hud.clear_inspection()
 			get_viewport().set_input_as_handled()
 		return
 
@@ -155,7 +155,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				GameManager.close_menu()
 			if player:
 				player.is_movement_locked = false
-			hud.reset_inspection()
+			hud.clear_inspection()
 			get_viewport().set_input_as_handled()
 		return
 
@@ -190,7 +190,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if selected_prop_index >= 0:
 			_clear_prop_selection()
 			AccessibilityManager.announce("Navigazione libera ripristinata.", true)
-			hud.reset_inspection()
+			hud.clear_inspection()
 		else:
 			hud.open_modal(hud.system_menu_modal)
 		get_viewport().set_input_as_handled()
@@ -295,8 +295,9 @@ func _highlight_selected_prop() -> void:
 	if selected_prop_index >= 0 and selected_prop_index < props.size():
 		var p: Area2D = props[selected_prop_index]
 		var txt: String = p.inspection_text if ("inspection_text" in p and not p.inspection_text.is_empty()) else p.get_accessible_label(selected_prop_index + 1, props.size())
+		var p_name: String = p.prop_name if "prop_name" in p else "Arredo"
 		if hud:
-			hud.show_inspection(txt, "ALEX", "[Invio / Spazio] Interagisci   [Tab] Successivo   [Esc] Annulla")
+			hud.show_inspection(txt, p_name.to_upper(), "[Invio / Spazio] Interagisci   [Tab] Successivo   [Esc] Annulla", false)
 
 func _clear_prop_selection() -> void:
 	selected_prop_index = -1

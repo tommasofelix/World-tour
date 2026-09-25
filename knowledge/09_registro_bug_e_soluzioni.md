@@ -488,4 +488,43 @@ Questo registro contiene soltanto problemi tecnici confermati e soluzioni con ev
 - Test automatici eseguiti: 356 asserzioni in `test_apartment_gameplay.gd` superate al 100% a 0 ms; 30/30 suite headless superate con 0 errori.
 - Misure di prevenzione delle regressioni: Privilegiare sempre pannelli vettoriali ad alto contrasto scalabili per i menu di testo interattivi, con font non inferiore a 14 px per garantire accessibilità universale sia per ipovedenti che per utenti con display ad alta risoluzione.
 
+### BUG-027 (RRU-33) — Persistenza dei Nodi Figli nelle Rigenerazioni Dinamiche Headless Sincrone da queue_free() Ritardato in Godot 4 (V5.7.1)
+
+- Data e componente: `2026-09-25`, `ui/character/character_sheet.gd`, `tests/test_skills_and_loft_study_system.gd` (Versione AVF `V5.7.1`).
+- Sintomi osservati:
+  1. Durante l'esecuzione sincrona headless del test di cambio branca nell'albero delle competenze (da `GENRES` a `STAGE`), l'asserzione `vbox_skills_tree_list.get_child_count()` restituiva 14 nodi anziché i 7 nodi attesi per la branca filtrata.
+- Evidenza riproducibile: Invocazione in successione rapida a 0 ms di `character_sheet._on_branch_filter_selected("stage")` subito dopo il popolamento iniziale della branca `genres`.
+- Causa radice verificata:
+  1. In Godot 4, il metodo `queue_free()` non rimuove istantaneamente il nodo dall'albero di scena, bensì ne accoda la distruzione al termine del frame corrente (fase di idle notification loop).
+  2. Nei test runner headless sincroni eseguiti a 0 ms senza frame-loop intermedio, la sequenza `for c in container.get_children(): c.queue_free()` seguita immediatamente da `container.add_child(...)` fa sì che `container.get_children()` includa sia i vecchi nodi in attesa di deallocazione sia i nuovi nodi appena istanziati, falsando il conteggio gerarchico.
+- Soluzione applicata:
+  1. Nel ciclo di pulizia del container dinamico (`character_sheet.gd`, riga 174), disconnettere esplicitamente il nodo dall'albero prima di invocare `queue_free()`:
+     ```gdscript
+     for c in vbox_skills_tree_list.get_children():
+         vbox_skills_tree_list.remove_child(c)
+         c.queue_free()
+     ```
+- Test automatici eseguiti: 128/128 asserzioni superate in `test_skills_and_loft_study_system.gd`; 31/31 suite headless complessive superate con 0 errori a 0 ms; 115 file GDScript compilati correttamente in `tools/check.ps1`.
+- Misure di prevenzione delle regressioni: In ogni logica UI che distrugge e ripopola dinamicamente elenchi di nodi `Control`, applicare categoricamente `container.remove_child(c)` prima di `c.queue_free()`, garantendo determinismo atomico sia nei test headless sincroni a 0 ms sia in caso di selezioni rapide da tastiera ad alto frame rate.
+
+### BUG-028 (RRU-34) — Disallineamento Testo-Voce (TTS) e Congelamento del Box di Dialogo BottomLeftDialogue (V5.8.0)
+
+- Data e componente: `2026-09-25`, `ui/apartment_hud/apartment_hud.gd`, `systems/action_system.gd`, `scenes/apartment/apartment.gd` (Versione AVF `V5.8.0`).
+- Sintomi osservati:
+  1. Box visivo `BottomLeftDialogue` statico o bloccato su un vecchio messaggio di azione o sul placeholder iniziale ("New York - Loft Apartment...").
+  2. Discrepanza totale con la sintesi vocale (NVDA): lo screen reader legge messaggi sintetici o divergenti mentre a schermo permangono testi differenti.
+  3. L'indicatore `[Spazio] Chiudi` non congedava la notifica poiché il tasto Spazio veniva intercettato dal movimento/prossimità dell'arredo.
+- Evidenza riproducibile: Completamento di un'azione alla chitarra nel loft: NVDA vocalizzava "Completato: Scale e riff alla chitarra. Guadagnati 20.0 XP.", mentre il box visivo mostrava "Esercizio alla chitarra completato: +20 XP Chitarra, -10 Energia, +3 Stress, +5 Morale!".
+- Causa radice verificata:
+  1. Emissione concorrente di annunci vocali: `ActionSystem._complete_action()` emetteva autonomamente una sintesi generica, mentre `ApartmentHud` popolava `label_text.text` con `result_message` disabilitando l'annuncio locale (`should_announce: false`).
+  2. Negli arredi domestici diretti (Cucina, Divano, Giradischi, Stereo), invocazione disgiunta di `AccessibilityManager.announce()` e `show_inspection()` con stringhe diverse.
+  3. All'allontanamento dagli arredi, `clear_inspection()` nascondeva il pannello e svuotava i testi, lasciando in cache su AccessKit/NVDA il buffer precedente.
+  4. Assenza di una gestione del tasto Spazio o Esc per congedare esplicitamente le notifiche transitorie di completamento azione.
+- Soluzione e Misure di prevenzione delle regressioni:
+  1. Canone "Zero Divergenza Testo-Voce": centralizzazione in `ApartmentHud` del metodo canonico `display_dialogue(text, speaker, hint, should_announce, is_interrupt)` che assegna rigorosamente la stessa identica stringa sia al label visivo sia alla sintesi vocale;
+  2. Stato Base Ambientale Permanente del "Diario di Bordo": in navigazione libera il box mostra permanentemente le coordinate e le istruzioni pulite di movimento, senza azzeramenti arbitrari né residui di vecchie notifiche;
+  3. Congedo attivo da tastiera (`[Spazio / Esc]`): gestione esplicita dell'evento per ripristinare all'istante lo stato base del Diario di Bordo;
+  4. Disattivazione dell'annuncio ridondante in `ActionSystem` quando l'azione è orchestrata dal ciclo vitale dell'HUD.
+
+
 

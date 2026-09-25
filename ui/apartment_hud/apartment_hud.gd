@@ -48,6 +48,10 @@ const TEX_DOCK_BAND = preload("res://assets/img/gameplay/GUI/Elementi/band_icon.
 const TEX_BTN_RIPRENDI = preload("res://assets/img/gameplay/GUI/Elementi/Pulsante_Riprendi.png")
 const TEX_BTN_TEMPO_X2 = preload("res://assets/img/gameplay/GUI/Elementi/Pulsante_tempo_x2.png")
 
+# Preload Componenti Selettori Accessibili
+const InstrumentPracticePicker = preload("res://ui/interaction_menu/instrument_practice_picker.gd")
+const SkillStudyPicker = preload("res://ui/interaction_menu/skill_study_picker.gd")
+
 # Top Bar / Profile
 @onready var label_level: Label = get_node_or_null("TopLeftProfile/HBox/VBox/HBoxLevel/LabelLevel") if has_node("TopLeftProfile/HBox/VBox/HBoxLevel/LabelLevel") else get_node_or_null("TopLeftProfile/HBox/VBox/LabelLevel")
 @onready var texture_level_icon: TextureRect = get_node_or_null("TopLeftProfile/HBox/VBox/HBoxLevel/TextureLevelIcon")
@@ -118,6 +122,9 @@ const TEX_BTN_TEMPO_X2 = preload("res://assets/img/gameplay/GUI/Elementi/Pulsant
 @onready var interaction_menu: InteractionMenu = get_node_or_null("InteractionMenu")
 
 var _all_modals: Array[Control] = []
+var practice_picker: InstrumentPracticePicker = null
+var study_picker: SkillStudyPicker = null
+var _pending_picker_action: Dictionary = {}
 var action_system: ActionSystem = null
 var _current_running_action: Dictionary = {}
 var is_stereo_on: bool = false
@@ -129,6 +136,7 @@ func _ready() -> void:
 	if GameManager and GameManager.player_data and GameManager.calendar_data:
 		action_system = ActionSystem.new(GameManager.player_data, GameManager.calendar_data)
 	_register_modals()
+	_ensure_pickers()
 	_connect_events()
 	_connect_modal_signals()
 	_connect_dock_buttons()
@@ -313,6 +321,10 @@ func _on_relax_activity_selected(action: ActionData) -> void:
 func is_any_modal_open() -> bool:
 	if interaction_menu and interaction_menu.visible and interaction_menu.is_menu_open:
 		return true
+	if practice_picker and practice_picker.visible and practice_picker.is_picker_open:
+		return true
+	if study_picker and study_picker.visible and study_picker.is_picker_open:
+		return true
 	for m in _all_modals:
 		if m and m.visible:
 			return true
@@ -322,6 +334,13 @@ func hide_all_modals() -> void:
 	if interaction_menu:
 		interaction_menu.visible = false
 		interaction_menu.is_menu_open = false
+	if practice_picker:
+		practice_picker.visible = false
+		practice_picker.is_picker_open = false
+	clear_inspection()
+	if study_picker:
+		study_picker.visible = false
+		study_picker.is_picker_open = false
 	for m in _all_modals:
 		if m:
 			m.visible = false
@@ -329,6 +348,7 @@ func hide_all_modals() -> void:
 		$Modals.visible = false
 
 func open_interaction_menu_for_prop(prop_id: String, prop_name: String, actions: Array[Dictionary], screen_pos: Vector2 = Vector2.ZERO) -> void:
+	clear_inspection()
 	hide_all_modals()
 	if interaction_menu:
 		interaction_menu.open_menu(prop_id, prop_name, actions, screen_pos)
@@ -350,6 +370,7 @@ func _on_interaction_menu_closed() -> void:
 func open_modal(modal_node: Control) -> void:
 	if not modal_node:
 		return
+	clear_inspection()
 	hide_all_modals()
 	if has_node("Modals"):
 		$Modals.visible = true
@@ -376,7 +397,19 @@ func close_modal(modal_node: Control) -> void:
 	modal_closed.emit(modal_node.name)
 	update_hud_display()
 
-func show_inspection(text: String, speaker_name: String = "ALEX", hint_text: String = "[Spazio] Interagisci   [Esc] Indietro") -> void:
+func clear_inspection() -> void:
+	if label_speaker:
+		label_speaker.text = ""
+	if label_text:
+		label_text.text = ""
+	if label_hint:
+		label_hint.text = ""
+	if panel_dialogue:
+		panel_dialogue.visible = false
+
+func show_inspection(text: String, speaker_name: String = "ALEX", hint_text: String = "[Spazio] Interagisci   [Esc] Indietro", should_announce: bool = true) -> void:
+	if label_text:
+		label_text.text = ""
 	_current_speaker = speaker_name.to_upper()
 	if label_speaker:
 		label_speaker.text = _current_speaker
@@ -384,10 +417,25 @@ func show_inspection(text: String, speaker_name: String = "ALEX", hint_text: Str
 		label_text.text = text
 	if label_hint:
 		label_hint.text = hint_text
+	if panel_dialogue:
+		panel_dialogue.visible = true
 	_update_dialogue_portrait()
 
+	if should_announce and not text.strip_edges().is_empty():
+		var speech: String = text
+		if not speaker_name.is_empty() and speaker_name.to_upper() != "ALEX" and speaker_name.to_upper() != "DIARIO DI BORDO":
+			speech = "%s: %s" % [speaker_name, text]
+		AccessibilityManager.announce(speech, true)
+
 func reset_inspection() -> void:
-	show_inspection(DEFAULT_AMBIENT_TEXT, "DIARIO DI BORDO", "[Frecce] Muoviti   [Tab] Arredi   [Spazio] Azione   [Esc] Menu")
+	if label_speaker:
+		label_speaker.text = "DIARIO DI BORDO"
+	if label_text:
+		label_text.text = DEFAULT_AMBIENT_TEXT
+	if label_hint:
+		label_hint.text = "[Frecce] Muoviti   [Tab] Arredi   [Spazio] Azione   [Esc] Menu"
+	if panel_dialogue:
+		panel_dialogue.visible = false
 
 func get_alex_portrait_texture(player: PlayerData) -> Texture2D:
 	if not player:
@@ -603,6 +651,82 @@ func open_modal_by_prop_id(prop_id: String) -> void:
 		_:
 			reset_inspection()
 
+func _ensure_pickers() -> void:
+	if practice_picker == null:
+		practice_picker = get_node_or_null("InstrumentPracticePicker")
+		if practice_picker == null:
+			practice_picker = InstrumentPracticePicker.new()
+			practice_picker.name = "InstrumentPracticePicker"
+			add_child(practice_picker)
+		if not practice_picker.instrument_selected.is_connected(_on_practice_instrument_selected):
+			practice_picker.instrument_selected.connect(_on_practice_instrument_selected)
+		if not practice_picker.picker_closed.is_connected(_on_practice_picker_closed):
+			practice_picker.picker_closed.connect(_on_practice_picker_closed)
+
+	if study_picker == null:
+		study_picker = get_node_or_null("SkillStudyPicker")
+		if study_picker == null:
+			study_picker = SkillStudyPicker.new()
+			study_picker.name = "SkillStudyPicker"
+			add_child(study_picker)
+		if not study_picker.skill_selected.is_connected(_on_study_skill_selected):
+			study_picker.skill_selected.connect(_on_study_skill_selected)
+		if not study_picker.study_picker_closed.is_connected(_on_study_picker_closed):
+			study_picker.study_picker_closed.connect(_on_study_picker_closed)
+
+func _on_practice_instrument_selected(skill_id: String, skill_name: String) -> void:
+	if practice_picker and practice_picker.is_picker_open:
+		practice_picker.close_picker()
+	if GameManager:
+		GameManager.close_menu()
+	modal_closed.emit("InstrumentPracticePicker")
+
+	var act: Dictionary = _pending_picker_action.duplicate()
+	_pending_picker_action = {}
+	act["type"] = "action"
+	act["xp_skill"] = skill_id
+	act["title"] = "Scale e riff: %s" % skill_name
+	act["result_message"] = "Sessione di scale e riff su %s terminata (+20 XP, -10 Energia)!" % skill_name
+	execute_interaction_action("guitar", act)
+
+func _on_practice_picker_closed() -> void:
+	if GameManager:
+		GameManager.close_menu()
+	modal_closed.emit("InstrumentPracticePicker")
+	_pending_picker_action = {}
+
+func _on_study_skill_selected(skill_id: String, skill_name: String, method_type: int) -> void:
+	if study_picker and study_picker.is_picker_open:
+		study_picker.close_study_picker()
+	if GameManager:
+		GameManager.close_menu()
+	modal_closed.emit("SkillStudyPicker")
+
+	var act: Dictionary = _pending_picker_action.duplicate()
+	_pending_picker_action = {}
+	act["type"] = "action"
+	act["xp_skill"] = skill_id
+	var method_name: String = ""
+	match method_type:
+		PlayerData.StudyMethodType.MANUAL:
+			method_name = "Studio manuale"
+		PlayerData.StudyMethodType.ACADEMY:
+			method_name = "Corso in Accademia"
+		PlayerData.StudyMethodType.MENTOR:
+			method_name = "Lezione col Maestro"
+		_:
+			method_name = "Studio"
+	var xp_val: float = act.get("xp_amount", 35.0)
+	act["title"] = "%s: %s" % [method_name, skill_name]
+	act["result_message"] = "%s su %s completato con profitto (+%.0f XP)!" % [method_name, skill_name, xp_val]
+	execute_interaction_action("study", act)
+
+func _on_study_picker_closed() -> void:
+	if GameManager:
+		GameManager.close_menu()
+	modal_closed.emit("SkillStudyPicker")
+	_pending_picker_action = {}
+
 func _on_interaction_action_chosen(prop_id: String, action: Dictionary) -> void:
 	execute_interaction_action(prop_id, action)
 
@@ -611,6 +735,33 @@ func execute_interaction_action(prop_id: String, action: Dictionary) -> void:
 	var dur: float = action.get("duration_seconds", 0.0)
 
 	match a_type:
+		"practice_picker":
+			_ensure_pickers()
+			hide_all_modals()
+			_pending_picker_action = action
+			var p_pos: Vector2 = Vector2.ZERO
+			if interaction_menu:
+				p_pos = interaction_menu.position
+			var p_data: PlayerData = GameManager.player_data if GameManager else null
+			practice_picker.open_picker(p_data, p_pos)
+			modal_opened.emit("InstrumentPracticePicker")
+			if GameManager:
+				GameManager.open_menu()
+
+		"study_picker":
+			_ensure_pickers()
+			hide_all_modals()
+			_pending_picker_action = action
+			var s_pos: Vector2 = Vector2.ZERO
+			if interaction_menu:
+				s_pos = interaction_menu.position
+			var method_type: int = action.get("study_method", 0)
+			var p_data_s: PlayerData = GameManager.player_data if GameManager else null
+			study_picker.open_study_picker(p_data_s, method_type, s_pos)
+			modal_opened.emit("SkillStudyPicker")
+			if GameManager:
+				GameManager.open_menu()
+
 		"inspect":
 			var desc: String = action.get("dialogue_text", action.get("description", ""))
 			show_inspection(desc, prop_id.to_upper(), "[Spazio] Chiudi   [Tab] Altri arredi")
@@ -725,11 +876,10 @@ func _run_action_with_duration(action: Dictionary) -> void:
 
 	var check: Dictionary = action_system.can_start_action(act_data)
 	if not check.get("can_start", false):
-		AccessibilityManager.announce(check.get("reason", "Impossibile avviare azione."), true)
-		show_inspection(check.get("reason", "Impossibile avviare azione."), "ALEX", "[Spazio] Chiudi")
+		show_inspection(check.get("reason", "Impossibile avviare azione."), "ALEX", "[Spazio] Chiudi", true)
 		return
 
-	show_inspection("In corso: %s (%ds)..." % [act_name, int(dur)], "ALEX", "[Esc] Annulla")
+	show_inspection("In corso: %s (%ds)..." % [act_name, int(dur)], "ALEX", "[Esc] Annulla", true)
 	action_system.start_action(act_data)
 
 func _apply_action_effects(action: Dictionary) -> void:
@@ -771,8 +921,7 @@ func _apply_action_effects(action: Dictionary) -> void:
 
 	var res_msg: String = action.get("result_message", "Azione completata!")
 	AccessibilityManager.play_cue(Enums.AudioCueType.AREA_PERSONAL)
-	AccessibilityManager.announce(res_msg, true)
-	show_inspection(res_msg, "ALEX", "[Spazio] Chiudi")
+	show_inspection(res_msg, "ALEX", "[Spazio] Chiudi", true)
 	update_hud_display()
 
 func _on_hud_action_completed(_action_id: String, _reward: Dictionary) -> void:
@@ -783,10 +932,9 @@ func _on_hud_action_completed(_action_id: String, _reward: Dictionary) -> void:
 	_current_running_action = {}
 	update_hud_display()
 	AccessibilityManager.play_cue(Enums.AudioCueType.AREA_PERSONAL)
-	AccessibilityManager.announce(res_msg, true)
-	show_inspection(res_msg, "ALEX", "[Spazio] Chiudi")
+	show_inspection(res_msg, "ALEX", "[Spazio] Chiudi", false)
 
 func _on_hud_action_canceled(_action_id: String) -> void:
 	_current_running_action = {}
-	reset_inspection()
+	clear_inspection()
 	update_hud_display()

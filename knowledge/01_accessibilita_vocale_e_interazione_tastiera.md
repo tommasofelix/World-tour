@@ -226,6 +226,68 @@ Per consentire l'utilizzo ergonomico e rapido del gioco con la sola mano destra 
      * Piena compatibilità da tastiera: selezione istantanea tramite numeri `1`..`9` e `Numpad 1`..`Numpad 9`, frecce direzionali Su/Giù, Numpad 8/2, Invio/Spazio ed Esc per chiusura rapida;
      * Lettura vocale lineare immediata su NVDA tramite `AccessibilityManager.announce()` all'apertura del menu.
 
+---
 
+## 14. Albero Competenze, Gradi di Maestria Stellari (★☆☆☆☆ - ★★★★★) & Metodi di Studio nel Loft NYC (Validato in V5.7.0)
 
+1. **Vocalizzazione Lineare dei Gradi di Maestria (Stelle 1–5)**:
+   - L'Albero delle Competenze a 6 rami e 28 abilità adotta una scala a 5 gradi qualitativi (`★☆☆☆☆` a `★★★★★`);
+   - Per garantire la massima chiarezza con gli screen reader (NVDA / SAPI), ogni passaggio di grado o interrogazione di stato viene vocalizzato combinando la rappresentazione testuale del grado, il nome descrittivo e la stringa a stelle:
+     * *Grado 1*: "Principiante ★☆☆☆☆" (100 XP)
+     * *Grado 2*: "Praticante ★★☆☆☆" (250 XP)
+     * *Grado 3*: "Professionista ★★★☆☆" (500 XP)
+     * *Grado 4*: "Virtuoso ★★★★☆" (1000 XP)
+     * *Grado 5*: "Maestro Leggendario ★★★★★" (2000 XP - Cap massimo)
+   - Quando un'azione genera un avanzamento, `ActionSystem` emette un annuncio vocale prioritario e sintetico: *"Salito di grado! ★★★☆☆ (Grado 3: Professionista)"*, evitando letture confuse o caratteri inaccessibili.
 
+2. **Accessibilità Zero Mouse dei 4 Metodi di Studio negli Arredi del Loft NYC**:
+   - I 4 metodi di apprendimento sono integrati come opzioni dirette nei menu d'interazione degli arredi del loft (`scenes/apartment/apartment_interactions.gd`), azionabili con tastiera numerica o frecce:
+     * *Studio Manuali sul Divano* (`couch_study_manual`): 10s, 0 €, guadagno di +35 XP in `comp_theory`. Ideale per apprendere i fondamenti e sbloccare il Grado 1;
+     * *Corsi in Accademia alla Porta* (`door_academy_course`): 12s, 30 €, guadagno di +45 XP in `comp_theory`. Consente l'avanzamento fino al Grado 3 (Professionista);
+     * *Lezioni con Maestro Privato alla Chitarra* (`guitar_mentor_lesson`): 12s, 50 €, guadagno di +75 XP in `skill_guitar`. Metodo avanzato per scalare fino al Grado 5 (Maestro Leggendario);
+     * *Pratica e Ascolto Vinili al Giradischi* (`turntable_listen_*`): 12s, 0 €, +20 morale, -10 stress, 35% probabilità Scintilla Creativa e attribuzione passiva di +25 XP nella competenza di genere (Rock, Metal, Blues, Jazz) o produzione tecnica.
+   - Tutti i suoni associati e jingle di completamento rispettano rigidamente la fascia protettiva di volume compresa tra **0.7f e 0.8f**.
+
+---
+
+## 15. Scheda Personaggio a 2 Sezioni Tabulate & Consultazione dell'Albero Competenze (Validato in V5.7.1)
+
+1. **Tabbed Navigation Disaccoppiata (Zero Sovraccarico Cognitivo per NVDA)**:
+   - All'apertura della Scheda Personaggio (tasto rapido **`C`** o **`1`** / **`KP_1`** da riposo nell'appartamento), la finestra si apre per default sulla **Scheda 1 (Profilo & Fisiologia)**;
+   - La commutazione tra le due schede avviene all'istante tramite tastiera:
+     * Tasto **`1`** (o **`KP_1`**): `Scheda 1 — Profilo Artistico & Fisiologia`;
+     * Tasto **`2`** (o **`KP_2`**): `Scheda 2 — Albero delle Competenze (28 Abilità)`.
+
+2. **Esposizione dei 4 Attributi Fisiologici Innati (Scheda 1)**:
+   - In Scheda 1, la colonna destra espone i valori su scala 1–100 dei 4 attributi fisiologici innati (`musicality`, `intelligence`, `stamina`, `charm`), vocalizzati da NVDA nella sintesi di benvenuto e consultabili riga per riga;
+   - La matrice delle 7 abilità storiche base rimane sincronizzata in tempo reale con i gradi dell'albero canonico.
+
+3. **Filtro per Ramo & Lettura a Mani Libere delle Abilità (Scheda 2)**:
+   - La Scheda 2 evita la lettura indiscriminata di un "muro di 28 righe", filtrando le competenze attraverso i 6 rami canonici:
+     * Tasto **`G`**: Ramo Cultura & Padronanza dei Generi (7 abilità);
+     * Tasto **`S`**: Ramo Competenze Strumentali & Vocali (5 abilità);
+     * Tasto **`A`**: Ramo Composizione, Armonia & Scrittura (6 abilità);
+     * Tasto **`P`**: Ramo Palco, Spettacolo & Intrattenimento (4 abilità);
+     * Tasto **`T`**: Ramo Studio, Suono & Liuteria (3 abilità);
+     * Tasto **`B`**: Ramo Business, Media & Management (3 abilità);
+   - Le abilità del ramo attivo sono focusabili individualmente con le frecce **`Su` / `Giù`**:
+     * NVDA annuncia nome, stelle correnti, XP attuali, XP necessari e, per le abilità propedeutiche non ancora sbloccate, il motivo esplicito del blocco (es. "Richiede Grado 2 in Teoria Musicale & Armonia");
+   - Tasto rapido **`R`**: Lettura vocale globale e continua a mani libere di tutte le abilità del ramo corrente;
+   - Tasto **`Esc`** o **`C`**: Chiusura immediata della scheda con ripristino sicuro del focus sul protagonista.
+
+---
+
+## 16. Sincronizzazione Rigorosa 1:1 Testo-Voce & Canale Unificato di Emissione (Validato in V5.8.0)
+
+1. **Canone "Zero Divergenza Testo-Voce" (1:1 Text-Speech Parity)**:
+   - Ogni box informativo, di dialogo o di notifica a schermo (incluso `BottomLeftDialogue` dell'HUD e i dialoghi delle modali) deve mantenere una corrispondenza letterale e assoluta tra ciò che viene renderizzato visivamente e ciò che viene pronunciato dalla sintesi vocale (NVDA / SAPI) tramite `AccessibilityManager.announce()`;
+   - È fatto categorico divieto di emettere simultaneamente sintesi vocali generiche o divergenti (es. frasi sintetiche da `ActionSystem`) mentre a schermo compaiono messaggi di risultato dettagliati contenenti valori di energia, morale, stress o XP;
+   - Tutte le emissioni di notifica del Loft devono transitare attraverso un metodo di dispatch unificato (`display_dialogue()`), garantendo atomicità e sincronismo tra il canale visivo per utenti normovedenti e il canale vocale per Luca.
+
+2. **Stato Base Ambientale del Diario di Bordo (Zero Freeze & Zero Residui)**:
+   - Quando il giocatore si muove liberamente nel loft senza arredi selezionati né azioni attive, `BottomLeftDialogue` non deve essere bruscamente occultato né congelato su vecchi testi o placeholder storici;
+   - Il box rimane visibile esponendo le informazioni pulite del "Diario di Bordo": coordinate della stanza, istruzioni di movimento (Frecce/Numpad) e scorciatoie di sfoglio arredi (Tab);
+   - Questo approccio previene l'esposizione di buffer di testo obsoleti al bridge AccessKit di NVDA e azzera la percezione di finestre congelate o non reattive.
+
+3. **Congedo Attivo dei Messaggi Temporanei (`[Spazio / Esc]`)**:
+   - Qualsiasi notifica temporanea di esito azione o ispezione arredo deve essere esplicitamente congedabile tramite pressione di `Spazio` o `Esc`, ripristinando istantaneamente lo stato base del Diario di Bordo sia a video che per la voce dello screen reader.
