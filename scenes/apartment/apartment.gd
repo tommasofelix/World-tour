@@ -131,9 +131,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 	elif key_event.keycode == KEY_KP_5:
-		_announce_current_prop()
-		get_viewport().set_input_as_handled()
-		return
+		if selected_prop_index >= 0:
+			_announce_current_prop()
+			get_viewport().set_input_as_handled()
+			return
 
 	# Interazione su arredo selezionato da ciclo Tab
 	if (key_event.keycode == KEY_SPACE or key_event.keycode == KEY_ENTER or key_event.keycode == KEY_KP_ENTER or key_event.keycode == KEY_KP_0) and selected_prop_index >= 0:
@@ -199,6 +200,26 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		KEY_W:
 			hud.open_modal(hud.legacy_modal)
+			get_viewport().set_input_as_handled()
+		KEY_1, KEY_KP_1:
+			# Macro-Categoria 1: Personale
+			hud.open_modal(hud.character_sheet_modal)
+			get_viewport().set_input_as_handled()
+		KEY_2, KEY_KP_2:
+			# Macro-Categoria 2: Creazione / Musiche
+			hud.open_modal(hud.song_catalog_modal)
+			get_viewport().set_input_as_handled()
+		KEY_3, KEY_KP_3:
+			# Macro-Categoria 3: Carriera / Live
+			hud.open_modal(hud.live_concert_modal)
+			get_viewport().set_input_as_handled()
+		KEY_4, KEY_KP_4:
+			# Macro-Categoria 4: Social / Upgrade
+			hud.open_modal(hud.social_modal)
+			get_viewport().set_input_as_handled()
+		KEY_5, KEY_KP_5:
+			# Macro-Categoria 5: Band
+			hud.open_modal(hud.band_hub_modal)
 			get_viewport().set_input_as_handled()
 		KEY_Z:
 			# Dormi subito / Concludi giornata

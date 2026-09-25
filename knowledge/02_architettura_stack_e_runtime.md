@@ -106,6 +106,10 @@ Tutti i sistemi di logica pura (`core/`, `systems/`, `data/`) sono isolati dal r
     - **Stand-Point Pattern per Auto-Walk**: La destinazione di movimento automatico (`walk_to_target`) non deve coincidere con la posizione globale del prop (spesso situata al centro dell'ostacolo solido). Ogni prop deve esporre un punto di stazionamento calcolato (`get_stand_position()` con `stand_offset`) situato nello spazio calpestabile antistante l'oggetto.
     - **Mouse Picking & Simmetria Universale (The Sims Foundation)**: Sfruttando `mouse_entered`, `mouse_exited` e `_input_event` sull'`Area2D`, gli utenti con mouse (Holy Diver) ottengono il cursore a manina (`CURSOR_POINTING_HAND`) e il click per auto-walk/interazione o menu contestuali futuri, mentre gli utenti con tastiera e screen reader (Luca) mantengono il 100% dell'operatività tramite navigazione diretta a tasti (Tab, Numpad, shortcut).
 
+13. **Discipline di Layout e Padding: `content_margin` vs `expand_margin` in StyleBoxFlat**:
+    - **Il Pericolo di `expand_margin`**: In Godot 4, l'uso di `expand_margin_*` su una risorsa `StyleBoxFlat` espande il rettangolo grafico renderizzato *fuori* dai confini geometrici del nodo `Control`. Questo altera la percezione visiva e crea sovrapposizioni o collisioni tra pannelli adiacenti che risultano invisibili al calcolo logico delle coordinate (`offset_*`), provocando sovrapposizioni parziali o artefatti di bordo.
+    - **Il Canone di `content_margin`**: Per aggiungere padding interno a un `PanelContainer`, utilizzare tassativamente `content_margin_left`, `content_margin_top`, `content_margin_right` e `content_margin_bottom` sullo `StyleBoxFlat`. Questo approccio preserva la corrispondenza 1:1 tra coordinate del nodo e visuale, garantendo al contempo che i nodi figli ricevano il padding desiderato senza dover inserire nodi `MarginContainer` intermedi, proteggendo i percorsi `get_node()` da rotture.
+
 ---
 
 ## Comandi Operativi di Riferimento

@@ -197,6 +197,79 @@ func test_apartment_hud_component() -> void:
 	assert_true(not hud.is_stereo_on, "Stereo spento dopo secondo trigger (Toggle)")
 	assert_true(hud.label_text.text.contains("Stereo spento"), "Inspection box indica stereo spento")
 
+	# Test dinamismo ritratti espressivi di Alex (Contratto D1)
+	var test_player: PlayerData = PlayerData.new()
+	test_player.energy = 80.0
+	test_player.stress = 20.0
+	test_player.morale = 75.0
+	assert_eq(hud.get_alex_portrait_texture(test_player), hud.TEX_ALEX_NORMALE, "Alex in equilibrio emotivo usa alex_normale.png")
+
+	test_player.morale = 25.0
+	assert_eq(hud.get_alex_portrait_texture(test_player), hud.TEX_ALEX_TRISTE, "Alex con morale basso (<= 30%) usa alex_triste.png")
+
+	test_player.morale = 75.0
+	test_player.stress = 65.0
+	assert_eq(hud.get_alex_portrait_texture(test_player), hud.TEX_ALEX_ARRABBIATO, "Alex con stress elevato (>= 60%) usa alex_arrabbiato.png")
+
+	test_player.stress = 90.0
+	assert_eq(hud.get_alex_portrait_texture(test_player), hud.TEX_ALEX_DISPERATO, "Alex con stress estremo (>= 85%) usa alex_disperato.png")
+
+	test_player.stress = 20.0
+	test_player.energy = 10.0
+	assert_eq(hud.get_alex_portrait_texture(test_player), hud.TEX_ALEX_DISPERATO, "Alex con energia critica (<= 15%) usa alex_disperato.png")
+
+	# Test dinamismo icone meteo / fasce orarie (Contratto D3)
+	assert_eq(hud.get_period_weather_texture(Enums.TimePeriod.MORNING), hud.TEX_MATTINO, "Mattina usa Mattino.png")
+	assert_eq(hud.get_period_weather_texture(Enums.TimePeriod.AFTERNOON), hud.TEX_POMERIGGIO, "Pomeriggio usa Pomeriggio.png")
+	assert_eq(hud.get_period_weather_texture(Enums.TimePeriod.EVENING), hud.TEX_TRAMONTO, "Sera usa Tramonto.png")
+	assert_eq(hud.get_period_weather_texture(Enums.TimePeriod.NIGHT), hud.TEX_NOTTE, "Notte usa Notte.png")
+
+	# Test dinamismo icona denaro (Contratto D4)
+	if GameManager:
+		GameManager.player_data.money = 250.0
+		hud.update_hud_display()
+		if hud.texture_money_icon:
+			assert_eq(hud.texture_money_icon.texture, hud.TEX_POCHI_SOLDI, "Saldo < 1000€ usa pochi_soldi.png")
+
+		GameManager.player_data.money = 1500.0
+		hud.update_hud_display()
+		if hud.texture_money_icon:
+			assert_eq(hud.texture_money_icon.texture, hud.TEX_MOLTI_SOLDI, "Saldo >= 1000€ usa Molti_Soldi.png")
+
+	# Test pulsanti Dock Macro-Categorie (Contratto D5)
+	if hud.btn_dock_personal:
+		hud.btn_dock_personal.pressed.emit()
+		assert_true(hud.character_sheet_modal.visible, "BtnDockPersonal apre CharacterSheetModal")
+		hud.hide_all_modals()
+
+	if hud.btn_dock_creation:
+		hud.btn_dock_creation.pressed.emit()
+		assert_true(hud.song_catalog_modal.visible, "BtnDockCreation apre SongCatalogModal")
+		hud.hide_all_modals()
+
+	if hud.btn_dock_career:
+		hud.btn_dock_career.pressed.emit()
+		assert_true(hud.live_concert_modal.visible, "BtnDockCareer apre LiveConcertModal")
+		hud.hide_all_modals()
+
+	if hud.btn_dock_tools:
+		hud.btn_dock_tools.pressed.emit()
+		assert_true(hud.upgrades_modal.visible, "BtnDockTools apre UpgradesModal")
+		hud.hide_all_modals()
+
+	if hud.btn_dock_band:
+		hud.btn_dock_band.pressed.emit()
+		assert_true(hud.band_hub_modal.visible, "BtnDockBand apre BandHubModal")
+		hud.hide_all_modals()
+
+	# Verifica Clearance Geometrica Anti-Sovrapposizione Dialogue - Dock (Full HD 1920x1080)
+	if hud.panel_dialogue and hud.panel_center_dock:
+		var dialogue_right: float = hud.panel_dialogue.offset_right
+		var dock_left: float = (1920.0 * hud.panel_center_dock.anchor_left) + hud.panel_center_dock.offset_left
+		assert_true(dialogue_right < dock_left, "Nessuna sovrapposizione tra dialogue box (X=%.1f) e center dock (X=%.1f)" % [dialogue_right, dock_left])
+		var clearance: float = dock_left - dialogue_right
+		assert_true(clearance >= 80.0, "Clearance tra dialogue e dock >= 80px (reale: %.1f px)" % clearance)
+
 	hud.reset_inspection()
 	assert_true(hud.label_text.text.contains("Loft Apartment"), "reset_inspection ripristina ambient text")
 
@@ -265,5 +338,21 @@ func test_apartment_scene_integration() -> void:
 	apt._on_prop_interaction("stereo")
 	assert_true(apt.hud.label_speaker.text.contains("STEREO"), "Interazione stereo aggiorna inspection box")
 	apt.hud.reset_inspection()
+
+	# Test tasti Numpad (KEY_KP_1 .. KEY_KP_5) per le 5 Macro-Aree del dock
+	var numpad_tests = [
+		{"key": KEY_KP_1, "modal": apt.hud.character_sheet_modal, "name": "KP_1 -> Personale"},
+		{"key": KEY_KP_2, "modal": apt.hud.song_catalog_modal, "name": "KP_2 -> Creazione"},
+		{"key": KEY_KP_3, "modal": apt.hud.live_concert_modal, "name": "KP_3 -> Carriera"},
+		{"key": KEY_KP_4, "modal": apt.hud.social_modal, "name": "KP_4 -> Social"},
+		{"key": KEY_KP_5, "modal": apt.hud.band_hub_modal, "name": "KP_5 -> Band"}
+	]
+	for t in numpad_tests:
+		var ev := InputEventKey.new()
+		ev.pressed = true
+		ev.keycode = t.key
+		apt._unhandled_input(ev)
+		assert_true(t.modal.visible, "Tasto %s apre correttamente la modale associata" % t.name)
+		apt.hud.hide_all_modals()
 
 	apt.queue_free()
