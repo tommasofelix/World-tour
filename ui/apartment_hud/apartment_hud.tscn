@@ -1,69 +1,99 @@
-[gd_scene load_steps=28 format=3 uid="uid://c8aparthudny001"]
+[gd_scene format=3 uid="uid://d3l6filxru2m3"]
 
-[ext_resource type="Script" path="res://ui/apartment_hud/apartment_hud.gd" id="1_aphud"]
-[ext_resource type="FontFile" uid="uid://cih81t234uip5" path="res://assets/img/font_text/press_start_2p/PressStart2P.ttf" id="2_font"]
-[ext_resource type="Texture2D" uid="uid://b126fg_right" path="res://assets/img/gameplay/casa/camera/personaggio_prova/fermo_destra.png" id="3_portrait"]
-[ext_resource type="PackedScene" uid="uid://dmsongcat01" path="res://ui/music/song_catalog.tscn" id="4_catalog"]
-[ext_resource type="PackedScene" uid="uid://dmsongcreat01" path="res://ui/music/song_creator.tscn" id="5_creator"]
-[ext_resource type="PackedScene" uid="uid://c8liveconct01" path="res://ui/concert/live_concert.tscn" id="6_concert"]
-[ext_resource type="PackedScene" uid="uid://dmeconbank01" path="res://ui/economy/economy_bank.tscn" id="7_bank"]
-[ext_resource type="PackedScene" uid="uid://dmsummarywt01" path="res://ui/summary/daily_summary.tscn" id="8_summary"]
-[ext_resource type="PackedScene" uid="uid://bw3u4ugqd3yx1" path="res://ui/character/character_sheet.tscn" id="9_charsheet"]
-[ext_resource type="PackedScene" uid="uid://dmbandhubwt01" path="res://ui/band/band_hub.tscn" id="10_bandhub"]
-[ext_resource type="PackedScene" uid="uid://dmalbumcrwt01" path="res://ui/album/album_creator.tscn" id="11_albumcr"]
-[ext_resource type="PackedScene" uid="uid://dmindhubwt01" path="res://ui/industry/industry_hub.tscn" id="12_indhub"]
-[ext_resource type="PackedScene" uid="uid://di3xf1tfkfnlg" path="res://ui/industry/dilemma_modal.tscn" id="13_dilemma"]
-[ext_resource type="PackedScene" uid="uid://drhidq00mm8wy" path="res://ui/travel/travel_modal.tscn" id="14_travel"]
-[ext_resource type="PackedScene" uid="uid://dmtourmodal01" path="res://ui/tour/tour_modal.tscn" id="15_tour"]
-[ext_resource type="PackedScene" uid="uid://cmwl8cbhw552k" path="res://ui/festival/festival_modal.tscn" id="16_fest"]
-[ext_resource type="PackedScene" uid="uid://coi38q00mm8wy" path="res://ui/social/social_modal.tscn" id="17_social"]
-[ext_resource type="PackedScene" uid="uid://b8m1n6ydye71u" path="res://ui/charts/chart_modal.tscn" id="18_chart"]
-[ext_resource type="PackedScene" uid="uid://dm2systemmenu01" path="res://ui/system_menu/system_menu_modal.tscn" id="19_sysmenu"]
-[ext_resource type="PackedScene" uid="uid://dm4upgradesmod01" path="res://ui/upgrades/upgrades_modal.tscn" id="20_upgrades"]
-[ext_resource type="PackedScene" uid="uid://dmrelaxmodal01" path="res://ui/relax/relax_modal.tscn" id="21_relax"]
-[ext_resource type="PackedScene" uid="uid://dmlegacymodal01" path="res://ui/legacy/legacy_modal.tscn" id="22_legacy"]
+[ext_resource type="Script" uid="uid://cpgc133ueetfp" path="res://ui/apartment_hud/apartment_hud.gd" id="1_aphud"]
+[ext_resource type="FontFile" uid="uid://bg3xkadvy8j0d" path="res://assets/img/font_text/press_start_2p/PressStart2P.ttf" id="2_font"]
+[ext_resource type="Texture2D" uid="uid://byiifpwk4m08i" path="res://assets/img/gameplay/GUI/Portrait/Alex/alex_normale.png" id="3_alex_normale"]
+[ext_resource type="Texture2D" uid="uid://b1thsejji5vo3" path="res://assets/img/gameplay/GUI/Elementi/Livello_Personaggio.png" id="4_level_star"]
+[ext_resource type="Texture2D" uid="uid://cvjb5vj8tr53d" path="res://assets/img/gameplay/GUI/Elementi/Energia.png" id="5_energy_bolt"]
+[ext_resource type="Texture2D" uid="uid://c658orthmx757" path="res://assets/img/gameplay/GUI/Elementi/Stress_nomrale.png" id="6_stress_heart"]
+[ext_resource type="Texture2D" uid="uid://b4sj7qsxl641g" path="res://assets/img/gameplay/GUI/Elementi/Morale_Normale.png" id="7_morale_note"]
+[ext_resource type="Texture2D" uid="uid://bnj38r8v0df5b" path="res://assets/img/gameplay/GUI/Elementi/Mattino.png" id="8_time_mattino"]
+[ext_resource type="Texture2D" uid="uid://clcbfi3j8fmoi" path="res://assets/img/gameplay/GUI/Elementi/Pulsante_Riprendi.png" id="9_btn_pause"]
+[ext_resource type="Texture2D" uid="uid://myyo0jiue0xf" path="res://assets/img/gameplay/GUI/Elementi/Pulsante_tempo_x2.png" id="10_btn_speed"]
+[ext_resource type="Texture2D" uid="uid://cryoojk3bfkcx" path="res://assets/img/gameplay/GUI/Elementi/Personale.png" id="11_dock_personale"]
+[ext_resource type="Texture2D" uid="uid://srifpwjse3ri" path="res://assets/img/gameplay/GUI/Elementi/Creazione.png" id="12_dock_creazione"]
+[ext_resource type="Texture2D" uid="uid://n2n5dw3r314w" path="res://assets/img/gameplay/GUI/Elementi/Carriera.png" id="13_dock_carriera"]
+[ext_resource type="Texture2D" uid="uid://ccbowy4f4mi2v" path="res://assets/img/gameplay/GUI/Elementi/Strumenti.png" id="14_dock_strumenti"]
+[ext_resource type="Texture2D" uid="uid://iqjuu5qaij6e" path="res://assets/img/gameplay/GUI/Elementi/pochi_soldi.png" id="15_money_cash"]
+[ext_resource type="Texture2D" uid="uid://drusvwghawdhy" path="res://assets/img/gameplay/GUI/Elementi/Mappa.png" id="16_map_pin"]
+[ext_resource type="PackedScene" uid="uid://dmsongcat01" path="res://ui/music/song_catalog.tscn" id="17_catalog"]
+[ext_resource type="PackedScene" uid="uid://dmsongcreat01" path="res://ui/music/song_creator.tscn" id="18_creator"]
+[ext_resource type="PackedScene" uid="uid://c8liveconct01" path="res://ui/concert/live_concert.tscn" id="19_concert"]
+[ext_resource type="PackedScene" uid="uid://dmeconbank01" path="res://ui/economy/economy_bank.tscn" id="20_bank"]
+[ext_resource type="PackedScene" uid="uid://dmsummarywt01" path="res://ui/summary/daily_summary.tscn" id="21_summary"]
+[ext_resource type="PackedScene" uid="uid://bw3u4ugqd3yx1" path="res://ui/character/character_sheet.tscn" id="22_charsheet"]
+[ext_resource type="PackedScene" uid="uid://dmbandhubwt01" path="res://ui/band/band_hub.tscn" id="23_bandhub"]
+[ext_resource type="PackedScene" uid="uid://dmalbumcrwt01" path="res://ui/album/album_creator.tscn" id="24_albumcr"]
+[ext_resource type="PackedScene" uid="uid://dmindhubwt01" path="res://ui/industry/industry_hub.tscn" id="25_indhub"]
+[ext_resource type="PackedScene" uid="uid://di3xf1tfkfnlg" path="res://ui/industry/dilemma_modal.tscn" id="26_dilemma"]
+[ext_resource type="PackedScene" uid="uid://drhidq00mm8wy" path="res://ui/travel/travel_modal.tscn" id="27_travel"]
+[ext_resource type="PackedScene" uid="uid://dmtourmodal01" path="res://ui/tour/tour_modal.tscn" id="28_tour"]
+[ext_resource type="PackedScene" uid="uid://cmwl8cbhw552k" path="res://ui/festival/festival_modal.tscn" id="29_fest"]
+[ext_resource type="PackedScene" uid="uid://coi38q00mm8wy" path="res://ui/social/social_modal.tscn" id="30_social"]
+[ext_resource type="PackedScene" uid="uid://b8m1n6ydye71u" path="res://ui/charts/chart_modal.tscn" id="31_chart"]
+[ext_resource type="PackedScene" uid="uid://d3domf6gjmrfg" path="res://ui/system_menu/system_menu_modal.tscn" id="32_sysmenu"]
+[ext_resource type="PackedScene" uid="uid://cyi571c3r84r1" path="res://ui/upgrades/upgrades_modal.tscn" id="33_upgrades"]
+[ext_resource type="PackedScene" uid="uid://cokc6bydye71u" path="res://ui/relax/relax_modal.tscn" id="34_relax"]
+[ext_resource type="PackedScene" uid="uid://c4gmh8uiq10gi" path="res://ui/legacy/legacy_modal.tscn" id="35_legacy"]
+[ext_resource type="Texture2D" uid="uid://6ul6s13rkxwj" path="res://assets/img/gameplay/GUI/Elementi/band_icon.png" id="36_dock_band"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud_panel"]
-bg_color = Color(0.08, 0.08, 0.12, 0.88)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.2, 0.85, 0.95, 0.9)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-expand_margin_left = 4.0
-expand_margin_top = 4.0
-expand_margin_right = 4.0
-expand_margin_bottom = 4.0
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_energy"]
-bg_color = Color(0.15, 0.85, 0.35, 1.0)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stress"]
-bg_color = Color(0.95, 0.3, 0.25, 1.0)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_morale"]
-bg_color = Color(0.2, 0.6, 1.0, 1.0)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
+content_margin_left = 14.0
+content_margin_top = 12.0
+content_margin_right = 14.0
+content_margin_bottom = 12.0
+bg_color = Color(0.1, 0.11, 0.16, 0.94)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.2, 0.85, 0.95, 0.95)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_bg"]
-bg_color = Color(0.12, 0.12, 0.16, 0.8)
+bg_color = Color(0.12, 0.12, 0.17, 0.9)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
-[node name="ApartmentHud" type="Control"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_energy"]
+bg_color = Color(0.15, 0.88, 0.38, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stress"]
+bg_color = Color(0.95, 0.3, 0.25, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_morale"]
+bg_color = Color(0.2, 0.65, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dock_panel"]
+bg_color = Color(0.08, 0.09, 0.14, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.9, 0.7, 0.25, 0.95)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="ApartmentHud" type="Control" unique_id=878860864]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -73,281 +103,570 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_aphud")
 
-[node name="TopLeftProfile" type="PanelContainer" parent="."]
+[node name="TopLeftProfile" type="PanelContainer" parent="." unique_id=1520228720]
 layout_mode = 0
 offset_left = 24.0
 offset_top = 20.0
-offset_right = 420.0
-offset_bottom = 110.0
+offset_right = 620.0
+offset_bottom = 200.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud_panel")
 
-[node name="HBox" type="HBoxContainer" parent="TopLeftProfile"]
+[node name="HBox" type="HBoxContainer" parent="TopLeftProfile" unique_id=1969672518]
 layout_mode = 2
-theme_override_constants/separation = 12
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 16
 
-[node name="PortraitFrame" type="Control" parent="TopLeftProfile/HBox"]
-custom_minimum_size = Vector2(72, 72)
+[node name="PortraitFrame" type="Control" parent="TopLeftProfile/HBox" unique_id=308809013]
+custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
+size_flags_vertical = 4
 
-[node name="TexturePortraitTop" type="TextureRect" parent="TopLeftProfile/HBox/PortraitFrame"]
+[node name="TexturePortraitTop" type="TextureRect" parent="TopLeftProfile/HBox/PortraitFrame" unique_id=1837335270]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("3_portrait")
+texture = ExtResource("3_alex_normale")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="VBox" type="VBoxContainer" parent="TopLeftProfile/HBox"]
+[node name="VBox" type="VBoxContainer" parent="TopLeftProfile/HBox" unique_id=1040609964]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 4
+size_flags_vertical = 3
+theme_override_constants/separation = 10
 
-[node name="LabelLevel" type="Label" parent="TopLeftProfile/HBox/VBox"]
+[node name="HBoxLevel" type="HBoxContainer" parent="TopLeftProfile/HBox/VBox" unique_id=731058869]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.25, 0.9, 1.0, 1.0)
+theme_override_constants/separation = 10
+
+[node name="TextureLevelIcon" type="TextureRect" parent="TopLeftProfile/HBox/VBox/HBoxLevel" unique_id=1363360170]
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+texture = ExtResource("4_level_star")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="LabelLevel" type="Label" parent="TopLeftProfile/HBox/VBox/HBoxLevel" unique_id=272791488]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.25, 0.9, 1, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 13
 text = "Lv. 1 - Chitarrista Esordiente"
 
-[node name="BarEnergy" type="ProgressBar" parent="TopLeftProfile/HBox/VBox"]
-custom_minimum_size = Vector2(0, 12)
+[node name="HBoxEnergy" type="HBoxContainer" parent="TopLeftProfile/HBox/VBox" unique_id=1982473687]
 layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TextureEnergyIcon" type="TextureRect" parent="TopLeftProfile/HBox/VBox/HBoxEnergy" unique_id=1988962600]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("5_energy_bolt")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="BarEnergy" type="ProgressBar" parent="TopLeftProfile/HBox/VBox/HBoxEnergy" unique_id=928839310]
+custom_minimum_size = Vector2(210, 18)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
 theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_energy")
 value = 100.0
 show_percentage = false
 
-[node name="BarStress" type="ProgressBar" parent="TopLeftProfile/HBox/VBox"]
-custom_minimum_size = Vector2(0, 10)
+[node name="LabelEnergyVal" type="Label" parent="TopLeftProfile/HBox/VBox/HBoxEnergy" unique_id=1776057552]
+custom_minimum_size = Vector2(165, 0)
 layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 1, 0.5, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 11
+text = "ENERGIA (100%)"
+
+[node name="HBoxStress" type="HBoxContainer" parent="TopLeftProfile/HBox/VBox" unique_id=66141583]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TextureStressIcon" type="TextureRect" parent="TopLeftProfile/HBox/VBox/HBoxStress" unique_id=326908192]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("6_stress_heart")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="BarStress" type="ProgressBar" parent="TopLeftProfile/HBox/VBox/HBoxStress" unique_id=490419893]
+custom_minimum_size = Vector2(210, 18)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
 theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_stress")
 value = 15.0
 show_percentage = false
 
-[node name="BarMorale" type="ProgressBar" parent="TopLeftProfile/HBox/VBox"]
-custom_minimum_size = Vector2(0, 10)
+[node name="LabelStressVal" type="Label" parent="TopLeftProfile/HBox/VBox/HBoxStress" unique_id=243912582]
+custom_minimum_size = Vector2(165, 0)
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 11
+text = "STRESS (15%)"
+
+[node name="HBoxMorale" type="HBoxContainer" parent="TopLeftProfile/HBox/VBox" unique_id=2099611274]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TextureMoraleIcon" type="TextureRect" parent="TopLeftProfile/HBox/VBox/HBoxMorale" unique_id=723847724]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("7_morale_note")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="BarMorale" type="ProgressBar" parent="TopLeftProfile/HBox/VBox/HBoxMorale" unique_id=1490242852]
+custom_minimum_size = Vector2(210, 18)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
 theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_morale")
 value = 80.0
 show_percentage = false
 
-[node name="TopRightTime" type="PanelContainer" parent="."]
+[node name="LabelMoraleVal" type="Label" parent="TopLeftProfile/HBox/VBox/HBoxMorale" unique_id=435062832]
+custom_minimum_size = Vector2(165, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 11
+text = "MORALE (80%)"
+
+[node name="TopRightTime" type="PanelContainer" parent="." unique_id=512029566]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -380.0
+offset_left = -480.0
 offset_top = 20.0
 offset_right = -24.0
-offset_bottom = 90.0
+offset_bottom = 190.0
 grow_horizontal = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud_panel")
 
-[node name="VBoxTime" type="VBoxContainer" parent="TopRightTime"]
+[node name="VBoxTime" type="VBoxContainer" parent="TopRightTime" unique_id=1332956807]
 layout_mode = 2
-theme_override_constants/separation = 4
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
 
-[node name="LabelDateTime" type="Label" parent="TopRightTime/VBoxTime"]
+[node name="HBoxDate" type="HBoxContainer" parent="TopRightTime/VBoxTime" unique_id=1648982771]
 layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="LabelDateTime" type="Label" parent="TopRightTime/VBoxTime/HBoxDate" unique_id=1018350326]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 10
-text = "Anno 1, Mese 1, Giorno 1"
+theme_override_font_sizes/font_size = 13
+text = "Giorno 1 - Lunedì, Settimana 1"
 
-[node name="LabelPeriod" type="Label" parent="TopRightTime/VBoxTime"]
+[node name="HBoxPeriod" type="HBoxContainer" parent="TopRightTime/VBoxTime" unique_id=2052942693]
 layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="TexturePeriodIcon" type="TextureRect" parent="TopRightTime/VBoxTime/HBoxPeriod" unique_id=354453977]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+texture = ExtResource("8_time_mattino")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="LabelPeriod" type="Label" parent="TopRightTime/VBoxTime/HBoxPeriod" unique_id=626813126]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.9, 1, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 9
-text = "Ore 06:00 (Mattina)"
+theme_override_font_sizes/font_size = 13
+text = "Mattina 08:00"
 
-[node name="BottomLeftDialogue" type="PanelContainer" parent="."]
+[node name="HBoxTimeControls" type="HBoxContainer" parent="TopRightTime/VBoxTime" unique_id=279174446]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="BtnTimePause" type="Button" parent="TopRightTime/VBoxTime/HBoxTimeControls" unique_id=2132677948]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Pausa / Riprendi (P)"
+focus_mode = 0
+icon = ExtResource("9_btn_pause")
+icon_alignment = 1
+expand_icon = true
+
+[node name="BtnTimeSpeed" type="Button" parent="TopRightTime/VBoxTime/HBoxTimeControls" unique_id=918396715]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Velocità x2 (V)"
+focus_mode = 0
+icon = ExtResource("10_btn_speed")
+icon_alignment = 1
+expand_icon = true
+
+[node name="BtnTimeSleep" type="Button" parent="TopRightTime/VBoxTime/HBoxTimeControls" unique_id=386755688]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Riposo / Salta fascia (X / Z)"
+focus_mode = 0
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 11
+text = "Zzz"
+
+[node name="BottomLeftDialogue" type="PanelContainer" parent="." unique_id=1288525083]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 24.0
-offset_top = -180.0
-offset_right = 720.0
-offset_bottom = -24.0
+offset_top = -240.0
+offset_right = 540.0
+offset_bottom = -20.0
 grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud_panel")
 
-[node name="Margin" type="MarginContainer" parent="BottomLeftDialogue"]
+[node name="Margin" type="MarginContainer" parent="BottomLeftDialogue" unique_id=1902025016]
 layout_mode = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 8
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
 
-[node name="HBox" type="HBoxContainer" parent="BottomLeftDialogue/Margin"]
+[node name="HBox" type="HBoxContainer" parent="BottomLeftDialogue/Margin" unique_id=1314178002]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_constants/separation = 14
 
-[node name="TexturePortraitDialogue" type="TextureRect" parent="BottomLeftDialogue/Margin/HBox"]
-custom_minimum_size = Vector2(96, 120)
+[node name="TexturePortraitDialogue" type="TextureRect" parent="BottomLeftDialogue/Margin/HBox" unique_id=8663627]
+custom_minimum_size = Vector2(120, 145)
 layout_mode = 2
-texture = ExtResource("3_portrait")
+texture = ExtResource("3_alex_normale")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="VBox" type="VBoxContainer" parent="BottomLeftDialogue/Margin/HBox"]
+[node name="VBox" type="VBoxContainer" parent="BottomLeftDialogue/Margin/HBox" unique_id=283463782]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 8
+size_flags_vertical = 3
+theme_override_constants/separation = 6
 
-[node name="LabelSpeaker" type="Label" parent="BottomLeftDialogue/Margin/HBox/VBox"]
+[node name="LabelSpeaker" type="Label" parent="BottomLeftDialogue/Margin/HBox/VBox" unique_id=907857744]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 14
 text = "ALEX"
 
-[node name="LabelText" type="Label" parent="BottomLeftDialogue/Margin/HBox/VBox"]
-custom_minimum_size = Vector2(400, 50)
+[node name="LabelText" type="Label" parent="BottomLeftDialogue/Margin/HBox/VBox" unique_id=2022150202]
+custom_minimum_size = Vector2(330, 75)
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 9
+theme_override_font_sizes/font_size = 11
 text = "New York - Loft Apartment.
 Frecce/WASD/Numpad: cammina.
 Tab: sfoglia arredi. Spazio: interagisci. Esc: menu."
 autowrap_mode = 3
 
-[node name="LabelHint" type="Label" parent="BottomLeftDialogue/Margin/HBox/VBox"]
+[node name="LabelHint" type="Label" parent="BottomLeftDialogue/Margin/HBox/VBox" unique_id=1893011891]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.5, 0.7, 0.8, 0.85)
+theme_override_colors/font_color = Color(0.5, 0.75, 0.9, 0.9)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 8
-text = "[Spazio] Azione   [Tab] Sfoglia arredi   [Esc] Menu"
+theme_override_font_sizes/font_size = 10
+text = "[Spazio] Azione  [Tab] Sfoglia  [Esc] Menu"
 
-[node name="BottomRightInfo" type="PanelContainer" parent="."]
+[node name="BottomCenterDock" type="PanelContainer" parent="." unique_id=1148051006]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -312.0
+offset_top = -135.0
+offset_right = 312.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_dock_panel")
+
+[node name="Margin" type="MarginContainer" parent="BottomCenterDock" unique_id=951533195]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="HBoxDock" type="HBoxContainer" parent="BottomCenterDock/Margin" unique_id=1738823474]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="BtnDockPersonal" type="Button" parent="BottomCenterDock/Margin/HBoxDock" unique_id=1048610619]
+custom_minimum_size = Vector2(100, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+tooltip_text = "Scheda Personale (Tasto 1)"
+focus_mode = 0
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 10
+text = "1 Personale"
+icon = ExtResource("11_dock_personale")
+icon_alignment = 1
+vertical_icon_alignment = 0
+expand_icon = true
+
+[node name="BtnDockCreation" type="Button" parent="BottomCenterDock/Margin/HBoxDock" unique_id=149037867]
+custom_minimum_size = Vector2(100, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+tooltip_text = "Creazione & Brani (Tasto 2)"
+focus_mode = 0
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 10
+text = "2 Musiche"
+icon = ExtResource("12_dock_creazione")
+icon_alignment = 1
+vertical_icon_alignment = 0
+expand_icon = true
+
+[node name="BtnDockCareer" type="Button" parent="BottomCenterDock/Margin/HBoxDock" unique_id=68320104]
+custom_minimum_size = Vector2(100, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+tooltip_text = "Carriera & Live (Tasto 3)"
+focus_mode = 0
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 10
+text = "3 Carriera"
+icon = ExtResource("13_dock_carriera")
+icon_alignment = 1
+vertical_icon_alignment = 0
+expand_icon = true
+
+[node name="BtnDockTools" type="Button" parent="BottomCenterDock/Margin/HBoxDock" unique_id=2054317397]
+custom_minimum_size = Vector2(100, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+tooltip_text = "Social & Upgrade (Tasto 4)"
+focus_mode = 0
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 10
+text = "4 Social"
+icon = ExtResource("14_dock_strumenti")
+icon_alignment = 1
+vertical_icon_alignment = 0
+expand_icon = true
+
+[node name="BtnDockBand" type="Button" parent="BottomCenterDock/Margin/HBoxDock" unique_id=1987654321]
+custom_minimum_size = Vector2(100, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+tooltip_text = "Band & Membri (Tasto 5 / B)"
+focus_mode = 0
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 10
+text = "5 Band"
+icon = ExtResource("36_dock_band")
+icon_alignment = 1
+vertical_icon_alignment = 0
+expand_icon = true
+
+[node name="BottomRightInfo" type="PanelContainer" parent="." unique_id=484041873]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -380.0
-offset_top = -120.0
+offset_left = -460.0
+offset_top = -200.0
 offset_right = -24.0
-offset_bottom = -24.0
+offset_bottom = -20.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_hud_panel")
 
-[node name="VBox" type="VBoxContainer" parent="BottomRightInfo"]
+[node name="VBox" type="VBoxContainer" parent="BottomRightInfo" unique_id=1560469064]
 layout_mode = 2
-theme_override_constants/separation = 6
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
 
-[node name="LabelLocation" type="Label" parent="BottomRightInfo/VBox"]
+[node name="HBoxMoney" type="HBoxContainer" parent="BottomRightInfo/VBox" unique_id=1865874864]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.2, 0.9, 1, 1)
-theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 10
-text = "NYC - LOFT APARTMENT"
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
 
-[node name="LabelMoney" type="Label" parent="BottomRightInfo/VBox"]
+[node name="TextureMoneyIcon" type="TextureRect" parent="BottomRightInfo/VBox/HBoxMoney" unique_id=2103833287]
+custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
+texture = ExtResource("15_money_cash")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="LabelMoney" type="Label" parent="BottomRightInfo/VBox/HBoxMoney" unique_id=665668202]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 13
-text = "€ 500.00"
+theme_override_font_sizes/font_size = 15
+text = "Banconote: 500.00 €"
 
-[node name="LabelArcadeWatermark" type="Label" parent="BottomRightInfo/VBox"]
+[node name="HBoxFans" type="HBoxContainer" parent="BottomRightInfo/VBox" unique_id=1758932029]
 layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="LabelFans" type="Label" parent="BottomRightInfo/VBox/HBoxFans" unique_id=1644466164]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.8, 0.7, 1, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 13
+text = "Folla: 0 Fan"
+
+[node name="HBoxLocation" type="HBoxContainer" parent="BottomRightInfo/VBox" unique_id=581094213]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="TextureLocationIcon" type="TextureRect" parent="BottomRightInfo/VBox/HBoxLocation" unique_id=756698858]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("16_map_pin")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="LabelLocation" type="Label" parent="BottomRightInfo/VBox/HBoxLocation" unique_id=1986972718]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.2, 0.9, 1, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 12
+text = "Mappa: NYC - LOFT APARTMENT"
+
+[node name="LabelArcadeWatermark" type="Label" parent="BottomRightInfo/VBox" unique_id=72168031]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.4, 0.45, 0.6, 0.7)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 10
 text = "WORLD TOUR"
+horizontal_alignment = 1
 
-[node name="Modals" type="Control" parent="."]
+[node name="Modals" type="Control" parent="." unique_id=150602236]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 3.0
+offset_top = -7.0
+offset_right = 3.0
+offset_bottom = -7.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="SongCatalog" parent="Modals" instance=ExtResource("4_catalog")]
+[node name="SongCatalog" parent="Modals" unique_id=1513286014 instance=ExtResource("17_catalog")]
 visible = false
 layout_mode = 1
 
-[node name="SongCreator" parent="Modals" instance=ExtResource("5_creator")]
+[node name="SongCreator" parent="Modals" unique_id=587750158 instance=ExtResource("18_creator")]
 visible = false
 layout_mode = 1
 
-[node name="LiveConcert" parent="Modals" instance=ExtResource("6_concert")]
+[node name="LiveConcert" parent="Modals" unique_id=1907347057 instance=ExtResource("19_concert")]
 visible = false
 layout_mode = 1
 
-[node name="EconomyBank" parent="Modals" instance=ExtResource("7_bank")]
+[node name="EconomyBank" parent="Modals" unique_id=797442011 instance=ExtResource("20_bank")]
 visible = false
 layout_mode = 1
 
-[node name="DailySummary" parent="Modals" instance=ExtResource("8_summary")]
+[node name="DailySummary" parent="Modals" unique_id=918788151 instance=ExtResource("21_summary")]
 visible = false
 layout_mode = 1
 
-[node name="CharacterSheet" parent="Modals" instance=ExtResource("9_charsheet")]
+[node name="CharacterSheet" parent="Modals" unique_id=1311984876 instance=ExtResource("22_charsheet")]
 visible = false
 layout_mode = 1
 
-[node name="BandHub" parent="Modals" instance=ExtResource("10_bandhub")]
+[node name="BandHub" parent="Modals" unique_id=1373627331 instance=ExtResource("23_bandhub")]
 visible = false
 layout_mode = 1
 
-[node name="AlbumCreator" parent="Modals" instance=ExtResource("11_albumcr")]
+[node name="AlbumCreator" parent="Modals" unique_id=1699941649 instance=ExtResource("24_albumcr")]
 visible = false
 layout_mode = 1
 
-[node name="IndustryHub" parent="Modals" instance=ExtResource("12_indhub")]
+[node name="IndustryHub" parent="Modals" unique_id=792235553 instance=ExtResource("25_indhub")]
 visible = false
 layout_mode = 1
 
-[node name="DilemmaModal" parent="Modals" instance=ExtResource("13_dilemma")]
+[node name="DilemmaModal" parent="Modals" unique_id=1910347379 instance=ExtResource("26_dilemma")]
 visible = false
 layout_mode = 1
 
-[node name="TravelModal" parent="Modals" instance=ExtResource("14_travel")]
+[node name="TravelModal" parent="Modals" unique_id=1662548177 instance=ExtResource("27_travel")]
 visible = false
 layout_mode = 1
 
-[node name="TourModal" parent="Modals" instance=ExtResource("15_tour")]
+[node name="TourModal" parent="Modals" unique_id=1912167007 instance=ExtResource("28_tour")]
 visible = false
 layout_mode = 1
 
-[node name="FestivalModal" parent="Modals" instance=ExtResource("16_fest")]
+[node name="FestivalModal" parent="Modals" unique_id=916814000 instance=ExtResource("29_fest")]
 visible = false
 layout_mode = 1
 
-[node name="SocialModal" parent="Modals" instance=ExtResource("17_social")]
+[node name="SocialModal" parent="Modals" unique_id=259960491 instance=ExtResource("30_social")]
 visible = false
 layout_mode = 1
 
-[node name="ChartModal" parent="Modals" instance=ExtResource("18_chart")]
+[node name="ChartModal" parent="Modals" unique_id=1938028259 instance=ExtResource("31_chart")]
 visible = false
 layout_mode = 1
 
-[node name="SystemMenuModal" parent="Modals" instance=ExtResource("19_sysmenu")]
+[node name="SystemMenuModal" parent="Modals" unique_id=1151625816 instance=ExtResource("32_sysmenu")]
 visible = false
 layout_mode = 1
 
-[node name="UpgradesModal" parent="Modals" instance=ExtResource("20_upgrades")]
+[node name="UpgradesModal" parent="Modals" unique_id=766738681 instance=ExtResource("33_upgrades")]
 visible = false
 layout_mode = 1
 
-[node name="RelaxModal" parent="Modals" instance=ExtResource("21_relax")]
+[node name="RelaxModal" parent="Modals" unique_id=904017115 instance=ExtResource("34_relax")]
 visible = false
 layout_mode = 1
 
-[node name="LegacyModal" parent="Modals" instance=ExtResource("22_legacy")]
+[node name="LegacyModal" parent="Modals" unique_id=195514862 instance=ExtResource("35_legacy")]
 visible = false
 layout_mode = 1

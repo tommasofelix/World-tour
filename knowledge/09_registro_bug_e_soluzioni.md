@@ -305,4 +305,29 @@ Questo registro contiene soltanto problemi tecnici confermati e soluzioni con ev
   * L'arresto per stallo di navigazione non deve mai essere trattato come arrivo a bersaglio;
   * Le interazioni di riposo domestico devono essere sempre distinte dalle strutture ricettive a pagamento.
 
+### BUG-018 (RRU-24) — Overlap Dialogue-Dock, Pulsante Band Mancante e Padding StyleBox in Viewport Full HD (V5.5.0)
+
+- Data e componente: `2026-09-25`, `ui/apartment_hud/apartment_hud.tscn`, `ui/apartment_hud/apartment_hud.gd`, `scenes/apartment/apartment.gd`, `tests/test_apartment_gameplay.gd` (Versione AVF `V5.5.0`).
+- Sintomi osservati:
+  1. Sovrapposizione grafica parziale tra il pannello di ispezione e dialogo in basso a sinistra (`BottomLeftDialogue`) e il dock centrale orizzontale (`BottomCenterDock`) su viewport 1920x1080.
+  2. Assenza del quinto pulsante dedicato alla Band nel dock centrale dell'appartamento, nonostante la presenza dell'asset grafico `band_icon.png`.
+  3. Presenza di zone vuote all'interno dei pannelli dell'HUD (in particolare il blocco tempo in alto a destra e il profilo in alto a sinistra), con pulsanti e barre che non riempivano l'intera area del box.
+- Evidenza riproducibile:
+  1. Avvio della scena dell'appartamento su risoluzione 1920x1080: `BottomLeftDialogue` esteso fino a X = 650 e `BottomCenterDock` con 5 pulsanti centrato su X = 960 (esteso a sinistra fino a X = 648) collidono visivamente, aggravati da `expand_margin = 8.0` dello StyleBox.
+  2. Mancanza del pulsante Band tra le macro-categorie dock dell'HUD e del tasto rapido numerico `5`.
+  3. I pulsanti tempo (`BtnTimePause`, `BtnTimeSpeed`, `BtnTimeSleep`) avevano larghezze fisse di 48/64 px, lasciando oltre 300 px di vuoto nero a destra nel contenitore da 476 px.
+- Causa radice verificata:
+  1. Dimensionamento asimmetrico dei pannelli inferiori e mancato calcolo matematico della clearance minima di sicurezza (almeno 80 px) tra il blocco di sinistra e il dock centrale.
+  2. L'utilizzo di `expand_margin` sui bordi dello StyleBox provoca l'estensione del disegno fuori dal bounding box logico del `Control`, inducendo collisioni visive invisibili al controllo delle sole coordinate `offset_*`.
+  3. Assenza di `content_margin` integrato negli StyleBox e assenza di flag `size_flags_horizontal = 3` / `size_flags_vertical = 3` sui controlli orizzontali e verticali interni ai box.
+- Soluzione applicata:
+  1. Ricalibrazione geometrica millimetrica: `BottomLeftDialogue` fissato tra X = 24 e X = 540 (larghezza 516 px); `BottomCenterDock` a 5 pulsanti esteso tra X = 648 e X = 1272. Clearance garantita = 108.0 pixel (> 80 px). Allineamento dell'offset inferiore di tutti i blocchi a Y = 1060 (`offset_bottom = -20.0`).
+  2. Inserimento di `BtnDockBand` ("5 Band") con texture `band_icon.png`, collegamento al `BandHubModal`, `focus_mode = 0` (Zero Focus Drop) e mappatura tasto `5` in `apartment.gd` (conservando `KEY_B`).
+  3. Adozione di `content_margin` (14 px orizzontale, 12 px verticale) negli StyleBox, rimozione di `expand_margin`, pulsanti temporali impostati con `size_flags_horizontal = 3` a tutta larghezza e altezza 38 px, barre vitali ad altezza 18 px e ritratto 120x120.
+  4. Suite `test_apartment_gameplay.gd` espansa a 102 asserzioni con test unitario per `BtnDockBand` e verifica matematica di clearance a 0 ms (`dialogue_right < dock_left` e `clearance >= 80 px`). 30/30 suite headless verdi a 0 ms.
+- Misure di prevenzione delle regressioni:
+  * Nelle interfacce HUD con blocchi orizzontali concorrenti, garantire sempre una clearance geometrica minima di sicurezza >= 80 px calcolata deterministicamente nei test headless;
+  * Per il padding interno dei pannelli `PanelContainer`, preferire tassativamente `content_margin` integrato nello `StyleBoxFlat` rispetto ad `expand_margin` (che distorce la geometria esterna);
+  * I controlli interni ai box informativi devono impiegare `size_flags_horizontal = 3` e `size_flags_vertical = 3` per distribuire uniformemente gli spazi ed evitare vuoti anti-estetici.
+
 

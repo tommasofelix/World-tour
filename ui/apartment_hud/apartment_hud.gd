@@ -2,60 +2,123 @@
 class_name ApartmentHud
 extends Control
 
-## In-Game HUD Sovrimpresso in Pixel Art Retrò Arcade (V5.4.0)
+## In-Game HUD Sovrimpresso in Pixel Art Retrò Arcade (V5.5.0)
 ## Fedele al concept visuale e all'architettura di Simmetria Universale (Luca & Holy Diver).
-## Gestisce le barre vitali (Energia, Stress, Morale), l'inspection dialogue box con ritratto,
-## l'indicatore di posizione/denaro e l'instradamento di tutte le 19 modali del simulatore.
+## Gestisce le barre vitali dinamiche con icone (Energia, Stress, Morale), l'inspection dialogue box
+## con ritratti reattivi allo stato emotivo di Alex, l'indicatore meteo/tempo, economia e dock macro-categorie.
 
 signal modal_opened(modal_name: String)
 signal modal_closed(modal_name: String)
 
+# Preload Texture Pixel Art Ritratti Alex
+const TEX_ALEX_NORMALE = preload("res://assets/img/gameplay/GUI/Portrait/Alex/alex_normale.png")
+const TEX_ALEX_TRISTE = preload("res://assets/img/gameplay/GUI/Portrait/Alex/alex_triste.png")
+const TEX_ALEX_ARRABBIATO = preload("res://assets/img/gameplay/GUI/Portrait/Alex/alex_arrabbiato.png")
+const TEX_ALEX_DISPERATO = preload("res://assets/img/gameplay/GUI/Portrait/Alex/alex_disperato.png")
+
+# Preload Texture Pixel Art Risorse & Status
+const TEX_LIVELLO = preload("res://assets/img/gameplay/GUI/Elementi/Livello_Personaggio.png")
+const TEX_ENERGIA = preload("res://assets/img/gameplay/GUI/Elementi/Energia.png")
+const TEX_STRESS_NORMALE = preload("res://assets/img/gameplay/GUI/Elementi/Stress_nomrale.png")
+const TEX_STRESS_CRITICO = preload("res://assets/img/gameplay/GUI/Elementi/Stress_critico.png")
+const TEX_MORALE_NORMALE = preload("res://assets/img/gameplay/GUI/Elementi/Morale_Normale.png")
+const TEX_MORALE_CRITICO = preload("res://assets/img/gameplay/GUI/Elementi/Morale_Critico.png")
+
+# Preload Texture Meteo & Tempo
+const TEX_MATTINO = preload("res://assets/img/gameplay/GUI/Elementi/Mattino.png")
+const TEX_POMERIGGIO = preload("res://assets/img/gameplay/GUI/Elementi/Pomeriggio.png")
+const TEX_TRAMONTO = preload("res://assets/img/gameplay/GUI/Elementi/Tramonto.png")
+const TEX_NOTTE = preload("res://assets/img/gameplay/GUI/Elementi/Notte.png")
+
+# Preload Texture Economia & Mappa
+const TEX_POCHI_SOLDI = preload("res://assets/img/gameplay/GUI/Elementi/pochi_soldi.png")
+const TEX_MOLTI_SOLDI = preload("res://assets/img/gameplay/GUI/Elementi/Molti_Soldi.png")
+const TEX_MAPPA = preload("res://assets/img/gameplay/GUI/Elementi/Mappa.png")
+
+# Preload Texture Dock Categorie
+const TEX_DOCK_PERSONALE = preload("res://assets/img/gameplay/GUI/Elementi/Personale.png")
+const TEX_DOCK_CREAZIONE = preload("res://assets/img/gameplay/GUI/Elementi/Creazione.png")
+const TEX_DOCK_CARRIERA = preload("res://assets/img/gameplay/GUI/Elementi/Carriera.png")
+const TEX_DOCK_STRUMENTI = preload("res://assets/img/gameplay/GUI/Elementi/Strumenti.png")
+const TEX_DOCK_BAND = preload("res://assets/img/gameplay/GUI/Elementi/band_icon.png")
+
+# Preload Texture Controlli Tempo
+const TEX_BTN_RIPRENDI = preload("res://assets/img/gameplay/GUI/Elementi/Pulsante_Riprendi.png")
+const TEX_BTN_TEMPO_X2 = preload("res://assets/img/gameplay/GUI/Elementi/Pulsante_tempo_x2.png")
+
 # Top Bar / Profile
-@onready var label_level: Label = $TopLeftProfile/HBox/VBox/LabelLevel
-@onready var bar_energy: ProgressBar = $TopLeftProfile/HBox/VBox/BarEnergy
-@onready var bar_stress: ProgressBar = $TopLeftProfile/HBox/VBox/BarStress
-@onready var bar_morale: ProgressBar = $TopLeftProfile/HBox/VBox/BarMorale
-@onready var texture_portrait_top: TextureRect = $TopLeftProfile/HBox/PortraitFrame/TexturePortraitTop
+@onready var label_level: Label = get_node_or_null("TopLeftProfile/HBox/VBox/HBoxLevel/LabelLevel") if has_node("TopLeftProfile/HBox/VBox/HBoxLevel/LabelLevel") else get_node_or_null("TopLeftProfile/HBox/VBox/LabelLevel")
+@onready var texture_level_icon: TextureRect = get_node_or_null("TopLeftProfile/HBox/VBox/HBoxLevel/TextureLevelIcon")
+@onready var bar_energy: ProgressBar = get_node_or_null("TopLeftProfile/HBox/VBox/HBoxEnergy/BarEnergy") if has_node("TopLeftProfile/HBox/VBox/HBoxEnergy/BarEnergy") else get_node_or_null("TopLeftProfile/HBox/VBox/BarEnergy")
+@onready var label_energy_val: Label = get_node_or_null("TopLeftProfile/HBox/VBox/HBoxEnergy/LabelEnergyVal")
+@onready var texture_energy_icon: TextureRect = get_node_or_null("TopLeftProfile/HBox/VBox/HBoxEnergy/TextureEnergyIcon")
+
+@onready var bar_stress: ProgressBar = get_node_or_null("TopLeftProfile/HBox/VBox/HBoxStress/BarStress") if has_node("TopLeftProfile/HBox/VBox/HBoxStress/BarStress") else get_node_or_null("TopLeftProfile/HBox/VBox/BarStress")
+@onready var label_stress_val: Label = get_node_or_null("TopLeftProfile/HBox/VBox/HBoxStress/LabelStressVal")
+@onready var texture_stress_icon: TextureRect = get_node_or_null("TopLeftProfile/HBox/VBox/HBoxStress/TextureStressIcon")
+
+@onready var bar_morale: ProgressBar = get_node_or_null("TopLeftProfile/HBox/VBox/HBoxMorale/BarMorale") if has_node("TopLeftProfile/HBox/VBox/HBoxMorale/BarMorale") else get_node_or_null("TopLeftProfile/HBox/VBox/BarMorale")
+@onready var label_morale_val: Label = get_node_or_null("TopLeftProfile/HBox/VBox/HBoxMorale/LabelMoraleVal")
+@onready var texture_morale_icon: TextureRect = get_node_or_null("TopLeftProfile/HBox/VBox/HBoxMorale/TextureMoraleIcon")
+
+@onready var texture_portrait_top: TextureRect = get_node_or_null("TopLeftProfile/HBox/PortraitFrame/TexturePortraitTop")
 
 # Top Right Date / Time
-@onready var label_datetime: Label = $TopRightTime/VBoxTime/LabelDateTime
-@onready var label_period: Label = $TopRightTime/VBoxTime/LabelPeriod
+@onready var label_datetime: Label = get_node_or_null("TopRightTime/VBoxTime/HBoxDate/LabelDateTime") if has_node("TopRightTime/VBoxTime/HBoxDate/LabelDateTime") else get_node_or_null("TopRightTime/VBoxTime/LabelDateTime")
+@onready var label_period: Label = get_node_or_null("TopRightTime/VBoxTime/HBoxPeriod/LabelPeriod") if has_node("TopRightTime/VBoxTime/HBoxPeriod/LabelPeriod") else get_node_or_null("TopRightTime/VBoxTime/LabelPeriod")
+@onready var texture_period_icon: TextureRect = get_node_or_null("TopRightTime/VBoxTime/HBoxPeriod/TexturePeriodIcon")
+@onready var btn_time_pause: Button = get_node_or_null("TopRightTime/VBoxTime/HBoxTimeControls/BtnTimePause")
+@onready var btn_time_speed: Button = get_node_or_null("TopRightTime/VBoxTime/HBoxTimeControls/BtnTimeSpeed")
+@onready var btn_time_sleep: Button = get_node_or_null("TopRightTime/VBoxTime/HBoxTimeControls/BtnTimeSleep")
 
 # Bottom Left Inspection Dialogue Box
-@onready var panel_dialogue: PanelContainer = $BottomLeftDialogue
-@onready var label_speaker: Label = $BottomLeftDialogue/Margin/HBox/VBox/LabelSpeaker
-@onready var label_text: Label = $BottomLeftDialogue/Margin/HBox/VBox/LabelText
-@onready var label_hint: Label = $BottomLeftDialogue/Margin/HBox/VBox/LabelHint
-@onready var texture_portrait_dialogue: TextureRect = $BottomLeftDialogue/Margin/HBox/TexturePortraitDialogue
+@onready var panel_dialogue: PanelContainer = get_node_or_null("BottomLeftDialogue")
+@onready var label_speaker: Label = get_node_or_null("BottomLeftDialogue/Margin/HBox/VBox/LabelSpeaker")
+@onready var label_text: Label = get_node_or_null("BottomLeftDialogue/Margin/HBox/VBox/LabelText")
+@onready var label_hint: Label = get_node_or_null("BottomLeftDialogue/Margin/HBox/VBox/LabelHint")
+@onready var texture_portrait_dialogue: TextureRect = get_node_or_null("BottomLeftDialogue/Margin/HBox/TexturePortraitDialogue")
+
+# Bottom Center Dock Macro-Categorie
+@onready var panel_center_dock: PanelContainer = get_node_or_null("BottomCenterDock")
+@onready var btn_dock_personal: Button = get_node_or_null("BottomCenterDock/Margin/HBoxDock/BtnDockPersonal")
+@onready var btn_dock_creation: Button = get_node_or_null("BottomCenterDock/Margin/HBoxDock/BtnDockCreation")
+@onready var btn_dock_career: Button = get_node_or_null("BottomCenterDock/Margin/HBoxDock/BtnDockCareer")
+@onready var btn_dock_tools: Button = get_node_or_null("BottomCenterDock/Margin/HBoxDock/BtnDockTools")
+@onready var btn_dock_band: Button = get_node_or_null("BottomCenterDock/Margin/HBoxDock/BtnDockBand")
 
 # Bottom Right Location & Money
-@onready var label_location: Label = $BottomRightInfo/VBox/LabelLocation
-@onready var label_money: Label = $BottomRightInfo/VBox/LabelMoney
+@onready var label_location: Label = get_node_or_null("BottomRightInfo/VBox/HBoxLocation/LabelLocation") if has_node("BottomRightInfo/VBox/HBoxLocation/LabelLocation") else get_node_or_null("BottomRightInfo/VBox/LabelLocation")
+@onready var texture_location_icon: TextureRect = get_node_or_null("BottomRightInfo/VBox/HBoxLocation/TextureLocationIcon")
+@onready var label_money: Label = get_node_or_null("BottomRightInfo/VBox/HBoxMoney/LabelMoney") if has_node("BottomRightInfo/VBox/HBoxMoney/LabelMoney") else get_node_or_null("BottomRightInfo/VBox/LabelMoney")
+@onready var texture_money_icon: TextureRect = get_node_or_null("BottomRightInfo/VBox/HBoxMoney/TextureMoneyIcon")
+@onready var label_fans: Label = get_node_or_null("BottomRightInfo/VBox/HBoxFans/LabelFans")
 
 # Modali di Gioco
-@onready var song_catalog_modal: Control = $Modals/SongCatalog
-@onready var song_creator_modal: Control = $Modals/SongCreator
-@onready var live_concert_modal: Control = $Modals/LiveConcert
-@onready var economy_bank_modal: Control = $Modals/EconomyBank
-@onready var daily_summary_modal: Control = $Modals/DailySummary
-@onready var character_sheet_modal: Control = $Modals/CharacterSheet
-@onready var band_hub_modal: Control = $Modals/BandHub
-@onready var album_creator_modal: Control = $Modals/AlbumCreator
-@onready var industry_hub_modal: Control = $Modals/IndustryHub
-@onready var dilemma_modal: Control = $Modals/DilemmaModal
-@onready var travel_modal: Control = $Modals/TravelModal
-@onready var tour_modal: Control = $Modals/TourModal
-@onready var festival_modal: Control = $Modals/FestivalModal
-@onready var social_modal: Control = $Modals/SocialModal
-@onready var chart_modal: Control = $Modals/ChartModal
-@onready var system_menu_modal: Control = $Modals/SystemMenuModal
-@onready var upgrades_modal: Control = $Modals/UpgradesModal
-@onready var relax_modal: Control = $Modals/RelaxModal
-@onready var legacy_modal: Control = $Modals/LegacyModal
+@onready var song_catalog_modal: Control = get_node_or_null("Modals/SongCatalog")
+@onready var song_creator_modal: Control = get_node_or_null("Modals/SongCreator")
+@onready var live_concert_modal: Control = get_node_or_null("Modals/LiveConcert")
+@onready var economy_bank_modal: Control = get_node_or_null("Modals/EconomyBank")
+@onready var daily_summary_modal: Control = get_node_or_null("Modals/DailySummary")
+@onready var character_sheet_modal: Control = get_node_or_null("Modals/CharacterSheet")
+@onready var band_hub_modal: Control = get_node_or_null("Modals/BandHub")
+@onready var album_creator_modal: Control = get_node_or_null("Modals/AlbumCreator")
+@onready var industry_hub_modal: Control = get_node_or_null("Modals/IndustryHub")
+@onready var dilemma_modal: Control = get_node_or_null("Modals/DilemmaModal")
+@onready var travel_modal: Control = get_node_or_null("Modals/TravelModal")
+@onready var tour_modal: Control = get_node_or_null("Modals/TourModal")
+@onready var festival_modal: Control = get_node_or_null("Modals/FestivalModal")
+@onready var social_modal: Control = get_node_or_null("Modals/SocialModal")
+@onready var chart_modal: Control = get_node_or_null("Modals/ChartModal")
+@onready var system_menu_modal: Control = get_node_or_null("Modals/SystemMenuModal")
+@onready var upgrades_modal: Control = get_node_or_null("Modals/UpgradesModal")
+@onready var relax_modal: Control = get_node_or_null("Modals/RelaxModal")
+@onready var legacy_modal: Control = get_node_or_null("Modals/LegacyModal")
 
 var _all_modals: Array[Control] = []
 var action_system: ActionSystem = null
 var is_stereo_on: bool = false
+var _current_speaker: String = "ALEX"
+
 const DEFAULT_AMBIENT_TEXT: String = "New York - Loft Apartment.\nFrecce/WASD/Numpad: cammina.\nTab: sfoglia arredi. Spazio: interagisci. Esc: menu."
 
 func _ready() -> void:
@@ -64,6 +127,8 @@ func _ready() -> void:
 	_register_modals()
 	_connect_events()
 	_connect_modal_signals()
+	_connect_dock_buttons()
+	_connect_time_buttons()
 	hide_all_modals()
 	reset_inspection()
 	update_hud_display()
@@ -75,7 +140,8 @@ func _process(delta: float) -> void:
 		action_system.update_action(delta)
 
 func _register_modals() -> void:
-	_all_modals = [
+	_all_modals = []
+	var candidate_modals: Array = [
 		song_catalog_modal,
 		song_creator_modal,
 		live_concert_modal,
@@ -96,6 +162,9 @@ func _register_modals() -> void:
 		relax_modal,
 		legacy_modal
 	]
+	for m in candidate_modals:
+		if m != null:
+			_all_modals.append(m)
 
 func _connect_events() -> void:
 	if EventBus:
@@ -150,10 +219,66 @@ func _connect_modal_signals() -> void:
 	if legacy_modal and legacy_modal.has_signal("closed"):
 		legacy_modal.closed.connect(func(): close_modal(legacy_modal))
 
+func _connect_dock_buttons() -> void:
+	if btn_dock_personal and not btn_dock_personal.pressed.is_connected(_on_dock_personal_pressed):
+		btn_dock_personal.pressed.connect(_on_dock_personal_pressed)
+	if btn_dock_creation and not btn_dock_creation.pressed.is_connected(_on_dock_creation_pressed):
+		btn_dock_creation.pressed.connect(_on_dock_creation_pressed)
+	if btn_dock_career and not btn_dock_career.pressed.is_connected(_on_dock_career_pressed):
+		btn_dock_career.pressed.connect(_on_dock_career_pressed)
+	if btn_dock_tools and not btn_dock_tools.pressed.is_connected(_on_dock_tools_pressed):
+		btn_dock_tools.pressed.connect(_on_dock_tools_pressed)
+	if btn_dock_band and not btn_dock_band.pressed.is_connected(_on_dock_band_pressed):
+		btn_dock_band.pressed.connect(_on_dock_band_pressed)
+
+func _connect_time_buttons() -> void:
+	if btn_time_pause and not btn_time_pause.pressed.is_connected(_on_time_pause_pressed):
+		btn_time_pause.pressed.connect(_on_time_pause_pressed)
+	if btn_time_speed and not btn_time_speed.pressed.is_connected(_on_time_speed_pressed):
+		btn_time_speed.pressed.connect(_on_time_speed_pressed)
+	if btn_time_sleep and not btn_time_sleep.pressed.is_connected(_on_time_sleep_pressed):
+		btn_time_sleep.pressed.connect(_on_time_sleep_pressed)
+
+func _on_dock_personal_pressed() -> void:
+	open_modal(character_sheet_modal)
+
+func _on_dock_creation_pressed() -> void:
+	open_modal(song_catalog_modal)
+
+func _on_dock_career_pressed() -> void:
+	open_modal(live_concert_modal)
+
+func _on_dock_tools_pressed() -> void:
+	open_modal(upgrades_modal)
+
+func _on_dock_band_pressed() -> void:
+	open_modal(band_hub_modal)
+
+func _on_time_pause_pressed() -> void:
+	if GameManager and GameManager.time_system:
+		GameManager.time_system.toggle_pause()
+		var state_str: String = "In pausa" if GameManager.time_system.is_paused else "In riproduzione"
+		AccessibilityManager.announce("Tempo di gioco: %s" % state_str, true)
+
+func _on_time_speed_pressed() -> void:
+	if GameManager and GameManager.time_system:
+		var new_speed: float = 2.0 if GameManager.time_system.time_scale < 1.5 else 1.0
+		GameManager.time_system.time_scale = new_speed
+		AccessibilityManager.announce("Velocità del tempo: %.1fx" % new_speed, true)
+
+func _on_time_sleep_pressed() -> void:
+	if GameManager and GameManager.time_system and GameManager.calendar_data:
+		if GameManager.calendar_data.current_period == Enums.TimePeriod.NIGHT:
+			AccessibilityManager.announce("Buonanotte. Sonno profondo fino a domani mattina.", true)
+			GameManager.time_system.trigger_sleep_now()
+		else:
+			AccessibilityManager.announce("Riposo breve fino alla fascia successiva.", true)
+			GameManager.time_system.advance_to_next_period()
+		update_hud_display()
+
 func _on_relax_activity_selected(action: ActionData) -> void:
 	if action_system:
 		action_system.start_action(action)
-
 
 func is_any_modal_open() -> bool:
 	for m in _all_modals:
@@ -187,38 +312,118 @@ func close_modal(modal_node: Control) -> void:
 	update_hud_display()
 
 func show_inspection(text: String, speaker_name: String = "ALEX", hint_text: String = "[Spazio] Interagisci   [Esc] Indietro") -> void:
+	_current_speaker = speaker_name.to_upper()
 	if label_speaker:
-		label_speaker.text = speaker_name.to_upper()
+		label_speaker.text = _current_speaker
 	if label_text:
 		label_text.text = text
 	if label_hint:
 		label_hint.text = hint_text
+	_update_dialogue_portrait()
 
 func reset_inspection() -> void:
 	show_inspection(DEFAULT_AMBIENT_TEXT, "DIARIO DI BORDO", "[Frecce] Muoviti   [Tab] Arredi   [Spazio] Azione   [Esc] Menu")
+
+func get_alex_portrait_texture(player: PlayerData) -> Texture2D:
+	if not player:
+		return TEX_ALEX_NORMALE
+	# 1. Stato Disperato: burnout / collasso fisico
+	if player.energy <= 15.0 or player.stress >= 85.0:
+		return TEX_ALEX_DISPERATO
+	# 2. Stato Arrabbiato: forte tensione
+	if player.stress >= 60.0:
+		return TEX_ALEX_ARRABBIATO
+	# 3. Stato Triste: crisi d'ispirazione / morale a terra
+	if player.morale <= 30.0:
+		return TEX_ALEX_TRISTE
+	# 4. Stato Ordinario
+	return TEX_ALEX_NORMALE
+
+func _update_dialogue_portrait() -> void:
+	if not texture_portrait_dialogue:
+		return
+	var player: PlayerData = GameManager.player_data if GameManager else null
+	if _current_speaker == "ALEX":
+		texture_portrait_dialogue.texture = get_alex_portrait_texture(player)
+	else:
+		# Se l'interlocutore non è Alex, mostriamo il ritratto neutrale o lo sprite associato
+		texture_portrait_dialogue.texture = TEX_ALEX_NORMALE
 
 func update_hud_display() -> void:
 	var player: PlayerData = GameManager.player_data if GameManager else null
 	var calendar: CalendarData = GameManager.calendar_data if GameManager else null
 
 	if player:
+		# Ritratto Alex in alto a sinistra
+		if texture_portrait_top:
+			texture_portrait_top.texture = get_alex_portrait_texture(player)
+		_update_dialogue_portrait()
+
+		# Livello Personaggio & Icona
 		if label_level:
-			var tier_str: String = GameManager.career_system.get_tier_name(player.career_tier) if (GameManager and GameManager.career_system) else "Nessuno"
-			label_level.text = "Tier %d - %s" % [player.career_tier + 1, tier_str]
+			var tier_str: String = GameManager.career_system.get_tier_name(player.career_tier) if (GameManager and GameManager.career_system) else "Garage Hero"
+			label_level.text = "Lv. %d — %s ⭐" % [player.career_tier + 1, tier_str]
+		if texture_level_icon and texture_level_icon.texture == null:
+			texture_level_icon.texture = TEX_LIVELLO
+
+		# Barra Energia
 		if bar_energy:
 			bar_energy.value = player.energy
+		if label_energy_val:
+			label_energy_val.text = "ENERGIA (%d%%)" % int(player.energy)
+		if texture_energy_icon and texture_energy_icon.texture == null:
+			texture_energy_icon.texture = TEX_ENERGIA
+
+		# Barra Stress & Icona Dinamica
 		if bar_stress:
 			bar_stress.value = player.stress
+		if label_stress_val:
+			label_stress_val.text = "STRESS (%d%%)" % int(player.stress)
+		if texture_stress_icon:
+			texture_stress_icon.texture = TEX_STRESS_CRITICO if player.stress >= 60.0 else TEX_STRESS_NORMALE
+
+		# Barra Morale & Icona Dinamica
 		if bar_morale:
 			bar_morale.value = player.morale
+		if label_morale_val:
+			label_morale_val.text = "MORALE (%d%%)" % int(player.morale)
+		if texture_morale_icon:
+			texture_morale_icon.texture = TEX_MORALE_CRITICO if player.morale <= 30.0 else TEX_MORALE_NORMALE
+
+		# Economia & Saldo Dinamico
 		if label_money:
-			label_money.text = "€ %.2f" % player.money
+			label_money.text = "Banconote: %.2f €" % player.money
+		if texture_money_icon:
+			texture_money_icon.texture = TEX_MOLTI_SOLDI if player.money >= 1000.0 else TEX_POCHI_SOLDI
+
+		# Fanbase & Mappa
+		if label_fans:
+			label_fans.text = "Folla: %d Fan" % player.fans
+		if label_location:
+			label_location.text = "Mappa: NYC — Loft Apartment"
+		if texture_location_icon and texture_location_icon.texture == null:
+			texture_location_icon.texture = TEX_MAPPA
 
 	if calendar:
 		if label_datetime:
-			label_datetime.text = calendar.get_full_date_string()
+			label_datetime.text = "Giorno %d — %s, Settimana %d" % [calendar.day_number, calendar.get_weekday_name(), calendar.get_week_number()]
 		if label_period:
-			label_period.text = "Ore %s (%s)" % [calendar.get_formatted_time_string(), _get_localized_period(calendar.current_period)]
+			label_period.text = "%s %s" % [_get_localized_period(calendar.current_period), calendar.get_formatted_time_string()]
+		if texture_period_icon:
+			texture_period_icon.texture = get_period_weather_texture(calendar.current_period)
+
+func get_period_weather_texture(period: int) -> Texture2D:
+	match period:
+		Enums.TimePeriod.MORNING:
+			return TEX_MATTINO
+		Enums.TimePeriod.AFTERNOON:
+			return TEX_POMERIGGIO
+		Enums.TimePeriod.EVENING:
+			return TEX_TRAMONTO
+		Enums.TimePeriod.NIGHT:
+			return TEX_NOTTE
+		_:
+			return TEX_MATTINO
 
 func _get_localized_period(period: int) -> String:
 	match period:
@@ -232,6 +437,11 @@ func _get_localized_period(period: int) -> String:
 			return "Notte"
 		_:
 			return "Giorno"
+
+func _get_localized_weekday(day_number: int) -> String:
+	var days: Array[String] = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"]
+	var index: int = (day_number - 1) % 7
+	return days[index]
 
 func _on_day_ended(summary_data: Dictionary) -> void:
 	hide_all_modals()
@@ -274,9 +484,10 @@ func open_modal_by_prop_id(prop_id: String) -> void:
 				GameManager.player_data.stress = maxi(Constants.MIN_STRESS, GameManager.player_data.stress - 10)
 				var got_spark: bool = randf() < 0.35
 				if got_spark:
-					GameManager.player_data.creative_sparks += 1
+					if GameManager.player_data.has_method("add_skill_xp"):
+						GameManager.player_data.add_skill_xp("composition", Constants.RECOVERY_MUSIC_SPARK_XP)
 					AccessibilityManager.announce("Sessione vinili d'epoca sul giradischi! +20 Morale, -10 Stress e una Scintilla Creativa guadagnata!", true)
-					show_inspection("L'ascolto dei vinili d'epoca ti ha ispirato: hai ottenuto una Scintilla Creativa (+1 Ispirazione)!", "GIRADISCHI", "[Spazio] Chiudi")
+					show_inspection("L'ascolto dei vinili d'epoca ti ha ispirato: hai ottenuto una Scintilla Creativa (+15 XP Composizione)!", "GIRADISCHI", "[Spazio] Chiudi")
 				else:
 					AccessibilityManager.announce("Sessione vinili d'epoca sul giradischi! +20 Morale e -10 Stress.", true)
 					show_inspection("Il calore analogico del vinile risuona nel loft, sciogliendo la tensione.", "GIRADISCHI", "[Spazio] Chiudi")

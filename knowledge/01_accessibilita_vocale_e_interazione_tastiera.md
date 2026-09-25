@@ -118,3 +118,15 @@ Per consentire l'utilizzo ergonomico e rapido del gioco con la sola mano destra 
      - Dall'ultimo elemento, premendo freccia Giù si torna al primo.
    - Questo meccanismo azzera i vicoli ciechi e consente una navigazione rapida e circolare adatta a sessioni prolungate senza mouse.
 
+---
+
+## 9. Clearance Geometrica Anti-Overlap & Focus Isolation per HUD Sovrimpressi (Validato in V5.5.0)
+
+1. **Prevenzione Focus Drop su Controlli Secondari Sovrimpressi (`focus_mode = FOCUS_NONE`)**:
+   - Quando un HUD perimetrale o un dock sovrimpresso risiede su un `CanvasLayer` sopra una scena esplorabile (come il Loft NYC), i pulsanti dell'HUD non devono intercettare il ciclo logico da tastiera di `Tab` e `Shift+Tab`.
+   - Assegnando esplicitamente `focus_mode = Control.FOCUS_NONE` a tutti i pulsanti del dock e ai controlli del tempo, il tasto `Tab` rimane dedicato al 100% alla navigazione degli arredi interattivi della stanza, mentre i pulsanti dell'HUD restano azionabili direttamente tramite shortcut dedicati (`1`..`5`, `P`, `V`, `Z`, `X`) per Luca e tramite click sinistro per Holy Diver.
+
+2. **Canone della Clearance Geometrica Orizzontale a 3 Blocchi**:
+   - In un layout Full HD 1920x1080 con tre blocchi orizzontali sulla stessa fascia (es. Dialogo a sinistra, Dock al centro, Info a destra), la clearance tra l'estremità destra del primo blocco e l'estremità sinistra del secondo deve essere `>= 80 pixel` (ideale 100–120 px).
+   - Nelle test suite headless deve essere sempre inserita un'asserzione geometrica esplicita (`assert_true(dialogue_right < dock_left)`) a 0 ms per impedire regressioni visive in caso di aggiunta di pulsanti o variazioni di testo.
+
