@@ -85,5 +85,5 @@ Consultare in quest'ordine e soltanto nella misura strettamente necessaria:
 - **Scopo & Dominio**: Music Career Simulator & Life Simulation (gestione tempo, abilità, produzione brani, concerti live, economia, etichette e fanbase).
 - **Responsabili**: Luca & Holy Diver.
 - **Coordinatore Operativo**: [`docs/todo.md`](./docs/todo.md).
-- **Stato Attuale**: Sezioni 1..12, Espansione Post-V5.1, Gameplay Grafico 2.5D Loft NYC con FSM GAMEPLAY_BUSY, Riposo Breve 5s, Fluidità Cinetica Continua a 210 px/s e Restyle Menu Interazione convalidate al 100% con NVDA; 30 suite headless convalidate con 0 errori a 0 ms; Versione AVF consolidata V5.6.4.
+- **Stato Attuale**: Sezioni 1..12, Espansione Post-V5.1, Gameplay Grafico 2.5D Loft NYC, Albero Competenze Popomundo (V5.7.0/V5.8.0), Day Loop Overtime (V5.8.1), Songwriting Artigianale (V5.9.0), Bonifica Router/BandHub (V5.9.1) e Pacing Songwriting con Limiti 2 Sessioni & Avanzamento Temporale (V5.10.0); 33 suite headless convalidate con 0 errori a 0 ms; Versione AVF consolidata V5.10.0.
 - **Stack Ufficiale Confermato**: Godot Engine 4.7.2.stable.official.ed1daf0bf win64, GDScript 2.0, Clean Architecture DDD, EventBus a segnali e AccessKit nativo.
