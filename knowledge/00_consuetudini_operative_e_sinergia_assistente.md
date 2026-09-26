@@ -80,3 +80,23 @@ Prima di procedere alla cancellazione di qualsiasi file o directory:
 3. **Analisi d'Impatto**: Descrivere le conseguenze sul progetto, sulle dipendenze e sui test;
 4. **Verifica Dati & Recuperabilità**: Accertare che dati storici o note utili siano preservati altrove;
 5. **Richiesta di Consenso Specifico**: Attendere l'autorizzazione esplicita di Luca prima di procedere.
+
+---
+
+## 6. Canoni Architetturali di Simulazione & Pacing Fisiologico (Revisione Popomundo)
+
+1. **Canone del Pacing a 2 Sessioni Quotidiane con Zero-Cost Rejection**:
+   - Le attività creative (composizione musicale, stesura testi, arrangiamento) e formative ad alto valore non devono essere spammabili all'infinito in una singola giornata virtuale.
+   - Ogni cantiere attivo impone un limite tassativo di massimo 2 sessioni giornaliere per componente:
+     * Sessione 1: resa piena al 100% e consumi nominali;
+     * Sessione 2: resa dimezzata al 50% per stanchezza creativa e stress maggiorato del +50%;
+     * Sessione 3+: **Rifiuto Categorico a Costo Zero**. Il sistema blocca l'operazione restituendo un esito negativo strutturato *prima* di prelevare energia o infliggere stress (0 energia, 0 stress, 0 tempo perso), con notifica vocale immediata per NVDA.
+   - All'alba di ogni nuovo giorno virtuale (`EndDaySystem`), i contatori giornalieri vengono azzerati in modo deterministico.
+
+2. **Canone dell'Avanzamento Temporale Sincrono nei Modali (`advance_virtual_hours`)**:
+   - Quando un'interfaccia a schermo intero (come `SongCreator`) o un menu opera durante la pausa del gioco (`is_paused`), le attività che nella diegesi consumano ore non possono dipendere dal delta tick del motore fisico.
+   - Il sistema invoca metodi sincroni dedicati (`TimeSystem.advance_virtual_hours(hours)`), che scalano l'orologio, aggiornano le fasce orarie (Mattino $\to$ Pomeriggio $\to$ Notte), emettono `time_ticked` e gestiscono le notifiche di overtime progressivo, mantenendo fermo l'avatar nel mondo 2.5D.
+
+3. **Canone della Trasparenza Vocale delle Risorse Discrete (Zero-Guessing NVDA)**:
+   - L'accessibilità per non vedenti esclude l'esplorazione per "tentativi ed errori".
+   - L'indicatore di disponibilità residua (`[Musica: %.0f%% (%d/2)]`) è integrato direttamente nell'etichetta dell'entità, e i pulsanti d'azione aggiornano in tempo reale la propria dicitura e descrizione accessibile per NVDA (*"Resa 50%"* vs *"Satura per oggi"* con disabilitazione del tasto).
