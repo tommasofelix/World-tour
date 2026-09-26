@@ -179,9 +179,19 @@ func _create_song_row(index: int, song: SongData) -> HBoxContainer:
 	var acc_desc := "Premi Invio per visualizzare dettagli o compiere azioni."
 	
 	if song.status == Enums.SongStatus.DRAFT:
-		var stage_str := song.get_stage_name()
-		acc_name = "Bozza %d: %s. Genere %s. Tema %s. Fase %s. Qualità %.1f su 100." % [
-			index, song.title, genre_str, theme_str, stage_str, song.quality_score
+		var craft_status := "In lavorazione"
+		if song.polishing_status == 1:
+			craft_status = "🟧 In Rifinitura (%.0fh)" % song.polishing_hours_remaining
+		elif song.polishing_status == 2:
+			craft_status = "🟩 Capolavoro"
+		elif song.polishing_status == 3:
+			craft_status = "Pronta per Incisione"
+
+		btn.text = "%d. '%s' [%s - %s] — [Musica: %.0f%%] [Testo: %.0f%%] | %s" % [
+			index, song.title, genre_str, theme_str, song.music_progress, song.lyrics_progress, craft_status
+		]
+		acc_name = "Bozza %d: %s. Genere %s. Tema %s. Musica al %.0f%%, Testo al %.0f%%. Stato %s." % [
+			index, song.title, genre_str, theme_str, song.music_progress, song.lyrics_progress, craft_status
 		]
 		acc_desc = tr("CATALOG_BTN_EDIT_ACC_DESC")
 		btn.pressed.connect(func():

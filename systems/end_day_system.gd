@@ -134,6 +134,28 @@ func process_day_end(day_num: int = 1, p_early_sleep_override: bool = false) -> 
 		if GameManager and GameManager.chart_system:
 			GameManager.chart_system.update_weekly_charts(day_num)
 		
+	# Gestione decadimento creativo e manutenzione repertorio / songwriting (Contratto D4)
+	if player_data:
+		if player_data.creative_burnout_days > 0:
+			player_data.creative_burnout_days = maxi(0, player_data.creative_burnout_days - 1)
+			if player_data.creative_burnout_days == 0:
+				AccessibilityManager.announce("Blocco creativo superato! La mente di Alex è di nuovo limpida e pronta per comporre capolavori.", true)
+
+		for s in player_data.songs:
+			# Decadimento repertorio live se non suonato da oltre 21 giorni (-5% a settimana fino al 50%)
+			if s.status in [Enums.SongStatus.PRODUCED, Enums.SongStatus.RELEASED]:
+				if s.last_played_day > 0 and (day_num - s.last_played_day) >= 21:
+					if (day_num - s.last_played_day) % 7 == 0:
+						s.mastery_live = maxf(50.0, s.mastery_live - 5.0)
+
+			# Decadimento finestra arancione di rifinitura se non conclusa
+			if s.polishing_status == 1:
+				s.polishing_hours_remaining = maxf(0.0, s.polishing_hours_remaining - 24.0)
+				if s.polishing_hours_remaining <= 0.0:
+					s.polishing_status = 3
+					s.stage = Enums.SongStage.RECORDING
+					AccessibilityManager.announce("Tempo di rifinitura scaduto per %s: consolidata automaticamente come traccia standard." % s.title, true)
+
 	# Valutazione dilemmi etici serali
 	var pending_dilemma: DilemmaData = null
 	if GameManager and GameManager.dilemma_system:

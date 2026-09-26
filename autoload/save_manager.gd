@@ -116,6 +116,7 @@ func load_game() -> bool:
 			GameManager.time_system = TimeSystem.new(GameManager.calendar_data)
 		else:
 			GameManager.time_system.calendar_data = GameManager.calendar_data
+			GameManager.time_system.sync_from_calendar()
 			
 	if not GameManager.skill_system:
 		GameManager.skill_system = SkillSystem.new(GameManager.player_data)
@@ -319,3 +320,10 @@ func get_day_duration() -> float:
 
 func set_day_duration(p_duration: float) -> void:
 	save_settings({"day_duration": p_duration})
+
+func is_tts_enabled() -> bool:
+	var s: Dictionary = load_settings()
+	return bool(s.get("tts_enabled", true))
+
+func set_tts_enabled(p_enabled: bool) -> void:
+	save_settings({"tts_enabled": p_enabled})

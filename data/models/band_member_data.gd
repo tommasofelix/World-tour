@@ -17,6 +17,15 @@ var musical_respect: float = 50.0 # 0.0 - 100.0 (riconoscimento del talento e le
 var tension: float = 0.0          # 0.0 - 100.0 (conflitti e attriti interni)
 var is_active: bool = true
 var joined_day: int = 1
+var instrument: String:
+	get:
+		match role:
+			Enums.BandRole.BASS: return "bass"
+			Enums.BandRole.DRUMS: return "drums"
+			Enums.BandRole.KEYBOARDS: return "keyboards"
+			Enums.BandRole.GUITAR_RHYTHM: return "guitar"
+			Enums.BandRole.VOCALS: return "vocals"
+			_: return ""
 
 func _init(
 	p_id: String = "",

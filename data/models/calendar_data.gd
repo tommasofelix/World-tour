@@ -9,6 +9,17 @@ var day_duration: float = Constants.DEFAULT_DAY_DURATION_SECONDS
 var remaining_seconds: float = Constants.DEFAULT_DAY_DURATION_SECONDS
 var current_period: int = Enums.TimePeriod.MORNING
 var action_counts_today: Dictionary = {}
+var overtime_state: Dictionary = {
+	"warned_hour_2": false,
+	"warned_hour_3": false,
+	"overtime_hour_1_applied": false,
+	"overtime_hour_2_applied": false,
+	"overtime_hour_3_applied": false,
+	"overtime_hour_4_applied": false,
+	"early_sleep_taken": false,
+	"sleep_period": Enums.TimePeriod.MORNING,
+	"sleep_hour_offset": 0
+}
 
 func _init(p_duration: float = Constants.DEFAULT_DAY_DURATION_SECONDS) -> void:
 	day_duration = p_duration
@@ -172,9 +183,23 @@ func increment_action_count(action_id: String) -> void:
 func get_action_count(action_id: String) -> int:
 	return action_counts_today.get(action_id, 0)
 
+func reset_overtime_state() -> void:
+	overtime_state = {
+		"warned_hour_2": false,
+		"warned_hour_3": false,
+		"overtime_hour_1_applied": false,
+		"overtime_hour_2_applied": false,
+		"overtime_hour_3_applied": false,
+		"overtime_hour_4_applied": false,
+		"early_sleep_taken": false,
+		"sleep_period": Enums.TimePeriod.MORNING,
+		"sleep_hour_offset": 0
+	}
+
 func reset_daily_saturation() -> void:
 	action_counts_today.clear()
 	remaining_seconds = day_duration
+	reset_overtime_state()
 	update_period()
 
 func to_dict() -> Dictionary:
@@ -183,7 +208,8 @@ func to_dict() -> Dictionary:
 		"day_duration": day_duration,
 		"remaining_seconds": remaining_seconds,
 		"current_period": current_period,
-		"action_counts_today": action_counts_today.duplicate(true)
+		"action_counts_today": action_counts_today.duplicate(true),
+		"overtime_state": overtime_state.duplicate(true)
 	}
 
 func from_dict(dict: Dictionary) -> void:
@@ -193,4 +219,8 @@ func from_dict(dict: Dictionary) -> void:
 	current_period = int(dict.get("current_period", current_period))
 	if dict.has("action_counts_today") and dict["action_counts_today"] is Dictionary:
 		action_counts_today = dict["action_counts_today"].duplicate(true)
+	if dict.has("overtime_state") and dict["overtime_state"] is Dictionary:
+		overtime_state = dict["overtime_state"].duplicate(true)
+	else:
+		reset_overtime_state()
 	update_period()

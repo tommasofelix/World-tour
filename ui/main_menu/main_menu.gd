@@ -18,6 +18,8 @@ extends Control
 @onready var label_settings_title: Label = $CenterContainer/VBoxMain/PanelSettings/VBoxSettings/LabelSettingsTitle
 @onready var label_lang: Label = $CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxLang/LabelLang
 @onready var opt_lang: OptionButton = $CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxLang/OptLang
+@onready var label_tts: Label = $CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxTTS/LabelTTS
+@onready var opt_tts: OptionButton = $CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxTTS/OptTTS
 @onready var label_day_duration: Label = $CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxDayDuration/LabelDayDuration
 @onready var opt_day_duration: OptionButton = $CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxDayDuration/OptDayDuration
 @onready var btn_back_settings: Button = $CenterContainer/VBoxMain/PanelSettings/VBoxSettings/BtnBackSettings
@@ -27,8 +29,9 @@ func _ready() -> void:
 	if GameManager:
 		GameManager.change_state(Enums.GameState.MAIN_MENU)
 		
-	# Inizializzazione opzioni lingua e durata giornata
+	# Inizializzazione opzioni lingua, sintesi e durata giornata
 	_populate_language_options()
+	_populate_tts_options()
 	_populate_day_duration_options()
 	
 	# Connessione segnali bottoni
@@ -46,6 +49,8 @@ func _ready() -> void:
 		btn_back_settings.pressed.connect(_on_back_settings_pressed)
 	if not opt_lang.item_selected.is_connected(_on_language_selected):
 		opt_lang.item_selected.connect(_on_language_selected)
+	if not opt_tts.item_selected.is_connected(_on_tts_selected):
+		opt_tts.item_selected.connect(_on_tts_selected)
 	if not opt_day_duration.item_selected.is_connected(_on_day_duration_selected):
 		opt_day_duration.item_selected.connect(_on_day_duration_selected)
 	
@@ -75,6 +80,16 @@ func _populate_language_options() -> void:
 		opt_lang.select(1)
 	else:
 		opt_lang.select(0)
+
+func _populate_tts_options() -> void:
+	opt_tts.clear()
+	opt_tts.add_item(tr("SETTINGS_TTS_ACTIVE"), 0)
+	opt_tts.set_item_metadata(0, true)
+	opt_tts.add_item(tr("SETTINGS_TTS_DISABLED"), 1)
+	opt_tts.set_item_metadata(1, false)
+	
+	var is_enabled: bool = AccessibilityManager.is_tts_enabled if AccessibilityManager else true
+	opt_tts.select(0 if is_enabled else 1)
 
 func _populate_day_duration_options() -> void:
 	opt_day_duration.clear()
@@ -109,6 +124,7 @@ func _refresh_ui_text() -> void:
 	
 	label_settings_title.text = tr("SETTINGS_TITLE").to_upper()
 	label_lang.text = tr("SETTINGS_LANGUAGE_LABEL")
+	label_tts.text = tr("SETTINGS_TTS_LABEL")
 	label_day_duration.text = "Durata Giornata:"
 	btn_back_settings.text = tr("SETTINGS_BACK").to_upper()
 	
@@ -125,6 +141,7 @@ func _refresh_ui_text() -> void:
 	AccessibilityManager.hook_control_accessibility(btn_quit, tr("MENU_QUIT_DESKTOP"), tr("MENU_QUIT_DESKTOP_DESC"))
 	AccessibilityManager.hook_control_accessibility(btn_quick_start, tr("MENU_TEST_MODE"), tr("MENU_TEST_MODE_DESC"))
 	AccessibilityManager.hook_control_accessibility(opt_lang, tr("SETTINGS_LANGUAGE_LABEL"), tr("SETTINGS_LANGUAGE_DESC"))
+	AccessibilityManager.hook_control_accessibility(opt_tts, tr("SETTINGS_TTS_LABEL"), tr("SETTINGS_TTS_DESC"))
 	AccessibilityManager.hook_control_accessibility(opt_day_duration, "Durata Giornata", "Seleziona la durata reale di ogni giornata di gioco: 5, 10, 15 o 20 minuti.")
 	AccessibilityManager.hook_control_accessibility(btn_back_settings, tr("SETTINGS_BACK"), tr("SETTINGS_BACK_DESC"))
 
@@ -155,6 +172,7 @@ func _on_settings_pressed() -> void:
 	vbox_menu.visible = false
 	panel_settings.visible = true
 	_populate_language_options()
+	_populate_tts_options()
 	_populate_day_duration_options()
 	opt_lang.grab_focus()
 
@@ -167,6 +185,13 @@ func _on_language_selected(index: int) -> void:
 	var selected_code: String = str(opt_lang.get_item_metadata(index))
 	if LocalizationManager:
 		LocalizationManager.set_language(selected_code, true)
+
+func _on_tts_selected(index: int) -> void:
+	var enabled: bool = bool(opt_tts.get_item_metadata(index))
+	if AccessibilityManager:
+		AccessibilityManager.set_tts_enabled(enabled)
+	var state_str: String = "attivata" if enabled else "disattivata"
+	AccessibilityManager.announce("Sintesi vocale " + state_str + ".", true)
 
 func _on_day_duration_selected(index: int) -> void:
 	var dur: float = float(opt_day_duration.get_item_metadata(index))

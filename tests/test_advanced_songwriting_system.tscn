@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dmadvsong01"]
+
+[ext_resource type="Script" path="res://tests/test_advanced_songwriting_system.gd" id="1_testadvsong"]
+
+[node name="TestAdvancedSongwritingSystem" type="Node"]
+script = ExtResource("1_testadvsong")

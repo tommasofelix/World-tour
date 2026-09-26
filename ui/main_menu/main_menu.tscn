@@ -132,6 +132,19 @@ text = "Lingua:"
 custom_minimum_size = Vector2(180, 40)
 layout_mode = 2
 
+[node name="HBoxTTS" type="HBoxContainer" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings" unique_id=1849182741]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="LabelTTS" type="Label" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxTTS" unique_id=748291038]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Sintesi Vocale:"
+
+[node name="OptTTS" type="OptionButton" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings/HBoxTTS" unique_id=1498273641]
+custom_minimum_size = Vector2(180, 40)
+layout_mode = 2
+
 [node name="HBoxDayDuration" type="HBoxContainer" parent="CenterContainer/VBoxMain/PanelSettings/VBoxSettings" unique_id=1100872202]
 layout_mode = 2
 theme_override_constants/separation = 12

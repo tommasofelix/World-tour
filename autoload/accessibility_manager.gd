@@ -20,10 +20,29 @@ const ANNOUNCE_DUPLICATE_DEBOUNCE_MS: float = 350.0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	_init_tts_setting()
 	_setup_audio_system()
 	_setup_tts()
 	EventBus.ui_focus_changed.connect(_on_ui_focus_changed)
 	EventBus.language_changed.connect(_on_language_changed)
+
+func _init_tts_setting() -> void:
+	if SaveManager:
+		is_tts_enabled = SaveManager.is_tts_enabled()
+	elif FileAccess.file_exists("user://settings.json"):
+		var f := FileAccess.open("user://settings.json", FileAccess.READ)
+		if f:
+			var json := JSON.new()
+			if json.parse(f.get_as_text()) == OK and json.data is Dictionary:
+				is_tts_enabled = bool(json.data.get("tts_enabled", true))
+			f.close()
+
+func set_tts_enabled(p_enabled: bool) -> void:
+	is_tts_enabled = p_enabled
+	if not is_tts_enabled:
+		silence()
+	if SaveManager:
+		SaveManager.set_tts_enabled(p_enabled)
 
 func _setup_audio_system() -> void:
 	if not audio_cue_system:
@@ -85,7 +104,7 @@ func announce(text: String, is_interrupt: bool = true) -> void:
 	var est_sec: float = clampf(float(text.length()) * 0.065, 0.6, 4.0)
 	_ducking_restore_time = (now_ms / 1000.0) + est_sec
 
-	if audio_cue_system:
+	if is_tts_enabled and audio_cue_system:
 		audio_cue_system.set_ducking(true)
 		is_ducking = true
 

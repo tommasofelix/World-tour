@@ -138,6 +138,23 @@ var stress: int = Constants.MIN_STRESS
 var morale: int = Constants.MAX_MORALE
 var money: float = 500.0
 
+# --- Ispirazione e Creatività Artigianale (World-tour V5.9.0 / Popomundo Inspired) ---
+var inspiration_points: int = 2
+var max_inspiration_points: int = 5
+var creative_burnout_days: int = 0
+
+func add_inspiration(amount: int) -> void:
+	inspiration_points = clampi(inspiration_points + amount, 0, max_inspiration_points)
+
+func consume_inspiration(amount: int) -> bool:
+	if inspiration_points >= amount:
+		inspiration_points -= amount
+		return true
+	return false
+
+func is_in_creative_burnout() -> bool:
+	return creative_burnout_days > 0
+
 # Carriera e notorietà
 var career_tier: int = Enums.CareerTier.BEDROOM_MUSICIAN
 var fans: int = 0
@@ -640,6 +657,9 @@ func get_drafts() -> Array[SongData]:
 			result.append(s)
 	return result
 
+func get_active_draft_songs() -> Array[SongData]:
+	return get_drafts()
+
 func get_produced_songs() -> Array[SongData]:
 	var result: Array[SongData] = []
 	for s in songs:
@@ -1032,6 +1052,9 @@ func reduce_stress(amount: int) -> void:
 func modify_morale(delta: int) -> void:
 	morale = clampi(morale + delta, Constants.MIN_MORALE, Constants.MAX_MORALE)
 
+func add_morale(amount: int) -> void:
+	modify_morale(amount)
+
 func modify_money(delta: float) -> void:
 	money += delta
 
@@ -1177,6 +1200,9 @@ func to_dict() -> Dictionary:
 		"intelligence": intelligence,
 		"stamina": stamina,
 		"charm": charm,
+		"inspiration_points": inspiration_points,
+		"max_inspiration_points": max_inspiration_points,
+		"creative_burnout_days": creative_burnout_days,
 		"skill_tree": _serialize_skill_tree()
 	}
 
@@ -1323,5 +1349,8 @@ func from_dict(dict: Dictionary) -> void:
 	intelligence = int(dict.get("intelligence", intelligence))
 	stamina = int(dict.get("stamina", stamina))
 	charm = int(dict.get("charm", charm))
+	inspiration_points = int(dict.get("inspiration_points", inspiration_points))
+	max_inspiration_points = int(dict.get("max_inspiration_points", max_inspiration_points))
+	creative_burnout_days = int(dict.get("creative_burnout_days", creative_burnout_days))
 	if dict.has("skill_tree") and dict["skill_tree"] is Dictionary:
 		_deserialize_skill_tree(dict["skill_tree"])

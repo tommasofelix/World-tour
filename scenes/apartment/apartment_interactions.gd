@@ -61,6 +61,18 @@ static func get_actions_for_prop(prop_id: String) -> Array[Dictionary]:
 					"result_message": "Sessione acustica rilassante sul divano (+10 XP Composizione, +10 Morale)!"
 				},
 				{
+					"id": "couch_write_lyrics_crafting",
+					"title": "Scrivi testo canzone",
+					"description": "Lavora alle liriche e alla metrica di una bozza aperta nel loft (+Avanzamento Testo, -10 Energia, +3 Stress).",
+					"duration_seconds": 5.0,
+					"type": "crafting_lyrics",
+					"energy_delta": -10,
+					"stress_delta": 3,
+					"morale_delta": 2,
+					"money_cost": 0.0,
+					"result_message": "Sessione di scrittura testi completata sul divano!"
+				},
+				{
 					"id": "couch_study_manual",
 					"title": "Studio manuale teorico",
 					"description": "Leggi un testo fondamentale per apprendere le basi o sbloccare una nuova competenza da zero (-12 Energia, +4 Stress, +2 Morale, +35 XP).",
@@ -94,6 +106,18 @@ static func get_actions_for_prop(prop_id: String) -> Array[Dictionary]:
 					"duration_seconds": 0.0,
 					"type": "modal",
 					"modal_name": "SongCreator"
+				},
+				{
+					"id": "guitar_compose_crafting",
+					"title": "Componi musica canzone",
+					"description": "Lavora alla parte strumentale e armonica di una bozza aperta (+Avanzamento Musica, -15 Energia, +4 Stress).",
+					"duration_seconds": 6.0,
+					"type": "crafting_music",
+					"energy_delta": -15,
+					"stress_delta": 4,
+					"morale_delta": 2,
+					"money_cost": 0.0,
+					"result_message": "Sessione di composizione musicale completata alla chitarra!"
 				},
 				{
 					"id": "guitar_practice",
@@ -198,77 +222,82 @@ static func get_actions_for_prop(prop_id: String) -> Array[Dictionary]:
 				{
 					"id": "turntable_listen",
 					"title": "Ascolta vinile",
-					"description": "Ascolto analogico ad alta fedeltà (+20 Morale, -10 Stress, 35% Scintilla Creativa).",
+					"description": "Ascolto analogico ad alta fedeltà (+20 Morale, -10 Stress, +1 Ispirazione, 35% Scintilla Creativa).",
 					"duration_seconds": 12.0,
 					"type": "action",
 					"energy_delta": 0,
 					"stress_delta": -10,
 					"morale_delta": 20,
 					"money_cost": 0.0,
+					"inspiration_points_gain": 1,
 					"inspiration_chance": 0.35,
 					"xp_amount": 10.0,
 					"xp_skill": "composition",
-					"result_message": "Il calore analogico del vinile risuona nel loft, sciogliendo la tensione (+20 Morale, -10 Stress)!"
+					"result_message": "Il calore analogico del vinile risuona nel loft, sciogliendo la tensione (+20 Morale, -10 Stress, +1 Ispirazione)!"
 				},
 				{
 					"id": "turntable_listen_rock",
 					"title": "Vinile Classic Rock",
-					"description": "Ascolto rock energico (+20 Morale, -10 Stress, 35% Scintilla, +25 XP Rock Classico).",
+					"description": "Ascolto rock energico (+20 Morale, -10 Stress, +1 Ispirazione, 35% Scintilla, +25 XP Rock Classico).",
 					"duration_seconds": 12.0,
 					"type": "action",
 					"energy_delta": 0,
 					"stress_delta": -10,
 					"morale_delta": 20,
 					"money_cost": 0.0,
+					"inspiration_points_gain": 1,
 					"inspiration_chance": 0.35,
 					"xp_amount": 25.0,
 					"xp_skill": "genre_rock",
-					"result_message": "Ascolto Classic Rock completato: sound energico assorbito (+25 XP Rock Classico, +20 Morale, -10 Stress)!"
+					"result_message": "Ascolto Classic Rock completato: sound energico assorbito (+25 XP Rock Classico, +20 Morale, -10 Stress, +1 Ispirazione)!"
 				},
 				{
 					"id": "turntable_listen_metal",
 					"title": "Vinile Heavy Metal",
-					"description": "Riff veloci e doppia cassa tellurica (+20 Morale, -10 Stress, 35% Scintilla, +25 XP Heavy Metal).",
+					"description": "Riff veloci e doppia cassa tellurica (+20 Morale, -10 Stress, +1 Ispirazione, 35% Scintilla, +25 XP Heavy Metal).",
 					"duration_seconds": 12.0,
 					"type": "action",
 					"energy_delta": 0,
 					"stress_delta": -10,
 					"morale_delta": 20,
 					"money_cost": 0.0,
+					"inspiration_points_gain": 1,
 					"inspiration_chance": 0.35,
 					"xp_amount": 25.0,
 					"xp_skill": "genre_metal",
-					"result_message": "Ascolto Heavy Metal completato: riff potenti e attacco metallico (+25 XP Heavy Metal)!"
+					"result_message": "Ascolto Heavy Metal completato: riff potenti e attacco metallico (+25 XP Heavy Metal, +1 Ispirazione)!"
 				},
 				{
 					"id": "turntable_listen_blues",
 					"title": "Vinile Blues & Roots",
-					"description": "Feeling viscerale e pentatoniche (+20 Morale, -10 Stress, 35% Scintilla, +25 XP Blues & Roots).",
+					"description": "Feeling viscerale e pentatoniche (+20 Morale, -10 Stress, +1 Ispirazione, 35% Scintilla, +25 XP Blues & Roots).",
 					"duration_seconds": 12.0,
 					"type": "action",
 					"energy_delta": 0,
 					"stress_delta": -10,
 					"morale_delta": 20,
 					"money_cost": 0.0,
+					"inspiration_points_gain": 1,
 					"inspiration_chance": 0.35,
 					"xp_amount": 25.0,
 					"xp_skill": "genre_blues",
-					"result_message": "Ascolto Blues completato: calore e malinconia viscerale (+25 XP Blues & Roots)!"
+					"result_message": "Ascolto Blues completato: calore e malinconia viscerale (+25 XP Blues & Roots, +1 Ispirazione)!"
 				},
 				{
 					"id": "turntable_listen_jazz",
 					"title": "Vinile Jazz & Fusion",
-					"description": "Accordi estesi e tempi dispari (+20 Morale, -10 Stress, 35% Scintilla, +25 XP Jazz & Fusion).",
+					"description": "Accordi estesi e tempi dispari (+20 Morale, -10 Stress, +1 Ispirazione, 35% Scintilla, +25 XP Jazz & Fusion).",
 					"duration_seconds": 12.0,
 					"type": "action",
 					"energy_delta": 0,
 					"stress_delta": -10,
 					"morale_delta": 20,
 					"money_cost": 0.0,
+					"inspiration_points_gain": 1,
 					"inspiration_chance": 0.35,
 					"xp_amount": 25.0,
 					"xp_skill": "genre_jazz",
-					"result_message": "Ascolto Jazz completato: armonie avanzate metabolizzate (+25 XP Jazz & Fusion)!"
+					"result_message": "Ascolto Jazz completato: armonie avanzate metabolizzate (+25 XP Jazz & Fusion, +1 Ispirazione)!"
 				},
 				{
 					"id": "turntable_study",
@@ -306,11 +335,12 @@ static func get_actions_for_prop(prop_id: String) -> Array[Dictionary]:
 				{
 					"id": "bed_rest",
 					"title": "Riposo breve",
-					"description": "Riposati sul letto e avanza alla fascia oraria successiva (+15 Energia).",
+					"description": "Riposati sul letto e avanza alla fascia oraria successiva (+15 Energia, chance Ispirazione Notturna).",
 					"duration_seconds": 5.0,
 					"type": "advance_period",
 					"energy_delta": 15,
 					"stress_delta": -5,
+					"inspiration_chance": 0.35,
 					"result_message": "Riposo completato. Passaggio alla fascia oraria successiva (+15 Energia, -5 Stress)."
 				},
 				{

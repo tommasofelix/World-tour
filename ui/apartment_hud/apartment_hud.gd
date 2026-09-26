@@ -831,7 +831,14 @@ func execute_interaction_action(prop_id: String, action: Dictionary) -> void:
 					GameManager.time_system.advance_to_next_period()
 				_apply_action_effects(action)
 
-		"action":
+		"action", "crafting_music", "crafting_lyrics":
+			if a_type in ["crafting_music", "crafting_lyrics"]:
+				var req_energy: int = 15 if a_type == "crafting_music" else 10
+				if GameManager and GameManager.player_data and GameManager.player_data.energy < req_energy:
+					var no_e_msg := "Energia insufficiente per comporre (%d richiesta)." % req_energy
+					show_inspection(no_e_msg, "ALEX", "[Spazio] Chiudi", true)
+					AccessibilityManager.announce(no_e_msg, true)
+					return
 			if action_system == null:
 				var p_data: PlayerData = GameManager.player_data if GameManager else null
 				var c_data: CalendarData = GameManager.calendar_data if GameManager else null
@@ -856,6 +863,16 @@ func _run_action_with_duration(action: Dictionary) -> void:
 	var xp: float = action.get("xp_amount", 0.0)
 	var skill: String = action.get("xp_skill", "instrument")
 	var money: float = action.get("money_cost", 0.0)
+	var a_type_check: String = action.get("type", "")
+	var e_delta_val: int = action.get("energy_delta", 0)
+	var s_delta_val: int = action.get("stress_delta", 0)
+
+	# Se l'azione è delegata a MusicSystem, azzeriamo i delta su ActionSystem per evitare la doppia detrazione
+	if a_type_check in ["crafting_music", "crafting_lyrics"]:
+		e_delta_val = 0
+		s_delta_val = 0
+		e_cost = 0
+		s_gain = 0
 
 	var is_rec: bool = (xp <= 0.0)
 	var act_data := ActionData.new(
@@ -867,8 +884,8 @@ func _run_action_with_duration(action: Dictionary) -> void:
 		xp,
 		skill,
 		is_rec,
-		action.get("energy_delta", 0),
-		action.get("stress_delta", 0),
+		e_delta_val,
+		s_delta_val,
 		action.get("morale_delta", 0),
 		money,
 		action.get("inspiration_chance", 0.0)
@@ -894,6 +911,7 @@ func _apply_action_effects(action: Dictionary) -> void:
 	var skill: String = action.get("xp_skill", "")
 	var is_gamble: bool = action.get("is_gamble", false)
 	var insp_chance: float = action.get("inspiration_chance", 0.0)
+	var insp_pts: int = int(action.get("inspiration_points_gain", 0))
 
 	if money > 0.0:
 		player.modify_money(-money)
@@ -913,7 +931,10 @@ func _apply_action_effects(action: Dictionary) -> void:
 			player.add_xp_to_skill(skill, xp)
 		elif player.has_method("add_skill_xp"):
 			player.add_skill_xp(skill, xp)
+	if insp_pts > 0:
+		player.add_inspiration(insp_pts)
 	if insp_chance > 0.0 and randf() < insp_chance:
+		player.add_inspiration(1)
 		if player.has_method("add_xp_to_skill"):
 			player.add_xp_to_skill("composition", Constants.RECOVERY_MUSIC_SPARK_XP)
 		elif player.has_method("add_skill_xp"):
@@ -925,9 +946,41 @@ func _apply_action_effects(action: Dictionary) -> void:
 	update_hud_display()
 
 func _on_hud_action_completed(_action_id: String, _reward: Dictionary) -> void:
-	if _current_running_action.get("type", "") == "advance_period":
+	var a_type: String = _current_running_action.get("type", "")
+	if a_type == "advance_period":
 		if GameManager and GameManager.time_system:
 			GameManager.time_system.advance_to_next_period()
+	elif a_type == "crafting_music":
+		if GameManager and GameManager.player_data and GameManager.music_system:
+			var drafts := GameManager.player_data.get_active_draft_songs()
+			var target_draft: SongData = null
+			for d in drafts:
+				if d.music_progress < 100.0:
+					target_draft = d
+					break
+			if target_draft:
+				var res := GameManager.music_system.work_on_music_progress(target_draft.id, 1.0)
+				_current_running_action["result_message"] = "Composizione musica completata per '%s'! Avanzamento: %.0f%%." % [target_draft.title, target_draft.music_progress]
+			elif not drafts.is_empty():
+				_current_running_action["result_message"] = "Tutti i cantieri aperti hanno già completato la musica! Apri il Song Creator per scrivere i testi, rifinirli o inciderli."
+			else:
+				_current_running_action["result_message"] = "Nessun cantiere aperto! Crea prima un nuovo progetto dal Song Creator."
+	elif a_type == "crafting_lyrics":
+		if GameManager and GameManager.player_data and GameManager.music_system:
+			var drafts := GameManager.player_data.get_active_draft_songs()
+			var target_draft: SongData = null
+			for d in drafts:
+				if d.lyrics_progress < 100.0:
+					target_draft = d
+					break
+			if target_draft:
+				var res := GameManager.music_system.work_on_lyrics_progress(target_draft.id, 1.0)
+				_current_running_action["result_message"] = "Scrittura testo completata per '%s'! Avanzamento: %.0f%%." % [target_draft.title, target_draft.lyrics_progress]
+			elif not drafts.is_empty():
+				_current_running_action["result_message"] = "Tutti i cantieri aperti hanno già completato i testi! Apri il Song Creator per comporre la musica, rifinirli o inciderli."
+			else:
+				_current_running_action["result_message"] = "Nessun cantiere aperto! Crea prima un nuovo progetto dal Song Creator."
+
 	var res_msg: String = _current_running_action.get("result_message", "Azione completata con successo!")
 	_current_running_action = {}
 	update_hud_display()

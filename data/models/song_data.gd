@@ -24,6 +24,18 @@ var inspiration_bonus: float = 0.0
 var quality_score: float = 0.0
 var is_cover: bool = false
 
+# Songwriting Artigianale, Doppia Barra, Strumento Dominante & Rifinitura (Popomundo Inspired - V5.9.0)
+var music_progress: float = 0.0 # 0.0 - 100.0
+var lyrics_progress: float = 0.0 # 0.0 - 100.0
+var dominant_instrument: String = "guitar" # discipline Ramo 2
+var archetype: String = "standard" # anthem, ballad, riff, standard, experimental
+var complexity: int = 1 # 0: semplice, 1: standard, 2: virtuosa
+var polishing_status: int = 0 # 0: in_progress, 1: orange, 2: green_masterpiece, 3: standard_finalized
+var polishing_hours_remaining: float = 0.0
+var inspiration_invested: int = 0
+var mastery_live: float = 20.0 # 20.0 - 100.0
+var last_played_day: int = 0
+
 # Tratto speciale emergente
 var traits: Array[int] = []
 var special_trait: int:
@@ -67,6 +79,15 @@ func _init(
 	genre = p_genre
 	theme = p_theme
 
+func is_ready_for_polishing() -> bool:
+	return music_progress >= 100.0 and lyrics_progress >= 100.0 and polishing_status == 0
+
+func is_orange_polishing() -> bool:
+	return polishing_status == 1
+
+func is_masterpiece() -> bool:
+	return polishing_status == 2
+
 func to_dict() -> Dictionary:
 	return {
 		"id": id,
@@ -90,7 +111,17 @@ func to_dict() -> Dictionary:
 		"plays_count": plays,
 		"revenue": revenue,
 		"revenue_generated": revenue,
-		"is_cover": is_cover
+		"is_cover": is_cover,
+		"music_progress": music_progress,
+		"lyrics_progress": lyrics_progress,
+		"dominant_instrument": dominant_instrument,
+		"archetype": archetype,
+		"complexity": complexity,
+		"polishing_status": polishing_status,
+		"polishing_hours_remaining": polishing_hours_remaining,
+		"inspiration_invested": inspiration_invested,
+		"mastery_live": mastery_live,
+		"last_played_day": last_played_day
 	}
 
 func from_dict(dict: Dictionary) -> void:
@@ -110,6 +141,16 @@ func from_dict(dict: Dictionary) -> void:
 	inspiration_bonus = float(dict.get("inspiration_bonus", inspiration_bonus))
 	quality_score = float(dict.get("quality_score", quality_score))
 	is_cover = bool(dict.get("is_cover", is_cover))
+	music_progress = float(dict.get("music_progress", music_progress))
+	lyrics_progress = float(dict.get("lyrics_progress", lyrics_progress))
+	dominant_instrument = str(dict.get("dominant_instrument", dominant_instrument))
+	archetype = str(dict.get("archetype", archetype))
+	complexity = int(dict.get("complexity", complexity))
+	polishing_status = int(dict.get("polishing_status", polishing_status))
+	polishing_hours_remaining = float(dict.get("polishing_hours_remaining", polishing_hours_remaining))
+	inspiration_invested = int(dict.get("inspiration_invested", inspiration_invested))
+	mastery_live = float(dict.get("mastery_live", mastery_live))
+	last_played_day = int(dict.get("last_played_day", last_played_day))
 	traits.clear()
 	if dict.has("traits") and dict["traits"] is Array:
 		for t in dict["traits"]:

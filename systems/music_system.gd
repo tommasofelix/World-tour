@@ -38,6 +38,220 @@ func create_draft(title: String, genre: int, theme: String = "love") -> SongData
 	EventBus.song_created.emit(song.to_dict())
 	return song
 
+# ==============================================================================
+# SONGWRITING ARTIGIANALE, DOPPIA BARRA E RIFINITURA (V5.9.0 / Popomundo Inspired)
+# ==============================================================================
+
+## Avvia un nuovo cantiere di songwriting artigianale (massimo 3 cantieri aperti)
+func start_crafting_project(title: String, genre: int, theme: String = "love", dominant_inst: String = "guitar", archetype: String = "standard", initial_inspiration: int = 0) -> Dictionary:
+	if player_data:
+		var open_drafts: Array[SongData] = player_data.get_active_draft_songs()
+		if open_drafts.size() >= 3:
+			return {
+				"success": false,
+				"reason": "draft_cap_reached",
+				"message": "Hai già 3 progetti aperti nel cassetto. Completa o archivia una bozza prima di iniziarne un'altra."
+			}
+			
+		if initial_inspiration > 0:
+			if not player_data.consume_inspiration(initial_inspiration):
+				return {
+					"success": false,
+					"reason": "inspiration_insufficient",
+					"message": "Punti Ispirazione insufficienti per iniziare con questo slancio."
+				}
+
+	var s_title := title.strip_edges()
+	if s_title.is_empty():
+		s_title = "Nuovo Progetto %s" % Enums.MusicalGenre.keys()[genre].capitalize()
+
+	var song := SongData.new("", s_title, genre, theme)
+	song.status = Enums.SongStatus.DRAFT
+	song.stage = Enums.SongStage.COMPOSITION
+	song.dominant_instrument = dominant_inst
+	song.archetype = archetype
+	song.inspiration_invested = initial_inspiration
+	var initial_boost: float = float(initial_inspiration) * 10.0
+	song.music_progress = clampf(initial_boost, 0.0, 100.0)
+	song.lyrics_progress = clampf(initial_boost, 0.0, 100.0)
+	song.polishing_status = 0
+	song.polishing_hours_remaining = 0.0
+	song.mastery_live = 20.0
+
+	var in_burnout: bool = player_data.is_in_creative_burnout() if player_data else false
+
+	if player_data:
+		player_data.add_song(song)
+
+	EventBus.song_created.emit(song.to_dict())
+	return {
+		"success": true,
+		"song": song,
+		"burnout_warning": in_burnout
+	}
+
+## Lavora sull'avanzamento della componente musicale (accordi, riff, melodia)
+func work_on_music_progress(song_id: String, hours: float = 1.0) -> Dictionary:
+	var song: SongData = player_data.get_song_by_id(song_id) if player_data else null
+	if not song:
+		return {"success": false, "reason": "song_not_found"}
+
+	if not player_data or not player_data.consume_energy(15):
+		return {"success": false, "reason": "energy_insufficient"}
+
+	var in_burnout: bool = player_data.is_in_creative_burnout()
+	var stress_gain: int = 8 if in_burnout else 4
+	player_data.add_stress(stress_gain)
+
+	var skill_harmony: float = float(player_data.get_skill_level("comp_theory"))
+	var musicality: float = float(player_data.musicality)
+	var gain: float = (15.0 + (skill_harmony * 0.25) + (musicality * 0.15)) * hours
+	if in_burnout:
+		gain *= 0.75
+
+	song.music_progress = clampf(song.music_progress + gain, 0.0, 100.0)
+	song.comp_skill_used = maxf(song.comp_skill_used, skill_harmony)
+
+	if player_data:
+		player_data.add_xp_to_skill("comp_theory", 15.0)
+		player_data.add_xp_to_skill("comp_riffs", 10.0)
+
+	var ready_now: bool = (song.music_progress >= 100.0 and song.lyrics_progress >= 100.0 and song.polishing_status == 0)
+	if ready_now:
+		song.polishing_status = 1 # ORANGE
+		song.polishing_hours_remaining = 36.0
+		AccessibilityManager.announce("Ispirazione al vertice! Entrambe le componenti sono al 100%%: %s entra nella Finestra di Rifinitura Arancione (36 ore)!" % song.title, true)
+
+	return {
+		"success": true,
+		"song": song,
+		"music_progress": song.music_progress,
+		"gain": gain,
+		"polishing_status": song.polishing_status,
+		"polishing_hours_remaining": song.polishing_hours_remaining
+	}
+
+## Lavora sull'avanzamento del testo (liriche, rime, metrica)
+func work_on_lyrics_progress(song_id: String, hours: float = 1.0) -> Dictionary:
+	var song: SongData = player_data.get_song_by_id(song_id) if player_data else null
+	if not song:
+		return {"success": false, "reason": "song_not_found"}
+
+	if not player_data or not player_data.consume_energy(10):
+		return {"success": false, "reason": "energy_insufficient"}
+
+	var in_burnout: bool = player_data.is_in_creative_burnout()
+	var stress_gain: int = 6 if in_burnout else 3
+	player_data.add_stress(stress_gain)
+
+	var skill_lyrics: float = float(player_data.get_skill_level("comp_lyrics"))
+	var intelligence: float = float(player_data.intelligence)
+	var affinity: float = Formulas.calculate_theme_genre_affinity(song.theme, song.genre)
+	var gain: float = (15.0 + (skill_lyrics * 0.25) + (intelligence * 0.15) + affinity) * hours
+	if in_burnout:
+		gain *= 0.75
+
+	song.lyrics_progress = clampf(song.lyrics_progress + gain, 0.0, 100.0)
+	song.lyrics_skill_used = maxf(song.lyrics_skill_used, skill_lyrics)
+
+	if player_data:
+		player_data.add_xp_to_skill("comp_lyrics", 15.0)
+
+	var ready_now: bool = (song.music_progress >= 100.0 and song.lyrics_progress >= 100.0 and song.polishing_status == 0)
+	if ready_now:
+		song.polishing_status = 1 # ORANGE
+		song.polishing_hours_remaining = 36.0
+		AccessibilityManager.announce("Ispirazione al vertice! Entrambe le componenti sono al 100%%: %s entra nella Finestra di Rifinitura Arancione (36 ore)!" % song.title, true)
+
+	return {
+		"success": true,
+		"song": song,
+		"lyrics_progress": song.lyrics_progress,
+		"gain": gain,
+		"polishing_status": song.polishing_status,
+		"polishing_hours_remaining": song.polishing_hours_remaining
+	}
+
+## Tenta il Colpo d'Ala spendendo Punti Ispirazione durante la finestra arancione
+func attempt_polishing_burst(song_id: String, inspiration_spent: int) -> Dictionary:
+	var song: SongData = player_data.get_song_by_id(song_id) if player_data else null
+	if not song:
+		return {"success": false, "reason": "song_not_found"}
+
+	if song.polishing_status != 1:
+		return {
+			"success": false,
+			"reason": "not_in_orange_window",
+			"message": "Il brano non si trova nella finestra di rifinitura arancione."
+		}
+
+	if inspiration_spent < 1 or not player_data or player_data.inspiration_points < inspiration_spent:
+		return {
+			"success": false,
+			"reason": "inspiration_insufficient",
+			"message": "Punti Ispirazione insufficienti per tentare il Colpo d'Ala."
+		}
+
+	player_data.consume_inspiration(inspiration_spent)
+	var prior_invested: int = song.inspiration_invested
+	song.inspiration_invested += inspiration_spent
+
+	var base_chance: float = 0.25 + (float(inspiration_spent - 1) * 0.25) + (float(prior_invested) * 0.05) + (float(player_data.musicality) / 200.0)
+	var final_chance: float = clampf(base_chance, 0.10, 0.95)
+	var is_success: bool = (randf() <= final_chance)
+
+	if is_success:
+		song.polishing_status = 2 # GREEN_MASTERPIECE
+		song.inspiration_bonus += 20.0
+		song.stage = Enums.SongStage.RECORDING
+		player_data.creative_burnout_days = 4
+		AccessibilityManager.announce("COLPO D'ALA TRIONFALE! %s diventa un Capolavoro Verde Brillante (+20 Qualità)! Alex entra in svuotamento creativo per 4 giorni." % song.title, true)
+		return {
+			"success": true,
+			"is_masterpiece": true,
+			"quality_bonus": 20.0,
+			"burnout_days": 4
+		}
+	else:
+		song.polishing_status = 3 # STANDARD_FINALIZED
+		song.inspiration_bonus += 5.0
+		song.stage = Enums.SongStage.RECORDING
+		AccessibilityManager.announce("Rifinitura completata. %s viene consolidata come traccia solida (+5 Qualità)." % song.title, true)
+		return {
+			"success": true,
+			"is_masterpiece": false,
+			"quality_bonus": 5.0,
+			"burnout_days": 0
+		}
+
+## Consolida il brano arancione come traccia standard senza spendere ispirazione
+func finalize_polishing_standard(song_id: String) -> Dictionary:
+	var song: SongData = player_data.get_song_by_id(song_id) if player_data else null
+	if not song:
+		return {"success": false, "reason": "song_not_found"}
+
+	if song.polishing_status != 1:
+		return {"success": false, "reason": "not_in_orange_window"}
+
+	song.polishing_status = 3 # STANDARD_FINALIZED
+	song.stage = Enums.SongStage.RECORDING
+	song.polishing_hours_remaining = 0.0
+	AccessibilityManager.announce("%s consolidata come traccia standard, pronta per la registrazione!" % song.title, true)
+	return {"success": true, "song": song}
+
+## Gestisce il decadimento orario della finestra di rifinitura arancione (36 ore)
+func process_hourly_polishing_decay(delta_virtual_hours: float) -> void:
+	if not player_data:
+		return
+	for s in player_data.songs:
+		if s.polishing_status == 1:
+			s.polishing_hours_remaining -= delta_virtual_hours
+			if s.polishing_hours_remaining <= 0.0:
+				s.polishing_status = 3
+				s.polishing_hours_remaining = 0.0
+				s.stage = Enums.SongStage.RECORDING
+				AccessibilityManager.announce("Tempo di rifinitura scaduto per %s: consolidata automaticamente come traccia standard." % s.title, true)
+
 ## Stadio 2: Composizione Riff & Armonia
 func work_on_composition(song: SongData, is_inspiration_burst: bool = false) -> Dictionary:
 	if not player_data.consume_energy(15):
@@ -172,10 +386,16 @@ func mix_and_master(song: SongData) -> Dictionary:
 		0.0,
 		theme_affinity
 	)
+	if song.inspiration_bonus > 0.0:
+		final_quality = clampf(final_quality + song.inspiration_bonus, Constants.SONG_MIN_QUALITY, Constants.SONG_MAX_QUALITY)
 	song.quality_score = final_quality
 
 	# Estrazione probabilistica del tratto emergente (Song Traits)
-	song.special_trait = _roll_special_trait(song)
+	if song.is_masterpiece():
+		var top_traits := [Enums.SongTrait.EARWORM, Enums.SongTrait.GENERATIONAL_ANTHEM, Enums.SongTrait.STAGE_BEAST, Enums.SongTrait.EPIC_RIFF]
+		song.special_trait = top_traits[randi() % top_traits.size()]
+	else:
+		song.special_trait = _roll_special_trait(song)
 
 	song.status = Enums.SongStatus.PRODUCED
 	song.stage = Enums.SongStage.COMPLETED

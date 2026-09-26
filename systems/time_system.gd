@@ -11,18 +11,88 @@ var player_data: PlayerData
 var is_paused: bool = false
 var time_scale: float = Constants.SPEED_NORMAL
 
-# Tracciamento Overtime Notturno Progressivo (00:00 - 04:00)
-var warned_hour_2: bool = false
-var warned_hour_3: bool = false
-var overtime_hour_1_applied: bool = false
-var overtime_hour_2_applied: bool = false
-var overtime_hour_3_applied: bool = false
-var overtime_hour_4_applied: bool = false
+# Tracciamento Overtime Notturno Progressivo (00:00 - 04:00) delegato a CalendarData
+var _warned_hour_2: bool = false
+var warned_hour_2: bool:
+	get:
+		return bool(calendar_data.overtime_state.get("warned_hour_2", false)) if calendar_data else _warned_hour_2
+	set(val):
+		_warned_hour_2 = val
+		if calendar_data:
+			calendar_data.overtime_state["warned_hour_2"] = val
 
-# Tracciamento Riposo Anticipato
-var early_sleep_taken: bool = false
-var sleep_period: int = Enums.TimePeriod.MORNING
-var sleep_hour_offset: int = 0
+var _warned_hour_3: bool = false
+var warned_hour_3: bool:
+	get:
+		return bool(calendar_data.overtime_state.get("warned_hour_3", false)) if calendar_data else _warned_hour_3
+	set(val):
+		_warned_hour_3 = val
+		if calendar_data:
+			calendar_data.overtime_state["warned_hour_3"] = val
+
+var _overtime_hour_1_applied: bool = false
+var overtime_hour_1_applied: bool:
+	get:
+		return bool(calendar_data.overtime_state.get("overtime_hour_1_applied", false)) if calendar_data else _overtime_hour_1_applied
+	set(val):
+		_overtime_hour_1_applied = val
+		if calendar_data:
+			calendar_data.overtime_state["overtime_hour_1_applied"] = val
+
+var _overtime_hour_2_applied: bool = false
+var overtime_hour_2_applied: bool:
+	get:
+		return bool(calendar_data.overtime_state.get("overtime_hour_2_applied", false)) if calendar_data else _overtime_hour_2_applied
+	set(val):
+		_overtime_hour_2_applied = val
+		if calendar_data:
+			calendar_data.overtime_state["overtime_hour_2_applied"] = val
+
+var _overtime_hour_3_applied: bool = false
+var overtime_hour_3_applied: bool:
+	get:
+		return bool(calendar_data.overtime_state.get("overtime_hour_3_applied", false)) if calendar_data else _overtime_hour_3_applied
+	set(val):
+		_overtime_hour_3_applied = val
+		if calendar_data:
+			calendar_data.overtime_state["overtime_hour_3_applied"] = val
+
+var _overtime_hour_4_applied: bool = false
+var overtime_hour_4_applied: bool:
+	get:
+		return bool(calendar_data.overtime_state.get("overtime_hour_4_applied", false)) if calendar_data else _overtime_hour_4_applied
+	set(val):
+		_overtime_hour_4_applied = val
+		if calendar_data:
+			calendar_data.overtime_state["overtime_hour_4_applied"] = val
+
+# Tracciamento Riposo Anticipato delegato a CalendarData
+var _early_sleep_taken: bool = false
+var early_sleep_taken: bool:
+	get:
+		return bool(calendar_data.overtime_state.get("early_sleep_taken", false)) if calendar_data else _early_sleep_taken
+	set(val):
+		_early_sleep_taken = val
+		if calendar_data:
+			calendar_data.overtime_state["early_sleep_taken"] = val
+
+var _sleep_period: int = Enums.TimePeriod.MORNING
+var sleep_period: int:
+	get:
+		return int(calendar_data.overtime_state.get("sleep_period", Enums.TimePeriod.MORNING)) if calendar_data else _sleep_period
+	set(val):
+		_sleep_period = val
+		if calendar_data:
+			calendar_data.overtime_state["sleep_period"] = val
+
+var _sleep_hour_offset: int = 0
+var sleep_hour_offset: int:
+	get:
+		return int(calendar_data.overtime_state.get("sleep_hour_offset", 0)) if calendar_data else _sleep_hour_offset
+	set(val):
+		_sleep_hour_offset = val
+		if calendar_data:
+			calendar_data.overtime_state["sleep_hour_offset"] = val
 
 func _init(p_calendar: CalendarData = null, p_player: PlayerData = null) -> void:
 	if p_calendar:
@@ -30,6 +100,12 @@ func _init(p_calendar: CalendarData = null, p_player: PlayerData = null) -> void
 	else:
 		calendar_data = CalendarData.new()
 	player_data = p_player
+
+func sync_from_calendar() -> void:
+	pass
+
+func _sync_to_calendar() -> void:
+	pass
 
 func set_paused(paused: bool) -> void:
 	if is_paused != paused:
@@ -79,34 +155,44 @@ func _check_overtime_and_notifications() -> void:
 		return
 		
 	var h_offset: int = calendar_data.get_hour_offset()
+	var state_changed: bool = false
 	
 	# Ore 00:00 (offset 18) -> Penalità minima +2 stress progressivo (nessun pop-up)
 	if h_offset >= 18 and not overtime_hour_1_applied:
 		overtime_hour_1_applied = true
+		state_changed = true
 		_apply_stress(Constants.OVERTIME_STRESS_HOUR_1)
 		
 	# Ore 01:00 (offset 19) -> +3 stress progressivo
 	if h_offset >= 19 and not overtime_hour_2_applied:
 		overtime_hour_2_applied = true
+		state_changed = true
 		_apply_stress(Constants.OVERTIME_STRESS_HOUR_2)
 		
 	# Ore 02:00 (offset 20) -> Avviso discreto per NVDA e +5 stress
 	if h_offset >= 20:
 		if not warned_hour_2:
 			warned_hour_2 = true
+			state_changed = true
 			AccessibilityManager.announce("Ore 02:00 di notte. Puoi andare a dormire (tasto Z) o proseguire le tue attività.", false)
 		if not overtime_hour_3_applied:
 			overtime_hour_3_applied = true
+			state_changed = true
 			_apply_stress(Constants.OVERTIME_STRESS_HOUR_3)
 			
 	# Ore 03:00 (offset 21) -> Avviso discreto finale e +10 stress
 	if h_offset >= 21:
 		if not warned_hour_3:
 			warned_hour_3 = true
+			state_changed = true
 			AccessibilityManager.announce("Attenzione: sono le 03:00. La giornata terminerà alle 04:00.", false)
 		if not overtime_hour_4_applied:
 			overtime_hour_4_applied = true
+			state_changed = true
 			_apply_stress(Constants.OVERTIME_STRESS_HOUR_4)
+
+	if state_changed:
+		_sync_to_calendar()
 
 func _apply_stress(amount: int) -> void:
 	var p: PlayerData = player_data
@@ -123,6 +209,7 @@ func sleep_early() -> void:
 	early_sleep_taken = true
 	sleep_period = calendar_data.current_period
 	sleep_hour_offset = calendar_data.get_hour_offset()
+	_sync_to_calendar()
 	
 	calendar_data.remaining_seconds = 0.0
 	calendar_data.update_period()
@@ -190,3 +277,5 @@ func reset_daily_overtime() -> void:
 	early_sleep_taken = false
 	sleep_period = Enums.TimePeriod.MORNING
 	sleep_hour_offset = 0
+	if calendar_data:
+		calendar_data.reset_overtime_state()

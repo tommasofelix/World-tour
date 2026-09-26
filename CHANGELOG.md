@@ -4,6 +4,71 @@ Le modifiche rilevanti sono registrate in ordine cronologico inverso. Una voce d
 
 ## Non rilasciato
 
+### 2026-09-26 — Songwriting Artigianale, Doppia Barra, Punti Ispirazione, Rifinitura Arancione/Verde Popomundo & Padronanza Live: Versione 5.9.0 — Sessioni Discrete di Composizione, Sindrome del Foglio Bianco & Suite test_advanced_songwriting_system.gd (33/33 Suite Verdi a 0 ms)
+- **Doppia Barra di Avanzamento & Modello Cantiere Brani (Contratto D0)**:
+  - In [`data/models/song_data.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/data/models/song_data.gd), introdotti i campi di avanzamento artigianale `music_progress` (0.0–100.0) e `lyrics_progress` (0.0–100.0), lo strumento dominante `dominant_instrument`, l'archetipo formale `archetype`, la complessità compositiva `complexity` (1..3), lo stato di rifinitura `polishing_status` (NONE, ORANGE, GREEN_BURST, STANDARD), il timer virtuale `polishing_hours_remaining`, i punti ispirazione investiti `inspiration_invested`, la padronanza live `mastery_live` (20.0–100.0) e `last_played_day`;
+  - Aggiunti helper di stato `is_ready_for_polishing()`, `is_orange_polishing()`, `is_masterpiece()` e serializzazione atomica `to_dict()` e `from_dict()`;
+  - In [`data/models/player_data.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/data/models/player_data.gd), introdotta la valuta `inspiration_points` (default 3, max 5, potenziabile a 10), il cooldown `creative_burnout_days`, la gestione a cap di 3 cantieri aperti in parallelo (`max_active_drafts: 3`), metodi di spesa/guadagno `add_inspiration()`, `consume_inspiration()` e `is_in_creative_burnout()`.
+- **Motore Logico di Composizione Artigianale & Rifinitura (Contratto D1)**:
+  - In [`systems/music_system.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/systems/music_system.gd), implementati:
+    - `start_crafting_project(title, genre, theme, dominant_inst, archetype, inspiration_invested)`: apre il cantiere verificando cap cantieri e consumando eventuale ispirazione iniziale;
+    - `work_on_music_progress(song_id, hours)`: sessione di melodia ed armonia (consumo 15 energia, +4 stress, raddoppiato se in blocco creativo), con calcolo resa basato su composizione, strumento e attributi fisiologici;
+    - `work_on_lyrics_progress(song_id, hours)`: sessione di scrittura testi (consumo 10 energia, +3 stress), basata su songwriting e intelligenza;
+    - Attivazione automatica della Finestra di Rifinitura Arancione a 36 ore virtuali al completamento del 100% di musica e testo;
+    - `attempt_polishing_burst(song_id, inspiration_spent)`: tenta il "Colpo d'Ala" consumando punti ispirazione per sbloccare lo stato Verde Brillante / Capolavoro (+20 Quality Score e tratti leggendari); se riuscito, attiva 3–5 giorni di "Sindrome del Foglio Bianco" (svuotamento creativo con raddoppio dello stress);
+    - `finalize_polishing_standard(song_id)`: consolida la traccia a standard (+5 Quality Score) avanzandola a RECORDING per l'incisione;
+    - `process_hourly_polishing_decay(hours)`: decrementa il timer orario della finestra arancione e consolida automaticamente a standard allo scadere delle 36 ore.
+- **Integrazione Azioni Loft NYC & Ricarica Ispirazione (Contratto D2)**:
+  - In [`scenes/apartment/apartment_interactions.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/scenes/apartment/apartment_interactions.gd), aggiunte azioni contestuali ad arredi:
+    - Chitarra: "Componi melodia per la canzone in lavorazione" (`guitar_compose_crafting`, 6s);
+    - Divano: "Scrivi versi e testi per la canzone in cantiere" (`couch_write_lyrics_crafting`, 5s);
+    - Giradischi: ascolto attivo dei vinili conferisce +1 Punto Ispirazione garantito;
+    - Letto: il riposo breve conferisce il 35% di probabilità di generare una scintilla di ispirazione (+1 Punto Ispirazione);
+  - In [`ui/apartment_hud/apartment_hud.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/apartment_hud/apartment_hud.gd), dispatching atomico con `GAMEPLAY_BUSY`, feedback sonori e aggiornamento visuale.
+- **Riorganizzazione UI SongCreator ("Studio di Scrittura") (Contratto D3)**:
+  - In [`ui/music/song_creator.tscn`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/music/song_creator.tscn) e [`ui/music/song_creator.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/music/song_creator.gd), strutturata l'interfaccia su 3 schede autonome accessibili con tasti `1`, `2`, `3`:
+    - Scheda 1: Cantieri Aperti (elenco progetti, barre percentuali parlanti, tasti rapidi `M` per musica, `T` per testo, `R` per rifinitura);
+    - Scheda 2: Nuovo Progetto (titolo, genere, tema, strumento dominante, archetipo, selettore ispirazione, avvio con Invio);
+    - Scheda 3: Incisione & Master (scelta Home Studio vs Pro Studio, registrazione singola o produci tutto);
+  - Preservata la totale retrocompatibilità dei nodi storici e Zero Focus Drop per NVDA.
+- **Padronanza Live, Sinergia Virtuosi & Decadimento Repertorio (Contratto D4)**:
+  - In [`systems/concert_system.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/systems/concert_system.gd), pesatura della resa scenica sulla padronanza live (20% $\to$ 100%), boost +15% per strumento dominante se suonato da un virtuoso nella band, incremento +15% di padronanza e registrazione data post concerto;
+  - In [`systems/band_system.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/systems/band_system.gd), sessione di prove di gruppo incrementa del +15% la padronanza di tutti i brani provati;
+  - In [`systems/end_day_system.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/systems/end_day_system.gd), decremento giornaliero del blocco creativo e applicazione della regola di arrugginimento repertorio dopo 21 giorni di inattività (-5% a settimana fino al floor protetto del 50%).
+- **Nuova Suite di Test Headless Dedicata & Blindatura Globale (Contratto D5)**:
+  - Creata la suite [`tests/test_advanced_songwriting_system.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/tests/test_advanced_songwriting_system.gd) (con wrapper `.tscn`) a 68 asserzioni deterministiche a 0 ms;
+  - Risolti deterministici bug residui: getter `instrument` in `BandMemberData`, forwarder `add_morale` in `PlayerData`, visibilità `btn_edit_info` in `SongCreator`;
+  - Compilazione convalidata su **119 file GDScript con 0 errori** (`tools/check.ps1`);
+  - Esecuzione test suite superata al 100% su **33/33 suite headless con 0 errori e 0 ms** (`tools/test.ps1`).
+- **Rifiniture Sistemiche di Bilanciamento & Coerenza (Post-Review)**:
+  - Eliminata la doppia detrazione di energia e stress dalle azioni contestuali del Loft (`guitar_compose_crafting` e `couch_write_lyrics_crafting`): `ActionSystem` gestisce durata e blocco `GAMEPLAY_BUSY`, mentre `MusicSystem` gestisce deterministicamente consumo risorse e burnout;
+  - Selezione intelligente della prima bozza che necessita effettivamente di avanzamento (`music_progress < 100.0` o `lyrics_progress < 100.0`);
+  - Attivato lo slancio creativo dell'Ispirazione iniziale investita (+10% immediato a entrambe le barre per punto speso) e boost cumulativo (+5% per punto) sul successo del Colpo d'Ala finale;
+  - Abilitate le scorciatoie del tastierino numerico `KEY_KP_1`, `KEY_KP_2`, `KEY_KP_3` per il cambio scheda in `SongCreator`;
+  - Arricchita la visualizzazione nel catalogo generale [`ui/music/song_catalog.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/music/song_catalog.gd) con la doppia percentuale parlante `[Musica: %.0f%%] [Testo: %.0f%%]` e stato rifinitura per tutte le bozze.
+
+### 2026-09-26 — Day Loop Multi-Day Stress Test, Blindatura Save/Load Overtime Notturno & Opzione Sintesi Vocale: Versione 5.8.1 — Risoluzione BUG-029 (RRU-35), Persistenza CalendarData & Suite test_multi_day_lifecycle.gd (32/32 Suite Verdi a 0 ms)
+- **Opzione Attivazione/Disattivazione Sintesi Vocale Godot (TTS)**:
+  - In [`autoload/save_manager.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/autoload/save_manager.gd), aggiunti metodi `is_tts_enabled()` e `set_tts_enabled(p_enabled: bool)` con salvataggio atomico su `user://settings.json`;
+  - In [`autoload/accessibility_manager.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/autoload/accessibility_manager.gd), integrato il controllo `tts_enabled`: se disattivata, invoca `DisplayServer.tts_stop()`, sopprime il motore vocale SAPI/OneCore e disabilita l'audio ducking, eliminando sovrapposizioni vocali per gli utenti che utilizzano screen reader esterni come NVDA;
+  - Integrata l'opzione "Voce Sintetica Integrata (TTS)" in [`ui/main_menu/main_menu.tscn`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/main_menu/main_menu.tscn) e [`ui/system_menu/system_menu_modal.tscn`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/system_menu/system_menu_modal.tscn) con chiavi bilingue (`it.json`, `en.json`).
+- **Serializzazione Atomica Overtime & Risoluzione BUG-029 (Contratto D0)**:
+  - Spostato strutturalmente lo stato dell'overtime notturno (`warned_hour_2`, `warned_hour_3`, `overtime_hour_1_applied` .. `_4_applied`, `early_sleep_taken`, `sleep_period`, `sleep_hour_offset`) nel modello dati serializzabile [`data/models/calendar_data.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/data/models/calendar_data.gd) (`overtime_state`);
+  - Serializzato in `to_dict()` e deserializzato robustamente con fallback legacy in `from_dict()`;
+  - In [`systems/time_system.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/systems/time_system.gd), trasformati tutti i flag di overtime in proprietà reattive (getter/setter) delegate direttamente a `calendar_data.overtime_state`, garantendo zero sfasamento temporale;
+  - All'alba, `calendar_data.reset_daily_saturation()` azzera automaticamente `overtime_state` tramite `reset_overtime_state()`;
+  - Eliminata la ri-applicazione spuria di stress (+2, +3, +5) e la duplicazione degli annunci vocali NVDA post caricamento salvataggio a notte fonda.
+- **Blindatura Ciclo Fine Giornata & Transizione Giorno (Contratto D1)**:
+  - Verificata la catena `EndDaySystem` $\leftrightarrow$ `DailySummary` $\leftrightarrow$ `ApartmentHud` $\leftrightarrow$ `PlayerAlex`;
+  - Sblocco garantito del movimento del protagonista all'alba del nuovo giorno (`GAMEPLAY_IDLE`, `velocity = Vector2.ZERO`).
+- **Nuova Suite di Test Headless Multi-Giorno (Contratto D2)**:
+  - Creata la suite [`tests/test_multi_day_lifecycle.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/tests/test_multi_day_lifecycle.gd) (con wrapper [`tests/test_multi_day_lifecycle.tscn`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/tests/test_multi_day_lifecycle.tscn)) a 50 asserzioni deterministiche a 0 ms;
+  - Verifica di 5 scenari: ciclo ordinario Giorno 1 con sonno a mezzanotte, Giorno 2 con overtime profondo a 20 stress, salvataggio e ricaricamento alle 02:30 con invarianza stress, transizione economica spese/royalties, e ripristino FSM.
+- **Verifica Regressioni & Avanzamento AVF a V5.8.1 (Contratto D3)**:
+  - Compilazione sintattica convalidata su **118 file GDScript con 0 errori** (`tools/check.ps1`);
+  - Esecuzione test suite superata al 100% su **32/32 suite headless con 0 errori e 0 ms** (`tools/test.ps1`);
+  - Registrato `BUG-029 (RRU-35)` in `knowledge/09_registro_bug_e_soluzioni.md` e roadmap aggiornata in `docs/todo.md`.
+
 ### 2026-09-25 — Ottimizzazione Sistemica Azioni-Skill, Studio Selettivo a 31 Abilità & Pratica Multi-Strumento: Versione 5.8.0 — Catalogo Ramo 2 (8 Discipline), Selettori Accessibili NVDA & Matrice 4 Metodi di Studio
 - **Espansione Catalogo Competenze a 31 Abilità & 8 Discipline Strumentali/Vocali (Contratto D0)**:
   - In [`data/models/player_data.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/data/models/player_data.gd), integrate nel Ramo 2 (`instrumental_technique`) tre nuove competenze canoniche: Fiati & Sassofono (`skill_horns`), Archi & Violino (`skill_strings`), Armonica & Strumenti Popolari (`skill_harmonica`), portando il catalogo totale a 31 abilità;

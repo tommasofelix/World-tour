@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dmmultiday01"]
+
+[ext_resource type="Script" path="res://tests/test_multi_day_lifecycle.gd" id="1_testmultiday"]
+
+[node name="TestMultiDayLifecycle" type="Node"]
+script = ExtResource("1_testmultiday")

@@ -375,9 +375,13 @@ func hold_rehearsal_session(check_noise_complaint: bool = false) -> Dictionary:
 		elif r_tier == UpgradeData.RehearsalTier.ACOUSTIC_PANELS:
 			noise_incident = true
 			player_data.add_stress(5)
-			noise_message = " I vicini hanno bussato lamentando vibrazioni dei bassi (+5 Stress)."
-	
-	var msg: String = "Sessione di prove completata! La coesione del gruppo è aumentata (Stress accumulato: +%d).%s" % [stress_gain, noise_message]
+	# Aumenta la padronanza live delle canzoni in repertorio (+15%)
+	var cur_day: int = GameManager.calendar_data.day_number if GameManager and GameManager.calendar_data else 1
+	for s in player_data.get_playable_songs():
+		s.mastery_live = clampf(s.mastery_live + 15.0, 20.0, 100.0)
+		s.last_played_day = cur_day
+
+	var msg: String = "Sessione di prove completata! La coesione del gruppo e la padronanza dei brani sono aumentate (Stress accumulato: +%d).%s" % [stress_gain, noise_message]
 	AccessibilityManager.announce(msg, true)
 	return {
 		"success": true,

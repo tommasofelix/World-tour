@@ -282,6 +282,22 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 9
 
+[node name="HBoxTTS" type="HBoxContainer" parent="PanelMain/Margin/VBox/PanelSettings/Margin/VBoxSettings"]
+layout_mode = 2
+
+[node name="LabelTTS" type="Label" parent="PanelMain/Margin/VBox/PanelSettings/Margin/VBoxSettings/HBoxTTS"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 9
+text = "Sintesi Vocale:"
+
+[node name="OptTTS" type="OptionButton" parent="PanelMain/Margin/VBox/PanelSettings/Margin/VBoxSettings/HBoxTTS"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 9
+
 [node name="HBoxDayDuration" type="HBoxContainer" parent="PanelMain/Margin/VBox/PanelSettings/Margin/VBoxSettings"]
 layout_mode = 2
 

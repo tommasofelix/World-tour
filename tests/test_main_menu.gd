@@ -121,6 +121,17 @@ func test_settings_toggle() -> void:
 	assert_true(not vbox_menu.visible, "Menu principale nascosto con impostazioni aperte")
 	assert_true(panel_settings.visible, "Pannello impostazioni visibile")
 	
+	# Verifica e test selettore Sintesi Vocale (TTS)
+	var opt_tts: OptionButton = menu.find_child("OptTTS", true, false) as OptionButton
+	assert_true(opt_tts != null, "Selettore Sintesi Vocale OptTTS presente")
+	if opt_tts:
+		menu._on_tts_selected(1) # Disattivata
+		assert_true(not AccessibilityManager.is_tts_enabled, "Sintesi vocale disattivata in AccessibilityManager")
+		assert_true(not SaveManager.is_tts_enabled(), "Opzione salvata su settings.json come disattivata")
+		menu._on_tts_selected(0) # Attiva
+		assert_true(AccessibilityManager.is_tts_enabled, "Sintesi vocale riattivata")
+		assert_true(SaveManager.is_tts_enabled(), "Opzione salvata su settings.json come attiva")
+
 	# Chiusura impostazioni
 	menu._on_back_settings_pressed()
 	assert_true(vbox_menu.visible, "Menu principale ripristinato dopo chiusura impostazioni")
@@ -158,11 +169,13 @@ func test_accessibility_hooks() -> void:
 	var btn_lg: Button = menu.find_child("BtnLoadGame", true, false) as Button
 	var btn_set: Button = menu.find_child("BtnSettings", true, false) as Button
 	var btn_quit: Button = menu.find_child("BtnQuit", true, false) as Button
+	var opt_tts_node: OptionButton = menu.find_child("OptTTS", true, false) as OptionButton
 	
 	assert_true(not btn_ng.get_accessibility_name().is_empty(), "Nuova Partita ha nome di accessibilità")
 	assert_true(not btn_lg.get_accessibility_name().is_empty(), "Carica Partita ha nome di accessibilità")
 	assert_true(not btn_set.get_accessibility_name().is_empty(), "Impostazioni ha nome di accessibilità")
 	assert_true(not btn_quit.get_accessibility_name().is_empty(), "Esci al Desktop ha nome di accessibilità")
+	assert_true(opt_tts_node != null and not opt_tts_node.get_accessibility_name().is_empty(), "OptTTS ha nome di accessibilità")
 	
 	assert_true(not btn_ng.get_accessibility_description().is_empty(), "Nuova Partita ha descrizione di accessibilità")
 	assert_true(not btn_lg.get_accessibility_description().is_empty(), "Carica Partita ha descrizione di accessibilità")

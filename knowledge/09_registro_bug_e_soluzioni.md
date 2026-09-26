@@ -522,9 +522,24 @@ Questo registro contiene soltanto problemi tecnici confermati e soluzioni con ev
   4. Assenza di una gestione del tasto Spazio o Esc per congedare esplicitamente le notifiche transitorie di completamento azione.
 - Soluzione e Misure di prevenzione delle regressioni:
   1. Canone "Zero Divergenza Testo-Voce": centralizzazione in `ApartmentHud` del metodo canonico `display_dialogue(text, speaker, hint, should_announce, is_interrupt)` che assegna rigorosamente la stessa identica stringa sia al label visivo sia alla sintesi vocale;
-  2. Stato Base Ambientale Permanente del "Diario di Bordo": in navigazione libera il box mostra permanentemente le coordinate e le istruzioni pulite di movimento, senza azzeramenti arbitrari né residui di vecchie notifiche;
-  3. Congedo attivo da tastiera (`[Spazio / Esc]`): gestione esplicita dell'evento per ripristinare all'istante lo stato base del Diario di Bordo;
-  4. Disattivazione dell'annuncio ridondante in `ActionSystem` quando l'azione è orchestrata dal ciclo vitale dell'HUD.
 
+### BUG-029 (RRU-35) — Deserializzazione Volatile e Ri-applicazione Spuria dei Flag Overtime Notturno al Caricamento Salvataggio (V5.8.1)
 
-
+- Data e componente: `2026-09-26`, `data/models/calendar_data.gd`, `systems/time_system.gd`, `autoload/save_manager.gd`, `tests/test_multi_day_lifecycle.gd` (Versione AVF `V5.8.1`).
+- Sintomi osservati:
+  1. Se un giocatore salvava la partita durante le ore di overtime notturno (ad esempio alle 02:30 del mattino) e successivamente ricaricava il salvataggio dal menu principale o dal menu di sistema, al primo tick dell'orologio virtuale venivano ri-applicate ingiustamente le penalità di stress accumulate nelle ore precedenti (+2, +3, +5 = +10 stress indebito) e venivano ripetuti gli annunci vocali discreti per NVDA già ascoltati (es. avviso delle 02:00).
+- Evidenza riproducibile:
+  1. Avanzamento del tempo fino alle 02:30 di notte in `TimeSystem`: stress del musicista pari a 10 e flag `warned_hour_2`, `overtime_hour_1_applied` .. `_3_applied` attivi.
+  2. Esecuzione di `SaveManager.save_game()` seguito da `SaveManager.load_game()`.
+  3. Al primo avanzamento temporale (`time_system.advance_time(0.1)`), lo stress saliva erroneamente da 10 a 20 e l'annuncio delle 02:00 veniva riemesso.
+- Causa radice verificata:
+  1. I flag di tracciamento dell'overtime e del riposo anticipato (`warned_hour_2`, `warned_hour_3`, `overtime_hour_1_applied` .. `_4_applied`, `early_sleep_taken`, `sleep_period`, `sleep_hour_offset`) erano definiti come mere variabili d'istanza runtime volatili in `TimeSystem`, escluse dalla struttura di persistenza atomica di `CalendarData` (`to_dict()` e `from_dict()`).
+  2. All'atto del caricamento, `SaveManager.load_game()` re-istanziava o riassegnava `GameManager.calendar_data`, lasciando i campi interni di `TimeSystem` inizializzati al loro valore predefinito `false`. Di conseguenza, `_check_overtime_and_notifications()` considerava le soglie orarie superate come nuovi eventi da processare.
+- Soluzione applicata:
+  1. Contratto D0: Spostamento strutturale del dizionario `overtime_state` nel modello dati persistente `CalendarData`, con inclusione obbligatoria in `to_dict()` e deserializzazione robusta con fallback in `from_dict()`.
+  2. Contratto D1: In `TimeSystem`, trasformazione di tutti i flag di overtime in proprietà reattive (getter/setter) delegate direttamente a `calendar_data.overtime_state`, garantendo zero sfasamento temporale e azzeramento automatico ad ogni alba tramite `calendar_data.reset_daily_saturation()`.
+  3. Contratto D2: Creazione della nuova suite di test headless deterministica a 0 ms `tests/test_multi_day_lifecycle.gd` (con wrapper `test_multi_day_lifecycle.tscn`), contenente 50 asserzioni che verificano il ciclo multi-giorno, l'accumulo esatto di 20 punti stress in overtime profondo, l'invarianza dello stress e degli avvisi post save/load notturno, la transizione economica e lo sblocco FSM.
+  4. Contratto D3: Convalida globale con `tools/check.ps1` (118 file GDScript con 0 errori) e `tools/test.ps1` (32/32 suite headless superate con 0 fallimenti a 0 ms).
+- Misure di prevenzione delle regressioni:
+  * Ogni stato temporale o di simulazione che determina penalità cumulative o trigger di notifica progressivi deve risiedere nei modelli dati canonici serializzabili (`CalendarData`, `PlayerData`) e mai in variabili d'istanza effimere dei controller di sistema.
+  * Nei sistemi temporali, utilizzare il pattern a delega diretta (property getters/setters) sul modello dati sottostante per eliminare ridondanze e scongiurare sfasamenti di sincronizzazione tra la logica di calcolo e la persistenza JSON.

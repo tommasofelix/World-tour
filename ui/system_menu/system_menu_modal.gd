@@ -36,6 +36,7 @@ signal main_menu_requested
 @onready var label_settings_title: Label = $PanelMain/Margin/VBox/PanelSettings/Margin/VBoxSettings/LabelSettingsTitle
 @onready var label_audio_info: Label = $PanelMain/Margin/VBox/PanelSettings/Margin/VBoxSettings/LabelAudioInfo
 @onready var opt_lang: OptionButton = $PanelMain/Margin/VBox/PanelSettings/Margin/VBoxSettings/HBoxLang/OptLang
+@onready var opt_tts: OptionButton = $PanelMain/Margin/VBox/PanelSettings/Margin/VBoxSettings/HBoxTTS/OptTTS
 @onready var opt_day_duration: OptionButton = $PanelMain/Margin/VBox/PanelSettings/Margin/VBoxSettings/HBoxDayDuration/OptDayDuration
 @onready var btn_back_settings: Button = $PanelMain/Margin/VBox/PanelSettings/Margin/VBoxSettings/BtnBackSettings
 
@@ -77,6 +78,8 @@ func _hook_accessibility() -> void:
 		AccessibilityManager.hook_control_accessibility(btn_read_speech, "Ascolta Riepilogo Vocale Completo (R)", "Legge vocalmente il resoconto completo di carriera per NVDA.")
 	if btn_back_stats:
 		AccessibilityManager.hook_control_accessibility(btn_back_stats, "Torna al Menu di Sistema (Esc)", "Ritorna all'elenco principale del menu di pausa.")
+	if opt_tts:
+		AccessibilityManager.hook_control_accessibility(opt_tts, "Sintesi Vocale (TTS)", "Attiva o disattiva la voce sintetica integrata del gioco.")
 
 func _populate_settings_options() -> void:
 	if opt_lang:
@@ -88,7 +91,20 @@ func _populate_settings_options() -> void:
 
 		var cur_lang: String = LocalizationManager.get_current_language() if LocalizationManager else "it"
 		opt_lang.selected = 1 if cur_lang == "en" else 0
-		opt_lang.item_selected.connect(_on_language_selected)
+		if not opt_lang.item_selected.is_connected(_on_language_selected):
+			opt_lang.item_selected.connect(_on_language_selected)
+
+	if opt_tts:
+		opt_tts.clear()
+		opt_tts.add_item("Attiva (Predefinita)", 0)
+		opt_tts.set_item_metadata(0, true)
+		opt_tts.add_item("Disattivata", 1)
+		opt_tts.set_item_metadata(1, false)
+
+		var is_enabled: bool = AccessibilityManager.is_tts_enabled if AccessibilityManager else true
+		opt_tts.selected = 0 if is_enabled else 1
+		if not opt_tts.item_selected.is_connected(_on_tts_selected):
+			opt_tts.item_selected.connect(_on_tts_selected)
 
 	if opt_day_duration:
 		opt_day_duration.clear()
@@ -96,7 +112,8 @@ func _populate_settings_options() -> void:
 		opt_day_duration.add_item("Standard (5 minuti - Predefinita)", 1)
 		opt_day_duration.add_item("Rilassata (10 minuti)", 2)
 		opt_day_duration.selected = 1
-		opt_day_duration.item_selected.connect(_on_day_duration_selected)
+		if not opt_day_duration.item_selected.is_connected(_on_day_duration_selected):
+			opt_day_duration.item_selected.connect(_on_day_duration_selected)
 
 func open() -> void:
 	visible = true
@@ -262,9 +279,10 @@ func _on_settings_pressed() -> void:
 	btn_main_menu.text = "5. Torna al Menu Principale"
 	vbox_menu.visible = false
 	panel_settings.visible = true
+	_populate_settings_options()
 	btn_back_settings.grab_focus()
 	AccessibilityManager.speak(
-		"Pannello Impostazioni. Volume calibrato su standard anti-mascheramento. Puoi modificare la lingua e la durata della giornata. Premi Esc o il pulsante Torna per uscire."
+		"Pannello Impostazioni. Volume calibrato su standard anti-mascheramento. Puoi modificare lingua, sintesi vocale e durata della giornata. Premi Esc o il pulsante Torna per uscire."
 	)
 
 func _on_back_settings_pressed() -> void:
@@ -278,6 +296,13 @@ func _on_language_selected(index: int) -> void:
 	if LocalizationManager:
 		LocalizationManager.set_language(lang)
 	AccessibilityManager.speak("Lingua impostata su: " + opt_lang.get_item_text(index))
+
+func _on_tts_selected(index: int) -> void:
+	var enabled: bool = bool(opt_tts.get_item_metadata(index))
+	if AccessibilityManager:
+		AccessibilityManager.set_tts_enabled(enabled)
+	var state_str: String = "attivata" if enabled else "disattivata"
+	AccessibilityManager.speak("Sintesi vocale " + state_str + ".")
 
 func _on_day_duration_selected(index: int) -> void:
 	var seconds: float = 300.0

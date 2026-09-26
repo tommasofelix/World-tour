@@ -77,6 +77,62 @@ text = "Imposta titolo, genere, tema e studio. Puoi produrre l'intero brano o pr
 [node name="HSeparator1" type="HSeparator" parent="PanelMain/VBox"]
 layout_mode = 2
 
+[node name="HBoxTabs" type="HBoxContainer" parent="PanelMain/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BtnTab1" type="Button" parent="PanelMain/VBox/HBoxTabs"]
+custom_minimum_size = Vector2(230, 38)
+layout_mode = 2
+text = "1: Cantieri Aperti"
+
+[node name="BtnTab2" type="Button" parent="PanelMain/VBox/HBoxTabs"]
+custom_minimum_size = Vector2(230, 38)
+layout_mode = 2
+text = "2: Nuovo Progetto"
+
+[node name="BtnTab3" type="Button" parent="PanelMain/VBox/HBoxTabs"]
+custom_minimum_size = Vector2(230, 38)
+layout_mode = 2
+text = "3: Incisione & Master"
+
+[node name="Tab1Drafts" type="VBoxContainer" parent="PanelMain/VBox"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="LabelDraftsInfo" type="Label" parent="PanelMain/VBox/Tab1Drafts"]
+layout_mode = 2
+text = "Cantieri Aperti nel Cassetto (Max 3). Tasti rapidi: M (Musica), T (Testo), R (Rifinitura/Burst)."
+
+[node name="ScrollDrafts" type="ScrollContainer" parent="PanelMain/VBox/Tab1Drafts"]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+
+[node name="VBoxDraftsList" type="VBoxContainer" parent="PanelMain/VBox/Tab1Drafts/ScrollDrafts"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="HBoxDraftActions" type="HBoxContainer" parent="PanelMain/VBox/Tab1Drafts"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="BtnDraftMusic" type="Button" parent="PanelMain/VBox/Tab1Drafts/HBoxDraftActions"]
+custom_minimum_size = Vector2(210, 40)
+layout_mode = 2
+text = "M: Componi Musica (-15 En)"
+
+[node name="BtnDraftLyrics" type="Button" parent="PanelMain/VBox/Tab1Drafts/HBoxDraftActions"]
+custom_minimum_size = Vector2(210, 40)
+layout_mode = 2
+text = "T: Scrivi Testo (-10 En)"
+
+[node name="BtnDraftPolish" type="Button" parent="PanelMain/VBox/Tab1Drafts/HBoxDraftActions"]
+custom_minimum_size = Vector2(250, 40)
+layout_mode = 2
+text = "R: Rifinitura / Colpo d'Ala"
+
 [node name="VBoxForm" type="VBoxContainer" parent="PanelMain/VBox"]
 layout_mode = 2
 theme_override_constants/separation = 12
@@ -118,6 +174,49 @@ text = "Tema lirico:"
 custom_minimum_size = Vector2(180, 38)
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="HBoxCraftDetails" type="HBoxContainer" parent="PanelMain/VBox/VBoxForm"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="LabelDominant" type="Label" parent="PanelMain/VBox/VBoxForm/HBoxCraftDetails"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+text = "Strumento Dominante:"
+
+[node name="OptDominant" type="OptionButton" parent="PanelMain/VBox/VBoxForm/HBoxCraftDetails"]
+custom_minimum_size = Vector2(180, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LabelArchetype" type="Label" parent="PanelMain/VBox/VBoxForm/HBoxCraftDetails"]
+layout_mode = 2
+text = "Archetipo:"
+
+[node name="OptArchetype" type="OptionButton" parent="PanelMain/VBox/VBoxForm/HBoxCraftDetails"]
+custom_minimum_size = Vector2(180, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxInspiration" type="HBoxContainer" parent="PanelMain/VBox/VBoxForm"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="LabelInspiration" type="Label" parent="PanelMain/VBox/VBoxForm/HBoxInspiration"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+text = "Investi Ispirazione (0-5):"
+
+[node name="SpinInspiration" type="SpinBox" parent="PanelMain/VBox/VBoxForm/HBoxInspiration"]
+custom_minimum_size = Vector2(120, 38)
+layout_mode = 2
+max_value = 5.0
+
+[node name="BtnStartCraft" type="Button" parent="PanelMain/VBox/VBoxForm/HBoxInspiration"]
+custom_minimum_size = Vector2(250, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Avvia Cantiere Artigianale (Max 3)"
 
 [node name="HBoxStudio" type="HBoxContainer" parent="PanelMain/VBox/VBoxForm"]
 layout_mode = 2

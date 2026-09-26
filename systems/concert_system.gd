@@ -481,7 +481,21 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 	# 3. Drammaturgia della Scaletta e Valutazione Qualità Media
 	var total_qual: float = 0.0
 	for s in setlist:
-		total_qual += s.quality_score
+		var mastery_factor: float = clampf(s.mastery_live / 100.0, 0.20, 1.00)
+		var weighted_qual: float = s.quality_score * (0.50 + 0.50 * mastery_factor)
+		if not s.dominant_instrument.is_empty():
+			var inst_key := "skill_%s" % s.dominant_instrument
+			var has_virtuoso: bool = false
+			if player_data and player_data.get_skill_grade(inst_key) >= 3:
+				has_virtuoso = true
+			elif player_data:
+				for m in player_data.get_active_band_members():
+					if m and not m.instrument.is_empty() and m.instrument.to_lower().contains(s.dominant_instrument.to_lower()):
+						has_virtuoso = true
+						break
+			if has_virtuoso:
+				weighted_qual *= 1.15
+		total_qual += weighted_qual
 	var avg_quality: float = total_qual / float(maxi(1, setlist.size()))
 
 	# Bonus Opener (Posizione 1)
@@ -660,6 +674,8 @@ func resolve_concert(venue: VenueData, setlist: Array[SongData], ticket_price: f
 		if not s.is_cover:
 			s.plays += audience
 			s.revenue += (gross_revenue / float(maxi(1, setlist.size())))
+		s.mastery_live = clampf(s.mastery_live + 15.0, 20.0, 100.0)
+		s.last_played_day = cur_day
 
 	# 8. Assegnazione XP abilità dal vivo
 	if skill_system:
