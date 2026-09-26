@@ -4,6 +4,29 @@ Le modifiche rilevanti sono registrate in ordine cronologico inverso. Una voce d
 
 ## Non rilasciato
 
+### 2026-09-26 — Pacing Songwriting Popomundo, Limiti 2 Sessioni Quotidiane, Resa Decrescente 50% & Avanzamento Temporale: Versione 5.10.0 — Macro-Fase 2 Revisione Popomundo (33/33 Suite Verdi a 0 ms)
+- **Modello Dati Cantieri Brani & Contatori Quotidiani (Contratto D0)**:
+  - In [`data/models/song_data.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/data/models/song_data.gd), introdotti i contatori per-brano `daily_music_sessions` e `daily_lyrics_sessions`, gli helper di guardia `can_work_music_today()` (limite < 2) e `can_work_lyrics_today()`, il metodo di azzeramento `reset_daily_sessions()` e la serializzazione atomica in `to_dict()` e `from_dict()`;
+  - In [`data/models/player_data.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/data/models/player_data.gd), aggiunto l'helper `reset_all_song_daily_sessions()` per la gestione centralizzata di tutti i cantieri attivi.
+- **Ricalibrazione Songwriting, Rendimenti Decrescenti & Blocco a Costo Zero (Contratto D1)**:
+  - In [`systems/music_system.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/systems/music_system.gd), ricalibrate le formule di composizione e scrittura con base gain ridotta a `8.0` (resa tipica 12–16% a sessione piena, tempo di completamento distribuito su 4–7 giorni virtuali);
+  - Introdotto moltiplicatore rendimenti decrescenti `rendement_mult = 0.50` sulla seconda sessione giornaliera con stress maggiorato (+6 musica, +5 testo; +12 e +9 in blocco creativo);
+  - Intercettazione della terza sessione quotidiana con rifiuto immediato a costo zero (`reason: "daily_limit_reached"`, 0 energia consumata, 0 stress, 0 tempo perso);
+  - Integrazione dell'avanzamento orario virtuale sincrono in `work_on_music_progress` (+2.0 ore) e `work_on_lyrics_progress` (+1.5 ore).
+- **Avanzamento Tempo Virtuale Dedicato in TimeSystem (Contratto D2)**:
+  - In [`systems/time_system.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/systems/time_system.gd), implementato il metodo pubblico `advance_virtual_hours(hours: float)` che sottrae i secondi virtuali equivalenti, aggiorna la fascia oraria, gestisce notifiche/overtime ed emette `time_ticked` (e `day_ended` a scadenza giorno) scavalcando la pausa modale.
+- **Reset Notturno all'Alba & Allineamento Loft NYC (Contratto D3)**:
+  - In [`systems/end_day_system.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/systems/end_day_system.gd), integrato `s.reset_daily_sessions()` nel ciclo di fine giornata per riaprire i cantieri ad ogni alba;
+  - In [`ui/apartment_hud/apartment_hud.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/apartment_hud/apartment_hud.gd), allineate le azioni chitarra e divano (`crafting_music` e `crafting_lyrics`) con selezione prioritaria di bozze ancora lavorabili oggi, differenziazione messaggio vocale/visivo di seconda sessione (resa 50%) e blocco a costo zero se tutti i cantieri sono saturi per la giornata.
+- **Accessibilità Scheda 1 SongCreator & Indicatori Parlanti NVDA (Contratto D4)**:
+  - In [`ui/music/song_creator.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/music/song_creator.gd), formattata la lista cantieri con contatori trasparenti `[Musica: %.0f%% (%d/2)] [Testo: %.0f%% (%d/2)]`;
+  - Implementato `_update_draft_buttons_state()` che disabilita i pulsanti saturi per oggi ("Musica: Satura per oggi (2/2)") e aggiorna il testo a resa piena ("Componi Musica (M)") vs resa 50% ("Componi Musica — Resa 50% (M)");
+  - Arricchiti gli annunci vocali immediati per NVDA alla pressione dei tasti rapidi `M` e `T`.
+- **Suite di Test Headless, Sintassi & Baseline AVF (Contratto D5)**:
+  - Estesa la suite [`tests/test_advanced_songwriting_system.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/tests/test_advanced_songwriting_system.gd) con test esaustivi su resa 100%, resa 50%, blocco 3a sessione, indipendenza bozze distinte, reset notturno, avanzamento orologio e persistenza save/load dei contatori;
+  - Compilazione convalidata con **0 errori su 119 file GDScript** (`tools/check.ps1`);
+  - Suite di test completata al 100% su **33/33 suite headless verdi a 0 errori e 0 ms** (`tools/test.ps1`).
+
 ### 2026-09-26 — Bonifica Ergonomica Router, Allineamento Dock 4 Social, Prove in BandHub & Potatura Legacy SongCreator: Versione 5.9.1 — Macro-Fase 1 Revisione Popomundo (33/33 Suite Verdi a 0 ms)
 - **Allineamento Router Dock 4 vs Tastiera & Accessibilità (Contratto D0)**:
   - In [`ui/apartment_hud/apartment_hud.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/apartment_hud/apartment_hud.gd) e [`ui/apartment_hud/apartment_hud.tscn`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/apartment_hud/apartment_hud.tscn), allineato il click mouse su `BtnDockTools` (Dock 4) all'apertura coerente di `social_modal`, sincronizzandolo con la pressione del tasto `4` / `KEY_KP_4`;

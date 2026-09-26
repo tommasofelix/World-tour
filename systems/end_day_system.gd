@@ -142,6 +142,9 @@ func process_day_end(day_num: int = 1, p_early_sleep_override: bool = false) -> 
 				AccessibilityManager.announce("Blocco creativo superato! La mente di Alex è di nuovo limpida e pronta per comporre capolavori.", true)
 
 		for s in player_data.songs:
+			# Reset sessioni giornaliere di songwriting (Regola Popomundo V5.10.0)
+			s.reset_daily_sessions()
+
 			# Decadimento repertorio live se non suonato da oltre 21 giorni (-5% a settimana fino al 50%)
 			if s.status in [Enums.SongStatus.PRODUCED, Enums.SongStatus.RELEASED]:
 				if s.last_played_day > 0 and (day_num - s.last_played_day) >= 21:

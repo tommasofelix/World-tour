@@ -660,6 +660,10 @@ func get_drafts() -> Array[SongData]:
 func get_active_draft_songs() -> Array[SongData]:
 	return get_drafts()
 
+func reset_all_song_daily_sessions() -> void:
+	for s in songs:
+		s.reset_daily_sessions()
+
 func get_produced_songs() -> Array[SongData]:
 	var result: Array[SongData] = []
 	for s in songs:

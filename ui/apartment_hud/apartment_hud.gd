@@ -938,14 +938,26 @@ func _on_hud_action_completed(_action_id: String, _reward: Dictionary) -> void:
 			var drafts := GameManager.player_data.get_active_draft_songs()
 			var target_draft: SongData = null
 			for d in drafts:
-				if d.music_progress < 100.0:
+				if d.music_progress < 100.0 and d.can_work_music_today():
 					target_draft = d
 					break
 			if target_draft:
 				var res := GameManager.music_system.work_on_music_progress(target_draft.id, 1.0)
-				_current_running_action["result_message"] = "Composizione musica completata per '%s'! Avanzamento: %.0f%%." % [target_draft.title, target_draft.music_progress]
+				if res.get("success", false):
+					var sess_str := " (Seconda sessione: resa 50%)" if res.get("is_second_session", false) else ""
+					_current_running_action["result_message"] = "Composizione musica per '%s'%s! Avanzamento: %.0f%%." % [target_draft.title, sess_str, target_draft.music_progress]
+				else:
+					_current_running_action["result_message"] = res.get("message", "Impossibile comporre musica.")
 			elif not drafts.is_empty():
-				_current_running_action["result_message"] = "Tutti i cantieri aperti hanno già completato la musica! Apri il Song Creator per scrivere i testi, rifinirli o inciderli."
+				var has_incomplete: bool = false
+				for d in drafts:
+					if d.music_progress < 100.0:
+						has_incomplete = true
+						break
+				if has_incomplete:
+					_current_running_action["result_message"] = "Tutti i cantieri aperti sono saturi per oggi sulla musica (2/2 sessioni)! Lascia decantare le idee fino a domani."
+				else:
+					_current_running_action["result_message"] = "Tutti i cantieri aperti hanno già completato la musica! Apri il Song Creator per scrivere i testi, rifinirli o inciderli."
 			else:
 				_current_running_action["result_message"] = "Nessun cantiere aperto! Crea prima un nuovo progetto dal Song Creator."
 	elif a_type == "crafting_lyrics":
@@ -953,14 +965,26 @@ func _on_hud_action_completed(_action_id: String, _reward: Dictionary) -> void:
 			var drafts := GameManager.player_data.get_active_draft_songs()
 			var target_draft: SongData = null
 			for d in drafts:
-				if d.lyrics_progress < 100.0:
+				if d.lyrics_progress < 100.0 and d.can_work_lyrics_today():
 					target_draft = d
 					break
 			if target_draft:
 				var res := GameManager.music_system.work_on_lyrics_progress(target_draft.id, 1.0)
-				_current_running_action["result_message"] = "Scrittura testo completata per '%s'! Avanzamento: %.0f%%." % [target_draft.title, target_draft.lyrics_progress]
+				if res.get("success", false):
+					var sess_str := " (Seconda sessione: resa 50%)" if res.get("is_second_session", false) else ""
+					_current_running_action["result_message"] = "Scrittura testo per '%s'%s! Avanzamento: %.0f%%." % [target_draft.title, sess_str, target_draft.lyrics_progress]
+				else:
+					_current_running_action["result_message"] = res.get("message", "Impossibile scrivere testi.")
 			elif not drafts.is_empty():
-				_current_running_action["result_message"] = "Tutti i cantieri aperti hanno già completato i testi! Apri il Song Creator per comporre la musica, rifinirli o inciderli."
+				var has_incomplete: bool = false
+				for d in drafts:
+					if d.lyrics_progress < 100.0:
+						has_incomplete = true
+						break
+				if has_incomplete:
+					_current_running_action["result_message"] = "Tutti i cantieri aperti sono saturi per oggi sui testi (2/2 sessioni)! Lascia decantare le rime fino a domani."
+				else:
+					_current_running_action["result_message"] = "Tutti i cantieri aperti hanno già completato i testi! Apri il Song Creator per comporre la musica, rifinirli o inciderli."
 			else:
 				_current_running_action["result_message"] = "Nessun cantiere aperto! Crea prima un nuovo progetto dal Song Creator."
 

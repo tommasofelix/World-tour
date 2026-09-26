@@ -246,14 +246,76 @@ func _refresh_drafts_list() -> void:
 		elif d.polishing_status == 3:
 			status_str = "⚪ Pronta Registrazione"
 
+		var m_sess: String = "Satura per oggi (2/2)" if d.daily_music_sessions >= 2 else ("Seconda sessione (Resa 50%%)" if d.daily_music_sessions == 1 else "Resa Piena (0/2)")
+		var l_sess: String = "Satura per oggi (2/2)" if d.daily_lyrics_sessions >= 2 else ("Seconda sessione (Resa 50%%)" if d.daily_lyrics_sessions == 1 else "Resa Piena (0/2)")
+
 		var row_btn := Button.new()
-		row_btn.text = "%s — [Musica: %.0f%%] [Testo: %.0f%%] %s" % [d.title, d.music_progress, d.lyrics_progress, status_str]
+		row_btn.text = "%s — [Musica: %.0f%% (%d/2)] [Testo: %.0f%% (%d/2)] %s" % [
+			d.title,
+			d.music_progress,
+			d.daily_music_sessions,
+			d.lyrics_progress,
+			d.daily_lyrics_sessions,
+			status_str
+		]
 		row_btn.pressed.connect(func():
 			selected_draft_song = d
 			current_song = d
-			AccessibilityManager.announce("Selezionato: %s. Musica al %.0f%%, Testo al %.0f%%." % [d.title, d.music_progress, d.lyrics_progress], true)
+			_update_draft_buttons_state()
+			AccessibilityManager.announce("Selezionato: %s. Musica al %.0f%% (%s), Testo al %.0f%% (%s)." % [
+				d.title,
+				d.music_progress,
+				m_sess,
+				d.lyrics_progress,
+				l_sess
+			], true)
 		)
 		vbox_drafts_list.add_child(row_btn)
+
+	_update_draft_buttons_state()
+
+func _update_draft_buttons_state() -> void:
+	if not selected_draft_song:
+		btn_draft_music.disabled = true
+		btn_draft_lyrics.disabled = true
+		btn_draft_polish.disabled = true
+		return
+
+	if selected_draft_song.polishing_status == 1:
+		btn_draft_music.disabled = true
+		btn_draft_lyrics.disabled = true
+		btn_draft_polish.disabled = false
+		btn_draft_polish.text = "Rifinisci Bozza (R)"
+	else:
+		btn_draft_polish.disabled = true
+
+		# Musica
+		if selected_draft_song.music_progress >= 100.0:
+			btn_draft_music.disabled = true
+			btn_draft_music.text = "Musica Completata (100%)"
+		elif not selected_draft_song.can_work_music_today():
+			btn_draft_music.disabled = true
+			btn_draft_music.text = "Musica: Satura per oggi (2/2)"
+		elif selected_draft_song.daily_music_sessions == 1:
+			btn_draft_music.disabled = false
+			btn_draft_music.text = "Componi Musica (M - Resa 50%)"
+		else:
+			btn_draft_music.disabled = false
+			btn_draft_music.text = "Componi Musica (M - Resa Piena)"
+
+		# Testo
+		if selected_draft_song.lyrics_progress >= 100.0:
+			btn_draft_lyrics.disabled = true
+			btn_draft_lyrics.text = "Testo Completato (100%)"
+		elif not selected_draft_song.can_work_lyrics_today():
+			btn_draft_lyrics.disabled = true
+			btn_draft_lyrics.text = "Testo: Saturo per oggi (2/2)"
+		elif selected_draft_song.daily_lyrics_sessions == 1:
+			btn_draft_lyrics.disabled = false
+			btn_draft_lyrics.text = "Scrivi Testo (T - Resa 50%)"
+		else:
+			btn_draft_lyrics.disabled = false
+			btn_draft_lyrics.text = "Scrivi Testo (T - Resa Piena)"
 
 func _on_btn_start_craft_pressed() -> void:
 	if not GameManager or not GameManager.music_system:
@@ -281,10 +343,17 @@ func _on_btn_draft_music_pressed() -> void:
 		return
 	var res := GameManager.music_system.work_on_music_progress(selected_draft_song.id, 1.0)
 	if not res.get("success", false):
-		AccessibilityManager.announce("Energia insufficiente per comporre musica (15 richieste).", true)
+		var reason: String = res.get("reason", "")
+		if reason == "daily_limit_reached":
+			AccessibilityManager.announce(res.get("message", "Limite giornaliero di composizione raggiunto per questo brano."), true)
+		elif reason == "energy_insufficient":
+			AccessibilityManager.announce("Energia insufficiente per comporre musica (15 richieste).", true)
+		else:
+			AccessibilityManager.announce("Impossibile comporre musica in questo momento.", true)
 	else:
 		_refresh_drafts_list()
-		AccessibilityManager.announce("Composizione musica per '%s': ora al %.0f%%!" % [selected_draft_song.title, selected_draft_song.music_progress], true)
+		var sess_desc := " (Seconda sessione a resa 50%)" if res.get("is_second_session", false) else ""
+		AccessibilityManager.announce("Composizione musica per '%s'%s: ora al %.0f%%!" % [selected_draft_song.title, sess_desc, selected_draft_song.music_progress], true)
 
 func _on_btn_draft_lyrics_pressed() -> void:
 	if not selected_draft_song or not GameManager or not GameManager.music_system:
@@ -292,10 +361,17 @@ func _on_btn_draft_lyrics_pressed() -> void:
 		return
 	var res := GameManager.music_system.work_on_lyrics_progress(selected_draft_song.id, 1.0)
 	if not res.get("success", false):
-		AccessibilityManager.announce("Energia insufficiente per scrivere testi (10 richieste).", true)
+		var reason: String = res.get("reason", "")
+		if reason == "daily_limit_reached":
+			AccessibilityManager.announce(res.get("message", "Limite giornaliero di scrittura raggiunto per questo brano."), true)
+		elif reason == "energy_insufficient":
+			AccessibilityManager.announce("Energia insufficiente per scrivere testi (10 richieste).", true)
+		else:
+			AccessibilityManager.announce("Impossibile scrivere testi in questo momento.", true)
 	else:
 		_refresh_drafts_list()
-		AccessibilityManager.announce("Scrittura testo per '%s': ora al %.0f%%!" % [selected_draft_song.title, selected_draft_song.lyrics_progress], true)
+		var sess_desc := " (Seconda sessione a resa 50%)" if res.get("is_second_session", false) else ""
+		AccessibilityManager.announce("Scrittura testo per '%s'%s: ora al %.0f%%!" % [selected_draft_song.title, sess_desc, selected_draft_song.lyrics_progress], true)
 
 func _on_btn_draft_polish_pressed() -> void:
 	if not selected_draft_song or not GameManager or not GameManager.music_system:

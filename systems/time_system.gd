@@ -267,6 +267,23 @@ func advance_to_next_period() -> bool:
 func trigger_sleep_now() -> void:
 	sleep_early()
 
+## Avanza il tempo virtuale di un numero specificato di ore virtuali (es. 1.5, 2.0).
+## Opera anche se il gioco è in pausa/modale, sincronizzando orologio e fasce orarie.
+func advance_virtual_hours(hours: float) -> void:
+	if not calendar_data or calendar_data.remaining_seconds <= 0.0:
+		return
+	var seconds_to_deduct: float = calendar_data.day_duration * (hours / Constants.VIRTUAL_HOURS_PER_DAY)
+	calendar_data.remaining_seconds = maxf(0.0, calendar_data.remaining_seconds - seconds_to_deduct)
+	calendar_data.update_period()
+	_check_overtime_and_notifications()
+	EventBus.time_ticked.emit(
+		calendar_data.remaining_seconds,
+		calendar_data.get_formatted_time_string(),
+		calendar_data.current_period
+	)
+	if calendar_data.remaining_seconds <= 0.0:
+		EventBus.day_ended.emit(calendar_data.day_number)
+
 func reset_daily_overtime() -> void:
 	warned_hour_2 = false
 	warned_hour_3 = false

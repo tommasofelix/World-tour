@@ -9,18 +9,26 @@ const UpgradeData = preload("res://data/models/upgrade_data.gd")
 var player_data: PlayerData
 var calendar_data: CalendarData
 var skill_system: SkillSystem
+var time_system: TimeSystem:
+	get:
+		if _time_system != null:
+			return _time_system
+		if GameManager and GameManager.time_system:
+			return GameManager.time_system
+		return null
+	set(val):
+		_time_system = val
+var _time_system: TimeSystem = null
 
-func _init(p_player_data: PlayerData, p_arg2: Variant = null, p_arg3: Variant = null) -> void:
+func _init(p_player_data: PlayerData, p_arg2: Variant = null, p_arg3: Variant = null, p_arg4: Variant = null) -> void:
 	player_data = p_player_data
-	if p_arg2 is CalendarData:
-		calendar_data = p_arg2
-	elif p_arg2 is SkillSystem:
-		skill_system = p_arg2
-
-	if p_arg3 is CalendarData:
-		calendar_data = p_arg3
-	elif p_arg3 is SkillSystem:
-		skill_system = p_arg3
+	for arg in [p_arg2, p_arg3, p_arg4]:
+		if arg is CalendarData:
+			calendar_data = arg
+		elif arg is SkillSystem:
+			skill_system = arg
+		elif arg is TimeSystem:
+			_time_system = arg
 
 ## Stadio 1: Concetto, Genere e Titolo
 func create_draft(title: String, genre: int, theme: String = "love") -> SongData:
@@ -96,25 +104,41 @@ func work_on_music_progress(song_id: String, hours: float = 1.0) -> Dictionary:
 	if not song:
 		return {"success": false, "reason": "song_not_found"}
 
+	if not song.can_work_music_today():
+		return {
+			"success": false,
+			"reason": "daily_limit_reached",
+			"message": "Hai dato il massimo sulla musica di questo brano per oggi! Lascia decantare le idee fino a domani o dedicati ad un altro cantiere."
+		}
+
 	if not player_data or not player_data.consume_energy(15):
 		return {"success": false, "reason": "energy_insufficient"}
 
 	var in_burnout: bool = player_data.is_in_creative_burnout()
-	var stress_gain: int = 8 if in_burnout else 4
+	var is_second_session: bool = (song.daily_music_sessions == 1)
+	var rendement_mult: float = 0.50 if is_second_session else 1.0
+
+	var stress_gain: int = (12 if in_burnout else 6) if is_second_session else (8 if in_burnout else 4)
 	player_data.add_stress(stress_gain)
 
+	var base_gain: float = 8.0
 	var skill_harmony: float = float(player_data.get_skill_level("comp_theory"))
 	var musicality: float = float(player_data.musicality)
-	var gain: float = (15.0 + (skill_harmony * 0.25) + (musicality * 0.15)) * hours
+	var gain: float = (base_gain + (skill_harmony * 0.20) + (musicality * 0.10)) * hours * rendement_mult
 	if in_burnout:
-		gain *= 0.75
+		gain *= 0.70
 
 	song.music_progress = clampf(song.music_progress + gain, 0.0, 100.0)
 	song.comp_skill_used = maxf(song.comp_skill_used, skill_harmony)
+	song.daily_music_sessions += 1
 
 	if player_data:
-		player_data.add_xp_to_skill("comp_theory", 15.0)
-		player_data.add_xp_to_skill("comp_riffs", 10.0)
+		player_data.add_xp_to_skill("comp_theory", 15.0 if not is_second_session else 8.0)
+		player_data.add_xp_to_skill("comp_riffs", 10.0 if not is_second_session else 5.0)
+
+	var active_time: TimeSystem = time_system
+	if active_time:
+		active_time.advance_virtual_hours(2.0)
 
 	var ready_now: bool = (song.music_progress >= 100.0 and song.lyrics_progress >= 100.0 and song.polishing_status == 0)
 	if ready_now:
@@ -127,6 +151,7 @@ func work_on_music_progress(song_id: String, hours: float = 1.0) -> Dictionary:
 		"song": song,
 		"music_progress": song.music_progress,
 		"gain": gain,
+		"is_second_session": is_second_session,
 		"polishing_status": song.polishing_status,
 		"polishing_hours_remaining": song.polishing_hours_remaining
 	}
@@ -137,25 +162,41 @@ func work_on_lyrics_progress(song_id: String, hours: float = 1.0) -> Dictionary:
 	if not song:
 		return {"success": false, "reason": "song_not_found"}
 
+	if not song.can_work_lyrics_today():
+		return {
+			"success": false,
+			"reason": "daily_limit_reached",
+			"message": "Hai dato il massimo sui testi di questo brano per oggi! Lascia decantare le rime fino a domani o dedicati ad un altro cantiere."
+		}
+
 	if not player_data or not player_data.consume_energy(10):
 		return {"success": false, "reason": "energy_insufficient"}
 
 	var in_burnout: bool = player_data.is_in_creative_burnout()
-	var stress_gain: int = 6 if in_burnout else 3
+	var is_second_session: bool = (song.daily_lyrics_sessions == 1)
+	var rendement_mult: float = 0.50 if is_second_session else 1.0
+
+	var stress_gain: int = (9 if in_burnout else 5) if is_second_session else (6 if in_burnout else 3)
 	player_data.add_stress(stress_gain)
 
+	var base_gain: float = 8.0
 	var skill_lyrics: float = float(player_data.get_skill_level("comp_lyrics"))
 	var intelligence: float = float(player_data.intelligence)
 	var affinity: float = Formulas.calculate_theme_genre_affinity(song.theme, song.genre)
-	var gain: float = (15.0 + (skill_lyrics * 0.25) + (intelligence * 0.15) + affinity) * hours
+	var gain: float = (base_gain + (skill_lyrics * 0.20) + (intelligence * 0.10) + affinity) * hours * rendement_mult
 	if in_burnout:
-		gain *= 0.75
+		gain *= 0.70
 
 	song.lyrics_progress = clampf(song.lyrics_progress + gain, 0.0, 100.0)
 	song.lyrics_skill_used = maxf(song.lyrics_skill_used, skill_lyrics)
+	song.daily_lyrics_sessions += 1
 
 	if player_data:
-		player_data.add_xp_to_skill("comp_lyrics", 15.0)
+		player_data.add_xp_to_skill("comp_lyrics", 15.0 if not is_second_session else 8.0)
+
+	var active_time: TimeSystem = time_system
+	if active_time:
+		active_time.advance_virtual_hours(1.5)
 
 	var ready_now: bool = (song.music_progress >= 100.0 and song.lyrics_progress >= 100.0 and song.polishing_status == 0)
 	if ready_now:
@@ -168,6 +209,7 @@ func work_on_lyrics_progress(song_id: String, hours: float = 1.0) -> Dictionary:
 		"song": song,
 		"lyrics_progress": song.lyrics_progress,
 		"gain": gain,
+		"is_second_session": is_second_session,
 		"polishing_status": song.polishing_status,
 		"polishing_hours_remaining": song.polishing_hours_remaining
 	}

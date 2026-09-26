@@ -101,11 +101,40 @@ func test_crafting_project_and_double_bar_progress() -> void:
 	assert_true(song.lyrics_progress > 10.0, "Barra testo avanzata (%.1f%%)" % song.lyrics_progress)
 	assert_eq(p.energy, 75, "Consumo 10 energia per scrittura testo (85 -> 75)")
 	assert_eq(p.stress, 7, "Stress incrementato di 3 per testo (4 -> 7)")
+	assert_eq(song.daily_lyrics_sessions, 1, "Sessioni giornaliere testo a 1")
+
+	# Seconda sessione di musica (resa dimezzata 50%, stress maggiorato +6)
+	var r_mus_2 := ms.work_on_music_progress(song.id, 1.0)
+	assert_true(r_mus_2["success"], "Seconda sessione musica riuscita")
+	assert_true(r_mus_2.get("is_second_session", false), "Flag is_second_session true")
+	assert_eq(p.energy, 60, "Consumo 15 energia per seconda sessione (75 -> 60)")
+	assert_eq(p.stress, 13, "Stress maggiorato di +6 per seconda sessione (7 -> 13)")
+	assert_eq(song.daily_music_sessions, 2, "Sessioni musica registrate a 2")
+
+	# Terza sessione di musica: deve essere respinta a costo zero (Popomundo Anti-Spam)
+	var r_mus_3 := ms.work_on_music_progress(song.id, 1.0)
+	assert_true(not r_mus_3["success"], "Terza sessione musica respinta")
+	assert_eq(r_mus_3.get("reason", ""), "daily_limit_reached", "Motivo rifiuto: daily_limit_reached")
+	assert_eq(p.energy, 60, "Energia intatta a costo zero (60)")
+	assert_eq(p.stress, 13, "Stress intatto a costo zero (13)")
+	assert_eq(song.daily_music_sessions, 2, "Contatore sessioni fermo a 2")
 
 	# Apertura altri 2 cantieri fino al cap di 3 (Traccia 2 a zero ispirazione)
 	var res2 := ms.start_crafting_project("Traccia 2", Enums.MusicalGenre.POP, "love")
 	assert_true(res2["success"], "Cantiere 2 aperto")
 	assert_eq(res2["song"].music_progress, 0.0, "Cantiere 2 parte da 0% senza ispirazione")
+
+	# Traccia 2 ha contatori sessioni a 0: la musica può essere composta regolarmente (indipendenza bozze)
+	var r_mus_t2 := ms.work_on_music_progress(res2["song"].id, 1.0)
+	assert_true(r_mus_t2["success"], "Composizione su Traccia 2 riuscita nonostante Traccia 1 sia satura")
+	assert_eq(res2["song"].daily_music_sessions, 1, "Traccia 2 a 1 sessione")
+	assert_eq(song.daily_music_sessions, 2, "Traccia 1 ancora satura a 2 sessioni")
+
+	# Reset notturno delle sessioni
+	p.reset_all_song_daily_sessions()
+	assert_eq(song.daily_music_sessions, 0, "Traccia 1 azzerata a 0 sessioni post-reset")
+	assert_eq(res2["song"].daily_music_sessions, 0, "Traccia 2 azzerata a 0 sessioni post-reset")
+
 	var res3 := ms.start_crafting_project("Traccia 3", Enums.MusicalGenre.METAL, "night")
 	assert_true(res3["success"], "Cantiere 3 aperto")
 	assert_eq(p.get_active_draft_songs().size(), 3, "Esattamente 3 cantieri aperti")
@@ -288,6 +317,8 @@ func test_serialization_and_save_load() -> void:
 	s.inspiration_invested = 2
 	s.mastery_live = 65.0
 	s.last_played_day = 14
+	s.daily_music_sessions = 1
+	s.daily_lyrics_sessions = 2
 	p1.add_song(s)
 
 	# Serializzazione
@@ -315,4 +346,6 @@ func test_serialization_and_save_load() -> void:
 	assert_eq(s_loaded.inspiration_invested, 2, "inspiration_invested persistito (2)")
 	assert_eq(s_loaded.mastery_live, 65.0, "mastery_live persistito (65.0)")
 	assert_eq(s_loaded.last_played_day, 14, "last_played_day persistito (14)")
+	assert_eq(s_loaded.daily_music_sessions, 1, "daily_music_sessions persistito (1)")
+	assert_eq(s_loaded.daily_lyrics_sessions, 2, "daily_lyrics_sessions persistito (2)")
 	assert_true(s_loaded.is_orange_polishing(), "is_orange_polishing() su brano caricato")

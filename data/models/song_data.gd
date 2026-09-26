@@ -35,6 +35,8 @@ var polishing_hours_remaining: float = 0.0
 var inspiration_invested: int = 0
 var mastery_live: float = 20.0 # 20.0 - 100.0
 var last_played_day: int = 0
+var daily_music_sessions: int = 0
+var daily_lyrics_sessions: int = 0
 
 # Tratto speciale emergente
 var traits: Array[int] = []
@@ -88,6 +90,16 @@ func is_orange_polishing() -> bool:
 func is_masterpiece() -> bool:
 	return polishing_status == 2
 
+func can_work_music_today() -> bool:
+	return daily_music_sessions < 2
+
+func can_work_lyrics_today() -> bool:
+	return daily_lyrics_sessions < 2
+
+func reset_daily_sessions() -> void:
+	daily_music_sessions = 0
+	daily_lyrics_sessions = 0
+
 func to_dict() -> Dictionary:
 	return {
 		"id": id,
@@ -121,7 +133,9 @@ func to_dict() -> Dictionary:
 		"polishing_hours_remaining": polishing_hours_remaining,
 		"inspiration_invested": inspiration_invested,
 		"mastery_live": mastery_live,
-		"last_played_day": last_played_day
+		"last_played_day": last_played_day,
+		"daily_music_sessions": daily_music_sessions,
+		"daily_lyrics_sessions": daily_lyrics_sessions
 	}
 
 func from_dict(dict: Dictionary) -> void:
@@ -151,6 +165,8 @@ func from_dict(dict: Dictionary) -> void:
 	inspiration_invested = int(dict.get("inspiration_invested", inspiration_invested))
 	mastery_live = float(dict.get("mastery_live", mastery_live))
 	last_played_day = int(dict.get("last_played_day", last_played_day))
+	daily_music_sessions = int(dict.get("daily_music_sessions", 0))
+	daily_lyrics_sessions = int(dict.get("daily_lyrics_sessions", 0))
 	traits.clear()
 	if dict.has("traits") and dict["traits"] is Array:
 		for t in dict["traits"]:
