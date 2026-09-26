@@ -253,14 +253,15 @@ layout_mode = 2
 theme_override_constants/separation = 14
 
 [node name="BtnProduceAll" type="Button" parent="PanelMain/VBox/HBoxBottom"]
+visible = false
 custom_minimum_size = Vector2(230, 44)
 layout_mode = 2
-text = "Produci Tutto (65 Energia)"
+text = "Produci Tutto"
 
 [node name="BtnAction" type="Button" parent="PanelMain/VBox/HBoxBottom"]
-custom_minimum_size = Vector2(200, 44)
+custom_minimum_size = Vector2(240, 44)
 layout_mode = 2
-text = "Avanza Prossima Fase"
+text = "Incidi e Finalizza Master"
 
 [node name="BtnSaveDraft" type="Button" parent="PanelMain/VBox/HBoxBottom"]
 custom_minimum_size = Vector2(170, 44)

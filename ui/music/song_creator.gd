@@ -171,7 +171,7 @@ func _setup_options() -> void:
 	AccessibilityManager.hook_control_accessibility(opt_studio, "Studio di Registrazione", acc_studio_desc)
 	AccessibilityManager.hook_control_accessibility(chk_burst, "Ispirazione Improvvisa", "Spunta per tentare un guizzo creativo con bonus qualità.")
 	AccessibilityManager.hook_control_accessibility(btn_produce_all, "Produci Brano Completo", "Registra e finalizza l'intero brano in un'unica sessione se hai energia e fondi sufficienti.")
-	AccessibilityManager.hook_control_accessibility(btn_action, "Avanza Prossima Fase", "Avanza di un singolo stadio nella produzione del brano.")
+	AccessibilityManager.hook_control_accessibility(btn_action, "Incidi e Finalizza Master", "Incide le tracce e finalizza il missaggio del brano (Tasto I).")
 	AccessibilityManager.hook_control_accessibility(btn_save_draft, "Salva Bozza", "Salva lo stato corrente della bozza e ritorna al catalogo.")
 	AccessibilityManager.hook_control_accessibility(btn_edit_info, "Modifica Titolo", "Sposta il focus sul campo titolo per modificarlo velocemente.")
 	AccessibilityManager.hook_control_accessibility(btn_cancel, "Annulla", "Chiude lo studio musicale senza salvare ulteriori modifiche.")
@@ -209,7 +209,7 @@ func select_tab(tab_idx: int) -> void:
 		hbox_studio.visible = true
 		vbox_status.visible = true
 		hbox_bottom.visible = true
-		btn_produce_all.visible = true
+		btn_produce_all.visible = false
 		btn_action.visible = true
 		btn_edit_info.visible = true
 		btn_save_draft.visible = true
@@ -394,51 +394,38 @@ func edit_existing_song(song: SongData) -> void:
 	btn_edit_info.visible = true
 
 func _update_stage_display() -> void:
+	btn_produce_all.visible = false
 	if current_song == null:
-		label_stage_status.text = "Fase attuale: Ideazione | Produzione completa: 65 Energia (oppure a tappe)"
-		btn_action.text = "1. Componi Melodia (-15 Energia)"
-		btn_produce_all.text = "Produci Tutto (65 Energia)"
-		btn_produce_all.disabled = false
-		btn_action.disabled = false
+		label_stage_status.text = "Fase attuale: Nessuna traccia selezionata per l'incisione."
+		btn_action.text = "Incidi e Finalizza Master"
+		btn_action.disabled = true
 		panel_result.visible = false
 		return
 
-	match current_song.stage:
-		Enums.SongStage.CONCEPT:
-			label_stage_status.text = "Fase attuale: Ideazione | Prossimo passo: Melodia (-15 Energia)"
-			btn_action.text = "Componi Melodia (-15 Energia)"
-			btn_produce_all.disabled = false
-			btn_action.disabled = false
-			panel_result.visible = false
-		Enums.SongStage.COMPOSITION:
-			label_stage_status.text = "Fase attuale: Melodia Composta | Prossimo passo: Testo (-10 Energia)"
-			btn_action.text = "Scrivi Testo (-10 Energia)"
-			btn_produce_all.disabled = false
-			btn_action.disabled = false
-			panel_result.visible = false
-		Enums.SongStage.SONGWRITING:
-			label_stage_status.text = "Fase attuale: Testo Scritto | Prossimo passo: Registrazione (-25 Energia)"
-			btn_action.text = "Registra Tracce (-25 Energia)"
-			btn_produce_all.disabled = false
-			btn_action.disabled = false
-			panel_result.visible = false
-		Enums.SongStage.RECORDING:
-			label_stage_status.text = "Fase attuale: Tracce Registrate | Prossimo passo: Missaggio Finale (-15 Energia)"
-			btn_action.text = "Finalizza Master (-15 Energia)"
-			btn_produce_all.disabled = false
-			btn_action.disabled = false
-			panel_result.visible = false
-		Enums.SongStage.COMPLETED:
-			label_stage_status.text = "Fase attuale: Master Ultimato e Prodotto!"
-			btn_produce_all.disabled = true
-			btn_action.disabled = true
-			panel_result.visible = true
-			var trait_str: String = current_song.get_trait_name()
-			label_result.text = "Brano Ultimato con Successo! Punteggio: %.1f / 100 | Tratto: %s" % [
-				current_song.quality_score,
-				trait_str
-			]
-			btn_release_now.grab_focus()
+	if current_song.stage == Enums.SongStage.RECORDING:
+		label_stage_status.text = "Fase attuale: Traccia completata e rifinita. Pronta per l'incisione e il master finale."
+		btn_action.text = "Incidi e Finalizza Master"
+		btn_action.disabled = false
+		panel_result.visible = false
+	elif current_song.stage == Enums.SongStage.COMPLETED:
+		label_stage_status.text = "Fase attuale: Master Ultimato e Prodotto!"
+		btn_action.text = "Brano Già Prodotto"
+		btn_action.disabled = true
+		panel_result.visible = true
+		var trait_str: String = current_song.get_trait_name()
+		label_result.text = "Brano Ultimato con Successo! Punteggio: %.1f / 100 | Tratto: %s" % [
+			current_song.quality_score,
+			trait_str
+		]
+		btn_release_now.grab_focus()
+	else:
+		label_stage_status.text = "Fase attuale: Traccia ancora in fase di scrittura (Musica: %.0f%%, Testo: %.0f%%). Completa prima il brano nei Cantieri Aperti." % [
+			current_song.music_progress,
+			current_song.lyrics_progress
+		]
+		btn_action.text = "Incompleta - Richiede Scrittura"
+		btn_action.disabled = true
+		panel_result.visible = false
 
 func _sync_form_to_song() -> void:
 	var s_title := edit_title.text.strip_edges()
@@ -457,111 +444,50 @@ func _sync_form_to_song() -> void:
 		EventBus.song_updated.emit(current_song.to_dict())
 
 func _on_btn_produce_all_pressed() -> void:
-	if not GameManager or not GameManager.music_system:
+	_on_btn_action_pressed()
+
+func _on_btn_action_pressed() -> void:
+	if not GameManager or not GameManager.music_system or current_song == null:
+		return
+
+	if current_song.stage != Enums.SongStage.RECORDING:
+		AccessibilityManager.announce("Questa traccia non è pronta per l'incisione. Completa prima le barre di musica e testo nei Cantieri Aperti.", true)
 		return
 
 	_sync_form_to_song()
 	var ms: MusicSystem = GameManager.music_system
 	var use_pro: bool = bool(opt_studio.get_item_metadata(opt_studio.selected))
-	var burst: bool = chk_burst.button_pressed
 
 	var player: PlayerData = GameManager.player_data
-	if use_pro and player.money < 50.0 and current_song.stage < Enums.SongStage.RECORDING:
+	if use_pro and player and player.money < 50.0:
 		AccessibilityManager.announce("Fondi insufficienti per lo Studio Professionale (richiesti 50 euro).", true)
 		return
 
-	if current_song.stage == Enums.SongStage.CONCEPT:
-		var r1 := ms.work_on_composition(current_song, burst)
-		if not r1.get("success", false):
-			AccessibilityManager.announce("Energia insufficiente per comporre la melodia.", true)
-			_update_stage_display()
-			return
+	var res_rec: Dictionary = ms.record_tracks(current_song, use_pro)
+	if not res_rec.get("success", false):
+		var reason: String = res_rec.get("reason", "")
+		if reason == "money_insufficient":
+			AccessibilityManager.announce("Fondi insufficienti per lo Studio Professionale (50 euro richiesti).", true)
+		else:
+			AccessibilityManager.announce("Energia insufficiente per incidere le tracce nello studio.", true)
+		_update_stage_display()
+		return
 
-	if current_song.stage == Enums.SongStage.COMPOSITION:
-		var r2 := ms.work_on_lyrics(current_song)
-		if not r2.get("success", false):
-			AccessibilityManager.announce("Energia insufficiente per scrivere il testo.", true)
-			_update_stage_display()
-			return
-
-	if current_song.stage == Enums.SongStage.SONGWRITING:
-		var r3 := ms.record_tracks(current_song, use_pro)
-		if not r3.get("success", false):
-			AccessibilityManager.announce("Energia o fondi insufficienti per incidere le tracce.", true)
-			_update_stage_display()
-			return
-
-	if current_song.stage == Enums.SongStage.RECORDING:
-		var r4 := ms.mix_and_master(current_song)
-		if not r4.get("success", false):
-			AccessibilityManager.announce("Energia insufficiente per il missaggio finale.", true)
-			_update_stage_display()
-			return
+	var res_master: Dictionary = ms.mix_and_master(current_song)
+	if not res_master.get("success", false):
+		AccessibilityManager.announce("Energia insufficiente per il missaggio e master finale.", true)
+		_update_stage_display()
+		return
 
 	current_step = 6
 	resume_step = 6
 	_update_stage_display()
-	var speech: String = "Produzione completata! '%s' è pronta. Punteggio qualità: %.1f. Tratto: %s." % [
+	var speech: String = "Incisione e Master completati! '%s' è pronta. Punteggio qualità: %.1f. Tratto: %s." % [
 		current_song.title,
 		current_song.quality_score,
 		current_song.get_trait_name()
 	]
 	AccessibilityManager.announce(speech, true)
-
-func _on_btn_action_pressed() -> void:
-	if not GameManager or not GameManager.music_system:
-		return
-
-	_sync_form_to_song()
-	var ms: MusicSystem = GameManager.music_system
-	var use_pro: bool = bool(opt_studio.get_item_metadata(opt_studio.selected))
-	var burst: bool = chk_burst.button_pressed
-
-	match current_song.stage:
-		Enums.SongStage.CONCEPT:
-			var res := ms.work_on_composition(current_song, burst)
-			if res.get("success", false):
-				current_step = 3
-				resume_step = 3
-				_update_stage_display()
-				AccessibilityManager.announce("Melodia composta con successo. Ora scrivi il testo.", true)
-			else:
-				AccessibilityManager.announce("Energia insufficiente per comporre.", true)
-		Enums.SongStage.COMPOSITION:
-			var res := ms.work_on_lyrics(current_song)
-			if res.get("success", false):
-				current_step = 4
-				resume_step = 4
-				_update_stage_display()
-				AccessibilityManager.announce("Testo completato con successo. Ora incidi le tracce.", true)
-			else:
-				AccessibilityManager.announce("Energia insufficiente per il testo.", true)
-		Enums.SongStage.SONGWRITING:
-			var res := ms.record_tracks(current_song, use_pro)
-			if res.get("success", false):
-				current_step = 5
-				resume_step = 5
-				_update_stage_display()
-				AccessibilityManager.announce("Tracce incise con successo. Ora finalizza il master.", true)
-			else:
-				var reason: String = res.get("reason", "")
-				if reason == "money_insufficient":
-					AccessibilityManager.announce("Fondi insufficienti per lo Studio Professionale (50 euro richiesti).", true)
-				else:
-					AccessibilityManager.announce("Energia insufficiente per registrare.", true)
-		Enums.SongStage.RECORDING:
-			var res := ms.mix_and_master(current_song)
-			if res.get("success", false):
-				current_step = 6
-				resume_step = 6
-				_update_stage_display()
-				var speech: String = "Master ultimato! Qualità: %.1f, Tratto: %s." % [
-					current_song.quality_score,
-					current_song.get_trait_name()
-				]
-				AccessibilityManager.announce(speech, true)
-			else:
-				AccessibilityManager.announce("Energia insufficiente per il missaggio.", true)
 
 func _on_btn_save_draft_pressed() -> void:
 	_sync_form_to_song()
@@ -615,4 +541,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				get_viewport().set_input_as_handled()
 			elif key_event.keycode == KEY_R:
 				_on_btn_draft_polish_pressed()
+				get_viewport().set_input_as_handled()
+		elif current_tab == 3:
+			if key_event.keycode == KEY_I:
+				_on_btn_action_pressed()
 				get_viewport().set_input_as_handled()

@@ -261,7 +261,7 @@ func test_apartment_hud_component() -> void:
 
 	if hud.btn_dock_tools:
 		hud.btn_dock_tools.pressed.emit()
-		assert_true(hud.upgrades_modal.visible, "BtnDockTools apre UpgradesModal")
+		assert_true(hud.social_modal.visible, "BtnDockTools apre SocialModal")
 		hud.hide_all_modals()
 
 	if hud.btn_dock_band:

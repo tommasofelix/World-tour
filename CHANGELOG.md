@@ -4,6 +4,25 @@ Le modifiche rilevanti sono registrate in ordine cronologico inverso. Una voce d
 
 ## Non rilasciato
 
+### 2026-09-26 — Bonifica Ergonomica Router, Allineamento Dock 4 Social, Prove in BandHub & Potatura Legacy SongCreator: Versione 5.9.1 — Macro-Fase 1 Revisione Popomundo (33/33 Suite Verdi a 0 ms)
+- **Allineamento Router Dock 4 vs Tastiera & Accessibilità (Contratto D0)**:
+  - In [`ui/apartment_hud/apartment_hud.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/apartment_hud/apartment_hud.gd) e [`ui/apartment_hud/apartment_hud.tscn`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/apartment_hud/apartment_hud.tscn), allineato il click mouse su `BtnDockTools` (Dock 4) all'apertura coerente di `social_modal`, sincronizzandolo con la pressione del tasto `4` / `KEY_KP_4`;
+  - Aggiornato il tooltip accessibile di `BtnDockTools` a `"Social & Fanbase (Tasto 4)"`;
+  - In [`tests/test_apartment_gameplay.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/tests/test_apartment_gameplay.gd), aggiornata l'asserzione di verifica automatica su `hud.social_modal.visible`.
+- **Integrazione Prove Band Direttamente in BandHub (Contratto D1)**:
+  - In [`ui/band/band_hub.tscn`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/band/band_hub.tscn) e [`ui/band/band_hub.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/band/band_hub.gd), aggiunto il pulsante `BtnRehearse` ("Fai le Prove (Tasto P)") nella barra inferiore prima di `BtnClose`;
+  - Mappata la scorciatoia da tastiera diretta `KEY_P` e implementato il metodo `_on_rehearse_pressed()`, che invoca `GameManager.band_system.hold_rehearsal_session(true)` fornendo annuncio vocale immediato per NVDA sui miglioramenti di chimica/affinità e sull'incremento del +15% di padronanza live per le canzoni in repertorio;
+  - Configurato hook di accessibilità con descrizione parlante completa per screen reader.
+- **Bonifica Residui `open_modal_by_prop_id` in ApartmentHud (Contratto D2)**:
+  - In [`ui/apartment_hud/apartment_hud.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/apartment_hud/apartment_hud.gd), eliminata l'assegnazione arbitraria di risorse forfettarie a costo zero (+15 Energia, -12 Stress, +20 Morale) che aggirava la simulazione temporale e l'`ActionSystem`;
+  - Mantenuto il feedback descrittivo nell'inspection box per retrocompatibilità con i test di interazione.
+- **Potatura Pipeline Legacy a 4 Stadi in SongCreator Scheda 3 (Contratto D3)**:
+  - In [`ui/music/song_creator.tscn`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/music/song_creator.tscn) e [`ui/music/song_creator.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/ui/music/song_creator.gd), occultato permanentemente il pulsante "Produci Tutto" e riallineato `BtnAction` a "Incidi e Finalizza Master" (`KEY_I`);
+  - Rimossi i rami sequenziali legacy a 1-click (`CONCEPT`, `COMPOSITION`, `SONGWRITING`) dalla Scheda 3: se la traccia non è giunta a `RECORDING`, il pulsante è disabilitato e segnala chiaramente che la canzone deve prima essere completata al 100% e rifinita nei Cantieri Aperti (Scheda 1); se è in `RECORDING`, esegue in sequenza incisione in studio e master finale.
+- **Verifica Globale & Determinismo Headless (Contratto D4)**:
+  - Sintassi convalidata su **119 file GDScript con 0 errori** (`tools/check.ps1`);
+  - Suite di test completata con successo al 100% su **33/33 suite headless con 0 errori e 0 ms** (`tools/test.ps1`).
+
 ### 2026-09-26 — Songwriting Artigianale, Doppia Barra, Punti Ispirazione, Rifinitura Arancione/Verde Popomundo & Padronanza Live: Versione 5.9.0 — Sessioni Discrete di Composizione, Sindrome del Foglio Bianco & Suite test_advanced_songwriting_system.gd (33/33 Suite Verdi a 0 ms)
 - **Doppia Barra di Avanzamento & Modello Cantiere Brani (Contratto D0)**:
   - In [`data/models/song_data.gd`](file:///c:/Users/nemex/OneDrive/Documenti/GitHub/World-tour/data/models/song_data.gd), introdotti i campi di avanzamento artigianale `music_progress` (0.0–100.0) e `lyrics_progress` (0.0–100.0), lo strumento dominante `dominant_instrument`, l'archetipo formale `archetype`, la complessità compositiva `complexity` (1..3), lo stato di rifinitura `polishing_status` (NONE, ORANGE, GREEN_BURST, STANDARD), il timer virtuale `polishing_hours_remaining`, i punti ispirazione investiti `inspiration_invested`, la padronanza live `mastery_live` (20.0–100.0) e `last_played_day`;

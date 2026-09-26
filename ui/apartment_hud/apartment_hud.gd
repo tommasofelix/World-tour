@@ -287,7 +287,7 @@ func _on_dock_career_pressed() -> void:
 	open_modal(live_concert_modal)
 
 func _on_dock_tools_pressed() -> void:
-	open_modal(upgrades_modal)
+	open_modal(social_modal)
 
 func _on_dock_band_pressed() -> void:
 	open_modal(band_hub_modal)
@@ -579,36 +579,19 @@ func open_modal_by_prop_id(prop_id: String) -> void:
 		"guitar":
 			open_modal(song_creator_modal)
 		"kitchen":
-			if GameManager and GameManager.player_data:
-				GameManager.player_data.energy = mini(Constants.MAX_ENERGY, GameManager.player_data.energy + 15)
-				GameManager.player_data.stress = maxi(Constants.MIN_STRESS, GameManager.player_data.stress - 5)
 			AccessibilityManager.play_cue(Enums.AudioCueType.AREA_PERSONAL)
-			AccessibilityManager.announce("Espresso bollente preparato nella cucina del loft. Energia ripristinata!", true)
-			show_inspection("Un ottimo caffè espresso appena fatto. Pronto a rimetterti al lavoro!", "CUCINA", "[Spazio] Chiudi")
+			show_inspection("Cucina del loft. Usa il menu interazioni per preparare un espresso bollente.", "CUCINA", "[Spazio] Chiudi")
+			AccessibilityManager.announce("Cucina del loft. Usa il menu interazioni per preparare un caffè.", false)
 			update_hud_display()
 		"couch":
-			if GameManager and GameManager.player_data:
-				GameManager.player_data.stress = maxi(Constants.MIN_STRESS, GameManager.player_data.stress - 12)
-				GameManager.player_data.morale = mini(Constants.MAX_MORALE, GameManager.player_data.morale + 5)
-				GameManager.player_data.energy = mini(Constants.MAX_ENERGY, GameManager.player_data.energy + 5)
 			AccessibilityManager.play_cue(Enums.AudioCueType.AREA_PERSONAL)
-			AccessibilityManager.announce("Ti sei disteso sul divano a riposare. Tensione e stress diminuiti.", true)
-			show_inspection("Ti rilassi sul divano vissuto del loft. Tensione allentata e mente rigenerata!", "DIVANO", "[Spazio] Chiudi")
+			show_inspection("Divano vissuto del loft. Usa il menu per rilassarti o scrivere testi.", "DIVANO", "[Spazio] Chiudi")
+			AccessibilityManager.announce("Divano del loft. Usa il menu per rilassarti o scrivere testi.", false)
 			update_hud_display()
 		"turntable":
-			if GameManager and GameManager.player_data:
-				GameManager.player_data.morale = mini(Constants.MAX_MORALE, GameManager.player_data.morale + 20)
-				GameManager.player_data.stress = maxi(Constants.MIN_STRESS, GameManager.player_data.stress - 10)
-				var got_spark: bool = randf() < 0.35
-				if got_spark:
-					if GameManager.player_data.has_method("add_skill_xp"):
-						GameManager.player_data.add_skill_xp("composition", Constants.RECOVERY_MUSIC_SPARK_XP)
-					AccessibilityManager.announce("Sessione vinili d'epoca sul giradischi! +20 Morale, -10 Stress e una Scintilla Creativa guadagnata!", true)
-					show_inspection("L'ascolto dei vinili d'epoca ti ha ispirato: hai ottenuto una Scintilla Creativa (+15 XP Composizione)!", "GIRADISCHI", "[Spazio] Chiudi")
-				else:
-					AccessibilityManager.announce("Sessione vinili d'epoca sul giradischi! +20 Morale e -10 Stress.", true)
-					show_inspection("Il calore analogico del vinile risuona nel loft, sciogliendo la tensione.", "GIRADISCHI", "[Spazio] Chiudi")
 			AccessibilityManager.play_cue(Enums.AudioCueType.AREA_CREATION)
+			show_inspection("Giradischi hi-fi analogico. Usa il menu per ascoltare vinili d'epoca e ricaricare ispirazione.", "GIRADISCHI", "[Spazio] Chiudi")
+			AccessibilityManager.announce("Giradischi del loft. Usa il menu per ascoltare vinili d'epoca.", false)
 			update_hud_display()
 		"bed":
 			if GameManager and GameManager.time_system and GameManager.calendar_data:
@@ -620,18 +603,18 @@ func open_modal_by_prop_id(prop_id: String) -> void:
 					AccessibilityManager.announce("Letto del Loft. Premi Z per dormire fino a domani mattina, X per riposare fino alla fascia successiva, oppure Esc per annullare.", true)
 				update_hud_display()
 		"arcade":
-			if GameManager and GameManager.player_data:
-				GameManager.player_data.morale = mini(Constants.MAX_MORALE, GameManager.player_data.morale + 10)
-				GameManager.player_data.stress = maxi(Constants.MIN_STRESS, GameManager.player_data.stress - 5)
-				AccessibilityManager.announce("Partita al cabinato arcade! Morale aumentato di 10.", true)
-				AccessibilityManager.play_cue(Enums.AudioCueType.AREA_PERSONAL)
-				update_hud_display()
+			AccessibilityManager.play_cue(Enums.AudioCueType.AREA_PERSONAL)
+			show_inspection("Cabinato arcade vintage. Usa il menu per fare una partita.", "ARCADE", "[Spazio] Chiudi")
+			AccessibilityManager.announce("Cabinato arcade del loft. Usa il menu per giocare.", false)
+			update_hud_display()
 		"desk":
 			open_modal(band_hub_modal)
 		"wardrobe":
-			open_modal(character_sheet_modal)
+			show_inspection("Guardaroba del loft. Usa il menu interazione per cambiarti il look.", "GUARDAROBA", "[Spazio] Chiudi")
+			AccessibilityManager.announce("Guardaroba del loft: usa il menu interazione per cambiarti il look.", false)
 		"toolbox":
-			open_modal(upgrades_modal)
+			show_inspection("Cassa attrezzi: verifica cavi jack e manutenzione chitarra dal menu.", "ATTREZZI", "[Spazio] Chiudi")
+			AccessibilityManager.announce("Cassa attrezzi: usa il menu per manutenzione cavi e chitarra.", false)
 		"door":
 			open_modal(live_concert_modal)
 		"stereo":

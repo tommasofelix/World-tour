@@ -17,10 +17,13 @@ signal closed()
 @onready var btn_refresh_candidates: Button = $PanelMain/VBox/HBoxBody/VBoxAuditions/BtnRefreshCandidates
 
 @onready var opt_revenue_split: OptionButton = $PanelMain/VBox/HBoxBottom/HBoxSplit/OptRevenueSplit
+@onready var btn_rehearse: Button = $PanelMain/VBox/HBoxBottom/BtnRehearse
 @onready var btn_close: Button = $PanelMain/VBox/HBoxBottom/BtnClose
 
 func _ready() -> void:
 	btn_close.pressed.connect(close)
+	if btn_rehearse:
+		btn_rehearse.pressed.connect(_on_rehearse_pressed)
 	btn_refresh_candidates.pressed.connect(_on_refresh_candidates_pressed)
 	opt_revenue_split.item_selected.connect(_on_revenue_split_selected)
 	
@@ -36,6 +39,7 @@ func _resolve_nodes() -> void:
 		vbox_candidates_list = get_node_or_null("PanelMain/VBox/HBoxBody/VBoxAuditions/ScrollAuditions/VBoxCandidatesList")
 		btn_refresh_candidates = get_node_or_null("PanelMain/VBox/HBoxBody/VBoxAuditions/BtnRefreshCandidates")
 		opt_revenue_split = get_node_or_null("PanelMain/VBox/HBoxBottom/HBoxSplit/OptRevenueSplit")
+		btn_rehearse = get_node_or_null("PanelMain/VBox/HBoxBottom/BtnRehearse")
 		btn_close = get_node_or_null("PanelMain/VBox/HBoxBottom/BtnClose")
 
 func _setup_split_options() -> void:
@@ -52,6 +56,8 @@ func _setup_split_options() -> void:
 
 func _setup_accessibility_hooks() -> void:
 	_resolve_nodes()
+	if btn_rehearse:
+		AccessibilityManager.hook_control_accessibility(btn_rehearse, "Fai le Prove con la Band", "Consuma energia, riduce la tensione della band, migliora l'affinità e incrementa la padronanza live delle canzoni del 15% (Tasto P).")
 	if btn_close:
 		AccessibilityManager.hook_control_accessibility(btn_close, "Chiudi Gestione Band", "Tasto rapido Esc o G. Ritorna all'HUD di gioco.")
 	if btn_refresh_candidates:
@@ -199,10 +205,23 @@ func _on_revenue_split_selected(index: int) -> void:
 		GameManager.band_system.set_revenue_split(mode)
 		refresh_hub()
 
+func _on_rehearse_pressed() -> void:
+	if not GameManager or not GameManager.band_system:
+		return
+	var res: Dictionary = GameManager.band_system.hold_rehearsal_session(true)
+	if res.get("success", false):
+		refresh_hub()
+		AccessibilityManager.announce("Sessione di prove completata! Chimica e affinità migliorate, padronanza live delle canzoni in repertorio +15%.", true)
+	else:
+		AccessibilityManager.announce(res.get("message", "Impossibile svolgere le prove."), true)
+
 func _unhandled_input(event: InputEvent) -> void:
 	if not visible:
 		return
 	if event is InputEventKey and event.is_pressed() and not event.is_echo():
 		if event.keycode == KEY_ESCAPE or event.keycode == KEY_G:
 			close()
+			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_P:
+			_on_rehearse_pressed()
 			get_viewport().set_input_as_handled()
